@@ -1,6 +1,6 @@
 #ifndef MYPHYSICENGINE_H
 #define MYPHYSICENGINE_H
-#include "physicEngine.h"
+#include "../physicEngine.h"
 class myPhysicEngine : public physicEngine
 {
 public:

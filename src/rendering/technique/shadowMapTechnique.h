@@ -1,7 +1,7 @@
 #ifndef SHADOW_MAP_TECHNIQUE_H
 #define SHADOW_MAP_TECHNIQUE_H
 #include "technique.h"
-#include "../math3d.h"
+#include "../../math3d.h"
 class ShadowMapTechnique : public Technique
 {
 public:

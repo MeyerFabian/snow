@@ -1,6 +1,6 @@
 
-#include "myRenderingEngine.h"
-#include "myPhysicEngine.h"
+#include "rendering/myRenderingEngine.h"
+#include "simulation/myPhysicEngine.h"
 #include <iostream>
 using namespace  std;
 renderingEngine* rE;
