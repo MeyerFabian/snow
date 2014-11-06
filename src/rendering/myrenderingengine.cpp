@@ -15,6 +15,7 @@
 #include "technique/shadowMapTechnique.h"
 #include "technique/shadowmapbufferobject.h"
 #include "stb_image.h"
+#include <memory>
 #define WINDOW_WIDTH 700
 #define WINDOW_HEIGHT 700
 using namespace std;
@@ -35,7 +36,7 @@ ShadowMapTechnique SMT;
 ShadowMapBufferObject SMFBO;
 
 GLuint textureID;
-Texture* helitex = NULL;
+shared_ptr<Texture> helitex;
 
 Mesh mesh;
 Mesh quad;
@@ -62,7 +63,7 @@ void initVBO(){
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_CULL_FACE);
-    helitex = new Texture("textures/test.png");
+    helitex = make_shared<Texture>("textures/test.png");
     helitex->Load(GL_TEXTURE_2D);
 }
 
@@ -298,7 +299,6 @@ bool myRenderingEngine::shouldClose(){
 void myRenderingEngine::stop(){
     glfwDestroyWindow(window);
     glfwTerminate();
-    delete helitex;
     exit(EXIT_SUCCESS);
 }
 
