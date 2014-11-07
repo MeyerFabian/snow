@@ -9,7 +9,7 @@
 #include "glew.h"
 #include "../math3d.h"
 #include "texture.h"
-
+#include <memory>
 struct Vertex{
 public:
     Vector3f pos;
@@ -34,10 +34,12 @@ public:
     
     bool LoadMesh(const std::string& Filename);
     void Render();
-private:
+    void initVBO();
+//private:
     bool InitFromScene(const aiScene* pScene, const std::string& Filename);
     void InitMesh(unsigned int Index, const aiMesh* paiMesh);
     bool InitMaterials(const aiScene* pScene, const std::string& Filename);
+
     void Clear();
 
 #define INVALID_MATERIAL 0xFFFFFFFF
@@ -45,14 +47,18 @@ private:
         MeshEntry();
         ~MeshEntry();
 
-        void Init(const std::vector<Vertex>& Vertices, const std::vector< unsigned int>& Indices);
+        void Init();
         GLuint VB;
         GLuint IB;
         unsigned int NumIndices;
         unsigned int MaterialIndex;
+
+
+        std::vector<Vertex> Vertices;
+        std::vector<unsigned int> Indices;
     };
     std::vector<MeshEntry> m_Entries;
-    std::vector<Texture*> m_Textures;
+    std::vector<shared_ptr<Texture>> m_Textures;
     
 };
 

@@ -48,8 +48,8 @@ src/renderingEngine.h
 src/rendering/myRenderingEngine.h
 src/rendering/myRenderingEngine.cpp
 src/physicEngine.h
-src/simulation/myphysicEngine.h
-src/simulation/myphysicEngine.cpp
+src/simulation/myPhysicEngine.h
+src/simulation/myPhysicEngine.cpp
 )
 
 

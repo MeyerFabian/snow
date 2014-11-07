@@ -6,7 +6,7 @@ class myPhysicEngine : public physicEngine
 public:
     myPhysicEngine() = default;
     virtual bool init();
-    virtual void update(double dt);
+    virtual void update( std::shared_ptr<std::vector< Mesh >> meshes ,double dt);
 };
 
 #endif // MYPHYSICENGINE_H

@@ -38,8 +38,6 @@ ShadowMapBufferObject SMFBO;
 GLuint textureID;
 shared_ptr<Texture> helitex;
 
-Mesh mesh;
-Mesh quad;
 
 static float stepsize=0.2f;
 static float rotation=0.0f;
@@ -48,21 +46,24 @@ Vector3f lightpos;
 static float lighty=0.0f;
 
 
+std::shared_ptr<std::vector< Mesh >> meshesToRender;
 
-
-
+void fillBufferFromMeshes(){
+    for(int i= 0;i< meshesToRender->size(); i++){
+       (*meshesToRender)[i].initVBO();
+    }
+}
 
 void initVBO(){
 
     //VBO-Buffer Initialization
-
-    mesh.LoadMesh("model/jeep.obj");
-    quad.LoadMesh("model/quad2.obj");
+    fillBufferFromMeshes();
     glCullFace(GL_BACK);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_CULL_FACE);
+
     helitex = make_shared<Texture>("textures/test.png");
     helitex->Load(GL_TEXTURE_2D);
 }
@@ -135,7 +136,7 @@ void initShader(){
     light.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
     SMT.setMVP(light.getMVP());
-    mesh.Render();
+    (*meshesToRender)[0].Render();
     glBindFramebuffer(GL_FRAMEBUFFER,0);
 
 
@@ -187,8 +188,7 @@ void initShader(){
 
 
 
-    mesh.Render();
-
+    (*meshesToRender)[0].Render();
     world.setPosition(0,-3.0f,0.0f);
     world.setScale(10.0f,1.0f,10.0f);
     world.setRotation(0,rotation,0);
@@ -211,7 +211,7 @@ void initShader(){
     world.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
     lighting.setLightMVP(world.getMVP());
     helitex->bind(GL_TEXTURE0);
-    quad.Render();
+    (*meshesToRender)[1].Render();
 
 }
 
@@ -252,8 +252,9 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     }
 }
 
-bool myRenderingEngine::init(){
+bool myRenderingEngine::init(std::shared_ptr<std::vector< Mesh >> meshes){
 
+    meshesToRender  = meshes;
 
     //GLFW INIT: ORDER IS IMPORTANT
     glfwSetErrorCallback(error_callback);
