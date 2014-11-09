@@ -1,5 +1,6 @@
 #include "myphysicengine.h"
-bool myPhysicEngine::init(std::shared_ptr<std::vector< Mesh >> meshes){
+
+bool myPhysicEngine::init(){
      return true;
 }
 void myPhysicEngine::update(double dt){

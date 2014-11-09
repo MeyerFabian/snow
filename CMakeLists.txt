@@ -19,8 +19,8 @@ file(COPY shader DESTINATION /)
 file(COPY textures DESTINATION /)
 file(COPY model DESTINATION /)
 add_executable(main
-src/main.cpp 
-src/math3d.h 
+src/main.cpp
+src/math3d.h
 src/math3d.cpp
 src/rendering/pipeline/pipeline.h
 src/rendering/pipeline/pipeline.cpp
@@ -32,6 +32,8 @@ shader/shader.vert
 shader/shader.frag
 shader/m_shadow.vert
 shader/m_shadow.frag
+shader/particleShader.vert
+shader/particleShader.frag
 stb_image/stb_image.h
 stb_image/stb_image.c
 src/rendering/technique/technique.h
@@ -40,6 +42,8 @@ src/rendering/technique/lightingTechnique.h
 src/rendering/technique/lightingTechnique.cpp
 src/rendering/technique/shadowMapTechnique.h
 src/rendering/technique/shadowMapTechnique.cpp
+src/rendering/technique/ParticleTechnique.h
+src/rendering/technique/ParticleTechnique.cpp
 src/object/mesh.h
 src/object/mesh.cpp
 src/rendering/technique/ShadowMapBufferObject.h
@@ -50,6 +54,16 @@ src/rendering/myRenderingEngine.cpp
 src/physicEngine.h
 src/simulation/myPhysicEngine.h
 src/simulation/myPhysicEngine.cpp
+src/simulation/timeUpdate.h
+src/simulation/timeUpdate/explicittimeupdate.h
+src/simulation/timeUpdate/explicittimeupdate.cpp
+src/simulation/timeUpdate/semiimplicittimeupdate.h
+src/simulation/timeUpdate/semiimplicittimeupdate.cpp
+src/object/particle.h
+src/object/grid.h
+src/object/gridpoint.h
+src/object/particlesystem.h
+src/object/particlesystem.cpp
 )
 
 

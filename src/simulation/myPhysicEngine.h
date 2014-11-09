@@ -5,8 +5,11 @@
 class myPhysicEngine : public physicEngine
 {
 public:
-    myPhysicEngine() = default;
-    virtual bool init(std::shared_ptr<std::vector< Mesh >> meshes);
+    myPhysicEngine(std::shared_ptr<std::vector< Mesh >> const meshes, shared_ptr<ParticleSystem> const particles):physicEngine(meshes, particles){
+
+    }
+
+    virtual bool init();
     virtual void update(double dt);
 };
 

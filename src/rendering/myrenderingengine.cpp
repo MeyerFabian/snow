@@ -16,6 +16,7 @@
 #include "technique/shadowmapbufferobject.h"
 #include "stb_image.h"
 #include <memory>
+#include "technique/particletechnique.h"
 #define WINDOW_WIDTH 700
 #define WINDOW_HEIGHT 700
 using namespace std;
@@ -35,6 +36,11 @@ const char* pFShadowMapFileName = "shader/m_shadow.frag";
 ShadowMapTechnique SMT;
 ShadowMapBufferObject SMFBO;
 
+
+const char* pVSParticleFileName = "shader/particleShader.vert";
+const char* pFSParticleFileName = "shader/particleShader.frag";
+ParticleTechnique PT;
+
 GLuint textureID;
 shared_ptr<Texture> helitex;
 
@@ -46,15 +52,15 @@ Vector3f lightpos;
 static float lighty=0.0f;
 
 
-std::shared_ptr<std::vector< Mesh >> meshesToRender;
-
-void fillBufferFromMeshes(){
-    for(int i= 0;i< meshesToRender->size(); i++){
-       (*meshesToRender)[i].initVBO();
+void myRenderingEngine::fillBufferFromMeshes(){
+    for(int i= 0;i< meshes->size(); i++){
+       (*meshes)[i].initVBO();
     }
+    particlesystem->initVBO();
+
 }
 
-void initVBO(){
+void myRenderingEngine::initVBO(){
 
     //VBO-Buffer Initialization
     fillBufferFromMeshes();
@@ -72,7 +78,28 @@ void initShader(){
 
 
 
-     string vs, fs;
+         string vs, fs;
+         vs.clear();
+         fs.clear();
+
+         if(!ReadFile(pVSParticleFileName,vs)){
+           fprintf(stderr, "Error: vs\n");
+            exit(1);
+         };
+
+         if(!ReadFile(pFSParticleFileName,fs)){
+
+          fprintf(stderr, "Error: fs \n");
+          exit(1);
+         };
+
+         PT = ParticleTechnique();
+
+         if(!PT.init(vs,fs)){
+             printf("PT init failed");
+         }
+         vs.clear();
+         fs.clear();
 
        if(!ReadFile(pVSFileName,vs)){
          fprintf(stderr, "Error: vs\n");
@@ -116,9 +143,8 @@ void initShader(){
 
 
 
-
     }
- void shadowMapPass(){
+ void myRenderingEngine::shadowMapPass(){
 
     SMFBO.BindForWriting();
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -136,21 +162,21 @@ void initShader(){
     light.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
     SMT.setMVP(light.getMVP());
-    (*meshesToRender)[0].Render();
+    (*meshes)[0].Render();
     glBindFramebuffer(GL_FRAMEBUFFER,0);
 
 
 
 }
- void renderPass(){
+ void myRenderingEngine::renderPass(){
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glClearColor(1,1,1,0);
+    glClearColor(0.5,0.5,0.5,0);
 
     SMFBO.BindForReading(GL_TEXTURE1);
 
-    lighting.plugTechnique();
+
     pipeline world;
 
     //
@@ -158,9 +184,14 @@ void initShader(){
     world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
     world.setCamera(0.0,3.0f,5.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
-    world.setPosition(0.0f,0.0f,0.0f);
+    world.setPosition(-1.0f,0.0f,0.0f);
     world.setScale(0.003f,0.003f,0.003f);
     world.setRotation(0,rotation,0);
+
+    PT.plugTechnique();
+    PT.setWVP(world.getMVP());
+
+    particlesystem->render();
 
 
     glm::mat4x4 matrix= glm::mat4x4(    world.getModelMatrix()->m[0][0], world.getModelMatrix()->m[0][1], world.getModelMatrix()->m[0][2], world.getModelMatrix()->m[0][3],
@@ -171,6 +202,7 @@ void initShader(){
     glm::mat4x4 tmatrix=glm::inverse(matrix);
     matrix=glm::transpose(tmatrix);
 
+    lighting.plugTechnique();
     lighting.setSampler(0);
     lighting.setShadowMapTexture(1);
     lighting.setLight(lightpos,0.1,Vector3f(1.0,1.0,1.0) ,0.90);
@@ -188,12 +220,15 @@ void initShader(){
 
 
 
-    (*meshesToRender)[0].Render();
+    (*meshes)[0].Render();
     world.setPosition(0,-3.0f,0.0f);
     world.setScale(10.0f,1.0f,10.0f);
     world.setRotation(0,rotation,0);
 
     world.setCamera(0.0,3.0f,5.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+
+
+
     //world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
     //world.setCamera(0.0,3.0,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
@@ -211,11 +246,23 @@ void initShader(){
     world.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
     lighting.setLightMVP(world.getMVP());
     helitex->bind(GL_TEXTURE0);
-    (*meshesToRender)[1].Render();
+    (*meshes)[1].Render();
 
+    world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
+    world.setCamera(0.0,3.0f,5.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+
+    world.setPosition(1.0f,0.0f,0.0f);
+    world.setScale(0.5f,0.5f,0.5f);
+    world.setRotation(0,rotation,0);
+
+    PT.plugTechnique();
+    PT.setWVP(world.getMVP());
+
+    particlesystem->render();
 }
 
- void renderQueue(){
+ void myRenderingEngine::renderQueue(){
+
 
      shadowMapPass();
 
@@ -252,9 +299,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     }
 }
 
-bool myRenderingEngine::init(std::shared_ptr<std::vector< Mesh >> meshes){
-
-    meshesToRender  = meshes;
+bool myRenderingEngine::init(){
 
     //GLFW INIT: ORDER IS IMPORTANT
     glfwSetErrorCallback(error_callback);
