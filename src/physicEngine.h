@@ -7,8 +7,8 @@
 class physicEngine{
     public :
     physicEngine() = default;
-    virtual bool init() = 0;
-    virtual void update( std::shared_ptr<std::vector< Mesh >> meshes,double dt) = 0;
+    virtual bool init( std::shared_ptr<std::vector< Mesh >> meshes) = 0;
+    virtual void update(double dt) = 0;
 };
 
 #endif // PHYSICENGINE_H

@@ -35,7 +35,7 @@ public:
     bool LoadMesh(const std::string& Filename);
     void Render();
     void initVBO();
-//private:
+private:
     bool InitFromScene(const aiScene* pScene, const std::string& Filename);
     void InitMesh(unsigned int Index, const aiMesh* paiMesh);
     bool InitMaterials(const aiScene* pScene, const std::string& Filename);

@@ -1,6 +1,12 @@
 #include "math3d.h"
 #include <iostream>
 using namespace std;
+
+/*
+ *
+ * Vector3f
+ *
+ * */
 void Vector3f::normalize(){
     float length = sqrt(this->x*this->x+this->y*this->y+this->z*this->z);
     this->x =this->x/length;
@@ -17,6 +23,24 @@ Vector3f Vector3f::cross(Vector3f& operand){
 void Vector3f::print() const{
     std::cout<<"Vector3f=   " << this->x << " "<< this->y << " "<< this->z << std::endl;
 }
+
+/*
+ *
+ * Matrix3f
+ *
+ * */
+
+void Matrix3f::print() const {
+    std::cout<<"Matrix3f=   " << this->m[0][0] << " "<< this->m[0][1] << " "<< this->m[0][2] << std::endl;
+    std::cout<<"            " << this->m[1][0] << " "<< this->m[1][1] << " "<< this->m[1][2] << std::endl;
+    std::cout<<"            " << this->m[2][0] << " "<< this->m[2][1] << " "<< this->m[2][2] << std::endl;
+}
+
+/*
+ *
+ * Matrix4f
+ *
+ * */
 
 void Matrix4f::print() const {
     std::cout<<"Matrix4f=   " << this->m[0][0] << " "<< this->m[0][1] << " "<< this->m[0][2] << " "<< this->m[0][3] << std::endl;

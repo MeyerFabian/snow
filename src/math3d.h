@@ -82,7 +82,39 @@ struct persp_info{
     float zFar;
 };
 
+struct Matrix3f{
 
+    Matrix3f() = default;
+    Matrix3f(float f){
+        for(int j = 0; j< 3; j++){
+            for(int i = 0; i<3;i++){
+                this->m[j][i] = f;
+            }
+        }
+    }
+    float m[3][3];
+
+    inline void LoadIdentity(){
+
+        this->m[0][0]=1.0f; this->m[0][1]=0.0f; this->m[0][2]=0.0f;
+        this->m[1][0]=0.0f; this->m[1][1]=1.0f; this->m[1][2]=0.0f;
+        this->m[2][0]=0.0f; this->m[2][1]=0.0f; this->m[2][2]=1.0f;
+    }
+    inline Matrix3f operator*(const Matrix3f operand){
+        Matrix3f returnMatrix;
+        for(int j = 0; j< 3; j++){
+            for(int i = 0; i<3;i++){
+                returnMatrix.m[j][i]=   this->m[j][0]*operand.m[0][i]+
+                                        this->m[j][1]*operand.m[1][i]+
+                                        this->m[j][2]*operand.m[2][i];
+            }
+
+        }
+        return returnMatrix;
+    }
+
+    void print() const;
+};
 struct Matrix4f{
 
     float m[4][4];
