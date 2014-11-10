@@ -17,6 +17,7 @@ public:
 
     void initVBO();
     void render();
+    void updateBuffers();
 private:
     std::shared_ptr<std::vector<Vector3f> > const pPositions = std::make_shared<std::vector<Vector3f> >();
 

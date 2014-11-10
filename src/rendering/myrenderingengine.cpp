@@ -170,6 +170,7 @@ void initShader(){
 }
  void myRenderingEngine::renderPass(){
 
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glClearColor(0.5,0.5,0.5,0);
@@ -187,11 +188,6 @@ void initShader(){
     world.setPosition(-1.0f,0.0f,0.0f);
     world.setScale(0.003f,0.003f,0.003f);
     world.setRotation(0,rotation,0);
-
-    PT.plugTechnique();
-    PT.setWVP(world.getMVP());
-
-    particlesystem->render();
 
 
     glm::mat4x4 matrix= glm::mat4x4(    world.getModelMatrix()->m[0][0], world.getModelMatrix()->m[0][1], world.getModelMatrix()->m[0][2], world.getModelMatrix()->m[0][3],
@@ -258,10 +254,12 @@ void initShader(){
     PT.plugTechnique();
     PT.setWVP(world.getMVP());
 
+    particlesystem->updateBuffers();
     particlesystem->render();
 }
 
  void myRenderingEngine::renderQueue(){
+
 
 
      shadowMapPass();

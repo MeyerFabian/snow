@@ -4,10 +4,11 @@ void ParticleSystem::initVBO() {
     computeParticlePositions();
     glGenBuffers(1,&VB);
     glBindBuffer(GL_ARRAY_BUFFER, VB);
-    glBufferData(GL_ARRAY_BUFFER,sizeof(Vector3f) * (pPositions)->size(), pPositions->data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,sizeof(Vector3f) * (pPositions)->size(), pPositions->data(), GL_STREAM_DRAW);
 }
 
 void ParticleSystem::render(){
+
 
     glEnableVertexAttribArray(0);
 
@@ -17,4 +18,13 @@ void ParticleSystem::render(){
 
 
     glDisableVertexAttribArray(0);
+}
+void ParticleSystem::updateBuffers(){
+
+    for(int i = 0; i< pPositions->size(); i++){
+        pPositions->at(i).x +=0.01f;
+    }
+    glBindBuffer(GL_ARRAY_BUFFER,VB);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3f) * (pPositions)->size(), NULL, GL_STREAM_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vector3f) * (pPositions)->size(), pPositions->data());
 }
