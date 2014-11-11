@@ -2,10 +2,13 @@
 #define MYPHYSICENGINE_H
 #include "../physicEngine.h"
 #include "timeUpdate.h"
+#include "timeUpdate/explicittimeupdate.h"
+#include "../object/grid.h"
+
 class myPhysicEngine : public physicEngine
 {
 public:
-    myPhysicEngine(std::shared_ptr<std::vector< Mesh >> const meshes, shared_ptr<ParticleSystem> const particles):physicEngine(meshes, particles){
+    myPhysicEngine( std::shared_ptr<TimeUpdate> const update):physicEngine( update){
 
     }
 

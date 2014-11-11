@@ -12,18 +12,29 @@
 class ParticleSystem{
 public:
 
-    ParticleSystem()= default;
+    ParticleSystem() = default;
     std::shared_ptr<std::vector<Particle> > const particles = std::make_shared<std::vector<Particle> >();
 
     void initVBO();
+    void updateVBOBuffer();
     void render();
-    void updateBuffers();
+
+    void initSSBO();
+
+    std::shared_ptr<std::vector<Vector3f> > const pPositions = std::make_shared< std::vector <Vector3f> >();
+    std::shared_ptr<std::vector<float> > const pMasses = std::make_shared< std::vector <float> >();
+
 private:
-    std::shared_ptr<std::vector<Vector3f> > const pPositions = std::make_shared<std::vector<Vector3f> >();
+
 
     void computeParticlePositions (){
         for(auto& particle : (*particles)){
             pPositions->push_back(particle.position);
+        }
+    }
+    void computeParticleMasses(){
+        for(auto& particle: (*particles)){
+            pMasses->push_back(particle.mass);
         }
     }
 

@@ -63,12 +63,15 @@ void myRenderingEngine::fillBufferFromMeshes(){
 void myRenderingEngine::initVBO(){
 
     //VBO-Buffer Initialization
-    fillBufferFromMeshes();
     glCullFace(GL_BACK);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_CULL_FACE);
+
+    glEnable(GL_PROGRAM_POINT_SIZE);
+
+    fillBufferFromMeshes();
 
     helitex = make_shared<Texture>("textures/test.png");
     helitex->Load(GL_TEXTURE_2D);
@@ -157,7 +160,7 @@ void initShader(){
 
     light.setPosition(0.0f,0.0f,0.0f);
     light.setScale(0.003f,0.003f,0.003f);
-    light.setRotation(0,rotation,0);
+    light.setRotation(0,0,0);
     light.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
     light.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
@@ -185,9 +188,9 @@ void initShader(){
     world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
     world.setCamera(0.0,3.0f,5.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
-    world.setPosition(-1.0f,0.0f,0.0f);
+    world.setPosition(0.0f,0.0f,0.0f);
     world.setScale(0.003f,0.003f,0.003f);
-    world.setRotation(0,rotation,0);
+    world.setRotation(0,0,0);
 
 
     glm::mat4x4 matrix= glm::mat4x4(    world.getModelMatrix()->m[0][0], world.getModelMatrix()->m[0][1], world.getModelMatrix()->m[0][2], world.getModelMatrix()->m[0][3],
@@ -219,7 +222,7 @@ void initShader(){
     (*meshes)[0].Render();
     world.setPosition(0,-3.0f,0.0f);
     world.setScale(10.0f,1.0f,10.0f);
-    world.setRotation(0,rotation,0);
+    world.setRotation(0,0,0);
 
     world.setCamera(0.0,3.0f,5.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
@@ -247,14 +250,14 @@ void initShader(){
     world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
     world.setCamera(0.0,3.0f,5.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
-    world.setPosition(1.0f,0.0f,0.0f);
+    world.setPosition(0.0f,0.0f,0.0f);
     world.setScale(0.5f,0.5f,0.5f);
-    world.setRotation(0,rotation,0);
+    world.setRotation(0,0,0);
 
     PT.plugTechnique();
     PT.setWVP(world.getMVP());
 
-    particlesystem->updateBuffers();
+    particlesystem->updateVBOBuffer();
     particlesystem->render();
 }
 

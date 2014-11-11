@@ -4,4 +4,5 @@ bool myPhysicEngine::init(){
      return true;
 }
 void myPhysicEngine::update(double dt){
+    integration->update(dt);
 }

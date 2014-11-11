@@ -7,6 +7,7 @@
 #include <vector>
 #include "object/grid.h"
 #include "object/particlesystem.h"
+#include "simulation/timeUpdate.h"
 using namespace  std;
 
 double dt = 0.00001;
@@ -17,19 +18,20 @@ double static_fps = 0.01666666666;
 int launchSnow(){
     Grid grid();
 
+
     shared_ptr<ParticleSystem> const pPs= make_shared<ParticleSystem > ();
-    float xpos=-1.0f,ypos=-1.0f,zpos=-1.0f;
-    for(int x = 0; x <= 100; x+=1){
-        xpos += 0.01f;
-        for(int y = 0; y <= 100; y+=1){
-            ypos += 0.01f;
-            for(int z = 0; z <= 100; z+=1){
-                zpos += 0.01f;
+    float xpos=-1.0f,ypos=-10.0f,zpos=-1.0f;
+    for(int x = 0; x < 10; x+=1){
+        xpos += 0.2f;
+        for(int y = 0; y <= 200; y+=1){
+            ypos += 0.1f;
+            for(int z = 0; z < 10; z+=1){
+                zpos += 0.2f;
                 pPs->particles->push_back(Particle(Vector3f(xpos,ypos,zpos)));
             }
             zpos = -1.0f;
         }
-        ypos = -1.0f;
+        ypos = -10.0f;
     }
 
     shared_ptr<std::vector<Mesh> > const  meshes = make_shared<std::vector<Mesh> >();
@@ -40,8 +42,12 @@ int launchSnow(){
      meshes->push_back(std::move(jeep));
     meshes->push_back(std::move(quad));
 
+
     shared_ptr<renderingEngine> const rE = make_shared<myRenderingEngine>(meshes,pPs);
-    shared_ptr<physicEngine> const  pE= make_shared<myPhysicEngine>(meshes,pPs);
+
+    shared_ptr<TimeUpdate> const update = make_shared<ExplicitTimeUpdate> (meshes,pPs);
+
+    shared_ptr<physicEngine> const  pE= make_shared<myPhysicEngine>(update);
     bool re_err = rE->init();
 
     if(re_err){

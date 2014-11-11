@@ -2,18 +2,19 @@
 #define PHYSICENGINE_H
 #include <memory>
 #include <vector>
-#include "object/mesh.h"
-#include "object/particlesystem.h"
+#include "simulation/timeUpdate.h"
 
 class physicEngine{
     public :
-    physicEngine( std::shared_ptr<std::vector< Mesh >> const meshesToSimulate, shared_ptr<ParticleSystem> const particlesToSimulate): meshes(meshesToSimulate), particles(particlesToSimulate){}
+    physicEngine( std::shared_ptr<TimeUpdate> const update):  integration(update){
+
+    }
 
     virtual bool init() = 0;
     virtual void update(double dt) = 0;
 
-    std::shared_ptr<std::vector< Mesh >> const  meshes;
-    std::shared_ptr<ParticleSystem> const  particles;
+
+    std::shared_ptr<TimeUpdate> const integration;
 };
 
 #endif // PHYSICENGINE_H
