@@ -20,7 +20,7 @@ public:
     void render();
 
     void initSSBO();
-
+    void updateSSBOBuffer();
     std::shared_ptr<std::vector<Vector3f> > const pPositions = std::make_shared< std::vector <Vector3f> >();
     std::shared_ptr<std::vector<float> > const pMasses = std::make_shared< std::vector <float> >();
 
@@ -39,5 +39,6 @@ private:
     }
 
     GLuint VB;
+    GLuint massB;
 };
 #endif // PARTICLESYSTEM_H

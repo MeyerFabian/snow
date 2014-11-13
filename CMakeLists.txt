@@ -36,8 +36,8 @@ shader/particleShader.vert
 shader/particleShader.frag
 stb_image/stb_image.h
 stb_image/stb_image.c
-src/rendering/technique/technique.h
-src/rendering/technique/technique.cpp
+src/technique.h
+src/technique.cpp
 src/rendering/technique/lightingTechnique.h
 src/rendering/technique/lightingTechnique.cpp
 src/rendering/technique/shadowMapTechnique.h
@@ -61,9 +61,12 @@ src/simulation/timeUpdate/semiimplicittimeupdate.h
 src/simulation/timeUpdate/semiimplicittimeupdate.cpp
 src/object/particle.h
 src/object/grid.h
+src/object/grid.cpp
 src/object/gridpoint.h
 src/object/particlesystem.h
 src/object/particlesystem.cpp
+src/simulation/technique/particleCompute.h
+src/simulation/technique/particleCompute.cpp
 )
 
 

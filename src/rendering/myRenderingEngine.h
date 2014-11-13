@@ -4,8 +4,8 @@
 class myRenderingEngine : public renderingEngine
 {
 public:
-    myRenderingEngine(std::shared_ptr<std::vector< Mesh >> const meshes, std::shared_ptr<ParticleSystem> const particles)
-        :renderingEngine(meshes,particles){
+    myRenderingEngine(std::shared_ptr<std::vector< Mesh >> const meshes, std::shared_ptr<ParticleSystem> const particles, std::shared_ptr<Grid> const grid)
+        :renderingEngine(meshes,particles,grid){
     }
     virtual bool init();
     virtual void render();

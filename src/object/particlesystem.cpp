@@ -23,10 +23,20 @@ void ParticleSystem::render(){
 void ParticleSystem::updateVBOBuffer(){
 
     glBindBuffer(GL_ARRAY_BUFFER,VB);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3f) * (pPositions)->size(), NULL, GL_STREAM_DRAW);
+  //glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3f) * (pPositions)->size(), NULL, GL_STREAM_DRAW);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vector3f) * (pPositions)->size(), pPositions->data());
 }
 
 void ParticleSystem::initSSBO(){
     computeParticleMasses();
+    glGenBuffers(1,&massB);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, massB);
+    glBufferData(GL_SHADER_STORAGE_BUFFER,sizeof(float) * (pMasses)->size(), pMasses->data(), GL_STREAM_DRAW);
+
+}
+void ParticleSystem::updateSSBOBuffer(){
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER,massB);
+  //glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3f) * (pPositions)->size(), NULL, GL_STREAM_DRAW);
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(Vector3f) * (pMasses)->size(), pMasses->data());
 }

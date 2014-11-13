@@ -19,6 +19,7 @@
 #include "technique/particletechnique.h"
 #define WINDOW_WIDTH 700
 #define WINDOW_HEIGHT 700
+#define GRID_RENDERING_RESOLUTION 5
 using namespace std;
 
 GLFWwindow* window;
@@ -57,6 +58,7 @@ void myRenderingEngine::fillBufferFromMeshes(){
        (*meshes)[i].initVBO();
     }
     particlesystem->initVBO();
+    grid->initVBO(GRID_RENDERING_RESOLUTION,GRID_RENDERING_RESOLUTION,GRID_RENDERING_RESOLUTION );
 
 }
 
@@ -259,6 +261,9 @@ void initShader(){
 
     particlesystem->updateVBOBuffer();
     particlesystem->render();
+    grid->updateVBOBuffer();
+    grid->render();
+
 }
 
  void myRenderingEngine::renderQueue(){

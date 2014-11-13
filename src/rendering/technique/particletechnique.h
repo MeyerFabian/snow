@@ -1,6 +1,6 @@
 #ifndef PARTICLETECHNIQUE_H
 #define PARTICLETECHNIQUE_H
-#include "technique.h"
+#include "../../technique.h"
 #include "../../math3d.h"
 class ParticleTechnique :public Technique
 {

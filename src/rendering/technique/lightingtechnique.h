@@ -1,6 +1,6 @@
 #ifndef LIGHTINGTECHNIQUE_H
 #define LIGHTINGTECHNIQUE_H
-#include "technique.h"
+#include "../../technique.h"
 #include <string>
 #include "../../math3d.h"
 #include "glm.hpp"

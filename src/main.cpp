@@ -16,22 +16,22 @@ double static_fps = 0.01666666666;
 
 
 int launchSnow(){
-    Grid grid();
+    shared_ptr<Grid>const  grid = make_shared<Grid >(50,50,50, 0.1f, -2.5f,0,0);
 
 
     shared_ptr<ParticleSystem> const pPs= make_shared<ParticleSystem > ();
-    float xpos=-1.0f,ypos=-10.0f,zpos=-1.0f;
-    for(int x = 0; x < 10; x+=1){
-        xpos += 0.2f;
-        for(int y = 0; y <= 200; y+=1){
-            ypos += 0.1f;
+    float xpos=-1.0f,ypos=-1.0f,zpos=-1.0f;
+    for(int x = 0; x < 100; x+=1){
+        xpos += 0.01f;
+        for(int y = 0; y <= 100; y+=1){
+            ypos += 0.01f;
             for(int z = 0; z < 10; z+=1){
-                zpos += 0.2f;
+                zpos += 0.1f;
                 pPs->particles->push_back(Particle(Vector3f(xpos,ypos,zpos)));
             }
             zpos = -1.0f;
         }
-        ypos = -10.0f;
+        ypos = -1.0f;
     }
 
     shared_ptr<std::vector<Mesh> > const  meshes = make_shared<std::vector<Mesh> >();
@@ -43,9 +43,9 @@ int launchSnow(){
     meshes->push_back(std::move(quad));
 
 
-    shared_ptr<renderingEngine> const rE = make_shared<myRenderingEngine>(meshes,pPs);
+    shared_ptr<renderingEngine> const rE = make_shared<myRenderingEngine>(meshes,pPs, grid);
 
-    shared_ptr<TimeUpdate> const update = make_shared<ExplicitTimeUpdate> (meshes,pPs);
+    shared_ptr<TimeUpdate> const update = make_shared<ExplicitTimeUpdate> (meshes,pPs,grid);
 
     shared_ptr<physicEngine> const  pE= make_shared<myPhysicEngine>(update);
     bool re_err = rE->init();

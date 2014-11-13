@@ -4,7 +4,7 @@
 class ExplicitTimeUpdate : public TimeUpdate
 {
 public:
-    ExplicitTimeUpdate(std::shared_ptr<std::vector< Mesh >> const meshesToSimulate, shared_ptr<ParticleSystem> const particlesToSimulate) : TimeUpdate(meshesToSimulate,particlesToSimulate){
+    ExplicitTimeUpdate(std::shared_ptr<std::vector< Mesh >> const meshesToSimulate, shared_ptr<ParticleSystem> const particlesToSimulate, std::shared_ptr<Grid> const grid) : TimeUpdate(meshesToSimulate,particlesToSimulate, grid){
 
     }
 
