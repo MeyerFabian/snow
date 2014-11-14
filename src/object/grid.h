@@ -47,7 +47,7 @@ private:
     void computeParticlePositions (int resolutionx, int resolutiony,int resolutionz){
         for(int i = 0; i< dimx ; i+=resolutionx){
             for(int j = 0; j< dimy ; j+=resolutiony){
-                for(int k = 0; k< dimy ; k+=resolutionz){
+                for(int k = 0; k< dimz ; k+=resolutionz){
 
                     pPositions->push_back(Vector3f(x_off + h*(float)i,y_off + h*(float)j,z_off + h*(float)k));
                 }

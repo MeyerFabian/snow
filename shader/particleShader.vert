@@ -6,5 +6,5 @@ void main(void)
 {
     gl_Position = gMVP* vec4(Position,1.0);
 
-    gl_PointSize = 4.0;
+    gl_PointSize = 20;
 }

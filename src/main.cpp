@@ -8,6 +8,7 @@
 #include "object/grid.h"
 #include "object/particlesystem.h"
 #include "simulation/timeUpdate.h"
+#include "defines.h"
 using namespace  std;
 
 double dt = 0.00001;
@@ -16,7 +17,7 @@ double static_fps = 0.01666666666;
 
 
 int launchSnow(){
-    shared_ptr<Grid>const  grid = make_shared<Grid >(50,50,50, 0.1f, -2.5f,0,0);
+    shared_ptr<Grid>const  grid = make_shared<Grid >(GRID_DIM_X,GRID_DIM_Y,GRID_DIM_Z, GRID_SPACING, GRID_POS_X,GRID_POS_Y,GRID_POS_Z);
 
 
     shared_ptr<ParticleSystem> const pPs= make_shared<ParticleSystem > ();

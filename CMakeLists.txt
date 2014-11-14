@@ -67,6 +67,7 @@ src/object/particlesystem.h
 src/object/particlesystem.cpp
 src/simulation/technique/particleCompute.h
 src/simulation/technique/particleCompute.cpp
+src/defines.h
 )
 
 

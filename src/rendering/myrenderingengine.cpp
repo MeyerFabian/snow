@@ -17,9 +17,7 @@
 #include "stb_image.h"
 #include <memory>
 #include "technique/particletechnique.h"
-#define WINDOW_WIDTH 700
-#define WINDOW_HEIGHT 700
-#define GRID_RENDERING_RESOLUTION 5
+#include "../defines.h"
 using namespace std;
 
 GLFWwindow* window;
@@ -58,7 +56,7 @@ void myRenderingEngine::fillBufferFromMeshes(){
        (*meshes)[i].initVBO();
     }
     particlesystem->initVBO();
-    grid->initVBO(GRID_RENDERING_RESOLUTION,GRID_RENDERING_RESOLUTION,GRID_RENDERING_RESOLUTION );
+    grid->initVBO(GRID_RENDERING_RESOLUTION_X,GRID_RENDERING_RESOLUTION_Y,GRID_RENDERING_RESOLUTION_Z );
 
 }
 
@@ -70,7 +68,6 @@ void myRenderingEngine::initVBO(){
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_CULL_FACE);
-
     glEnable(GL_PROGRAM_POINT_SIZE);
 
     fillBufferFromMeshes();
