@@ -8,11 +8,16 @@
 #include <vector>
 #include "../math3d.h"
 
-
+#include "../defines.h"
 class ParticleSystem{
 public:
 
     ParticleSystem() = default;
+    ~ParticleSystem(){
+        delete pPositions;
+        delete pVelocities;
+    }
+
     std::shared_ptr<std::vector<Particle> > const particles = std::make_shared<std::vector<Particle> >();
 
     void initVBO();
@@ -21,24 +26,16 @@ public:
 
     void initSSBO();
     void updateSSBOBuffer();
-    std::shared_ptr<std::vector<Vector3f> > const pPositions = std::make_shared< std::vector <Vector3f> >();
-    std::shared_ptr<std::vector<float> > const pMasses = std::make_shared< std::vector <float> >();
+    Vector4f* pPositions= nullptr ;
+    Vector4f* pVelocities= nullptr ;
 
 private:
 
 
-    void computeParticlePositions (){
-        for(auto& particle : (*particles)){
-            pPositions->push_back(particle.position);
-        }
-    }
-    void computeParticleMasses(){
-        for(auto& particle: (*particles)){
-            pMasses->push_back(particle.mass);
-        }
-    }
 
     GLuint VB;
+    GLuint posB;
     GLuint massB;
+    GLuint velB;
 };
 #endif // PARTICLESYSTEM_H

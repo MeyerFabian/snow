@@ -6,7 +6,7 @@ in vec4 LightSpacePos;
 uniform vec3 gLightPosition;
 uniform vec3 gCameraPos;
 uniform sampler2D gSampler;
-uniform sampler2D gShadowMap;
+//uniform sampler2D gShadowMap;
 uniform float gAmbient;
 uniform vec3 gColor;
 uniform float gDiffuse;
@@ -47,12 +47,12 @@ void main(void)
     vec3 LightSpacePos0 = LightSpacePos.xyz/LightSpacePos.w;
     vec2 UV= vec2(0.5 + 0.5 * LightSpacePos0.x,0.5 + 0.5 * LightSpacePos0.y);
     float z = 0.5 + 0.5 * LightSpacePos0.z;
-    float ShadowFactor =1.0f;
-    float Depth = texture2D(gShadowMap,UV).x;
-    if(Depth < (z-0.001)){
-        ShadowFactor = 0.5f;
-    }
+ //   float ShadowFactor =1.0f;
+  //  float Depth = texture2D(gShadowMap,UV).x;
+ //   if(Depth < (z-0.001)){
+ //       ShadowFactor = 0.5f;
+ //   }
 
 
-    gl_FragColor = clamp(textureColor * (ambientColor + ShadowFactor * (diffuseColor + specColor)),0.0,1.0);
+    gl_FragColor = clamp(textureColor * (ambientColor + (diffuseColor + specColor)),0.0,1.0);
 }

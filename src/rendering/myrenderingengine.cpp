@@ -18,6 +18,7 @@
 #include <memory>
 #include "technique/particletechnique.h"
 #include "../defines.h"
+#include "../simulation/technique/particleCompute.h"
 using namespace std;
 
 GLFWwindow* window;
@@ -40,6 +41,10 @@ const char* pVSParticleFileName = "shader/particleShader.vert";
 const char* pFSParticleFileName = "shader/particleShader.frag";
 ParticleTechnique PT;
 
+
+const char* pPCFileName = "shader/computeShader.glsl";
+ParticleCompute PC;
+
 GLuint textureID;
 shared_ptr<Texture> helitex;
 
@@ -55,7 +60,7 @@ void myRenderingEngine::fillBufferFromMeshes(){
     for(int i= 0;i< meshes->size(); i++){
        (*meshes)[i].initVBO();
     }
-    particlesystem->initVBO();
+    //particlesystem->initVBO();
     grid->initVBO(GRID_RENDERING_RESOLUTION_X,GRID_RENDERING_RESOLUTION_Y,GRID_RENDERING_RESOLUTION_Z );
 
 }
@@ -120,7 +125,7 @@ void initShader(){
         lighting.init(vs,fs);
 
 
-
+/*
        vs.clear();
        fs.clear();
 
@@ -140,7 +145,7 @@ void initShader(){
        if(!SMT.init(vs,fs)){
            printf("SMT init failed");
        }
-
+*/
 
 
 
@@ -165,19 +170,22 @@ void initShader(){
 
     SMT.setMVP(light.getMVP());
     (*meshes)[0].Render();
-    glBindFramebuffer(GL_FRAMEBUFFER,0);
+
 
 
 
 }
  void myRenderingEngine::renderPass(){
 
+    pipeline light;
+    lightpos = Vector3f(0.0,lighty+ 3.0f,1.0f);
+
+
+    //SMFBO.BindForReading(GL_TEXTURE1);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glClearColor(0.5,0.5,0.5,0);
-
-    SMFBO.BindForReading(GL_TEXTURE1);
 
 
     pipeline world;
@@ -202,7 +210,7 @@ void initShader(){
 
     lighting.plugTechnique();
     lighting.setSampler(0);
-    lighting.setShadowMapTexture(1);
+    //lighting.setShadowMapTexture(1);
     lighting.setLight(lightpos,0.1,Vector3f(1.0,1.0,1.0) ,0.90);
     lighting.setWorldMatrix(world.getModelMatrix());
     lighting.setInverse(&matrix);
@@ -241,7 +249,7 @@ void initShader(){
     lighting.setWorldMatrix(world.getModelMatrix());
     lighting.setInverse(&matrix);
     lighting.setWVP(world.getMVP());
-    world.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+    //world.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
     lighting.setLightMVP(world.getMVP());
     helitex->bind(GL_TEXTURE0);
     (*meshes)[1].Render();
@@ -253,6 +261,7 @@ void initShader(){
     world.setScale(0.5f,0.5f,0.5f);
     world.setRotation(0,0,0);
 
+    glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
     PT.plugTechnique();
     PT.setWVP(world.getMVP());
 
@@ -267,7 +276,7 @@ void initShader(){
 
 
 
-     shadowMapPass();
+     //shadowMapPass();
 
      renderPass();
 

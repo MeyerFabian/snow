@@ -17,5 +17,6 @@ public:
     void shadowMapPass();
     void renderPass();
     void renderQueue();
+
 };
 #endif // MYRENDERINGENGINE_H

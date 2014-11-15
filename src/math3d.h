@@ -25,6 +25,8 @@ struct Vector2f{
         this->y=y;
     }
 };
+
+
 struct Vector3f{
     float x;
     float y;
@@ -72,6 +74,25 @@ struct Vector3f{
         result.z = this->z - operand.z;
         return result;
     }
+};
+struct Vector4f{
+    float x;
+    float y;
+    float z;
+    float w;
+    Vector4f(float x, float y, float z,float w){
+        this->x=x;
+        this->y=y;
+        this->z=z;
+        this->w = w;
+    }
+    Vector4f(const Vector3f &vec){
+        this->x = vec.x;
+        this->y = vec.y;
+        this->z = vec.z;
+        this->w = 0;
+    }
+    void print() const;
 };
 
 struct persp_info{

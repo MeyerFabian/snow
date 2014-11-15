@@ -1,7 +1,7 @@
 #include "myphysicengine.h"
 
 bool myPhysicEngine::init(){
-     return true;
+     integration->init();
 }
 void myPhysicEngine::update(double dt){
     integration->update(dt);

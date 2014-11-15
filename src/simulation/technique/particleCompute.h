@@ -5,9 +5,11 @@
 class ParticleCompute :public Technique
 {
 public:
-    ParticleCompute();
+    ParticleCompute()=default;
     bool init(string cs);
+    void setGridPos(const float gridPosx,const float gridPosy,const float gridPosz);
 private:
+    GLuint gGridPos;
 };
 
 #endif // particleCompute_H

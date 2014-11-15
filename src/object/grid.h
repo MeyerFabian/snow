@@ -8,6 +8,8 @@
 #include <memory>
 #include <glm.hpp>
 #include <iostream>
+
+#include "../defines.h"
 class Grid{
 public:
     Grid()= default;
@@ -32,6 +34,8 @@ public:
     float z_off;
 
     GLuint VB;
+    GLuint massB;
+    GLuint velB;
 
     std::shared_ptr<std::vector<Vector3f> > const pPositions = std::make_shared< std::vector <Vector3f> >();
 
@@ -43,6 +47,8 @@ public:
     void initVBO(int res_x,int res_y,int res_z);
     void updateVBOBuffer();
     void render();
+
+    void initSSBO();
 private:
     void computeParticlePositions (int resolutionx, int resolutiony,int resolutionz){
         for(int i = 0; i< dimx ; i+=resolutionx){
@@ -55,6 +61,7 @@ private:
 
         }
     }
+
 
 };
 

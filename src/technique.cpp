@@ -13,7 +13,7 @@ Technique::~Technique(){
 }
 void Technique::init(){
     this->ShaderProgram= glCreateProgram();
-
+    //glProgramParameteri(this->ShaderProgram , GL_PROGRAM_SEPARABLE, GL_TRUE);
     if (ShaderProgram == 0) {
         fprintf(stderr, "Error creating shader program\n");
     }

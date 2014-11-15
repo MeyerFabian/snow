@@ -21,21 +21,22 @@ int launchSnow(){
 
 
     shared_ptr<ParticleSystem> const pPs= make_shared<ParticleSystem > ();
-    float xpos=-1.0f,ypos=-1.0f,zpos=-1.0f;
-    for(int x = 0; x < 100; x+=1){
+    float xpos=-1.0f,ypos=2.0f,zpos=-1.0f;
+    for(int x = 0; x < 96; x+=1){
         xpos += 0.01f;
-        for(int y = 0; y <= 100; y+=1){
+        for(int y = 0; y < 96; y+=1){
             ypos += 0.01f;
-            for(int z = 0; z < 10; z+=1){
-                zpos += 0.1f;
+            for(int z = 0; z < 96; z+=1){
+                zpos += 0.01f;
                 pPs->particles->push_back(Particle(Vector3f(xpos,ypos,zpos)));
             }
             zpos = -1.0f;
         }
-        ypos = -1.0f;
+        ypos = 2.0f;
     }
 
     shared_ptr<std::vector<Mesh> > const  meshes = make_shared<std::vector<Mesh> >();
+
     Mesh jeep;
     jeep.LoadMesh("model/jeep.obj");
     Mesh quad;

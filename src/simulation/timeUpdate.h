@@ -10,7 +10,7 @@ public:
         : meshes(meshesToSimulate), particlesystem(particlesToSimulate) , grid(gridToSimulate){
 
     }
-
+    virtual void init() =0;
     virtual void update(double dt) = 0;
 
     std::shared_ptr<std::vector< Mesh >> const  meshes;

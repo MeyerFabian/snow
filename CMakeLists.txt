@@ -34,6 +34,7 @@ shader/m_shadow.vert
 shader/m_shadow.frag
 shader/particleShader.vert
 shader/particleShader.frag
+shader/computeShader.glsl
 stb_image/stb_image.h
 stb_image/stb_image.c
 src/technique.h

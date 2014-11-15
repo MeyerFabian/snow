@@ -7,7 +7,7 @@ public:
     SemiImplicitTimeUpdate(std::shared_ptr<std::vector< Mesh >> const meshesToSimulate, shared_ptr<ParticleSystem> const particlesToSimulate, std::shared_ptr<Grid> const grid): TimeUpdate(meshesToSimulate,particlesToSimulate, grid){
 
     }
-
+    void init();
     void update(double dt);
 };
 
