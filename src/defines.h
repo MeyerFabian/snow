@@ -12,7 +12,7 @@
 #define GRID_POS_Y 0
 #define GRID_POS_Z -2.5
 #define GRID_DIM_X 50
-#define GRID_DIM_Y 25
+#define GRID_DIM_Y 50
 #define GRID_DIM_Z 50
 #define GRID_SPACING 0.1
 
