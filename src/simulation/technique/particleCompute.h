@@ -8,8 +8,14 @@ public:
     ParticleCompute()=default;
     bool init(string cs);
     void setGridPos(const float gridPosx,const float gridPosy,const float gridPosz);
+    void setGridDim(const int gridDimx,const int gridDimy,const int gridDimz);
+    void setdt(const float dt);
+    void setGridSpacing (const float h);
 private:
     GLuint gGridPos;
+    GLuint gGridDim;
+    GLuint dt;
+    GLuint h;
 };
 
 #endif // particleCompute_H

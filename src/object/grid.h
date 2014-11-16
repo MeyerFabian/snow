@@ -13,6 +13,9 @@
 class Grid{
 public:
     Grid()= default;
+    ~Grid(){
+        delete pPositions;
+    }
 
     std::shared_ptr<std::vector<GridPoint>> const gridPoints = std::make_shared<std::vector<GridPoint>>();
 
@@ -33,34 +36,23 @@ public:
     float y_off;
     float z_off;
 
-    GLuint VB;
-    GLuint massB;
+    GLuint posB;
     GLuint velB;
 
-    std::shared_ptr<std::vector<Vector3f> > const pPositions = std::make_shared< std::vector <Vector3f> >();
+    Vector4f* pPositions;
 
     inline glm::ivec3 getIJK(int index){
         int temp = index%(dimx*dimy);
         return glm::ivec3(temp%dimx, temp/dimx, index/(dimx*dimy));
     }
 
-    void initVBO(int res_x,int res_y,int res_z);
-    void updateVBOBuffer();
+    void initVBO();
+    void updateSSBOBuffer();
     void render();
 
     void initSSBO();
 private:
-    void computeParticlePositions (int resolutionx, int resolutiony,int resolutionz){
-        for(int i = 0; i< dimx ; i+=resolutionx){
-            for(int j = 0; j< dimy ; j+=resolutiony){
-                for(int k = 0; k< dimz ; k+=resolutionz){
 
-                    pPositions->push_back(Vector3f(x_off + h*(float)i,y_off + h*(float)j,z_off + h*(float)k));
-                }
-            }
-
-        }
-    }
 
 
 };

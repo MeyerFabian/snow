@@ -61,7 +61,7 @@ void myRenderingEngine::fillBufferFromMeshes(){
        (*meshes)[i].initVBO();
     }
     //particlesystem->initVBO();
-    grid->initVBO(GRID_RENDERING_RESOLUTION_X,GRID_RENDERING_RESOLUTION_Y,GRID_RENDERING_RESOLUTION_Z );
+    //grid->initVBO();
 
 }
 
@@ -193,7 +193,7 @@ void initShader(){
     //
 
     world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
-    world.setCamera(0.0,3.0f,5.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+    world.setCamera(3.0,4.5f,5.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
     world.setPosition(0.0f,0.0f,0.0f);
     world.setScale(0.003f,0.003f,0.003f);
@@ -226,12 +226,12 @@ void initShader(){
 
 
 
-    (*meshes)[0].Render();
+    //(*meshes)[0].Render();
     world.setPosition(0,-3.0f,0.0f);
     world.setScale(10.0f,1.0f,10.0f);
     world.setRotation(0,0,0);
 
-    world.setCamera(0.0,3.0f,5.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+    world.setCamera(3.0,4.5f,5.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
 
 
@@ -255,19 +255,17 @@ void initShader(){
     (*meshes)[1].Render();
 
     world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
-    world.setCamera(0.0,3.0f,5.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
     world.setPosition(0.0f,0.0f,0.0f);
-    world.setScale(0.5f,0.5f,0.5f);
+    world.setScale(1.0f,1.0f,1.0f);
     world.setRotation(0,0,0);
 
     glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
     PT.plugTechnique();
     PT.setWVP(world.getMVP());
 
-    particlesystem->updateVBOBuffer();
-    particlesystem->render();
-    grid->updateVBOBuffer();
+    //particlesystem->updateVBOBuffer();
+    //particlesystem->render();
     grid->render();
 
 }
