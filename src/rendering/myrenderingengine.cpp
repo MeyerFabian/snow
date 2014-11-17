@@ -265,7 +265,7 @@ void initShader(){
     PT.setWVP(world.getMVP());
 
     //particlesystem->updateVBOBuffer();
-    //particlesystem->render();
+    particlesystem->render();
     grid->render();
 
 }

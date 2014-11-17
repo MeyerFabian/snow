@@ -12,50 +12,42 @@ layout(std140, binding = 0) buffer pPosMass {
 layout(std140, binding = 1) buffer gPos {
     vec4 gPositionsMass[ ];
 };
-/*
-layout(std140, binding = 1) buffer pVel {
+
+layout(std140, binding = 2) buffer pVel {
     vec4 pVelocities[ ];
 };
 
-layout(std140, binding = 4) buffer gVel {
+layout(std140, binding = 3) buffer gVel {
     vec4 gVelocities[ ];
 };
-*/
 
-layout(local_size_x= 512, local_size_y =1, local_size_z = 1)in;
 
-int getIndex(int i ,  int j , int k){
-    return i + (j * int(gGridDim[0].x)) + (k *int(gGridDim[1].x) * int(gGridDim[0].x));
+layout(local_size_x= 1024, local_size_y =1, local_size_z = 1)in;
+
+int width = 4;
+uint threadNum = 64;
+
+void getIndex(inout ivec3 ijk,inout int index){
+    index = ijk.x + (ijk.y * int(gGridDim[0].x)) + (ijk.z *int(gGridDim[1].x) * int(gGridDim[0].x));
+}
+void getIJK(inout ivec3 ijk, inout int index){
+    int temp = index%(gGridDim[0].x*gGridDim[1].x);
+    ijk= ivec3(temp%gGridDim[0].x,temp/gGridDim[0].x,index/(gGridDim[0].x*gGridDim[1].x));
 }
 
 void main(void){
-    uint index = gl_GlobalInvocationID.x;
-    vec3 ParticleInGrid = (pPositionsMass[index].xyz- gGridPos);
-    float ParticleMass = pPositionsMass[index].w;
+    uint globalInvoc = gl_GlobalInvocationID.x;
 
-    pPositionsMass[index].x +=0.0005;
-int gIndex;
-int gridIndX;
-int gridIndY;
-int gridIndZ;
-int n= 0;
+    pPositionsMass[globalInvoc/threadNum].x +=0.0005;
 
-    for( int i=-1; i<=2 ; i++){
-    gridIndX =int(ParticleInGrid.x/gridSpacing) +i;
+    int gridOffsetOfParticle = int(globalInvoc%threadNum);
+    ivec3 gridOffset;
 
-        for(int j=-1; j<=2; j++){
-            gridIndY =int(ParticleInGrid.y/gridSpacing) +j;
+    getIJK(gridOffset,gridOffsetOfParticle );
 
-            for(int k=-1 ;k<=2;k++ ){
-                gridIndZ =int(ParticleInGrid.z/gridSpacing) +k;
+    ivec3 gridIndex = ivec3((pPositionsMass[globalInvoc/threadNum].xyz- gGridPos)/gridSpacing) + gridOffset;
+    int gPositionsMassIndex = 0;
+    getIndex(gridIndex,gPositionsMassIndex);
 
-                if(gridIndX>= n && gridIndY>=n && gridIndZ>=n  &&  gridIndX< gGridDim[0].x &&  gridIndY <gGridDim[1].x   &&  gridIndZ< gGridDim[2].x ){
-                    gIndex = getIndex(gridIndX,gridIndY,gridIndZ);
-                    gPositionsMass[gIndex].w+=ParticleMass;
-                }
-            }
-        }
-    }
-
-
+    gPositionsMass[gPositionsMassIndex].w+=pPositionsMass[globalInvoc/threadNum].w;
 }
