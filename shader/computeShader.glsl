@@ -26,13 +26,13 @@ layout(local_size_x= 1024, local_size_y =1, local_size_z = 1)in;
 
 int width = 4;
 uint threadNum = 64;
-
+int n= 0;
 void getIndex(inout ivec3 ijk,inout int index){
     index = ijk.x + (ijk.y * int(gGridDim[0].x)) + (ijk.z *int(gGridDim[1].x) * int(gGridDim[0].x));
 }
 void getIJK(inout ivec3 ijk, inout int index){
-    int temp = index%(gGridDim[0].x*gGridDim[1].x);
-    ijk= ivec3(temp%gGridDim[0].x,temp/gGridDim[0].x,index/(gGridDim[0].x*gGridDim[1].x));
+    int temp = index%(width*width);
+    ijk= ivec3(temp%width,temp/width,index/(width*width));
 }
 
 void main(void){
@@ -40,14 +40,20 @@ void main(void){
 
     pPositionsMass[globalInvoc/threadNum].x +=0.0005;
 
-    int gridOffsetOfParticle = int(globalInvoc%threadNum);
+    int gridOffsetOfParticle = int(globalInvoc%threadNum); //  597%64=21
     ivec3 gridOffset;
 
-    getIJK(gridOffset,gridOffsetOfParticle );
+    getIJK(gridOffset,gridOffsetOfParticle ); // temp = 21%
 
     ivec3 gridIndex = ivec3((pPositionsMass[globalInvoc/threadNum].xyz- gGridPos)/gridSpacing) + gridOffset;
-    int gPositionsMassIndex = 0;
-    getIndex(gridIndex,gPositionsMassIndex);
+    if(gridIndex.x>= n && gridIndex.y>=n && gridIndex.z>=n && gridIndex.x< gGridDim[0].x && gridIndex.y <gGridDim[1].x &&gridIndex.z< gGridDim[2].x ){
 
-    gPositionsMass[gPositionsMassIndex].w+=pPositionsMass[globalInvoc/threadNum].w;
+
+        int gPositionsMassIndex = 0;
+        getIndex(gridIndex,gPositionsMassIndex);
+
+        gPositionsMass[gPositionsMassIndex].w+=pPositionsMass[globalInvoc/threadNum].w; // 88 Fps
+        barrier();
+        gVelocities[gPositionsMassIndex].xyz+=pPositionsMass[globalInvoc/threadNum].xyz; //56 Fps
+     }
 }
