@@ -12,7 +12,7 @@ layout(std140, binding = 0) buffer pPosMass {
 layout(std140, binding = 1) buffer gPos {
     vec4 gPositionsMass[ ];
 };
-/*
+
 layout(std140, binding = 1) buffer pVel {
     vec4 pVelocities[ ];
 };
@@ -20,7 +20,7 @@ layout(std140, binding = 1) buffer pVel {
 layout(std140, binding = 4) buffer gVel {
     vec4 gVelocities[ ];
 };
-*/
+
 
 layout(local_size_x= 512, local_size_y =1, local_size_z = 1)in;
 
