@@ -37,7 +37,7 @@ void getIJK(inout ivec3 ijk, inout int index){
 void main(void){
     uint globalInvoc = gl_GlobalInvocationID.x;
     uint pIndex = globalInvoc/threadNum;
-    pPositionsMass[pIndex].x +=0.0005;
+    //pPositionsMass[pIndex].x +=0.0005;
 
     int gridOffsetOfParticle = int(globalInvoc%threadNum); //  597%64=21
     ivec3 gridOffset;
