@@ -24,7 +24,7 @@ void ExplicitTimeUpdate::update(double dt){
     pc.setdt(dt);
     pc.setGridSpacing(grid->h);
     glDispatchCompute(1728,1,1);
-    particlesystem->updateSSBOBuffer();
-    glMemoryBarrier ( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
+    //particlesystem->updateSSBOBuffer();
+    //glMemoryBarrier ( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 
 }

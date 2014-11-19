@@ -260,7 +260,7 @@ void initShader(){
     world.setScale(1.0f,1.0f,1.0f);
     world.setRotation(0,0,0);
 
-    glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
+    //glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
     PT.plugTechnique();
     PT.setWVP(world.getMVP());
 
