@@ -8,9 +8,9 @@
 #define GRID_RENDERING_RESOLUTION_Y 10
 #define GRID_RENDERING_RESOLUTION_Z 10
 
-#define GRID_POS_X -1
+#define GRID_POS_X -1.05
 #define GRID_POS_Y 0
-#define GRID_POS_Z -1
+#define GRID_POS_Z -1.05
 #define GRID_DIM_X 101
 #define GRID_DIM_Y 101
 #define GRID_DIM_Z 101
