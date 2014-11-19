@@ -36,8 +36,8 @@ void getIJK(inout ivec3 ijk, inout int index){
 
 void main(void){
     uint globalInvoc = gl_GlobalInvocationID.x;
-
-    pPositionsMass[globalInvoc/threadNum].x +=0.0005;
+    uint pIndex = globalInvoc/threadNum;
+    pPositionsMass[pIndex].x +=0.0005;
 
     int gridOffsetOfParticle = int(globalInvoc%threadNum); //  597%64=21
     ivec3 gridOffset;
@@ -51,8 +51,9 @@ void main(void){
         int gPositionsMassIndex = 0;
         getIndex(gridIndex,gPositionsMassIndex);
 
-        gPositionsMass[gPositionsMassIndex].w+=pPositionsMass[globalInvoc/threadNum].w; // 87 Fps
+        gPositionsMass[gPositionsMassIndex].w+=pPositionsMass[pIndex].w; // 87 Fps
         barrier();
-        gVelocities[gPositionsMassIndex].xyz+=pVelocities[globalInvoc/threadNum].xyz; //27 Fps
-     }
+        gVelocities[gPositionsMassIndex].xyz+=pVelocities[pIndex].xyz; //27 Fps
+
+   }
 }
