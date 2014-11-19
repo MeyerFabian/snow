@@ -23,7 +23,7 @@ void ExplicitTimeUpdate::update(double dt){
     pc.setGridDim(grid->dimx, grid->dimy, grid->dimz);
     pc.setdt(dt);
     pc.setGridSpacing(grid->h);
-    glDispatchCompute(1024,1,1);
+    glDispatchCompute(32,1,1);
     //particlesystem->updateSSBOBuffer();
     //glMemoryBarrier ( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 

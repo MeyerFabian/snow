@@ -35,7 +35,7 @@ void main(void){
     vec3 ParticleInGrid = (pPositionsMass[index].xyz- gGridPos);
     float ParticleMass = pPositionsMass[index].w;
 
-    pPositionsMass[index].x +=0.0005;
+    //pPositionsMass[index].x +=0.0005;
 int gIndex;
 int gridIndX;
 int gridIndY;
@@ -73,7 +73,7 @@ int n= 0;
 
                 if(gridIndX>= n && gridIndY>=n && gridIndZ>=n  &&  gridIndX< gGridDim[0].x &&  gridIndY <gGridDim[1].x   &&  gridIndZ< gGridDim[2].x ){
                     getIndex(gridIndX,gridIndY,gridIndZ,gIndex);
-                    gVelocities[gIndex].xyz+=pVelocities[index].xyz;
+                    //gVelocities[gIndex].xyz+=pVelocities[index].xyz;
                 }
             }
         }
