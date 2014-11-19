@@ -25,8 +25,8 @@ layout(std140, binding = 3) buffer gVel {
 
 
 
-int getIndex(int i ,  int j , int k){
-    return i + (j * int(gGridDim[0].x)) + (k *int(gGridDim[1].x) * int(gGridDim[0].x));
+void getIndex(inout int i , inout int j ,inout int k, inout int index){
+    index = i + (j * int(gGridDim[0].x)) + (k *int(gGridDim[1].x) * int(gGridDim[0].x));
 }
 
 void main(void){
@@ -52,7 +52,7 @@ int n= 0;
                 gridIndZ =int(ParticleInGrid.z/gridSpacing) +k;
 
                 if(gridIndX>= n && gridIndY>=n && gridIndZ>=n  &&  gridIndX< gGridDim[0].x &&  gridIndY <gGridDim[1].x   &&  gridIndZ< gGridDim[2].x ){
-                    gIndex = getIndex(gridIndX,gridIndY,gridIndZ);
+                    getIndex(gridIndX,gridIndY,gridIndZ,gIndex);
                     gPositionsMass[gIndex].w+=ParticleMass;
                 }
             }
@@ -72,11 +72,11 @@ int n= 0;
                 gridIndZ =int(ParticleInGrid.z/gridSpacing) +k;
 
                 if(gridIndX>= n && gridIndY>=n && gridIndZ>=n  &&  gridIndX< gGridDim[0].x &&  gridIndY <gGridDim[1].x   &&  gridIndZ< gGridDim[2].x ){
-                    gIndex = getIndex(gridIndX,gridIndY,gridIndZ);
+                    getIndex(gridIndX,gridIndY,gridIndZ,gIndex);
                     gVelocities[gIndex].xyz+=pVelocities[index].xyz;
                 }
             }
         }
     }
-    //44FPS
+    //47FPS
 }
