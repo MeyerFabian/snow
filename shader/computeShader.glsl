@@ -11,15 +11,15 @@ layout(std140, binding = 0) buffer pPosMass {
     vec4 pPositionsMass[ ];
 };
 
-layout(std140, binding = 1) buffer gPos {
-    vec4 gPositionsMass[ ];
-};
 
 layout(std140, binding = 1) buffer pVel {
     vec4 pVelocities[ ];
 };
+layout(std140, binding = 2) buffer gPos {
+    vec4 gPositionsMass[ ];
+};
 
-layout(std140, binding = 4) buffer gVel {
+layout(std140, binding = 3) buffer gVel {
     vec4 gVelocities[ ];
 };
 
@@ -59,7 +59,7 @@ int n= 0;
         }
     }
 
-   //220FPS
+   //140FPS
 
     barrier();
     for( int i=-1; i<=2 ; i++){
@@ -78,5 +78,5 @@ int n= 0;
             }
         }
     }
-    //97FPS
+    //44FPS
 }
