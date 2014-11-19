@@ -44,7 +44,7 @@ void main(void){
 
     getIJK(gridOffset,gridOffsetOfParticle ); // temp = 21%
 
-    ivec3 gridIndex = ivec3((pPositionsMass[globalInvoc/threadNum].xyz- gGridPos)/gridSpacing) + gridOffset;
+    ivec3 gridIndex = ivec3((pPositionsMass[pIndex].xyz- gGridPos)/gridSpacing) + gridOffset;
     if(gridIndex.x>= n && gridIndex.y>=n && gridIndex.z>=n && gridIndex.x< gGridDim[0].x && gridIndex.y <gGridDim[1].x &&gridIndex.z< gGridDim[2].x ){
 
 
