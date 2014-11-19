@@ -62,7 +62,7 @@ int n= 0;
    //140FPS
 
     barrier();
-    /*
+/*
     for( int i=-1; i<=2 ; i++){
     gridIndX =int(ParticleInGrid.x/gridSpacing) +i;
 
@@ -74,11 +74,11 @@ int n= 0;
 
                 if(gridIndX>= n && gridIndY>=n && gridIndZ>=n  &&  gridIndX< gGridDim[0].x &&  gridIndY <gGridDim[1].x   &&  gridIndZ< gGridDim[2].x ){
                     getIndex(gridIndX,gridIndY,gridIndZ,gIndex);
-                    //gVelocities[gIndex].xyz+=pVelocities[index].xyz;
+                   // gVelocities[gIndex].xyz+=pVelocities[index].xyz;
                 }
             }
         }
     }
-  */
+*/
   //47FPS
 }
