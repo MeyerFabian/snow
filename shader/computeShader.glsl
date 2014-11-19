@@ -9,14 +9,13 @@ layout(std140, binding = 0) buffer pPosMass {
     vec4 pPositionsMass[ ];
 };
 
-layout(std140, binding = 1) buffer gPos {
-    vec4 gPositionsMass[ ];
-};
-
-layout(std140, binding = 2) buffer pVel {
+layout(std140, binding = 1) buffer pVel {
     vec4 pVelocities[ ];
 };
 
+layout(std140, binding = 2) buffer gPos {
+    vec4 gPositionsMass[ ];
+};
 layout(std140, binding = 3) buffer gVel {
     vec4 gVelocities[ ];
 };
@@ -52,8 +51,8 @@ void main(void){
         int gPositionsMassIndex = 0;
         getIndex(gridIndex,gPositionsMassIndex);
 
-        gPositionsMass[gPositionsMassIndex].w+=pPositionsMass[globalInvoc/threadNum].w; // 88 Fps
+        gPositionsMass[gPositionsMassIndex].w+=pPositionsMass[globalInvoc/threadNum].w; // 87 Fps
         barrier();
-        gVelocities[gPositionsMassIndex].xyz+=pPositionsMass[globalInvoc/threadNum].xyz; //56 Fps
+        gVelocities[gPositionsMassIndex].xyz+=pPositionsMass[globalInvoc/threadNum].xyz; //27 Fps
      }
 }

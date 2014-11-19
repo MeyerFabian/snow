@@ -31,7 +31,7 @@ void Grid::initSSBO(){
 
     glGenBuffers(1,&posB);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
-    glBufferData(GL_SHADER_STORAGE_BUFFER,sizeof(Vector4f) * (gridPoints)->size(), NULL, GL_STREAM_DRAW);
+    glBufferData(GL_SHADER_STORAGE_BUFFER,sizeof(Vector4f) * (gridPoints)->size(), NULL, GL_STATIC_DRAW);
     pPositions =(Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f) * (gridPoints)->size(),GL_MAP_WRITE_BIT |  GL_MAP_INVALIDATE_BUFFER_BIT));
     int index=0;
 
@@ -47,7 +47,7 @@ void Grid::initSSBO(){
     }
 
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER,1, posB);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER,GRID_POS_BUFFER, posB);
 
     std::cout << "Amount of gridPoints: " << gridPoints->size()<<std::endl;
 
@@ -56,7 +56,7 @@ void Grid::initSSBO(){
 
     glGenBuffers(1,&velB);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, velB);
-    glBufferData(GL_SHADER_STORAGE_BUFFER,sizeof(Vector4f) * (gridPoints)->size(), NULL, GL_STREAM_DRAW);
+    glBufferData(GL_SHADER_STORAGE_BUFFER,sizeof(Vector4f) * (gridPoints)->size(), NULL, GL_STATIC_DRAW);
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER ) ;
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GRID_VEL_BUFFER , velB);
     std::cout << "GridVelocityBufferSize: "<< sizeof(Vector4f) * (gridPoints)->size()/1024 << " KB" <<std::endl;

@@ -17,11 +17,9 @@
 #define GRID_SPACING 0.1
 
 #define PARTICLE_POS_BUFFER 0
+#define PARTICLE_VEL_BUFFER 1
 
-#define GRID_POS_BUFFER 1
-
-#define PARTICLE_VEL_BUFFER 2
-
+#define GRID_POS_BUFFER 2
 #define GRID_VEL_BUFFER 3
 #endif // DEFINES_H
 
