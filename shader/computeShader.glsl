@@ -53,6 +53,6 @@ void main(void){
 
         gPositionsMass[gPositionsMassIndex].w+=pPositionsMass[globalInvoc/threadNum].w; // 87 Fps
         barrier();
-        gVelocities[gPositionsMassIndex].xyz+=pPositionsMass[globalInvoc/threadNum].xyz; //27 Fps
+        gVelocities[gPositionsMassIndex].xyz+=pVelocities[globalInvoc/threadNum].xyz; //27 Fps
      }
 }
