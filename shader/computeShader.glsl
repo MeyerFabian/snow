@@ -5,7 +5,7 @@ uniform ivec3 gGridDim;
 uniform float dt;
 uniform float gridSpacing;
 
-layout(local_size_x=1024)in;
+layout(local_size_x=256)in;
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pPositionsMass[ ];
@@ -62,6 +62,7 @@ int n= 0;
    //140FPS
 
     barrier();
+    /*
     for( int i=-1; i<=2 ; i++){
     gridIndX =int(ParticleInGrid.x/gridSpacing) +i;
 
@@ -78,5 +79,6 @@ int n= 0;
             }
         }
     }
-    //47FPS
+  */
+  //47FPS
 }
