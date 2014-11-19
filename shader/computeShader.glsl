@@ -53,7 +53,7 @@ void main(void){
 
         gPositionsMass[gPositionsMassIndex].w+=pPositionsMass[pIndex].w; // 87 Fps
         barrier();
-        gVelocities[gPositionsMassIndex].xyz+=pVelocities[pIndex].xyz; //27 Fps
+        //gVelocities[gPositionsMassIndex].xyz+=pVelocities[pIndex].xyz; //27 Fps
 
    }
 }
