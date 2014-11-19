@@ -24,6 +24,6 @@ void ExplicitTimeUpdate::update(double dt){
     pc.setdt(dt);
     pc.setGridSpacing(grid->h);
     glDispatchCompute(65535,1,1);
-    glMemoryBarrier ( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
+    //glMemoryBarrier ( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 
 }
