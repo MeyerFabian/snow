@@ -14,5 +14,5 @@ void main(void)
     gl_Position = gMVP* vec4(Position.xyz,1.0);
     }
     z = Position.z;
-    gl_PointSize =  Position.w/((1.0e-6)*750*64);
+    gl_PointSize =  Position.w/((1.0e-6)*550*64);
 }
