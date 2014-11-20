@@ -20,7 +20,7 @@ layout(std140, binding = 3) buffer gVel {
     vec4 gVelocities[ ];
 };
 
-
+//try using y
 layout(local_size_x= 64, local_size_y =1, local_size_z = 1)in;
 
 int width = 4;

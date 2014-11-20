@@ -193,7 +193,7 @@ void initShader(){
     //
 
     world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
-    world.setCamera(4.0,8.5f,6.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+    world.setCamera(0.00,0.35f,0.00,1.85,2.35f,0.0f,0.0f,1.0f,0.0f);
 
     world.setPosition(0.0f,0.0f,0.0f);
     world.setScale(0.003f,0.003f,0.003f);
@@ -231,7 +231,7 @@ void initShader(){
     world.setScale(10.0f,1.0f,10.0f);
     world.setRotation(0,0,0);
 
-    world.setCamera(4.0,8.5f,6.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+    world.setCamera(0.00,0.35f,8.0f,0.00,2.35f,0.0f,0.0f,1.0f,0.0f);
 
 
 

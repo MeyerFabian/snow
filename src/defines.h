@@ -11,9 +11,9 @@
 #define GRID_POS_X -1.05
 #define GRID_POS_Y 0.05
 #define GRID_POS_Z -1.05
-#define GRID_DIM_X 100
-#define GRID_DIM_Y 100
-#define GRID_DIM_Z 100
+#define GRID_DIM_X 101
+#define GRID_DIM_Y 101
+#define GRID_DIM_Z 101
 #define GRID_SPACING 0.1
 
 #define PARTICLE_POS_BUFFER 0
