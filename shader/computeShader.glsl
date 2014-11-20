@@ -21,7 +21,7 @@ layout(std140, binding = 3) buffer gVel {
 };
 
 //try using y
-layout(local_size_x= 64, local_size_y =1, local_size_z = 1)in;
+layout(local_size_x= 1024, local_size_y =1, local_size_z = 1)in;
 
 int width = 4;
 ivec3 windowOffset=ivec3(-2,-2,-2);
@@ -36,11 +36,12 @@ void getIJK(inout ivec3 ijk, inout int index){
 }
 
 void main(void){
-    uint globalInvoc = gl_GlobalInvocationID.x;
-    uint pIndex = globalInvoc/threadNum;
+    uint globalInvocX = gl_GlobalInvocationID.x;
+    uint globalInvocY = gl_GlobalInvocationID.y;
+    uint pIndex = globalInvocX/threadNum;
     //pPositionsMass[pIndex].x +=0.0005;
 
-    int gridOffsetOfParticle = int(globalInvoc%threadNum); //  597%64=21
+    int gridOffsetOfParticle = int(globalInvocY%threadNum); //  597%64=21
     ivec3 gridOffset;
 
     getIJK(gridOffset,gridOffsetOfParticle ); // temp = 21%16 = 5, ijk=(5%4, 5/4, 21/16) = (1,1,1)+(-2,-2,-2) = (-1,-1,-1)
