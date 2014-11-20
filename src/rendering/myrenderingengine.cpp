@@ -193,7 +193,7 @@ void initShader(){
     //
 
     world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
-    world.setCamera(1.1,2.1f,10.0f,1.1,2.1f,0.0f,0.0f,1.0f,0.0f);
+    world.setCamera(1.15,5.15f,10.0f,1.15,2.15f,0.0f,0.0f,1.0f,0.0f);
 
     world.setPosition(0.0f,0.0f,0.0f);
     world.setScale(0.003f,0.003f,0.003f);
@@ -231,7 +231,7 @@ void initShader(){
     world.setScale(10.0f,1.0f,10.0f);
     world.setRotation(0,0,0);
 
-    world.setCamera(1.1,2.1f,10.0f,1.1,2.1f,0.0f,0.0f,1.0f,0.0f);
+    world.setCamera(1.15,5.15f,10.0f,1.15,2.15f,0.0f,0.0f,1.0f,0.0f);
 
 
 
@@ -260,7 +260,6 @@ void initShader(){
     world.setScale(1.0f,1.0f,1.0f);
     world.setRotation(0,0,0);
 
-    //glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
     PT.plugTechnique();
     PT.setWVP(world.getMVP());
 

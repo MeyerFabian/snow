@@ -5,7 +5,7 @@ uniform ivec3 gGridDim;
 uniform float dt;
 uniform float gridSpacing;
 
-layout(local_size_x=256)in;
+layout(local_size_x=1024)in;
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pPositionsMass[ ];
@@ -57,14 +57,14 @@ int n= 0;
                     getIndex(gridIndX,gridIndY,gridIndZ,gIndex);
                     //gIndex = 13+ 4*101+4*101*101 =41221
                     gPositionsMass[gIndex].w+=ParticleMass;
+                    barrier();
                 }
             }
         }
     }
 
 
-    barrier();
-
+/*
     for( int i=-1; i<=2 ; i++){
     gridIndX =int(ParticleInGrid.x/gridSpacing) +i;
 
@@ -76,10 +76,10 @@ int n= 0;
 
                 if(gridIndX>= n && gridIndY>=n && gridIndZ>=n  &&  gridIndX< gGridDim[0].x &&  gridIndY <gGridDim[1].x   &&  gridIndZ< gGridDim[2].x ){
                     getIndex(gridIndX,gridIndY,gridIndZ,gIndex);
-                    gVelocities[gIndex].xyz+=pVelocities[index].xyz;
+                    //gVelocities[gIndex].xyz+=pVelocities[index].xyz;
                 }
             }
         }
     }
-
+*/
 }

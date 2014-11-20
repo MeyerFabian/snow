@@ -39,7 +39,7 @@ void Grid::initSSBO(){
         for(int j = 0; j< dimy ; j++){
             for(int i = 0; i< dimx ; i++){
                 pPositions[index] = Vector4f(x_off + h*(float)i,y_off + h*(float)j,z_off + h*(float)k,0);
-
+                pPositions[index].w = 0.0f;
                 //pPositions[index].print();
                 index++;
             }
