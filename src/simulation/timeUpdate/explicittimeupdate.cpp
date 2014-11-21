@@ -1,7 +1,7 @@
 #include "explicittimeupdate.h"
 
 void ExplicitTimeUpdate::init(){
-    const char* pPCFileName = "shader/computeShader.glsl";
+    const char* pPCFileName = "shader/overParticlesAndNeighbors.glsl";
 
     string cs;
     if(!ReadFile(pPCFileName,cs)){
