@@ -48,10 +48,10 @@ int n= 0;
     // gridIndX = 1.45/0.1 - 1 = 14.5 -1 = 13.5
 
         for(int j=-1; j<=2; j++){
-            gridIndY =int(ParticleInGrid.y/gridSpacing) +j;
+            gridIndY =int(ParticleInGrid.y/gridSpacing) +j; //j=-1
             //gridIndY = 0.55/0.1 - 1 = 5.5 -1 = 4.5
             for(int k=-1 ;k<=2;k++ ){
-                gridIndZ =int(ParticleInGrid.z/gridSpacing) +k;
+                gridIndZ =int(ParticleInGrid.z/gridSpacing) +k; //k=-1
                 //gridIndY = 0.55/0.1 - 1 = 5.5 -1 = 4.5
                 if(gridIndX>= n && gridIndY>=n && gridIndZ>=n  &&  gridIndX< gGridDim[0].x &&  gridIndY <gGridDim[1].x   &&  gridIndZ< gGridDim[2].x ){
                     getIndex(gridIndX,gridIndY,gridIndZ,gIndex);

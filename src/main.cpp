@@ -21,7 +21,7 @@ int launchSnow(){
 
 
     shared_ptr<ParticleSystem> const pPs= make_shared<ParticleSystem > ();
-    float xpos=-0.5f,ypos=0.5f,zpos=-0.5f;
+    float xpos=0.5f,ypos=0.5f,zpos=0.5f;
     for(int x = 0; x < 32; x+=1){
         xpos += 0.1f;
         for(int y = 0; y < 32; y+=1){
@@ -30,7 +30,7 @@ int launchSnow(){
                 zpos += 0.1f;
                 pPs->particles->push_back(Particle(Vector3f(xpos,ypos,zpos)));
             }
-            zpos = -0.5f;
+            zpos = 0.5f;
         }
         ypos = 0.5f;
     }
