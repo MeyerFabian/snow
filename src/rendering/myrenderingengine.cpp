@@ -42,8 +42,6 @@ const char* pFSParticleFileName = "shader/particleShader.frag";
 ParticleTechnique PT;
 
 
-const char* pPCFileName = "shader/computeShader.glsl";
-ParticleCompute PC;
 
 GLuint textureID;
 shared_ptr<Texture> helitex;

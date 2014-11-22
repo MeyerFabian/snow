@@ -8,7 +8,7 @@ void main(void)
 
 
 
-    if(Position.w < 0.00000001){
+    if(Position.w < 0.00000000001){
     gl_Position=vec4(0,0,-500,1.0);
     }else
     {
