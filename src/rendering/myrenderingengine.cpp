@@ -150,7 +150,7 @@ void initShader(){
 
     }
  void myRenderingEngine::shadowMapPass(){
-
+/*
     SMFBO.BindForWriting();
     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -169,13 +169,13 @@ void initShader(){
     SMT.setMVP(light.getMVP());
     (*meshes)[0].Render();
 
-
+*/
 
 
 }
  void myRenderingEngine::renderPass(){
 
-    pipeline light;
+    //pipeline light;
     lightpos = Vector3f(0.0,lighty+ 3.0f,1.0f);
 
 
@@ -189,76 +189,68 @@ void initShader(){
     pipeline world;
 
     //
+    glm::mat4x4 matrix;
+    glm::mat4x4 tmatrix;
 
     world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
-    world.setCamera(1.1,2.1f,10.0f,0.5,1.1,2.1f,0.0f,1.0f,0.0f);
+    world.setCamera(1.1,2.1f,10.0f,1.1,2.1f,0.0f,0.0f,1.0f,0.0f);
 
-    world.setPosition(0.0f,0.0f,0.0f);
-    world.setScale(0.003f,0.003f,0.003f);
-    world.setRotation(0,0,0);
-
-
-    glm::mat4x4 matrix= glm::mat4x4(    world.getModelMatrix()->m[0][0], world.getModelMatrix()->m[0][1], world.getModelMatrix()->m[0][2], world.getModelMatrix()->m[0][3],
-                                        world.getModelMatrix()->m[1][0], world.getModelMatrix()->m[1][1], world.getModelMatrix()->m[1][2], world.getModelMatrix()->m[1][3],
-                                        world.getModelMatrix()->m[2][0], world.getModelMatrix()->m[2][1], world.getModelMatrix()->m[2][2], world.getModelMatrix()->m[2][3],
-                                        world.getModelMatrix()->m[3][0], world.getModelMatrix()->m[3][1], world.getModelMatrix()->m[3][2], world.getModelMatrix()->m[3][3]
-            );
-    glm::mat4x4 tmatrix=glm::inverse(matrix);
-    matrix=glm::transpose(tmatrix);
 
     lighting.plugTechnique();
     lighting.setSampler(0);
-    //lighting.setShadowMapTexture(1);
     lighting.setLight(lightpos,0.1,Vector3f(1.0,1.0,1.0) ,0.90);
-    lighting.setWorldMatrix(world.getModelMatrix());
-    lighting.setInverse(&matrix);
-    lighting.setWVP(world.getMVP());
-    lighting.setCameraPos(world.getCameraPos());
     Vector3f specIntens(1.0,1.0,1.0);
     lighting.setSpecularIntensity(specIntens);
     lighting.setSpecularPower(10);
 
-    world.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
-    lighting.setLightMVP(world.getMVP());//TODO
+    for(int i= 0;i< meshes->size(); i++){
+        world.setPosition((*meshes)[i].getPosition());
+        world.setScale((*meshes)[i].getScale());
+        world.setRotation((*meshes)[i].getRotation());
+
+world.setCamera(1.1,2.1f,10.0f,1.1,2.1f,0.0f,0.0f,1.0f,0.0f);
+        matrix= glm::mat4x4(    world.getModelMatrix()->m[0][0], world.getModelMatrix()->m[0][1], world.getModelMatrix()->m[0][2], world.getModelMatrix()->m[0][3],
+                                            world.getModelMatrix()->m[1][0], world.getModelMatrix()->m[1][1], world.getModelMatrix()->m[1][2], world.getModelMatrix()->m[1][3],
+                                            world.getModelMatrix()->m[2][0], world.getModelMatrix()->m[2][1], world.getModelMatrix()->m[2][2], world.getModelMatrix()->m[2][3],
+                                            world.getModelMatrix()->m[3][0], world.getModelMatrix()->m[3][1], world.getModelMatrix()->m[3][2], world.getModelMatrix()->m[3][3]
+                );
+        tmatrix=glm::inverse(matrix);
+        matrix=glm::transpose(tmatrix);
+
+        //lighting.setShadowMapTexture(1);
+        lighting.setWorldMatrix(world.getModelMatrix());
+        lighting.setInverse(&matrix);
+        lighting.setWVP(world.getMVP());
+
+        (*meshes)[i].Render();
+        //world.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+        //lighting.setLightMVP(world.getMVP());//TODO
 
 
 
 
-    //(*meshes)[0].Render();
-    world.setPosition(0,-3.0f,0.0f);
-    world.setScale(10.0f,1.0f,10.0f);
-    world.setRotation(0,0,0);
+        /*
+        matrix= glm::mat4x4(    world.getModelMatrix()->m[0][0], world.getModelMatrix()->m[0][1], world.getModelMatrix()->m[0][2], world.getModelMatrix()->m[0][3],
+                                        world.getModelMatrix()->m[1][0], world.getModelMatrix()->m[1][1], world.getModelMatrix()->m[1][2], world.getModelMatrix()->m[1][3],
+                                        world.getModelMatrix()->m[2][0], world.getModelMatrix()->m[2][1], world.getModelMatrix()->m[2][2], world.getModelMatrix()->m[2][3],
+                                        world.getModelMatrix()->m[3][0], world.getModelMatrix()->m[3][1], world.getModelMatrix()->m[3][2], world.getModelMatrix()->m[3][3]
+            );
+        tmatrix=glm::inverse(matrix);
+        matrix=glm::transpose(tmatrix);
 
-    world.setCamera(1.1,2.1f,10.0f,1.1,2.1f,0.0f,0.0f,1.0f,0.0f);
+        lighting.setWorldMatrix(world.getModelMatrix());
+        lighting.setInverse(&matrix);
+        lighting.setWVP(world.getMVP());
+        lighting.setLightMVP(world.getMVP());
+        */
 
-
-
-    //world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
-    //world.setCamera(0.0,3.0,1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
-
-    matrix= glm::mat4x4(    world.getModelMatrix()->m[0][0], world.getModelMatrix()->m[0][1], world.getModelMatrix()->m[0][2], world.getModelMatrix()->m[0][3],
-                                    world.getModelMatrix()->m[1][0], world.getModelMatrix()->m[1][1], world.getModelMatrix()->m[1][2], world.getModelMatrix()->m[1][3],
-                                    world.getModelMatrix()->m[2][0], world.getModelMatrix()->m[2][1], world.getModelMatrix()->m[2][2], world.getModelMatrix()->m[2][3],
-                                    world.getModelMatrix()->m[3][0], world.getModelMatrix()->m[3][1], world.getModelMatrix()->m[3][2], world.getModelMatrix()->m[3][3]
-        );
-    tmatrix=glm::inverse(matrix);
-    matrix=glm::transpose(tmatrix);
-
-    lighting.setWorldMatrix(world.getModelMatrix());
-    lighting.setInverse(&matrix);
-    lighting.setWVP(world.getMVP());
+    }
     //world.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
-    lighting.setLightMVP(world.getMVP());
-    helitex->bind(GL_TEXTURE0);
-    (*meshes)[1].Render();
-
-    world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
-
-    world.setPosition(0.0f,0.0f,0.0f);
-    world.setScale(1.0f,1.0f,1.0f);
-    world.setRotation(0,0,0);
 
     //glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
+    world.setPosition(Vector3f(0.0f,0.0f,0.0f));
+    world.setScale(Vector3f(1.0f,1.0f,1.0f));
+    world.setRotation(Vector3f(0.0f,0.0f,0.0f));
     PT.plugTechnique();
     PT.setWVP(world.getMVP());
 

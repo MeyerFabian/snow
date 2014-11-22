@@ -1,7 +1,7 @@
 in vec4 Position0;
 in vec4 Normal0;
 in vec2 Texture0;
-in vec4 LightSpacePos;
+//in vec4 LightSpacePos;
 
 uniform vec3 gLightPosition;
 uniform vec3 gCameraPos;
@@ -44,9 +44,9 @@ void main(void)
     }
 
     //ShadowMap
-    vec3 LightSpacePos0 = LightSpacePos.xyz/LightSpacePos.w;
-    vec2 UV= vec2(0.5 + 0.5 * LightSpacePos0.x,0.5 + 0.5 * LightSpacePos0.y);
-    float z = 0.5 + 0.5 * LightSpacePos0.z;
+   // vec3 LightSpacePos0 = LightSpacePos.xyz/LightSpacePos.w;
+    //vec2 UV= vec2(0.5 + 0.5 * LightSpacePos0.x,0.5 + 0.5 * LightSpacePos0.y);
+    //float z = 0.5 + 0.5 * LightSpacePos0.z;
  //   float ShadowFactor =1.0f;
   //  float Depth = texture2D(gShadowMap,UV).x;
  //   if(Depth < (z-0.001)){

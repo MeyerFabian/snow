@@ -5,8 +5,8 @@ class Camera
 {
 public:
     Camera();
-    void setCamera(float pos_x, float pos_y, float pos_z, float lookAt_x,float lookAt_y,float lookAt_z, float up_x,float up_y,float up_z);
-    void update(int key, float stepsize);
+    void setCamera(const float pos_x, const float pos_y, const float pos_z, const float lookAt_x,const float lookAt_y,const float lookAt_z, const float up_x,const float up_y,const float up_z);
+    void update(const int key, const float stepsize);
     Vector3f xAxis;
     Vector3f yAxis;
     Vector3f zAxis;

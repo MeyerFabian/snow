@@ -39,8 +39,14 @@ int launchSnow(){
 
     Mesh jeep;
     jeep.LoadMesh("model/jeep.obj");
+    jeep.setPosition(0.0f,0.0f,0.0f);
+    jeep.setScale(0.003f,0.003f,0.003f);
+    jeep.setRotation(0,0,0);
     Mesh quad;
-    quad.LoadMesh("model/quad2.obj");
+    quad.LoadMesh("model/box.obj");
+    quad.setPosition(0,-3.0f,0.0f);
+    quad.setScale(10.0f,1.0f,10.0f);
+    quad.setRotation(0,0,0);
     meshes->push_back(std::move(jeep));
     meshes->push_back(std::move(quad));
 

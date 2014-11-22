@@ -20,11 +20,11 @@ const Matrix4f* pipeline::getModelMatrix(){
 
     return &this->modelMatrix;
 }
-void pipeline::update(int key, float stepsize){
+void pipeline::update(const int key,const  float stepsize){
     this->m_camera.update(key,stepsize);
 
 }
-void pipeline::setCamera(float pos_x, float pos_y, float pos_z, float lookAt_x, float lookAt_y, float lookAt_z, float up_x, float up_y, float up_z){
+void pipeline::setCamera(const float pos_x, const float pos_y, const float pos_z, const float lookAt_x, const float lookAt_y, const float lookAt_z, const float up_x, const float up_y, const float up_z){
     this->m_camera.setCamera(pos_x,pos_y,pos_z,lookAt_x,lookAt_y,lookAt_z,up_x,up_y,up_z);
 }
 Vector3f pipeline::getCameraPos(){

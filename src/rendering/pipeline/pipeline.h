@@ -12,7 +12,7 @@ public:
 
     const Matrix4f* getMVP();
     const Matrix4f* getModelMatrix();
-    void setPerspective(float fov, float width, float height, float zNear, float zFar){
+    void setPerspective(const float fov, const float width, const float height, const float zNear, const float zFar){
         m_persp.fov= fov;
         m_persp.width=width;
         m_persp.height=height;
@@ -20,24 +20,18 @@ public:
         m_persp.zFar=zFar;
     }
 
-    void setScale(float x, float y, float z){
-        scale.x = x;
-        scale.y = y;
-        scale.z = z;
+    void setScale(const Vector3f &scl){
+        scale = scl;
     }
-    void setRotation(float x_angle, float y_angle, float z_angle){
-        rotation.x = x_angle;
-        rotation.y = y_angle;
-        rotation.z = z_angle;
+    void setRotation(const Vector3f &angle){
+        rotation =angle;
     }
-    void setPosition(float x, float y, float z){
-        position.x = x;
-        position.y = y;
-        position.z = z;
+    void setPosition(const Vector3f &pos){
+        position =pos;
     }
     Vector3f getCameraPos();
-    void setCamera(float pos_x, float pos_y, float pos_z, float lookAt_x,float lookAt_y,float lookAt_z, float up_x,float up_y,float up_z);
-    void update(int key, float stepsize);
+    void setCamera(const float pos_x, const float pos_y, const float pos_z, const float lookAt_x,const float lookAt_y,const float lookAt_z, const float up_x,const float up_y,const float up_z);
+    void update(const int key, const float stepsize);
 
 private:
     Vector3f scale;

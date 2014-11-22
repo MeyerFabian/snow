@@ -35,6 +35,30 @@ public:
     bool LoadMesh(const std::string& Filename);
     void Render();
     void initVBO();
+    void setScale(const float x,const float y,const float z){
+        scale.x = x;
+        scale.y = y;
+        scale.z = z;
+    }
+    void setRotation(const float x_angle,const float y_angle,const float z_angle){
+        rotation.x = x_angle;
+        rotation.y = y_angle;
+        rotation.z = z_angle;
+    }
+    void setPosition(const float x,const float y,const float z){
+        position.x = x;
+        position.y = y;
+        position.z = z;
+    }
+    const Vector3f& getPosition(){
+        return position;
+    }
+    const Vector3f& getRotation(){
+        return rotation;
+    }
+    const Vector3f& getScale(){
+        return scale;
+    }
 private:
     bool InitFromScene(const aiScene* pScene, const std::string& Filename);
     void InitMesh(unsigned int Index, const aiMesh* paiMesh);
@@ -59,7 +83,9 @@ private:
     };
     std::vector<MeshEntry> m_Entries;
     std::vector<shared_ptr<Texture>> m_Textures;
-    
+    Vector3f scale;
+    Vector3f rotation;
+    Vector3f position;
 };
 
 #endif // MESH_H
