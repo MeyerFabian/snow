@@ -21,7 +21,7 @@ layout(std140, binding = 3) buffer gVel {
 };
 
 //try using y
-layout(local_size_x=1024 , local_size_y =1, local_size_z = 1)in;
+layout(local_size_x=32, local_size_y =32, local_size_z = 1)in;
 
 int width = 4;
 ivec3 windowOffset=ivec3(-2,-2,-2);
