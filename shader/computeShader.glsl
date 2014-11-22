@@ -5,7 +5,7 @@ uniform ivec3 gGridDim;
 uniform float dt;
 uniform float gridSpacing;
 
-layout(local_size_x=1024)in;
+layout(local_size_x=16)in;
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pPositionsMass[ ];
