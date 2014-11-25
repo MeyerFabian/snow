@@ -8,12 +8,12 @@ void main(void)
 
 
 
-    if(Position.w < 0.00000000001){
+    if(Position.w < 0.000000001){
     gl_Position=vec4(0,0,-500,1.0);
     }else
     {
     gl_Position = gMVP* vec4(Position.xyz,1.0);
     }
     z = Position.x;
-    gl_PointSize =  0+ Position.w/((1.0e-6)*64);
+    gl_PointSize =  0+ Position.w/((1.0e-6)*200);
 }

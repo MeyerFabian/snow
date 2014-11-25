@@ -256,7 +256,10 @@ world.setCamera(1.1,2.1f,10.0f,1.1,2.1f,0.0f,0.0f,1.0f,0.0f);
 
     //particlesystem->updateVBOBuffer();
     //particlesystem->render();
+    //double timeS = glfwGetTime ();
     grid->render();
+    //double timeE = glfwGetTime();
+    //std::cout << (timeE - timeS)*1000 << " ms for rendering the grid."<<std::endl;
 
 }
 

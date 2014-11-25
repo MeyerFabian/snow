@@ -28,7 +28,7 @@ layout(std140, binding = 3) buffer gVel {
 };
 
 int width = 4;
-ivec3 windowOffset=ivec3(-2,-2,-2);
+ivec3 windowOffset=ivec3(-1,-1,-1);
 
 int n= 0;
 void getIndex(const ivec3 ijk,inout int index){
@@ -44,7 +44,7 @@ float weighting(const float x){
     if(absX < 1){
         return 0.5f *absX*absX*absX -x*x +2.0f/3.0f;
     }
-    else if (absX < 2){
+    else if (absX <= 2){
         return -1.0f/6.0f *absX*absX*absX +x*x - 2.0f *absX + 4.0f/3.0f;
     }
     return 0.0f;

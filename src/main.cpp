@@ -9,6 +9,7 @@
 #include "object/particlesystem.h"
 #include "simulation/timeUpdate.h"
 #include "defines.h"
+#include "GLFW/glfw3.h"
 using namespace  std;
 
 double dt = 0.00001;
@@ -39,7 +40,7 @@ int launchSnow(){
 
     Mesh jeep;
     jeep.LoadMesh("model/jeep.obj");
-    jeep.setPosition(0.0f,0.0f,0.0f);
+    jeep.setPosition(-.54f,-0.25f,0.0f);
     jeep.setScale(0.003f,0.003f,0.003f);
     jeep.setRotation(0,0,0);
     Mesh quad;
@@ -62,14 +63,27 @@ int launchSnow(){
         return 1;
     }
     pE->init();
-
+    double timeEnd = 0;
+    double timeStart=0;
+    double timeStartRendering=0;
+    double timeStepEnd = 0;
   while (rE->shouldClose()){
         //while(sim_t < static_fps){
+        //timeStepEnd = timeStart;
+        //timeStart = glfwGetTime();
+        //std::cout << (timeStart - timeStepEnd) * 1000 << " ms for TimeStep."<<std::endl;
 
         pE->update(dt);
         //sim_t += dt;
         //}
+
+        //timeEnd = glfwGetTime();
+        //std::cout << (timeEnd - timeStart) * 1000 << " ms for Physic-Engine."<<std::endl;
+        //timeStartRendering = glfwGetTime();
         rE->render();
+        //timeEnd = glfwGetTime();
+        //std::cout << (timeEnd - timeStartRendering) * 1000 << " ms for Rendering-Engine.\n"<<std::endl;
+
     }
     rE->stop();
 
