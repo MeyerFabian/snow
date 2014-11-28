@@ -10,7 +10,7 @@ uniform float gridSpacing;
 
 //layout(local_size_variable)in;
 //try using y
-layout(local_size_x= 1024, local_size_y =1, local_size_z = 1)in;
+layout(local_size_x= 1024, local_size_y = 1, local_size_z = 1)in;
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pPositionsMass[ ];

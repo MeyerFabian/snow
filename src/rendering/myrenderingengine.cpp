@@ -83,10 +83,10 @@ void initShader(){
 
 
 
-         string vs, fs;
+         string vs, fs,gs;
          vs.clear();
          fs.clear();
-
+         gs.clear();
          if(!ReadFile(pVSParticleFileName,vs)){
            fprintf(stderr, "Error: vs\n");
             exit(1);
@@ -103,6 +103,7 @@ void initShader(){
          if(!PT.init(vs,fs)){
              printf("PT init failed");
          }
+
          vs.clear();
          fs.clear();
 

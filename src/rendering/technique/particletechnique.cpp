@@ -12,7 +12,6 @@ bool ParticleTechnique::init(string vs, string fs){
 
     addShader(vs.c_str(),GL_VERTEX_SHADER);
     addShader(fs.c_str(),GL_FRAGMENT_SHADER);
-
     finalize();
 
     ModelViewPersp = glGetUniformLocation(this->ShaderProgram,"gMVP");

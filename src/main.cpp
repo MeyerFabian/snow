@@ -66,6 +66,7 @@ int launchSnow(){
     double timeEnd = 0;
     double timeStart=0;
     double timeStartRendering=0;
+    double timeEndPhysic = 0;
     double timeStepEnd = 0;
   while (rE->shouldClose()){
         //while(sim_t < static_fps){
@@ -77,12 +78,12 @@ int launchSnow(){
         //sim_t += dt;
         //}
 
-        //timeEnd = glfwGetTime();
-        //std::cout << (timeEnd - timeStart) * 1000 << " ms for Physic-Engine."<<std::endl;
+        //timeEndPhysic = glfwGetTime();
+        //std::cout << (timeEndPhysic - timeStart) * 1000 << " ms for Physic-Engine."<<std::endl;
         //timeStartRendering = glfwGetTime();
         rE->render();
         //timeEnd = glfwGetTime();
-        //std::cout << (timeEnd - timeStartRendering) * 1000 << " ms for Rendering-Engine.\n"<<std::endl;
+        //std::cout << (timeEnd - timeStartRendering) * 1000 << " ms for Rendering-Engine.\n"<<std::endl << std::flush;
 
     }
     rE->stop();
