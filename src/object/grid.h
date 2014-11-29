@@ -47,7 +47,7 @@ public:
     }
 
     void initVBO();
-    void updateSSBOBuffer();
+    void resetSSBOBuffer();
     void render();
 
     void initSSBO();

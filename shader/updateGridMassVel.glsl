@@ -1,6 +1,5 @@
 #version 440
-//#extension GL_ARB_compute_variable_group_size :require
-//#define GL_ARB_compute_variable_group_size        1
+#extension GL_ARB_compute_variable_group_size :require
 
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
@@ -8,9 +7,9 @@ uniform float dt;
 uniform float gridSpacing;
 
 
-//layout(local_size_variable)in;
+layout(local_size_variable)in;
 //try using y
-layout(local_size_x= 1024, local_size_y = 1, local_size_z = 1)in;
+//layout(local_size_x= 1024, local_size_y = 1, local_size_z = 1)in;
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pPositionsMass[ ];
