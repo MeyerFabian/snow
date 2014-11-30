@@ -1,10 +1,10 @@
-#ifndef resetGrid_H
-#define resetGrid_H
+#ifndef overGrid_H
+#define overGrid_H
 #include "../../technique.h"
-class ResetGrid :public Technique
+class OverGrid :public Technique
 {
 public:
-    ResetGrid()=default;
+    OverGrid()=default;
     bool init(string cs);
 private:
 };

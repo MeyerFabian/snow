@@ -2,7 +2,7 @@
 #define EXPLICITTIMEUPDATE_H
 #include "../timeUpdate.h"
 #include "../technique/particleCompute.h"
-#include "../technique/resetGrid.h"
+#include "../technique/overGrid.h"
 #include "../../defines.h"
 class ExplicitTimeUpdate : public TimeUpdate
 {
@@ -13,7 +13,8 @@ public:
     void init();
     void update(double dt);
     ParticleCompute pc;
-    ResetGrid rg;
+    OverGrid rg;
+    OverGrid divVelMass;
 };
 
 #endif // EXPLICITTIMEUPDATE_H

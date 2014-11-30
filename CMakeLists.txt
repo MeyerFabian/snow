@@ -34,6 +34,7 @@ shader/m_shadow.frag
 shader/particleShader.vert
 shader/particleShader.frag
 shader/updateGridMassVel.glsl
+shader/overGridDivideVelByMass.glsl
 shader/resetGrid.glsl
 stb_image/stb_image.h
 stb_image/stb_image.c
@@ -68,8 +69,8 @@ src/object/particlesystem.h
 src/object/particlesystem.cpp
 src/simulation/technique/particleCompute.h
 src/simulation/technique/particleCompute.cpp
-src/simulation/technique/resetGrid.h
-src/simulation/technique/resetGrid.cpp
+src/simulation/technique/overGrid.h
+src/simulation/technique/overGrid.cpp
 src/defines.h
 )
 

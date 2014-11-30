@@ -1,6 +1,6 @@
-#include "resetGrid.h"
+#include "overGrid.h"
 #include <iostream>
-bool ResetGrid::init(string cs){
+bool OverGrid::init(string cs){
 
     Technique::init();
 
