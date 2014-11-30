@@ -27,7 +27,7 @@ layout(std140, binding = 3) buffer gVel {
 
 int width = 4;
 ivec3 windowOffset=ivec3(-1,-1,-1);
-
+float gCellVolume = gridSpacing *gridSpacing*gridSpacing;
 int n= 0;
 void getIndex(const ivec3 ijk,inout int index){
     index = ijk.x + (ijk.y * int(gGridDim[0].x)) + (ijk.z *int(gGridDim[1].x) * int(gGridDim[0].x));
@@ -90,7 +90,7 @@ void main(void){
 
         gPositionsMass[gPositionsMassIndex].w+=particle.w * w; // 640FPS
         barrier();
-        gVelocities[gPositionsMassIndex].xyz+=particleVelocity.xyz * particle.w * w / gPositionsMass[gPositionsMassIndex].w; //27 Fps
+        pVelocities[pIndex].w+= particle.w/ gPositionsMass[gPositionsMassIndex].w * w *gCellVolume  ; //27 Fps
 
    }
 

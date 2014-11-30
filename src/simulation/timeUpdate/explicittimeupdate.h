@@ -12,9 +12,10 @@ public:
     }
     void init();
     void update(double dt);
+    ParticleCompute cVolume;
     ParticleCompute pc;
     OverGrid rg;
-    OverGrid divVelMass;
+    //OverGrid divVelMass;
 };
 
 #endif // EXPLICITTIMEUPDATE_H
