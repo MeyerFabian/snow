@@ -87,7 +87,6 @@ void main(void){
 
         getIndex(gridIndex,gPositionsMassIndex);
         // gPositionsMassIndex = 13+ 4*100+4*100*100 = 40413
-
         gPositionsMass[gPositionsMassIndex].w+=particle.w * w; // 640FPS
         barrier();
         gVelocities[gPositionsMassIndex].xyz+=particleVelocity.xyz * particle.w * w / gPositionsMass[gPositionsMassIndex].w; //27 Fps

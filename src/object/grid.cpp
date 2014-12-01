@@ -14,7 +14,6 @@ void Grid::render(){
 
         glBindBuffer(GL_ARRAY_BUFFER, posB);
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-        //DrawArraysInstanced?! + DRAW ONLY GRID NODES
         glDrawArrays(GL_POINTS,0,(gridPoints)->size());
 
 
@@ -28,11 +27,14 @@ void Grid::resetSSBOBuffer(){
 }
 
 void Grid::initSSBO(){
+    //approacing zero driver overhead
+    GLbitfield mapFlags = GL_MAP_WRITE_BIT| GL_MAP_INVALIDATE_BUFFER_BIT;
+
 
     glGenBuffers(1,&posB);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
     glBufferData(GL_SHADER_STORAGE_BUFFER,sizeof(Vector4f) * (gridPoints)->size(), NULL, GL_STATIC_DRAW);
-    pPositions =(Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f) * (gridPoints)->size(),GL_MAP_WRITE_BIT |  GL_MAP_INVALIDATE_BUFFER_BIT));
+    pPositions =(Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f) * (gridPoints)->size(),mapFlags));
     int index=0;
 
     for(int k = 0; k< dimz ; k++){
