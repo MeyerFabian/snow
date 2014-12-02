@@ -26,7 +26,7 @@ void ExplicitTimeUpdate::init(){
     rg.init(cs);
 
     cs.clear();
-    if(!ReadFile(pResetGridFileName,cs)){
+    if(!ReadFile(pComputeVolumeFileName,cs)){
       fprintf(stderr, "Error: vs\n");
        exit(1);
     };

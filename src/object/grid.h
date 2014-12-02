@@ -38,6 +38,7 @@ public:
 
     GLuint posB;
     GLuint velB;
+    GLuint forceB;
 
     Vector4f* pPositions;
 

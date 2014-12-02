@@ -28,14 +28,17 @@ public:
     void updateSSBOBuffer();
     Vector4f* pPositions= nullptr ;
     Vector4f* pVelocities= nullptr ;
+    Matrix3f* pForcesE= nullptr ;
+    Matrix3f* pForcesP= nullptr ;
 
 private:
 
 
 
-    GLuint VB;
+
     GLuint posB;
-    GLuint massB;
     GLuint velB;
+    GLuint FEpB;
+    GLuint FPpB;
 };
 #endif // PARTICLESYSTEM_H

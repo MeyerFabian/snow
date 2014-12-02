@@ -11,19 +11,29 @@ layout(local_size_variable)in;
 //layout(local_size_x= 1024, local_size_y = 1, local_size_z = 1)in;
 
 layout(std140, binding = 0) buffer pPosMass {
-    vec4 pPositionsMass[ ];
+    vec4 pxm[ ];
 };
 
-layout(std140, binding = 1) buffer pVel {
-    vec4 pVelocities[ ];
+layout(std140, binding = 1) buffer pVelVolume {
+    vec4 pv[ ];
 };
 
-layout(std140, binding = 2) buffer gPos {
-    vec4 gPositionsMass[ ];
+layout(std140, binding = 2) buffer gPosMass {
+    vec4 gxm[ ];
 };
 layout(std140, binding = 3) buffer gVel {
-    vec4 gVelocities[ ];
+    vec4 gv[ ];
 };
+layout(std140, binding = 4) buffer pForceElastic {
+    mat3 pFP[ ];
+};
+layout(std140, binding = 5) buffer pForcePlastic {
+    mat3 pFE[ ];
+};
+layout(std140, binding = 6) buffer gForce{
+    mat3 gf[] ;
+};
+
 
 int width = 4;
 ivec3 windowOffset=ivec3(-1,-1,-1);
@@ -58,18 +68,24 @@ void main(void){
 
     uint pIndex= gl_GlobalInvocationID.x;
     uint globalInvocY = gl_GlobalInvocationID.y;
-    //pPositionsMass[pIndex].x +=0.0005;
-    vec4 particle = pPositionsMass[pIndex];
-    vec4 particleVelocity = pVelocities[pIndex];
 
-    int gPositionsMassIndex = 0;
+    pxm[pIndex].x +=0.00005;
+
+    vec4 particle = pxm[pIndex];
+    vec4 particleVelocity = pv[pIndex];
+
+    vec3 xp= particle.xyz; //particle position
+    float mp = particle.w; // particle mass
+    vec3 vp = particleVelocity.xyz; //particle velocity
+    //float Vp = particleVelocity.w; //particle Volume
+
 
     int gridOffsetOfParticle = int(globalInvocY); //  597%64=21
     ivec3 gridOffset;
 
     getIJK(gridOffsetOfParticle,gridOffset ); // temp = 21%16 = 5, ijk=(5%4, 5/4, 21/16) = (1,1,1)+(-2,-2,-2) = (-1,-1,-1)
 
-    vec3 ParticleInGrid= (particle.xyz- gGridPos)/gridSpacing;
+    vec3 ParticleInGrid= (xp- gGridPos)/gridSpacing;
 
     ivec3 gridIndex = ivec3(ParticleInGrid) + gridOffset;
 
@@ -82,14 +98,18 @@ void main(void){
     if(gridIndex.x>= n && gridIndex.y>=n && gridIndex.z>=n && gridIndex.x< gGridDim[0].x && gridIndex.y <gGridDim[1].x &&gridIndex.z< gGridDim[2].x ){
 
         vec3 gridDistanceToParticle = ParticleInGrid- vec3(gridIndex);
-        float w = .0f;
-        weighting (gridDistanceToParticle,w);
+        float wip = .0f;
+        weighting (gridDistanceToParticle,wip);
 
-        getIndex(gridIndex,gPositionsMassIndex);
-        // gPositionsMassIndex = 13+ 4*100+4*100*100 = 40413
-        gPositionsMass[gPositionsMassIndex].w+=particle.w * w; // 640FPS
+        int gI;
+        getIndex(gridIndex,gI);
+
+        gxm[gI].w+= mp * wip; // calculate gridMasses
+
         barrier();
-        gVelocities[gPositionsMassIndex].xyz+=particleVelocity.xyz * particle.w * w / gPositionsMass[gPositionsMassIndex].w; //27 Fps
+        float mi= gxm[gI].w;
+
+        gv[gI].xyz+= vp * mp * wip / mi; // calculate gridVelocity
 
    }
 
