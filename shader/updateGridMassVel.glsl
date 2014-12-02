@@ -25,28 +25,113 @@ layout(std140, binding = 3) buffer gVel {
     vec4 gv[ ];
 };
 layout(std140, binding = 4) buffer pForceElastic {
-    mat3 pFP[ ];
+    mat3 FEp[ ];
 };
 layout(std140, binding = 5) buffer pForcePlastic {
-    mat3 pFE[ ];
+    mat3 FPp[ ];
 };
 layout(std140, binding = 6) buffer gForce{
-    mat3 gf[] ;
+    mat3 fi[] ;
 };
 
-
-int width = 4;
-ivec3 windowOffset=ivec3(-1,-1,-1);
-
 int n= 0;
+
+
+
+#define GAMMA 5.828427124 // FOUR_GAMMA_SQUARED = sqrt(8)+3;
+#define CSTAR 0.923879532 // cos(pi/8)
+#define SSTAR 0.3826834323 // sin(p/8)
+void jacobiConjugation( int x, int y, int z, inout mat3 S, inout vec4 qV )
+{
+/*
+    // eliminate off-diagonal entries Spq, Sqp
+    float ch = 2.f * (S[0]-S[4]), ch2 = ch*ch;
+      quaternion defines needed
+    float sh = S[3], sh2 = sh*sh;
+    bool flag = ( GAMMA * sh2 < ch2 );
+    float w = rsqrtf( ch2 + sh2 );
+    ch = flag ? w*ch : CSTAR; ch2 = ch*ch;
+    sh = flag ? w*sh : SSTAR; sh2 = sh*sh;
+
+    // build rotation matrix Q
+    float scale = 1.f / (ch2 + sh2);
+    float a = (ch2-sh2) * scale;
+    float b = (2.f*sh*ch) * scale;
+    float a2 = a*a, b2 = b*b, ab = a*b;
+
+    // Use what we know about Q to simplify S = Q' * S * Q
+    // and the re-arranging step.
+    float s0 = a2*S[0] + 2*ab*S[1] + b2*S[4];
+    float s2 = a*S[2] + b*S[5];
+    float s3 = (a2-b2)*S[1] + ab*(S[4]-S[0]);
+    float s4 = b2*S[0] - 2*ab*S[1] + a2*S[4];
+    float s5 = a*S[7] - b*S[6];
+    float s8 = S[8];
+    S = mat3( s4, s5, s3,
+              s5, s8, s2,
+              s3, s2, s0 );
+
+    vec3 tmp( sh*qV.x, sh*qV.y, sh*qV.z );
+    sh *= qV.w;
+    // original
+    qV *= ch;
+
+    qV[z] += sh;
+    qV.w -= tmp[z];
+    qV[x] += tmp[y];
+    qV[y] -= tmp[x];
+    */
+}
+
+void jacobiEigenanalysis(inout mat3 S,inout vec4 qV )
+{
+    qV = vec4( 1,0,0,0 );
+
+    jacobiConjugation( 0, 1, 2, S, qV );
+    jacobiConjugation( 1, 2, 0, S, qV );
+    jacobiConjugation( 2, 0, 1, S, qV );
+
+    jacobiConjugation( 0, 1, 2, S, qV );
+    jacobiConjugation( 1, 2, 0, S, qV );
+    jacobiConjugation( 2, 0, 1, S, qV );
+
+    jacobiConjugation( 0, 1, 2, S, qV );
+    jacobiConjugation( 1, 2, 0, S, qV );
+    jacobiConjugation( 2, 0, 1, S, qV );
+
+    jacobiConjugation( 0, 1, 2, S, qV );
+    jacobiConjugation( 1, 2, 0, S, qV );
+    jacobiConjugation( 2, 0, 1, S, qV );
+}
+
+/**
+  * Takes an integer vector ijk and returns the respective buffer index.
+  * i of [0,x-GridDimension]
+  * j of[0,y-GridDimension]
+  * k of [0, z-GridDimension]
+  */
 void getIndex(const ivec3 ijk,inout int index){
     index = ijk.x + (ijk.y * int(gGridDim[0].x)) + (ijk.z *int(gGridDim[1].x) * int(gGridDim[0].x));
 }
+
+/**
+  * Takes an index with range [0,63] referring to one of the 64 neighbors
+  * (4x*4y*4z = 64 Neighbors) and returns its relative signed and rounded position to
+  * that grid node.
+  */
+int width = 4;
+ivec3 windowOffset=ivec3(-1,-1,-1);
+
 void getIJK(const  int index,inout ivec3 ijk){
     int temp = index%(width*width);
     ijk= ivec3(temp%width,temp/width,index/(width*width))+windowOffset;
 }
 
+
+/*
+ * Returns weight distribution by grid basis function (dyadic products of one-dimensional
+ * cubic B-splines) from particle to actual grid neighbors dependant on their distance to the particle.
+ */
 float weighting(const float x){
     const float absX = abs(x);
     if(absX < 1){
@@ -58,7 +143,9 @@ float weighting(const float x){
     return 0.0f;
 }
 
-
+/**
+  * Weighting is split into x,y and z direction.
+  */
 void weighting(const vec3 distanceVector, inout float w){
     w = weighting(distanceVector.x)*  weighting(distanceVector.y) * weighting(distanceVector.z);
 }
@@ -110,6 +197,7 @@ void main(void){
         float mi= gxm[gI].w;
 
         gv[gI].xyz+= vp * mp * wip / mi; // calculate gridVelocity
+        vec4 quat;
 
    }
 
