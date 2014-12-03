@@ -25,91 +25,17 @@ layout(std140, binding = 3) buffer gVel {
     vec4 gv[ ];
 };
 layout(std140, binding = 4) buffer pForceElastic {
-    mat3 FEp[ ];
+    mat3 pFE[ ];
 };
 layout(std140, binding = 5) buffer pForcePlastic {
-    mat3 FPp[ ];
+    mat3 pFP[ ];
 };
 layout(std140, binding = 6) buffer gForce{
-    mat3 fi[] ;
+    vec4 fi[] ;
 };
 
 int n= 0;
 
-
-
-#define GAMMA 5.828427124 // FOUR_GAMMA_SQUARED = sqrt(8)+3;
-#define CSTAR 0.923879532 // cos(pi/8)
-#define SSTAR 0.3826834323 // sin(p/8)
-void jacobiConjugation( int x, int y, int z, inout mat3 S, inout vec4 qV )
-{
-/*
-    // eliminate off-diagonal entries Spq, Sqp
-    float ch = 2.f * (S[0]-S[4]), ch2 = ch*ch;
-      quaternion defines needed
-    float sh = S[3], sh2 = sh*sh;
-    bool flag = ( GAMMA * sh2 < ch2 );
-    float w = rsqrtf( ch2 + sh2 );
-    ch = flag ? w*ch : CSTAR; ch2 = ch*ch;
-    sh = flag ? w*sh : SSTAR; sh2 = sh*sh;
-
-    // build rotation matrix Q
-    float scale = 1.f / (ch2 + sh2);
-    float a = (ch2-sh2) * scale;
-    float b = (2.f*sh*ch) * scale;
-    float a2 = a*a, b2 = b*b, ab = a*b;
-
-    // Use what we know about Q to simplify S = Q' * S * Q
-    // and the re-arranging step.
-    float s0 = a2*S[0] + 2*ab*S[1] + b2*S[4];
-    float s2 = a*S[2] + b*S[5];
-    float s3 = (a2-b2)*S[1] + ab*(S[4]-S[0]);
-    float s4 = b2*S[0] - 2*ab*S[1] + a2*S[4];
-    float s5 = a*S[7] - b*S[6];
-    float s8 = S[8];
-    S = mat3( s4, s5, s3,
-              s5, s8, s2,
-              s3, s2, s0 );
-
-    vec3 tmp( sh*qV.x, sh*qV.y, sh*qV.z );
-    sh *= qV.w;
-    // original
-    qV *= ch;
-
-    qV[z] += sh;
-    qV.w -= tmp[z];
-    qV[x] += tmp[y];
-    qV[y] -= tmp[x];
-    */
-}
-
-void jacobiEigenanalysis(inout mat3 S,inout vec4 qV )
-{
-    qV = vec4( 1,0,0,0 );
-
-    jacobiConjugation( 0, 1, 2, S, qV );
-    jacobiConjugation( 1, 2, 0, S, qV );
-    jacobiConjugation( 2, 0, 1, S, qV );
-
-    jacobiConjugation( 0, 1, 2, S, qV );
-    jacobiConjugation( 1, 2, 0, S, qV );
-    jacobiConjugation( 2, 0, 1, S, qV );
-
-    jacobiConjugation( 0, 1, 2, S, qV );
-    jacobiConjugation( 1, 2, 0, S, qV );
-    jacobiConjugation( 2, 0, 1, S, qV );
-
-    jacobiConjugation( 0, 1, 2, S, qV );
-    jacobiConjugation( 1, 2, 0, S, qV );
-    jacobiConjugation( 2, 0, 1, S, qV );
-}
-
-/**
-  * Takes an integer vector ijk and returns the respective buffer index.
-  * i of [0,x-GridDimension]
-  * j of[0,y-GridDimension]
-  * k of [0, z-GridDimension]
-  */
 void getIndex(const ivec3 ijk,inout int index){
     index = ijk.x + (ijk.y * int(gGridDim[0].x)) + (ijk.z *int(gGridDim[1].x) * int(gGridDim[0].x));
 }
@@ -160,28 +86,30 @@ void main(void){
 
     vec4 particle = pxm[pIndex];
     vec4 particleVelocity = pv[pIndex];
+    mat3 FEp = pFE[pIndex];
 
     vec3 xp= particle.xyz; //particle position
     float mp = particle.w; // particle mass
     vec3 vp = particleVelocity.xyz; //particle velocity
     //float Vp = particleVelocity.w; //particle Volume
 
-
-    int gridOffsetOfParticle = int(globalInvocY); //  597%64=21
+    int gridOffsetOfParticle = int(globalInvocY); //  21
     ivec3 gridOffset;
 
     getIJK(gridOffsetOfParticle,gridOffset ); // temp = 21%16 = 5, ijk=(5%4, 5/4, 21/16) = (1,1,1)+(-2,-2,-2) = (-1,-1,-1)
 
+    // the particle will be scaled to gridSpace
     vec3 ParticleInGrid= (xp- gGridPos)/gridSpacing;
 
+    /* the ijk coordinates in gridSpace are computed by the position of the particle and its offset dependent
+    * on which of the 64 grid nodes is choosen by the invocation
+    */
     ivec3 gridIndex = ivec3(ParticleInGrid) + gridOffset;
 
+    /*
+     * If the referrig gridPoint is out of range of the dimensions of the grid, it will be ignored.
+     */
 
-    // gridIndex= ivec3(((pPositionsMass[9].xyz - (-1.05,0.05,-1.05))/0.1) + (-1,-1,-1)
-    //          = ivec3(((0.4,0.5,-0.5)-(-1.05,0.05,-1.05))/0.1))+(-1,-1,-1)
-    //          = (1.45,0.55,0.55)/0.1 +(-1,-1,-1)
-    //          = (14.5,5.5,5.5) +(-1,-1,-1)
-    //          = (13.5,4.5,4.5)
     if(gridIndex.x>= n && gridIndex.y>=n && gridIndex.z>=n && gridIndex.x< gGridDim[0].x && gridIndex.y <gGridDim[1].x &&gridIndex.z< gGridDim[2].x ){
 
         vec3 gridDistanceToParticle = ParticleInGrid- vec3(gridIndex);
@@ -191,13 +119,13 @@ void main(void){
         int gI;
         getIndex(gridIndex,gI);
 
-        gxm[gI].w+= mp * wip; // calculate gridMasses
+        gxm[gI].w+= mp * wip; // add ParticleMass to gridPointMass
 
         barrier();
         float mi= gxm[gI].w;
 
-        gv[gI].xyz+= vp * mp * wip / mi; // calculate gridVelocity
-        vec4 quat;
+        gv[gI].xyz+= vp * mp * wip / mi; // calculate added gridVelocity
+
 
    }
 

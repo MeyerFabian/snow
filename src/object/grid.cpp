@@ -65,9 +65,9 @@ void Grid::initSSBO(){
 
     glGenBuffers(1,&forceB);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, forceB);
-    glBufferData(GL_SHADER_STORAGE_BUFFER,sizeof(Matrix3f) * (gridPoints)->size(), NULL, GL_STATIC_DRAW);
+    glBufferData(GL_SHADER_STORAGE_BUFFER,sizeof(Vector4f) * (gridPoints)->size(), NULL, GL_STATIC_DRAW);
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER ) ;
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GRID_FORCE_BUFFER , forceB);
-    std::cout << "GridForceBufferSize: "<< sizeof(Matrix3f) * (gridPoints)->size()/1024 << " KB" <<std::endl;
+    std::cout << "GridForceBufferSize: "<< sizeof(Vector4f) * (gridPoints)->size()/1024 << " KB" <<std::endl;
 
 }

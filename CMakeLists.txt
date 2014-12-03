@@ -35,6 +35,7 @@ shader/particleShader.vert
 shader/particleShader.frag
 shader/updateGridMassVel.glsl
 shader/computeParticleVolume.glsl
+shader/overGridAndParticles.glsl
 shader/resetGrid.glsl
 stb_image/stb_image.h
 stb_image/stb_image.c
