@@ -5,6 +5,7 @@ void ExplicitTimeUpdate::init(){
     const char* pPCFileName = "shader/updateGridMassVel.glsl";
     const char* pResetGridFileName ="shader/resetGrid.glsl";
     //const char* pDivideByMass = "shader/overGridDivideVelByMass.glsl";
+
     string cs;
 
     if(!ReadFile(pPCFileName,cs)){
@@ -53,7 +54,7 @@ void ExplicitTimeUpdate::init(){
 
 
 void ExplicitTimeUpdate::update(double dt){
-/*
+
     rg.plugTechnique();
     glDispatchComputeGroupSizeARB(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
@@ -64,7 +65,7 @@ void ExplicitTimeUpdate::update(double dt){
     pc.setGridSpacing(grid->h);
     glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier ( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
-    */
+
 /*
  * obsolete can be done in previous compute shader
     divVelMass.plugTechnique();

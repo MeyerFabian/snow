@@ -26,7 +26,7 @@ layout(std140, binding = 3) buffer gVel {
 layout(local_size_variable)in;
 
 int width = 4;
-ivec3 windowOffset=ivec3(-2,-2,-2);
+ivec3 windowOffset=ivec3(-1,-1,-1);
 
 int n= 0;
 
@@ -48,14 +48,14 @@ void main(void){
     int gridOffsetOfParticle = int(globalInvocX); //  597%64=21
     ivec3 gridOffset;
     float gridMassSum = 0;
-    for(int i = 0; i<numParticles; i++){
+    for(uint i = 0; i<5; i++){
         vec3 positionInGrid = abs((pPositionsMass[i].xyz- gGridPos) - gPositionsMass[gl_GlobalInvocationID.x].xyz);
         if(positionInGrid.x < 2.0f*gridSpacing &&positionInGrid.y < 2.0f*gridSpacing && positionInGrid.z <2.0f*gridSpacing){
               gridMassSum+=pPositionsMass[i].w;
         }
 
     }
-    gPositionsMass[gl_GlobalInvocationID.x].w
+    gPositionsMass[gl_GlobalInvocationID.x].w =gridMassSum;
 barrier();
     /*
 getIJK(gridOffset,gridOffsetOfParticle ); // temp = 21%16 = 5, ijk=(5%4, 5/4, 21/16) = (1,1,1)+(-2,-2,-2) = (-1,-1,-1)

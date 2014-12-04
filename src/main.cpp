@@ -12,7 +12,7 @@
 #include "GLFW/glfw3.h"
 using namespace  std;
 
-double dt = 0.00001;
+double dt = 0.0016666666;
 double sim_t = 0.0;
 double static_fps = 0.01666666666;
 
