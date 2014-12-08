@@ -51,6 +51,17 @@ void ParticleSystem::initSSBO(){
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, PARTICLE_VEL_BUFFER , velB);
     std::cout << "ParticleVelocityBufferSize: "<<sizeof(Vector4f) * (particles)->size()/1024 << " KB" <<std::endl;
 
+    glGenBuffers(1,&velBn);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, velBn);
+    glBufferData(GL_SHADER_STORAGE_BUFFER,sizeof (Vector4f) * (particles)->size(), NULL, GL_STATIC_DRAW);
+    pVelocities = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f) * (particles)->size(), GL_MAP_WRITE_BIT| GL_MAP_INVALIDATE_BUFFER_BIT));
+    for(int i = 0; i<particles->size();i++){
+        pVelocities[i]= particles->at(i).velocity;
+    }
+    glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER ) ;
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, PARTICLE_VEL_N_BUFFER , velB);
+    std::cout << "ParticleVelocityBufferSize: "<<sizeof(Vector4f) * (particles)->size()/1024 << " KB" <<std::endl;
+
     glGenBuffers(1,&FEpB);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, FEpB);
     glBufferData(GL_SHADER_STORAGE_BUFFER,sizeof (Matrix3f) * (particles)->size(), NULL, GL_STATIC_DRAW);
@@ -58,6 +69,7 @@ void ParticleSystem::initSSBO(){
     for(int i = 0; i<particles->size();i++){
         pForcesE[i] = particles->at(i).forceElastic;
     }
+
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER ) ;
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, PARTICLE_FE_BUFFER , FEpB);
     std::cout << "ParticleForceElasticBufferSize: "<<sizeof(Matrix3f) * (particles)->size()/1024 << " KB" <<std::endl;

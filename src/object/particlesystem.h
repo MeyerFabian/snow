@@ -38,6 +38,7 @@ private:
 
     GLuint posB;
     GLuint velB;
+    GLuint velBn;
     GLuint FEpB;
     GLuint FPpB;
 };

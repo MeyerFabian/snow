@@ -63,6 +63,13 @@ void Grid::initSSBO(){
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GRID_VEL_BUFFER , velB);
     std::cout << "GridVelocityBufferSize: "<< sizeof(Vector4f) * (gridPoints)->size()/1024 << " KB" <<std::endl;
 
+    glGenBuffers(1,&velBn);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, velBn);
+    glBufferData(GL_SHADER_STORAGE_BUFFER,sizeof(Vector4f) * (gridPoints)->size(), NULL, GL_STATIC_DRAW);
+    glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER ) ;
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, GRID_VEL_N_BUFFER , velBn);
+    std::cout << "GridVelocityBufferSize: "<< sizeof(Vector4f) * (gridPoints)->size()/1024 << " KB" <<std::endl;
+
     glGenBuffers(1,&forceB);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, forceB);
     glBufferData(GL_SHADER_STORAGE_BUFFER,sizeof(Vector4f) * (gridPoints)->size(), NULL, GL_STATIC_DRAW);

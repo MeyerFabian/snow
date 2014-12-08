@@ -4,6 +4,12 @@
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;
+uniform float young;
+uniform float poisson;
+uniform float hardening;
+uniform float critComp;
+uniform float critStretch;
+
 
 
 layout(local_size_variable)in;
@@ -34,10 +40,7 @@ layout(std140, binding = 6) buffer gForce{
     vec4 fi[] ;
 };
 
-#define GAMMA 5.828427124 // FOUR_GAMMA_SQUARED = sqrt(8)+3;
-#define CSTAR 0.923879532 // cos(pi/8)
-#define SSTAR 0.3826834323 // sin(p/8)
-#define EPSILON 1e-6
+
 
 //QUATERNION MATH
 struct quat{
@@ -55,6 +58,12 @@ vec3 column( int i ,const mat3 data) {
 }
 
 
+//* SVD IMPLEMENTATION SNOW CUDA *//
+
+#define GAMMA 5.828427124 // FOUR_GAMMA_SQUARED = sqrt(8)+3;
+#define CSTAR 0.923879532 // cos(pi/8)
+#define SSTAR 0.3826834323 // sin(p/8)
+#define EPSILON 1e-6
 void fromQuat( const quat q, inout mat3 M )
 {
     float qxx = q.data[0]*q.data[0];
@@ -76,7 +85,6 @@ void fromQuat( const quat q, inout mat3 M )
     M[1][2] = 2.f * (qyz-qwx);
     M[2][2] = 1.f - 2.f*(qxx+qyy);
 }
-
 void jacobiConjugation( int x, int y, int z, inout mat3 S, inout quat qV )
 {
 
@@ -346,6 +354,31 @@ void computePD( const mat3 A, inout mat3 R, inout mat3 P )
     R =  W*transpose(V) ;
     P = V* S*transpose( V);
 }
+//* SVD IMPLEMENTATION SNOW CUDA END*//
+
+/*
+* E0 Young Modulus
+* r Poissons ratio
+* Es hardening coefficient
+* Jp determinant of FPp
+* mu0 = E0/(2*(1+r))
+* mu = mu0 * e(Es(1-Jp))
+*/
+float mu(const float JP){
+    return young /(2.0f*(1.0f+poisson))* exp(hardening*(1.0f-JP));
+}
+
+/*
+* E0 Young Modulus
+* r Poissons ratio
+* Es hardening coefficient
+* Jp determinant of FPp
+* lambda0 = E0*r/((1+r)(1-2r))
+* lambda = lambda0 * e(Es(1-Jp))
+*/
+float lambda(const float JP){
+    return young*poisson /((1.0f+poisson)*(1.0f-2.0f*poisson))* exp(hardening*(1.0f-JP));
+}
 
 
 /**
@@ -354,9 +387,6 @@ void computePD( const mat3 A, inout mat3 R, inout mat3 P )
  * j of[0,y-GridDimension]
  * k of [0, z-GridDimension]
  */
-
-int n= 0;
-
 void getIndex(const ivec3 ijk,inout int index){
     index = ijk.x + (ijk.y * int(gGridDim[0].x)) + (ijk.z *int(gGridDim[1].x) * int(gGridDim[0].x));
 }
@@ -379,13 +409,15 @@ void getIJK(const  int index,inout ivec3 ijk){
  * Returns weight distribution by grid basis function (dyadic products of one-dimensional
  * cubic B-splines) from particle to actual grid neighbors dependant on their distance to the particle.
  */
+
+
 float weighting(const float x){
     const float absX = abs(x);
     if(absX < 1){
-        return 0.5f *absX*absX*absX -x*x +2.0f/3.0f;
+        return 0.5f *absX*absX*absX -absX*absX +2.0f/3.0f;
     }
     else if (absX <= 2){
-        return -1.0f/6.0f *absX*absX*absX +x*x - 2.0f *absX + 4.0f/3.0f;
+        return -1.0f/6.0f *absX*absX*absX +absX*absX - 2.0f *absX + 4.0f/3.0f;
     }
     return 0.0f;
 }
@@ -397,22 +429,40 @@ void weighting(const vec3 distanceVector, inout float w){
     w = weighting(distanceVector.x)*  weighting(distanceVector.y) * weighting(distanceVector.z);
 }
 
+float weightingGradient(const float x){
+    const float absX = abs(x);
+    if(absX < 1){
+        return 1.5f *absX*absX-2.0f*absX;
+    }
+    else if (absX <= 2){
+        return -1.0f/2.0f *absX*absX +2.0f*absX - 2.0f;
+    }
+    return 0.0f;
+}
 
+void weightingGradient(const vec3 distanceVector, inout vec3 wg){
+    wg.x = weightingGradient(distanceVector.x)*  weighting(distanceVector.y) * weighting(distanceVector.z);
+    wg.y = weighting(distanceVector.x)*  weightingGradient(distanceVector.y) * weighting(distanceVector.z);
+    wg.z = weighting(distanceVector.x)*  weighting(distanceVector.y) * weightingGradient(distanceVector.z);
+}
+
+int n= 0;
 void main(void){
 
     uint pIndex= gl_GlobalInvocationID.x;
     uint globalInvocY = gl_GlobalInvocationID.y;
 
-    pxm[pIndex].x +=0.00005;
+    //pxm[pIndex].x +=0.00005;
 
     vec4 particle = pxm[pIndex];
     vec4 particleVelocity = pv[pIndex];
     mat3 FEp = pFE[pIndex];
+    mat3 FPp =pFP[pIndex];
 
     vec3 xp= particle.xyz; //particle position
     float mp = particle.w; // particle mass
     vec3 vp = particleVelocity.xyz; //particle velocity
-    //float Vp = particleVelocity.w; //particle Volume
+    float Vp0 = particleVelocity.w; //particle Volume
 
     int gridOffsetOfParticle = int(globalInvocY); //  21
     ivec3 gridOffset;
@@ -440,6 +490,7 @@ void main(void){
         int gI;
         getIndex(gridIndex,gI);
 
+        //COMBINE MASS +VELOCITY MAKE ONE BIG SHADER AND LOOK IF ITS BETTER
         gxm[gI].w+= mp * wip; // add ParticleMass to gridPointMass
 
         barrier();
@@ -447,9 +498,21 @@ void main(void){
 
         gv[gI].xyz+= vp * mp * wip / mi; // calculate added gridVelocity
 
-    mat3 RE, SE;
-    computePD(FEp,RE,SE);
+        mat3 REp, SEp;
+        FEp = mat3(1.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f);
+        FPp = mat3(1.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f);
+        computePD(FEp,REp,SEp);
 
+        FEp = mat3(1.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f);
+        REp = mat3(1.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f);
+        float JPp = determinant(FPp);
+        float JEp = determinant(FEp);
+        vec3 wipg;
+        weightingGradient(gridDistanceToParticle,wipg);
+
+
+        fi[gI].xyz -= Vp0*(  //2.0f* mu(JPp)*
+                             (FEp-REp)*transpose(FEp) + lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f) )*wipg ;
    }
 
 }

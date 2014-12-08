@@ -109,7 +109,12 @@ struct Matrix3f{
     Matrix3f(float f){
         for(int j = 0; j< 3; j++){
             for(int i = 0; i<3;i++){
-                this->m[j][i] = f;
+                if(j==i){
+                    this->m[j][i] = f;
+                }
+                else{
+                    this->m[j][i] = 0.0f;
+                }
             }
         }
     }

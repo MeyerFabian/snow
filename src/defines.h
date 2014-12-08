@@ -12,7 +12,7 @@
 #define GRID_POS_Y 0.025
 #define GRID_POS_Z -1.025
 #define GRID_DIM_X 201
-#define GRID_DIM_Y 201
+#define GRID_DIM_Y 101
 #define GRID_DIM_Z 201
 #define GRID_SPACING 0.05
 #define PARTICLE_TO_GRID_SIZE 64
@@ -25,10 +25,18 @@
 #define PARTICLE_VEL_BUFFER 1
 #define PARTICLE_FE_BUFFER 4
 #define PARTICLE_FP_BUFFER 5
+#define PARTICLE_VEL_N_BUFFER 8
 
 #define GRID_POS_BUFFER 2
 #define GRID_VEL_BUFFER 3
 #define GRID_FORCE_BUFFER 6
+#define GRID_VEL_N_BUFFER 7
+
+#define YOUNG_MODULUS 1.4e5
+#define POISSON 0.2
+#define HARDENING 10.0
+#define CRIT_COMPRESSION 2.5e-2
+#define CRIT_STRETCH 7.5e-3
 #endif // DEFINES_H
 
 // 300x100x300 105 Fps

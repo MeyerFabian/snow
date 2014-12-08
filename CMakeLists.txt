@@ -34,9 +34,12 @@ shader/m_shadow.frag
 shader/particleShader.vert
 shader/particleShader.frag
 shader/updateGridMassVel.glsl
+shader/updateParticleVel.glsl
+shader/updateParticles.glsl
 shader/computeParticleVolume.glsl
 shader/overGridAndParticles.glsl
 shader/resetGrid.glsl
+shader/updateGridVelCollision.glsl
 stb_image/stb_image.h
 stb_image/stb_image.c
 src/technique.h

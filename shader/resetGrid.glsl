@@ -11,6 +11,9 @@ layout(std140, binding = 2) buffer gPos {
 layout(std140, binding = 3) buffer gVel {
     vec4 gVelocities[ ];
 };
+layout(std140, binding = 6) buffer gForce{
+    vec4 fi[] ;
+};
 
 float n = 0.0f;
 vec3 zeroVelocity = vec3(0.0f,0.0f,0.0f);
@@ -28,4 +31,5 @@ void main(void){
 
     //if( readVel.x > 1e-10 || readVel.y > 1e-10 || readVel.z > 1e-10)//2
     gVelocities[gl_GlobalInvocationID.x].xyz = zeroVelocity;//1&2
+    fi[gl_GlobalInvocationID.x].xyz = zeroVelocity;
 }

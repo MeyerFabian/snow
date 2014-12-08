@@ -14,7 +14,10 @@ public:
     void update(double dt);
     ParticleCompute cVolume;
     ParticleCompute pc;
+    ParticleCompute pVU;
     OverGrid rg;
+    OverGrid vUp;
+    OverGrid pU;
     //OverGrid divVelMass;
 };
 
