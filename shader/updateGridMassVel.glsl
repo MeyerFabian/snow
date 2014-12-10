@@ -54,7 +54,7 @@ void multUpScalar ( inout quat q, const float s )
 //MATRIX MATH
 vec3 column( int i ,const mat3 data) {
     //int j = 3*i;
-    return vec3( data[i][0], data[i][1], data[i][2] );
+    return vec3( data[0][i], data[1][i], data[2][i]);
     // return vec3( data[j], data[j+1], data[j+2] );
 }
 
@@ -303,7 +303,7 @@ void QRDecomposition( const mat3 B, inout mat3 Q,inout mat3 R )
     U = mat3(  s0, s1, 0,
               -s1, s0, 0,
                 0,  0, 1 );
-    R= U*R;
+    R= R*U;
     //R = mat3::multiplyAtB( U, R );
 
     qQ.data[0]=1; qQ.data[1]=0; qQ.data[2]=0; qQ.data[3]=0;
@@ -326,7 +326,7 @@ void QRDecomposition( const mat3 B, inout mat3 Q,inout mat3 R )
                 0, 1,  0,
               -s1, 0, s0 );
 
-    R= U*R;
+    R= R*U;
     //R = mat3::multiplyAtB( U, R );
 
     // update cumulative rotation
@@ -346,7 +346,7 @@ void QRDecomposition( const mat3 B, inout mat3 Q,inout mat3 R )
     U = mat3( 1,   0,  0,
               0,  s0, s1,
               0, -s1, s0 );
-    R= U*R;
+    R= R*U;
     //R = mat3::multiplyAtB( U, R );
 
     // update cumulative rotation
@@ -377,7 +377,7 @@ void computeSVD( const mat3 A,inout mat3 W,inout mat3 S,inout mat3 V )
                0.0f,1.0f,0.0f,
                0.0f,0.0f,1.0f);
 */
-    mat3 B = A * V;
+    mat3 B = V*A;
 
 /// 3. Sorting the singular values (find V)
     sortSingularValues( B, V );
@@ -394,8 +394,17 @@ void computePD( const mat3 A, inout mat3 R, inout mat3 P )
     // P is positive semidefinite Hermitian matrix
     mat3 W, S, V;
     computeSVD( A, W, S, V );
-    R =  W*transpose(V) ;
-    P = V* S*transpose( V);
+
+    //floating point errors are really significant
+    V = mat3(0.0f,0.0f,1.0f,
+               0.0f,-1.0f,0.0f,
+               1.0f,0.0f,0.0f);
+    W = mat3(0.0f,0.0f,1.0f,
+               0.0f,-1.0f,0.0f,
+               1.0f,0.0f,0.0f);
+    R =  transpose(V) *W;
+
+    P = transpose( V)*S*V;
 }
 //* SVD IMPLEMENTATION SNOW CUDA END*//
 
@@ -553,10 +562,7 @@ void main(void){
 
         computePD(FEp,REp,SEp);
 
-       /* REp = mat3(1.0f,0.0f,0.0f,
-                   0.0f,1.0f,0.0f,
-                   0.0f,0.0f,1.0f);
-                   */
+
         float JPp = determinant(FPp);
         float JEp = determinant(FEp);
         vec3 wipg;
