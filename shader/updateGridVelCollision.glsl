@@ -25,7 +25,8 @@ void main(void){
     float cellMass = gxm[gI].w;
     vec3 vi =  gv[gI].xyz;
     vec3 fi = gf[gI].xyz;
-    gvn[gI].xyz =vi + dt*
-            //1.0f/(cellMass) *
-            fi;
+    gvn[gI].xyz =vi + dt
+            /(cellMass)
+            * fi;
+
 }

@@ -74,10 +74,10 @@ void getIJK(const  int index,inout ivec3 ijk){
 float weighting(const float x){
     const float absX = abs(x);
     if(absX < 1){
-        return 0.5f *absX*absX*absX -absX*absX +2.0f/3.0f;
+        return 0.5f *absX*absX*absX -x*x +2.0f/3.0f;
     }
     else if (absX <= 2){
-        return -1.0f/6.0f *absX*absX*absX +absX*absX - 2.0f *absX + 4.0f/3.0f;
+        return -1.0f/6.0f *absX*absX*absX +x*x - 2.0f *absX + 4.0f/3.0f;
     }
     return 0.0f;
 }
@@ -89,22 +89,7 @@ void weighting(const vec3 distanceVector, inout float w){
     w = weighting(distanceVector.x)*  weighting(distanceVector.y) * weighting(distanceVector.z);
 }
 
-float weightingGradient(const float x){
-    const float absX = abs(x);
-    if(absX < 1){
-        return 1.5f *absX*absX-2.0f*absX;
-    }
-    else if (absX <= 2){
-        return -1.0f/2.0f *absX*absX +2.0f*absX - 2.0f;
-    }
-    return 0.0f;
-}
 
-void weightingGradient(const vec3 distanceVector, inout vec3 wg){
-    wg.x = weightingGradient(distanceVector.x)*  weighting(distanceVector.y) * weighting(distanceVector.z);
-    wg.y = weighting(distanceVector.x)*  weightingGradient(distanceVector.y) * weighting(distanceVector.z);
-    wg.z = weighting(distanceVector.x)*  weighting(distanceVector.y) * weightingGradient(distanceVector.z);
-}
 
 int n= 0;
 void main(void){

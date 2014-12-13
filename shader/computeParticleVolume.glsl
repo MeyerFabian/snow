@@ -96,7 +96,9 @@ void main(void){
         gxm[gI].w+=mp * wip; // calculate gridMass
         barrier();
         float mi = gxm[gI].w;
-        pv[pIndex].w+= mp / (mi * wip / gCellVolume)  ; //calculate particleVolume
+        pv[pIndex].w+=
+                 (mi * wip / gCellVolume)  ; //calculate particleVolume
+                        //1e-6 / ( 1e-9 * 0.1 /0.05^3)
 
    }
 

@@ -396,12 +396,14 @@ void computePD( const mat3 A, inout mat3 R, inout mat3 P )
     computeSVD( A, W, S, V );
 
     //floating point errors are really significant
+    /*
     V = mat3(0.0f,0.0f,1.0f,
                0.0f,-1.0f,0.0f,
                1.0f,0.0f,0.0f);
     W = mat3(0.0f,0.0f,1.0f,
                0.0f,-1.0f,0.0f,
                1.0f,0.0f,0.0f);
+               */
     R =  transpose(V) *W;
 
     P = transpose( V)*S*V;
@@ -466,10 +468,10 @@ void getIJK(const  int index,inout ivec3 ijk){
 float weighting(const float x){
     const float absX = abs(x);
     if(absX < 1){
-        return 0.5f *absX*absX*absX -absX*absX +2.0f/3.0f;
+        return 0.5f *absX*absX*absX -x*x +2.0f/3.0f;
     }
     else if (absX <= 2){
-        return -1.0f/6.0f *absX*absX*absX +absX*absX - 2.0f *absX + 4.0f/3.0f;
+        return -1.0f/6.0f *absX*absX*absX +x*x - 2.0f *absX + 4.0f/3.0f;
     }
     return 0.0f;
 }
@@ -484,10 +486,10 @@ void weighting(const vec3 distanceVector, inout float w){
 float weightingGradient(const float x){
     const float absX = abs(x);
     if(absX < 1){
-        return 1.5f *absX*absX-2.0f*absX;
+        return 1.5f *x*absX-2.0f*x;
     }
     else if (absX <= 2){
-        return -1.0f/2.0f *absX*absX +2.0f*absX - 2.0f;
+        return -1.0f/2.0f *absX*x + 2.0f*x - 2.0f*x/absX;
     }
     return 0.0f;
 }
@@ -514,7 +516,7 @@ void main(void){
     vec3 xp= particle.xyz; //particle position
     float mp = particle.w; // particle mass
     vec3 vp = particleVelocity.xyz; //particle velocity
-    float Vp0 = particleVelocity.w; //particle Volume
+    float pp0 = particleVelocity.w; //particle density
 
     int gridOffsetOfParticle = int(globalInvocY); //  21
     ivec3 gridOffset;
@@ -568,9 +570,10 @@ void main(void){
         vec3 wipg;
         weightingGradient(gridDistanceToParticle,wipg);
 
+        fi[gI].xyz -= (mp/pp0)*(
+                (  2.0f* mu(JPp)*
+                             (FEp-REp)*transpose(FEp) + lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f) )*wipg) ;
 
-        fi[gI].xyz -= Vp0*(  //2.0f* mu(JPp)*
-                             (FEp-REp)*transpose(FEp) + lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f) )*wipg ;
    }
 
 }
