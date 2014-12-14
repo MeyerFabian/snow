@@ -564,7 +564,6 @@ void main(void){
 
         computePD(FEp,REp,SEp);
 
-
         float JPp = determinant(FPp);
         float JEp = determinant(FEp);
         vec3 wipg;

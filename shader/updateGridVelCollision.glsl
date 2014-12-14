@@ -19,14 +19,15 @@ layout(std140, binding = 7) buffer gVeln {
 };
 float n = 0.0f;
 vec3 zeroVelocity = vec3(0.0f,0.0f,0.0f);
+vec3 g = vec3(0.0f,-9.81f,0.0f);
 //vec3 readVel; //2
 void main(void){
     uint gI = gl_GlobalInvocationID.x;
     float cellMass = gxm[gI].w;
     vec3 vi =  gv[gI].xyz;
     vec3 fi = gf[gI].xyz;
+    if(cellMass>1e-12)
     gvn[gI].xyz =vi + dt
-            /(cellMass)
-            * fi;
+             * (fi/(cellMass) + g) ;
 
 }

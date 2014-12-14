@@ -193,7 +193,7 @@ void initShader(){
     glm::mat4x4 matrix;
     glm::mat4x4 tmatrix;
 
-    world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
+    world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 50.0f);
     world.setCamera(1.1,2.1f,10.0f,1.1,2.1f,0.0f,0.0f,1.0f,0.0f);
 
 
@@ -209,7 +209,6 @@ void initShader(){
         world.setScale((*meshes)[i].getScale());
         world.setRotation((*meshes)[i].getRotation());
 
-world.setCamera(1.1,2.1f,10.0f,1.1,2.1f,0.0f,0.0f,1.0f,0.0f);
         matrix= glm::mat4x4(    world.getModelMatrix()->m[0][0], world.getModelMatrix()->m[0][1], world.getModelMatrix()->m[0][2], world.getModelMatrix()->m[0][3],
                                             world.getModelMatrix()->m[1][0], world.getModelMatrix()->m[1][1], world.getModelMatrix()->m[1][2], world.getModelMatrix()->m[1][3],
                                             world.getModelMatrix()->m[2][0], world.getModelMatrix()->m[2][1], world.getModelMatrix()->m[2][2], world.getModelMatrix()->m[2][3],
