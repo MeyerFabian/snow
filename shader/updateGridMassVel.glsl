@@ -31,10 +31,10 @@ layout(std140, binding = 3) buffer gVel {
     vec4 gv[ ];
 };
 layout(std140, binding = 4) buffer pForceElastic {
-    mat3 pFE[ ];
+    mat4 pFE[ ];
 };
 layout(std140, binding = 5) buffer pForcePlastic {
-    mat3 pFP[ ];
+    mat4 pFP[ ];
 };
 layout(std140, binding = 6) buffer gForce{
     vec4 fi[] ;
@@ -510,8 +510,10 @@ void main(void){
 
     vec4 particle = pxm[pIndex];
     vec4 particleVelocity = pv[pIndex];
-    mat3 FEp = mat3(pFE[pIndex]);
-    mat3 FPp =mat3(pFP[pIndex]);
+    mat4 FEp4 = mat4(pFE[pIndex]);
+    mat3 FEp = mat3(FEp4[0].xyz,FEp4[1].xyz,FEp4[2].xyz);
+    mat4 FPp4 = mat4(pFP[pIndex]);
+    mat3 FPp =mat3(FPp4[0].xyz,FPp4[1].xyz,FPp4[2].xyz);
 
     vec3 xp= particle.xyz; //particle position
     float mp = particle.w; // particle mass
@@ -553,14 +555,6 @@ void main(void){
         gv[gI].xyz+= vp * mp * wip / mi; // calculate added gridVelocity
 
         mat3 REp, SEp;
-
-        FEp = mat3(1.0f,0.0f,0.0f,
-                   0.0f,1.0f,0.0f,
-                   0.0f,0.0f,1.0f);
-
-        FPp = mat3(1.0f,0.0f,0.0f,
-                   0.0f,1.0f,0.0f,
-                   0.0f,0.0f,1.0f);
 
         computePD(FEp,REp,SEp);
 

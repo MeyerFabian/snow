@@ -144,7 +144,19 @@ struct Matrix3f{
 struct Matrix4f{
 
     float m[4][4];
-
+    Matrix4f() =default;
+    Matrix4f(float f){
+        for(int j = 0; j< 4; j++){
+            for(int i = 0; i<4;i++){
+                if(j==i){
+                    this->m[j][i] = f;
+                }
+                else{
+                    this->m[j][i] = 0.0f;
+                }
+            }
+        }
+    }
     inline void LoadIdentity(){
 
         this->m[0][0]=1.0f; this->m[0][1]=0.0f; this->m[0][2]=0.0f; this->m[0][3]=0.0f;

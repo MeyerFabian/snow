@@ -194,7 +194,7 @@ void initShader(){
     glm::mat4x4 tmatrix;
 
     world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 50.0f);
-    world.setCamera(1.1,2.1f,10.0f,1.1,2.1f,0.0f,0.0f,1.0f,0.0f);
+    world.setCamera(0.0f,2.1f,6.5f,0.0,2.1f,0.0f,0.0f,1.0f,0.0f);
 
 
     lighting.plugTechnique();
