@@ -13,8 +13,6 @@ uniform float critStretch;
 
 
 layout(local_size_variable)in;
-//try using y
-//layout(local_size_x= 1024, local_size_y = 1, local_size_z = 1)in;
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pxm[ ];
@@ -26,19 +24,16 @@ layout(std140, binding = 1) buffer pVelVolume {
 layout(std140, binding = 3) buffer gVel {
     vec4 gv[ ];
 };
-layout(std140, binding = 4) buffer pForceElastic {
-    mat3 pFE[ ];
-};
-layout(std140, binding = 5) buffer pForcePlastic {
-    mat3 pFP[ ];
-};
+
 layout(std140, binding = 7) buffer gVeln {
     vec4 gvn[ ];
 };
 layout(std140, binding = 8) buffer pVeln {
     vec4 pvn[ ];
 };
-
+layout(std140, binding = 9) buffer pDeltaVeln {
+    vec4 deltapvn[ ];
+};
 
 
 /**
@@ -90,6 +85,23 @@ void weighting(const vec3 distanceVector, inout float w){
 }
 
 
+float weightingGradient(const float x){
+    const float absX = abs(x);
+    if(absX < 1){
+        return 1.5f *x*absX-2.0f*x;
+    }
+    else if (absX <= 2){
+        return -1.0f/2.0f *absX*x + 2.0f*x - 2.0f*x/absX;
+    }
+    return 0.0f;
+}
+
+void weightingGradient(const vec3 distanceVector, inout vec3 wg){
+    wg.x = weightingGradient(distanceVector.x)*  weighting(distanceVector.y) * weighting(distanceVector.z);
+    wg.y = weighting(distanceVector.x)*  weightingGradient(distanceVector.y) * weighting(distanceVector.z);
+    wg.z = weighting(distanceVector.x)*  weighting(distanceVector.y) * weightingGradient(distanceVector.z);
+}
+
 
 int n= 0;
 void main(void){
@@ -97,17 +109,10 @@ void main(void){
     uint pIndex= gl_GlobalInvocationID.x;
     uint globalInvocY = gl_GlobalInvocationID.y;
 
-    //pxm[pIndex].x +=0.00005;
-
     vec4 particle = pxm[pIndex];
     vec4 particleVelocity = pv[pIndex];
-    mat3 FEp = pFE[pIndex];
-    mat3 FPp =pFP[pIndex];
 
     vec3 xp= particle.xyz; //particle position
-    float mp = particle.w; // particle mass
-    vec3 vp = particleVelocity.xyz; //particle velocity
-    float Vp0 = particleVelocity.w; //particle Volume
 
     int gridOffsetOfParticle = int(globalInvocY); //  21
     ivec3 gridOffset;
@@ -131,15 +136,18 @@ void main(void){
         vec3 gridDistanceToParticle = ParticleInGrid- vec3(gridIndex);
         float wip = .0f;
         weighting (gridDistanceToParticle,wip);
-
+        vec3 gwip =vec3(.0f);
+        weightingGradient(gridDistanceToParticle,gwip);
         int gI;
         getIndex(gridIndex,gI);
+
         vec3 vin =gvn[gI].xyz;
         vec3 vi =gv[gI].xyz;
-        //COMBINE MASS +VELOCITY MAKE ONE BIG SHADER AND LOOK IF ITS BETTER
+        //vpn+1 = a * vpn + temp_vpn+1
+        //temp_vpn+1 = sum_i [(1-a) * vin+1 * wipn + (a) * (vin+1 - vin)* wipn]
         pvn[gl_GlobalInvocationID.x].xyz += ((1.0f-alpha) *vin * wip)+(alpha*(vin-vi)*wip); // add ParticleMass to gridPointMass
-        //barrier();
-
+        //d_vpn+1 = sum_i [vin+1 * d_wipn]
+        deltapvn[gl_GlobalInvocationID.x].xyz += vin * gwip;
     }
 
 }

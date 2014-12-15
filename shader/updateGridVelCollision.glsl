@@ -3,7 +3,6 @@
 uniform float dt;
 
 layout(local_size_variable)in;
-//try using y
 
 layout(std140, binding = 2) buffer gPosMass {
     vec4 gxm[ ];
@@ -26,6 +25,7 @@ void main(void){
     float cellMass = gxm[gI].w;
     vec3 vi =  gv[gI].xyz;
     vec3 fi = gf[gI].xyz;
+    //vin+1 = vin + d_t * mi^(-1) * fin
     if(cellMass>1e-12)
     gvn[gI].xyz =vi + dt
              * (fi/(cellMass) + g) ;

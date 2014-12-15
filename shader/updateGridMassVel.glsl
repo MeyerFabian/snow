@@ -13,8 +13,6 @@ uniform float critStretch;
 
 
 layout(local_size_variable)in;
-//try using y
-//layout(local_size_x= 1024, local_size_y = 1, local_size_z = 1)in;
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pxm[ ];
@@ -546,12 +544,12 @@ void main(void){
         int gI;
         getIndex(gridIndex,gI);
 
-        //COMBINE MASS +VELOCITY MAKE ONE BIG SHADER AND LOOK IF ITS BETTER
-        gxm[gI].w+= mp * wip; // add ParticleMass to gridPointMass
+        //min = sum_p [ mp *wipn]
+        gxm[gI].w+= mp * wip;
 
         barrier();
         float mi= gxm[gI].w;
-
+        //vin = sum_p [ vpn * mp *wipn / min]
         gv[gI].xyz+= vp * mp * wip / mi; // calculate added gridVelocity
 
         mat3 REp, SEp;
@@ -563,6 +561,9 @@ void main(void){
         vec3 wipg;
         weightingGradient(gridDistanceToParticle,wipg);
 
+        // fi(^x) = - sum_p [ Vpn * sigmaP * d_wipn]
+        //        = - sum_p [ Vp0 * (Jpn * 2 * mu(FPp)/Jpn * (FEp-REp) * FEp^(-T) + Jpn* lamba(FPp)/Jpn* (JEp -1.0f) * JEp * FEp * FEp^(-T))*d_wipn]
+        //        = - sum_p [ Vp0  * (2 * mu(FPp) * (FEp-REp) * FEp^(-T) + lamba(FPp)* (JEp -1.0f) * JEp * I )*d_wipn]
         fi[gI].xyz -= (mp/pp0)*(
                 (  2.0f* mu(JPp)*
                              (FEp-REp)*transpose(FEp) + lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f) )*wipg) ;

@@ -3,7 +3,6 @@
 
 
 layout(local_size_variable)in;
-//try using y
 
 layout(std140, binding = 2) buffer gPos {
     vec4 gPositionsMass[ ];

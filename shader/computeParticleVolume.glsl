@@ -7,8 +7,6 @@ uniform float gridSpacing;
 
 
 layout(local_size_variable)in;
-//try using y
-//layout(local_size_x= 1024, local_size_y = 1, local_size_z = 1)in;
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pxm[ ];
@@ -59,14 +57,11 @@ void main(void){
 
     uint pIndex= gl_GlobalInvocationID.x;
     uint globalInvocY = gl_GlobalInvocationID.y;
-    //pxm[pIndex].x +=0.0005;
     vec4 particle = pxm[pIndex];
     vec4 particleVelocity = pv[pIndex];
 
     vec3 xp= particle.xyz; //particle position
     float mp = particle.w; // particle mass
-    vec3 vp = particleVelocity.xyz; //particle velocity
-    //float Vp = particleVelocity.w; //particle Volume
 
     int gI = 0;
 
@@ -92,13 +87,12 @@ void main(void){
         weighting (gridDistanceToParticle,wip);
 
         getIndex(gridIndex,gI);
-
-        gxm[gI].w+=mp * wip; // calculate gridMass
+        // mi0 = sum_p [mp *wip0]
+        gxm[gI].w+=mp * wip;
         barrier();
         float mi = gxm[gI].w;
-        pv[pIndex].w+=
-                 (mi * wip / gCellVolume)  ; //calculate particleVolume
-                        //1e-6 / ( 1e-9 * 0.1 /0.05^3)
+        // pp0 = sum_i[ mi0 *wip0 / h^(3)]
+        pv[pIndex].w += (mi * wip / gCellVolume)  ;
 
    }
 
