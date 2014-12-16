@@ -52,7 +52,7 @@ void multUpScalar ( inout quat q, const float s )
 //MATRIX MATH
 vec3 column( int i ,const mat3 data) {
     //int j = 3*i;
-    return vec3( data[0][i], data[1][i], data[2][i]);
+    return vec3( data[i][0], data[i][1], data[i][2]);
     // return vec3( data[j], data[j+1], data[j+2] );
 }
 
@@ -75,13 +75,13 @@ void fromQuat( const quat q, inout mat3 M )
     float qwy = q.data[0]*q.data[2];
     float qwz = q.data[0]*q.data[3];
     M[0][0] = 1.f - 2.f*(qyy+qzz);
-    M[1][0] = 2.f * (qxy+qwz);
-    M[2][0] = 2.f * (qxz-qwy);
-    M[0][1] = 2.f * (qxy-qwz);
+    M[0][1] = 2.f * (qxy+qwz);
+    M[0][2] = 2.f * (qxz-qwy);
+    M[1][0] = 2.f * (qxy-qwz);
     M[1][1] = 1.f - 2.f*(qxx+qzz);
-    M[2][1] = 2.f * (qyz+qwx);
-    M[0][2] = 2.f * (qxz+qwy);
-    M[1][2] = 2.f * (qyz-qwx);
+    M[1][2] = 2.f * (qyz+qwx);
+    M[2][0] = 2.f * (qxz+qwy);
+    M[2][1] = 2.f * (qyz-qwx);
     M[2][2] = 1.f - 2.f*(qxx+qyy);
 }
 /*
@@ -116,9 +116,9 @@ void jacobiConjugation( int x, int y, int z, inout mat3 S, inout quat qV )
  // eliminate off-diagonal entries Spq, Sqp
  float ch = 2.f * (S[0][0]-S[1][1]), ch2 = ch*ch;
  //float ch = 2.f * (S[0]-S[4]), ch2 = ch*ch;
- float sh = S[0][1], sh2 = sh*sh;
-
+ float sh = S[1][0], sh2 = sh*sh;
  //float sh = S[3], sh2 = sh*sh;
+
  bool flag = ( GAMMA * sh2 < ch2 );
 
  float w = inversesqrt( ch2 + sh2 );
@@ -134,15 +134,15 @@ void jacobiConjugation( int x, int y, int z, inout mat3 S, inout quat qV )
 
  // Use what we know about Q to simplify S = Q' * S * Q
  // and the re-arranging step.
- float s0 = a2*S[0][0] + 2*ab*S[1][0] + b2*S[1][1];
+ float s0 = a2*S[0][0] + 2*ab*S[0][1] + b2*S[1][1];
  //float s0 = a2*S[0] + 2*ab*S[1] + b2*S[4];
- float s2 = a*S[2][0] + b*S[2][1];
+ float s2 = a*S[0][2] + b*S[1][2];
  //float s2 = a*S[2] + b*S[5];
- float s3 = (a2-b2)*S[1][0] + ab*(S[1][1]-S[0][0]);
+ float s3 = (a2-b2)*S[0][1] + ab*(S[1][1]-S[0][0]);
  //float s3 = (a2-b2)*S[1] + ab*(S[4]-S[0]);
- float s4 = b2*S[0][0] - 2*ab*S[1][0] + a2*S[1][1];
+ float s4 = b2*S[0][0] - 2*ab*S[0][1] + a2*S[1][1];
   //float s4 = b2*S[0] - 2*ab*S[1] + a2*S[4];
- float s5 = a*S[1][2] - b*S[0][2];
+ float s5 = a*S[2][1] - b*S[2][0];
  //float s5 = a*S[7] - b*S[6];
  float s8 = S[2][2];
  //float s8 = S[8];
@@ -251,12 +251,8 @@ void sortSingularValues(inout mat3 B,inout mat3 V )
     condNegSwap( c, v2, v3 );
 
     // re-build B,V
-    B = mat3( b1.x, b2.x, b3.x,
-              b1.y, b2.y, b3.y,
-              b1.z, b2.z, b3.z );
-    V = mat3( v1.x, v2.x, v3.x,
-              v1.y, v2.y, v3.y,
-              v1.z, v2.z, v3.z);
+    B = mat3( b1,b2,b3);
+    V = mat3( v1,v2,v3);
 
 }
 
@@ -301,7 +297,7 @@ void QRDecomposition( const mat3 B, inout mat3 Q,inout mat3 R )
     U = mat3(  s0, s1, 0,
               -s1, s0, 0,
                 0,  0, 1 );
-    R= R*U;
+    R= transpose(U)*R;
     //R = mat3::multiplyAtB( U, R );
 
     qQ.data[0]=1; qQ.data[1]=0; qQ.data[2]=0; qQ.data[3]=0;
@@ -315,7 +311,7 @@ void QRDecomposition( const mat3 B, inout mat3 Q,inout mat3 R )
     //qQ = quat( ch*qQ.w-sh*qQ.z, ch*qQ.x+sh*qQ.y, ch*qQ.y-sh*qQ.x, sh*qQ.w+ch*qQ.z );
 
     // second givens rotation
-    QRGivensQuaternion( R[0][0], R[2][0], ch, sh );
+    QRGivensQuaternion( R[0][0], R[0][2], ch, sh );
     //QRGivensQuaternion( R[0], R[2], ch, sh );
 
     s0 = 1-2*sh*sh;
@@ -324,7 +320,7 @@ void QRDecomposition( const mat3 B, inout mat3 Q,inout mat3 R )
                 0, 1,  0,
               -s1, 0, s0 );
 
-    R= R*U;
+    R= transpose(U)*R;
     //R = mat3::multiplyAtB( U, R );
 
     // update cumulative rotation
@@ -336,7 +332,7 @@ void QRDecomposition( const mat3 B, inout mat3 Q,inout mat3 R )
     //qQ = quat( ch*qQ.w+sh*qQ.y, ch*qQ.x+sh*qQ.z, ch*qQ.y-sh*qQ.w, ch*qQ.z-sh*qQ.x );
 
     // third Givens rotation
-    QRGivensQuaternion( R[1][1], R[2][1], ch, sh );
+    QRGivensQuaternion( R[1][1], R[1][2], ch, sh );
     //QRGivensQuaternion( R[4], R[5], ch, sh );
 
     s0 = 1-2*sh*sh;
@@ -344,7 +340,7 @@ void QRDecomposition( const mat3 B, inout mat3 Q,inout mat3 R )
     U = mat3( 1,   0,  0,
               0,  s0, s1,
               0, -s1, s0 );
-    R= R*U;
+    R= transpose(U)*R;
     //R = mat3::multiplyAtB( U, R );
 
     // update cumulative rotation
@@ -363,7 +359,8 @@ void QRDecomposition( const mat3 B, inout mat3 Q,inout mat3 R )
 void computeSVD( const mat3 A,inout mat3 W,inout mat3 S,inout mat3 V )
 {
     // normal equations matrix
-    mat3 ATA = transpose(A) * A ;
+    mat3 AT = transpose(A);
+    mat3 ATA = AT * A ;
 
 /// 2. Symmetric Eigenanlysis
     quat qV;
@@ -393,18 +390,10 @@ void computePD( const mat3 A, inout mat3 R, inout mat3 P )
     mat3 W, S, V;
     computeSVD( A, W, S, V );
 
-    //floating point errors are really significant
-    /*
-    V = mat3(0.0f,0.0f,1.0f,
-               0.0f,-1.0f,0.0f,
-               1.0f,0.0f,0.0f);
-    W = mat3(0.0f,0.0f,1.0f,
-               0.0f,-1.0f,0.0f,
-               1.0f,0.0f,0.0f);
-               */
-    R =  transpose(V) *W;
 
-    P = transpose( V)*S*V;
+    R = W*transpose(V);
+
+    P = V*S*transpose(V);
 }
 //* SVD IMPLEMENTATION SNOW CUDA END*//
 
@@ -468,7 +457,7 @@ float weighting(const float x){
     if(absX < 1){
         return 0.5f *absX*absX*absX -x*x +2.0f/3.0f;
     }
-    else if (absX <= 2){
+    else if (absX < 2){
         return -1.0f/6.0f *absX*absX*absX +x*x - 2.0f *absX + 4.0f/3.0f;
     }
     return 0.0f;
@@ -509,9 +498,13 @@ void main(void){
     vec4 particle = pxm[pIndex];
     vec4 particleVelocity = pv[pIndex];
     mat4 FEp4 = mat4(pFE[pIndex]);
-    mat3 FEp = mat3(FEp4[0].xyz,FEp4[1].xyz,FEp4[2].xyz);
+    mat3 FEp = mat3(FEp4[0][0],FEp4[0][1],FEp4[0][2],
+                    FEp4[1][0],FEp4[1][1],FEp4[1][2],
+                    FEp4[2][0],FEp4[2][1],FEp4[2][2]);
     mat4 FPp4 = mat4(pFP[pIndex]);
-    mat3 FPp =mat3(FPp4[0].xyz,FPp4[1].xyz,FPp4[2].xyz);
+    mat3 FPp = mat3(FPp4[0][0],FPp4[0][1],FPp4[0][2],
+                    FPp4[1][0],FPp4[1][1],FPp4[1][2],
+                    FPp4[2][0],FPp4[2][1],FPp4[2][2]);
 
     vec3 xp= particle.xyz; //particle position
     float mp = particle.w; // particle mass
@@ -550,10 +543,10 @@ void main(void){
         barrier();
         float mi= gxm[gI].w;
         //vin = sum_p [ vpn * mp *wipn / min]
+        //if(mi>1e-6)
         gv[gI].xyz+= vp * mp * wip / mi; // calculate added gridVelocity
-
+        //FEp = mat3(0.997);
         mat3 REp, SEp;
-
         computePD(FEp,REp,SEp);
 
         float JPp = determinant(FPp);
@@ -564,9 +557,13 @@ void main(void){
         // fi(^x) = - sum_p [ Vpn * sigmaP * d_wipn]
         //        = - sum_p [ Vp0 * (Jpn * 2 * mu(FPp)/Jpn * (FEp-REp) * FEp^(-T) + Jpn* lamba(FPp)/Jpn* (JEp -1.0f) * JEp * FEp * FEp^(-T))*d_wipn]
         //        = - sum_p [ Vp0  * (2 * mu(FPp) * (FEp-REp) * FEp^(-T) + lamba(FPp)* (JEp -1.0f) * JEp * I )*d_wipn]
-        fi[gI].xyz -= (mp/pp0)*(
-                (  2.0f* mu(JPp)*
-                             (FEp-REp)*transpose(FEp) + lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f) )*wipg) ;
+        //if(pp0>1e-6)
+        fi[gI].xyz -=(mp/pp0)*
+                ((  2.0f* mu(JPp)*
+                             (FEp-REp)*transpose(FEp)
+                    //+ lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f)
+                    )
+                    *wipg) ;
 
    }
 

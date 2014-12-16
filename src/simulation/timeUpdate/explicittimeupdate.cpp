@@ -111,7 +111,9 @@ void ExplicitTimeUpdate::update(double dt){
     glMemoryBarrier ( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
 
     pU.plugTechnique();
-    pU.setDt(dt);
+    pU.setDt(dt);   
+    pU.setCritComp();
+    pU.setCritStretch();
     glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 

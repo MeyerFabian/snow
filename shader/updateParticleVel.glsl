@@ -32,7 +32,7 @@ layout(std140, binding = 8) buffer pVeln {
     vec4 pvn[ ];
 };
 layout(std140, binding = 9) buffer pDeltaVeln {
-    vec4 deltapvn[ ];
+    mat4 deltapvn[ ];
 };
 
 
@@ -146,8 +146,13 @@ void main(void){
         //vpn+1 = a * vpn + temp_vpn+1
         //temp_vpn+1 = sum_i [(1-a) * vin+1 * wipn + (a) * (vin+1 - vin)* wipn]
         pvn[gl_GlobalInvocationID.x].xyz += ((1.0f-alpha) *vin * wip)+(alpha*(vin-vi)*wip); // add ParticleMass to gridPointMass
-        //d_vpn+1 = sum_i [vin+1 * d_wipn]
-        deltapvn[gl_GlobalInvocationID.x].xyz += vin * gwip;
+
+        //d_vpn+1 = sum_i [vin+1 * d_wipn^(T)]
+        deltapvn[gl_GlobalInvocationID.x] +=mat4( vin.x * gwip.x,vin.x * gwip.y, vin.x *gwip.z,0.0f,
+                                                  vin.y * gwip.x,vin.y * gwip.y, vin.y *gwip.z,0.0f,
+                                                  vin.z * gwip.x,vin.z * gwip.y, vin.z *gwip.z,0.0f,
+                                                  0.0f,0.0f,0.0f,0.0f);
+
     }
 
 }

@@ -31,7 +31,7 @@ public:
     Matrix4f* pForcesE= nullptr ;
     Matrix4f* pForcesP= nullptr ;
     Vector4f* pVelocitiesn = nullptr;
-    Vector4f* pdeltaVelocitiesn =nullptr;
+    Matrix4f* pdeltaVelocitiesn =nullptr;
 private:
 
 
