@@ -5,7 +5,7 @@ struct GridPoint{
 
     GridPoint(Vector3f v = Vector3f(0.0f,0.0f,0.0f),
              float m = 0,
-             Matrix3f Fe = Matrix3f(1.0f),
+             Matrix3f Fe = Matrix3f(1.025f),
              Matrix3f Fp = Matrix3f(1.0f))
             : velocity(v), mass(m), forceElastic(Fe), forcePlastic(Fp){}
 

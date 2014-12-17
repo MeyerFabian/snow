@@ -545,9 +545,11 @@ void main(void){
         //vin = sum_p [ vpn * mp *wipn / min]
         //if(mi>1e-6)
         gv[gI].xyz+= vp * mp * wip / mi; // calculate added gridVelocity
-        //FEp = mat3(0.997);
         mat3 REp, SEp;
+       // FEp=mat3(1.025f);
+        FPp=mat3(1.0f);
         computePD(FEp,REp,SEp);
+
 
         float JPp = determinant(FPp);
         float JEp = determinant(FEp);
@@ -561,7 +563,7 @@ void main(void){
         fi[gI].xyz -=(mp/pp0)*
                 ((  2.0f* mu(JPp)*
                              (FEp-REp)*transpose(FEp)
-                    //+ lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f)
+                    + lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f)
                     )
                     *wipg) ;
 

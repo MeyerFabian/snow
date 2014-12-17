@@ -402,23 +402,32 @@ void main(void){
                     FEp4[1][0],FEp4[1][1],FEp4[1][2],
                     FEp4[2][0],FEp4[2][1],FEp4[2][2]);
     mat4 FPp4 = mat4(pFP[pI]);
-    mat3 FPp =mat3(FPp4[0].xyz,FPp4[1].xyz,FPp4[2].xyz);
-    mat4 dvp4 = mat4(deltapvn[pI]);
+    mat3 FPp =mat3(FPp4[0][0],FPp4[0][1],FPp4[0][2],
+            FPp4[1][0],FPp4[1][1],FPp4[1][2],
+            FPp4[2][0],FPp4[2][1],FPp4[2][2]);
 
+    mat4 dvp4 = mat4(deltapvn[pI]);
     mat3 dvp =mat3( dvp4[0][0],dvp4[0][1],dvp4[0][2],
                     dvp4[1][0],dvp4[1][1],dvp4[1][2],
                     dvp4[2][0],dvp4[2][1],dvp4[2][2]);
     //dvp=mat3(0.001);
-
-    mat3 FEpn = (mat3(1.0f) + dt * dvp)* FEp;
     //FEpn = mat3(.0975);
+    mat3 FEpn = (mat3(1.0f) + dt * dvp)* FEp;
+    mat3 Fpn = (mat3(1.0f) + dt * dvp)* (FEp*FPp);
     mat3 FPpn = FPp;
+
     mat3 W,S,V;
     computeSVD(FEpn,W,S,V);
     clamp(S[0][0], 1.0f-critComp,1.0f+critStretch);
     clamp(S[1][1], 1.0f-critComp,1.0f+critStretch);
     clamp(S[2][2], 1.0f-critComp,1.0f+critStretch);
     FEpn = W*S *transpose(V);
+
+    mat3 S_I = S;
+    S_I[0][0]= 1.0f/S_I[0][0];
+    S_I[1][1]= 1.0f/S_I[1][1];
+    S_I[2][2]= 1.0f/S_I[2][2];
+    FPpn =V   * S_I * transpose(W) *Fpn;
 /*
     pFE[gl_GlobalInvocationID.x][0].xyz =vec3(0.0f,0.0f,0.0f);
     pFE[gl_GlobalInvocationID.x][1].xyz =vec3(0.0f,1.0f,0.0f);
@@ -428,6 +437,10 @@ void main(void){
     pFE[gl_GlobalInvocationID.x] = mat4( FEpn[0][0],FEpn[0][1],FEpn[0][2],0.0f,
                                          FEpn[1][0],FEpn[1][1],FEpn[1][2],0.0f,
                                          FEpn[2][0],FEpn[1][2],FEpn[2][2],0.0f,
+                                         0.0f,0.0f,0.0f,1.0);
+    pFP[gl_GlobalInvocationID.x] = mat4( FPpn[0][0],FPpn[0][1],FPpn[0][2],0.0f,
+                                         FPpn[1][0],FPpn[1][1],FPpn[1][2],0.0f,
+                                         FPpn[2][0],FPpn[1][2],FPpn[2][2],0.0f,
                                          0.0f,0.0f,0.0f,1.0);
 
 /*

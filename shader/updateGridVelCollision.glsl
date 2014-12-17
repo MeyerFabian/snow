@@ -18,7 +18,7 @@ layout(std140, binding = 7) buffer gVeln {
 };
 float n = 0.0f;
 vec3 zeroVelocity = vec3(0.0f,0.0f,0.0f);
-vec3 g = vec3(0.0f,-9.81f,0.0f);
+vec3 g = vec3(0.0f,0.0f,0.0f);
 
 //vec3 readVel; //2
 void main(void){
