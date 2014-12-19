@@ -255,9 +255,9 @@ void initShader(){
     PT.setWVP(world.getMVP());
 
     //particlesystem->updateVBOBuffer();
-    particlesystem->render();
+    //particlesystem->render();
     //double timeS = glfwGetTime ();
-    //grid->render();
+    grid->render();
     //double timeE = glfwGetTime();
     //std::cout << (timeE - timeS)*1000 << " ms for rendering the grid."<<std::endl;
 

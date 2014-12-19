@@ -112,7 +112,6 @@ void main(void){
         barrier();
         float mi = gxm[gI].w;
         // pp0 = sum_i[ mi0 *wip0 / h^(3)]
-        //if(mi>1e-6)
         pv[pIndex].w += (mi * wip / gCellVolume)  ;
 
    }

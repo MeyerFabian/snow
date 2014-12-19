@@ -424,27 +424,27 @@ void main(void){
     FEpn = W*S *transpose(V);
 
     mat3 S_I = S;
-    S_I[0][0]= 1.0f/S_I[0][0];
-    S_I[1][1]= 1.0f/S_I[1][1];
-    S_I[2][2]= 1.0f/S_I[2][2];
+    S_I[0][0]=(S_I[0][0]<0.0f)?1.0f: 1.0f/S_I[0][0];
+    S_I[1][1]= (S_I[1][1]<0.0f)?1.0f: 1.0f/S_I[1][1];
+    S_I[2][2]= (S_I[2][2]<0.0f)?1.0f: 1.0f/S_I[2][2];
     FPpn =V   * S_I * transpose(W) *Fpn;
 /*
     pFE[gl_GlobalInvocationID.x][0].xyz =vec3(0.0f,0.0f,0.0f);
     pFE[gl_GlobalInvocationID.x][1].xyz =vec3(0.0f,1.0f,0.0f);
     pFE[gl_GlobalInvocationID.x][2].xyz =vec3(1.0f,0.0f,0.0f);
 */
-/*
+
     pFE[gl_GlobalInvocationID.x] = mat4( FEpn[0][0],FEpn[0][1],FEpn[0][2],0.0f,
                                          FEpn[1][0],FEpn[1][1],FEpn[1][2],0.0f,
                                          FEpn[2][0],FEpn[2][1],FEpn[2][2],0.0f,
                                          0.0f,0.0f,0.0f,1.0);
-  */
-  /*
+
+
     pFP[gl_GlobalInvocationID.x] = mat4( FPpn[0][0],FPpn[0][1],FPpn[0][2],0.0f,
                                          FPpn[1][0],FPpn[1][1],FPpn[1][2],0.0f,
                                          FPpn[2][0],FPpn[2][1],FPpn[2][2],0.0f,
                                          0.0f,0.0f,0.0f,1.0);
-*/
+
 /*
     pFE[gl_GlobalInvocationID.x][0].xyz =column(0,FEpn);
     pFE[gl_GlobalInvocationID.x][1].xyz =column(1,FEpn);

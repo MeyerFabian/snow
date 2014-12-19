@@ -539,11 +539,8 @@ void main(void){
         //min = sum_p [ mp *wipn]
         gxm[gI].w+= mp * wip;
 
-        barrier();
-        float mi= gxm[gI].w;
         //vin = sum_p [ vpn * mp *wipn / min]
-        //if(mi>1e-6)
-        gv[gI].xyz+= vp * mp * wip / mi; // calculate added gridVelocity
+        gv[gI].xyz+= vp * mp * wip; // calculate added gridVelocity
         mat3 REp, SEp;
         computePD(FEp,REp,SEp);
 
@@ -555,23 +552,21 @@ void main(void){
         // fi(^x) = - sum_p [ Vpn * sigmaP * d_wipn]
         //        = - sum_p [ Vp0 * (Jpn * 2 * mu(FPp)/Jpn * (FEp-REp) * FEp^(T) + Jpn* lamba(FPp)/Jpn* (JEp -1.0f) * JEp * FEp^(-T) * FEp^(T))*d_wipn]
         //        = - sum_p [ Vp0  * (2 * mu(FPp) * (FEp-REp) * FEp^(-T) + lamba(FPp)* (JEp -1.0f) * JEp * I )*d_wipn]
-        //if(pp0>1e-6)
+        if(pp0>0.0f){
         fi[gI].xyz -=
 
-                //(mp/pp0)*
-                 mat3(5.0f)
-/*
+                (mp/pp0)*
+
                 ((  2.0f* mu(JPp)*
                              (FEp-REp)*transpose(FEp)
                     + lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f)
                     )
-                            */
-                  //  *wipg
-                *vec3(0.05)
-                      //)
+
+                  *wipg
+                      )
                 ;
 
-
+        }
    }
 
 }
