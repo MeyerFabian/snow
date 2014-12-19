@@ -451,13 +451,12 @@ void getIJK(const  int index,inout ivec3 ijk){
  * cubic B-splines) from particle to actual grid neighbors dependant on their distance to the particle.
  */
 
-
 float weighting(const float x){
-    const float absX = abs(x);
-    if(absX < 1){
+    const float absX = (x<0)?-x:x;
+    if(absX < 1.0f){
         return 0.5f *absX*absX*absX -x*x +2.0f/3.0f;
     }
-    else if (absX < 2){
+    else if (absX < 2.0f){
         return -1.0f/6.0f *absX*absX*absX +x*x - 2.0f *absX + 4.0f/3.0f;
     }
     return 0.0f;
@@ -471,11 +470,11 @@ void weighting(const vec3 distanceVector, inout float w){
 }
 
 float weightingGradient(const float x){
-    const float absX = abs(x);
-    if(absX < 1){
+    const float absX = (x<0)?-x:x;
+    if(absX < 1.0f){
         return 1.5f *x*absX-2.0f*x;
     }
-    else if (absX <= 2){
+    else if (absX < 2.0f){
         return -1.0f/2.0f *absX*x + 2.0f*x - 2.0f*x/absX;
     }
     return 0.0f;
@@ -546,10 +545,7 @@ void main(void){
         //if(mi>1e-6)
         gv[gI].xyz+= vp * mp * wip / mi; // calculate added gridVelocity
         mat3 REp, SEp;
-       // FEp=mat3(1.025f);
-        FPp=mat3(1.0f);
         computePD(FEp,REp,SEp);
-
 
         float JPp = determinant(FPp);
         float JEp = determinant(FEp);
@@ -557,15 +553,24 @@ void main(void){
         weightingGradient(gridDistanceToParticle,wipg);
 
         // fi(^x) = - sum_p [ Vpn * sigmaP * d_wipn]
-        //        = - sum_p [ Vp0 * (Jpn * 2 * mu(FPp)/Jpn * (FEp-REp) * FEp^(-T) + Jpn* lamba(FPp)/Jpn* (JEp -1.0f) * JEp * FEp * FEp^(-T))*d_wipn]
+        //        = - sum_p [ Vp0 * (Jpn * 2 * mu(FPp)/Jpn * (FEp-REp) * FEp^(T) + Jpn* lamba(FPp)/Jpn* (JEp -1.0f) * JEp * FEp^(-T) * FEp^(T))*d_wipn]
         //        = - sum_p [ Vp0  * (2 * mu(FPp) * (FEp-REp) * FEp^(-T) + lamba(FPp)* (JEp -1.0f) * JEp * I )*d_wipn]
         //if(pp0>1e-6)
-        fi[gI].xyz -=(mp/pp0)*
+        fi[gI].xyz -=
+
+                //(mp/pp0)*
+                 mat3(5.0f)
+/*
                 ((  2.0f* mu(JPp)*
                              (FEp-REp)*transpose(FEp)
                     + lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f)
                     )
-                    *wipg) ;
+                            */
+                  //  *wipg
+                *vec3(0.05)
+                      //)
+                ;
+
 
    }
 

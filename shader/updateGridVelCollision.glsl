@@ -28,10 +28,11 @@ void main(void){
     vec3 fi = gf[gI].xyz;//+vec3(0.0001,0.0002,0.0);
     //vin+1 = vin + d_t * mi^(-1) * fin
     //if(cellMass>1e-6)
-    //if(mi>1e-6)
     gvn[gI].xyz =vi + dt
-             * (fi
-                /(mi)
-                + g) ;
+             * (
+                fi
+               ///(mi)
+               + g)
+            ;
 
 }

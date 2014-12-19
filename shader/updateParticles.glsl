@@ -402,15 +402,15 @@ void main(void){
                     FEp4[1][0],FEp4[1][1],FEp4[1][2],
                     FEp4[2][0],FEp4[2][1],FEp4[2][2]);
     mat4 FPp4 = mat4(pFP[pI]);
-    mat3 FPp =mat3(FPp4[0][0],FPp4[0][1],FPp4[0][2],
-            FPp4[1][0],FPp4[1][1],FPp4[1][2],
-            FPp4[2][0],FPp4[2][1],FPp4[2][2]);
+    mat3 FPp =mat3( FPp4[0][0],FPp4[0][1],FPp4[0][2],
+                    FPp4[1][0],FPp4[1][1],FPp4[1][2],
+                    FPp4[2][0],FPp4[2][1],FPp4[2][2]);
 
     mat4 dvp4 = mat4(deltapvn[pI]);
     mat3 dvp =mat3( dvp4[0][0],dvp4[0][1],dvp4[0][2],
                     dvp4[1][0],dvp4[1][1],dvp4[1][2],
                     dvp4[2][0],dvp4[2][1],dvp4[2][2]);
-    //dvp=mat3(0.001);
+    //dvp=mat3(1.0);
     //FEpn = mat3(.0975);
     mat3 FEpn = (mat3(1.0f) + dt * dvp)* FEp;
     mat3 Fpn = (mat3(1.0f) + dt * dvp)* (FEp*FPp);
@@ -433,16 +433,18 @@ void main(void){
     pFE[gl_GlobalInvocationID.x][1].xyz =vec3(0.0f,1.0f,0.0f);
     pFE[gl_GlobalInvocationID.x][2].xyz =vec3(1.0f,0.0f,0.0f);
 */
-
+/*
     pFE[gl_GlobalInvocationID.x] = mat4( FEpn[0][0],FEpn[0][1],FEpn[0][2],0.0f,
                                          FEpn[1][0],FEpn[1][1],FEpn[1][2],0.0f,
-                                         FEpn[2][0],FEpn[1][2],FEpn[2][2],0.0f,
+                                         FEpn[2][0],FEpn[2][1],FEpn[2][2],0.0f,
                                          0.0f,0.0f,0.0f,1.0);
+  */
+  /*
     pFP[gl_GlobalInvocationID.x] = mat4( FPpn[0][0],FPpn[0][1],FPpn[0][2],0.0f,
                                          FPpn[1][0],FPpn[1][1],FPpn[1][2],0.0f,
-                                         FPpn[2][0],FPpn[1][2],FPpn[2][2],0.0f,
+                                         FPpn[2][0],FPpn[2][1],FPpn[2][2],0.0f,
                                          0.0f,0.0f,0.0f,1.0);
-
+*/
 /*
     pFE[gl_GlobalInvocationID.x][0].xyz =column(0,FEpn);
     pFE[gl_GlobalInvocationID.x][1].xyz =column(1,FEpn);
@@ -453,11 +455,13 @@ void main(void){
     vec3 vpn = pvn[pI].xyz;
     vec3 vp = pv[pI].xyz;
     //vpn+1 = a * vpn + temp_vpn+1
-    pv[pI].xyz = vp * alpha + vpn;
+    pv[pI].xyz = vp * alpha +
+            vpn;
 
     // UPDATE POSITION
     vpn = pv[pI].xyz;
     // xpn+1 = xpn + d_t * vpn+1
+
     pxm[pI].xyz += dt * vpn;
 
     //Reset vpn+1 and delta vpn+1 to (0,0,0)
