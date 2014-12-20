@@ -555,9 +555,9 @@ void main(void){
         if(pp0>0.0f){
         fi[gI].xyz -=
 
-                (mp/pp0)*
+                (mp/pp0)*(
 
-                ((  2.0f* mu(JPp)*
+                (  2.0f* mu(JPp)*
                              (FEp-REp)*transpose(FEp)
                     + lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f)
                     )

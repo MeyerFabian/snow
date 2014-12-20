@@ -433,7 +433,7 @@ void main(void){
     pFE[gl_GlobalInvocationID.x][1].xyz =vec3(0.0f,1.0f,0.0f);
     pFE[gl_GlobalInvocationID.x][2].xyz =vec3(1.0f,0.0f,0.0f);
 */
-
+/*
     pFE[gl_GlobalInvocationID.x] = mat4( FEpn[0][0],FEpn[0][1],FEpn[0][2],0.0f,
                                          FEpn[1][0],FEpn[1][1],FEpn[1][2],0.0f,
                                          FEpn[2][0],FEpn[2][1],FEpn[2][2],0.0f,
@@ -444,7 +444,7 @@ void main(void){
                                          FPpn[1][0],FPpn[1][1],FPpn[1][2],0.0f,
                                          FPpn[2][0],FPpn[2][1],FPpn[2][2],0.0f,
                                          0.0f,0.0f,0.0f,1.0);
-
+*/
 /*
     pFE[gl_GlobalInvocationID.x][0].xyz =column(0,FEpn);
     pFE[gl_GlobalInvocationID.x][1].xyz =column(1,FEpn);
@@ -466,5 +466,5 @@ void main(void){
 
     //Reset vpn+1 and delta vpn+1 to (0,0,0)
     pvn[pI].xyz = zeroVelocity;
-    deltapvn[pI] = mat4(0.0f);
+    deltapvn[pI] = mat4(1.0f);
 }
