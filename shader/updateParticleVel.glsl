@@ -21,6 +21,11 @@ layout(std140, binding = 0) buffer pPosMass {
 layout(std140, binding = 1) buffer pVelVolume {
     vec4 pv[ ];
 };
+
+layout(std140, binding = 2) buffer gPosMass {
+    vec4 gxm[ ];
+};
+
 layout(std140, binding = 3) buffer gVel {
     vec4 gv[ ];
 };
@@ -140,17 +145,18 @@ void main(void){
         getIndex(gridIndex,gI);
 
         vec3 vin =gvn[gI].xyz;
-        vec3 vi =gv[gI].xyz;
+        vec3 vi =gv[gI].xyz; //needs to be normalized with mi
+        float mi = gxm[gI].w;
         //vpn+1 = a * vpn + temp_vpn+1
         //temp_vpn+1 = sum_i [(1-a) * vin+1 * wipn + (a) * (vin+1 - vin)* wipn]
-        pvn[gl_GlobalInvocationID.x].xyz += ((1.0f-alpha) *vin * wip)+(alpha*(vin-vi)*wip); // add ParticleMass to gridPointMass
+        pvn[gl_GlobalInvocationID.x].xyz += ((1.0f-alpha) *vin * wip)+(alpha*(vin-vi/mi)*wip); // add ParticleMass to gridPointMass
 
         //pvn[gl_GlobalInvocationID.x].xyz +=vin*wip;
         //d_vpn+1 = sum_i [vin+1 * d_wipn^(T)]
         deltapvn[gl_GlobalInvocationID.x] += mat4( vin.x * gwip.x,vin.x * gwip.y, vin.x *gwip.z,0.0f,
                                                    vin.y * gwip.x,vin.y * gwip.y, vin.y *gwip.z,0.0f,
                                                    vin.z * gwip.x,vin.z * gwip.y, vin.z *gwip.z,0.0f,
-                                                   0.0f,0.0f,0.0f,1.0f);
+                                                   0.0f,0.0f,0.0f,0.0f);
 
     }
 
