@@ -1,6 +1,6 @@
 #version 440
 #extension GL_ARB_compute_variable_group_size :require
-
+#extension  NV_shader_atomic_float:require
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;
@@ -108,12 +108,17 @@ void main(void){
 
         getIndex(gridIndex,gI);
         // mi0 = sum_p [mp *wip0]
-        gxm[gI].w+=mp * wip;
+        //gxm[gI].w+=mp * wip;
+
+        atomicAdd(gxm[gI].w, mp * wip);
         barrier();
         float mi = gxm[gI].w;
         // pp0 = sum_i[ mi0 *wip0 / h^(3)]
         if(mi>0.0f)
-        pv[pIndex].w += (mi * wip / gCellVolume)  ;
+        //pv[pIndex].w += (mi * wip / gCellVolume)  ;
+
+
+        atomicAdd(pv[pIndex].w, (mi * wip / gCellVolume));
 
    }
 

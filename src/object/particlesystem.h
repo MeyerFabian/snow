@@ -26,6 +26,7 @@ public:
 
     void initSSBO();
     void updateSSBOBuffer();
+    void debug();
     Vector4f* pPositions= nullptr ;
     Vector4f* pVelocities= nullptr ;
     Matrix4f* pForcesE= nullptr ;

@@ -1,5 +1,6 @@
 #version 440
 #extension GL_ARB_compute_variable_group_size :require
+#extension  NV_shader_atomic_float:require
 uniform float dt;
 
 layout(local_size_variable)in;
@@ -32,11 +33,11 @@ void main(void){
 
     gvn[gI].xyz =vi/mi + dt
              * (
-                fi
-               /(12.5)
+                //fi/(mi)
                + g)
             ;
 
+    //fi[gI].xyz += force;
 
     }
 }

@@ -25,6 +25,13 @@ void Grid::resetSSBOBuffer(){
   //glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3f) * (pPositions)->size(), NULL, GL_STREAM_DRAW);
    // glBufferSubData(GL_SHADER_STORAGE_BUFFER, 12, sizeof(Vector4f) * (gridPoints)->size(),0);
 }
+void Grid::debug(){
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, forceB);
+
+    Vector4f* l = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (gridPoints)->size(), GL_MAP_READ_BIT));
+    l[22+55*201+28*201*101].print();
+    glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
+}
 
 void Grid::initSSBO(){
     //approacing zero driver overhead

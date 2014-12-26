@@ -1,6 +1,7 @@
 #version 440
 #extension GL_ARB_compute_variable_group_size :require
 #define alpha 0.95
+#extension  NV_shader_atomic_float:require
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;
@@ -70,7 +71,7 @@ void getIJK(const  int index,inout ivec3 ijk){
  * cubic B-splines) from particle to actual grid neighbors dependant on their distance to the particle.
  */
 float weighting(const float x){
-    const float absX = (x<0)?-x:x;
+    const float absX = abs(x);
     if(absX < 1.0f){
         return 0.5f *absX*absX*absX -x*x +2.0f/3.0f;
     }
@@ -88,7 +89,7 @@ void weighting(const vec3 distanceVector, inout float w){
 }
 
 float weightingGradient(const float x){
-    const float absX = (x<0)?-x:x;
+    const float absX = abs(x);
     if(absX < 1.0f){
         return 1.5f *x*absX-2.0f*x;
     }
@@ -149,15 +150,23 @@ void main(void){
         float mi = gxm[gI].w;
         //vpn+1 = a * vpn + temp_vpn+1
         //temp_vpn+1 = sum_i [(1-a) * vin+1 * wipn + (a) * (vin+1 - vin)* wipn]
-        pvn[gl_GlobalInvocationID.x].xyz += ((1.0f-alpha) *vin * wip)+(alpha*(vin-vi/mi)*wip); // add ParticleMass to gridPointMass
-
+        vec3 vpn = ((1.0f-alpha) *vin * wip)+(alpha*(vin-vi/mi)*wip); // add ParticleMass to gridPointMass
+        //fi[gI].xyz += force;
+        atomicAdd(pvn[gl_GlobalInvocationID.x].x,vpn.x);
+        atomicAdd(pvn[gl_GlobalInvocationID.x].y,vpn.y);
+        atomicAdd(pvn[gl_GlobalInvocationID.x].z,vpn.z);
         //pvn[gl_GlobalInvocationID.x].xyz +=vin*wip;
         //d_vpn+1 = sum_i [vin+1 * d_wipn^(T)]
+ /*
         deltapvn[gl_GlobalInvocationID.x] += mat4( vin.x * gwip.x,vin.x * gwip.y, vin.x *gwip.z,0.0f,
                                                    vin.y * gwip.x,vin.y * gwip.y, vin.y *gwip.z,0.0f,
                                                    vin.z * gwip.x,vin.z * gwip.y, vin.z *gwip.z,0.0f,
                                                    0.0f,0.0f,0.0f,0.0f);
 
+        deltapvn[gl_GlobalInvocationID.x] += mat4( 0.0f,0.0f, 0.0f,0.0f,
+                                                   0.0f,0.0f, 0.0f,0.0f,
+                                                   0.0f,0.0f, 0.0f,0.0f,
+                                                   0.0f,0.0f,0.0f,0.0f);*/
     }
 
 }

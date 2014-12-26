@@ -1,6 +1,6 @@
 #version 440
 #extension GL_ARB_compute_variable_group_size :require
-
+#extension  NV_shader_atomic_float:require
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;
@@ -37,7 +37,6 @@ layout(std140, binding = 5) buffer pForcePlastic {
 layout(std140, binding = 6) buffer gForce{
     vec4 fi[] ;
 };
-
 
 
 //QUATERNION MATH
@@ -121,7 +120,7 @@ void jacobiConjugation( int x, int y, int z, inout mat3 S, inout quat qV )
 
  bool flag = ( GAMMA * sh2 < ch2 );
 
- float w = inversesqrt( ch2 + sh2 );
+ float w = 1/sqrt( ch2 + sh2 );
 //float w = rsqrtf( ch2 + sh2 );
 
  ch = flag ? w*ch : CSTAR; ch2 = ch*ch;
@@ -352,9 +351,11 @@ void sortSingularValues(inout mat3 B,inout mat3 V )
      q3 = ch*qQ.data[3]-sh*qQ.data[2];
      qQ.data[0]=q0; qQ.data[1]=q1; qQ.data[2]=q2; qQ.data[3]=q3;
      //qQ = quat( ch*qQ.w-sh*qQ.x, sh*qQ.w+ch*qQ.x, ch*qQ.y+sh*qQ.z, ch*qQ.z-sh*qQ.y );
-
+    //qQ.data[0] =0.0 ;  qQ.data[1] = 1/sqrt(2);  qQ.data[2] = 0.0;  qQ.data[3] = 1/(sqrt(2));
      // qQ now contains final rotation for Q
      fromQuat(qQ,Q);
+
+
 
  }
 
@@ -370,11 +371,9 @@ void computeSVD( const mat3 A,inout mat3 W,inout mat3 S,inout mat3 V )
     //V = mat3::fromQuat(qV);
 
 
-
     mat3 B =  A*V;
 /// 3. Sorting the singular values (find V)
     sortSingularValues( B, V );
-
 /// 4. QR decomposition
     QRDecomposition( B, W, S );
 
@@ -395,6 +394,7 @@ void computePD( const mat3 A, inout mat3 R, inout mat3 P )
     P = V*S*transpose(V);
 }
 //* SVD IMPLEMENTATION SNOW CUDA END*//
+
 
 /*
 * E0 Young Modulus
@@ -451,7 +451,7 @@ void getIJK(const  int index,inout ivec3 ijk){
  */
 
 float weighting(const float x){
-    const float absX = (x<0)?-x:x;
+    const float absX = abs(x);
     if(absX < 1.0f){
         return 0.5f *absX*absX*absX -x*x +2.0f/3.0f;
     }
@@ -469,7 +469,7 @@ void weighting(const vec3 distanceVector, inout float w){
 }
 
 float weightingGradient(const float x){
-    const float absX = (x<0)?-x:x;
+    const float absX = abs(x);
     if(absX < 1.0f){
         return 1.5f *x*absX-2.0f*x;
     }
@@ -496,9 +496,7 @@ void main(void){
     vec4 particle = pxm[pIndex];
     vec4 particleVelocity = pv[pIndex];
     mat4 FEp4 = mat4(pFE[pIndex]);
-    mat3 FEp =mat3(FEp4[0][0],FEp4[0][1],FEp4[0][2],
-            FEp4[1][0],FEp4[1][1],FEp4[1][2],
-            FEp4[2][0],FEp4[2][1],FEp4[2][2]);
+    mat3 FEp =mat3(FEp4);
     mat4 FPp4 = mat4(pFP[pIndex]);
     mat3 FPp = mat3(FPp4[0][0],FPp4[0][1],FPp4[0][2],
             FPp4[1][0],FPp4[1][1],FPp4[1][2],
@@ -536,10 +534,18 @@ void main(void){
         getIndex(gridIndex,gI);
 
         //min = sum_p [ mp *wipn]
-        gxm[gI].w+= mp * wip;
+        //gxm[gI].w+= mp * wip;
+        atomicAdd(gxm[gI].w, mp * wip);
 
         //vin = sum_p [ vpn * mp *wipn / min]
-        gv[gI].xyz+= vp * mp * wip; // calculate added gridVelocity
+        //gv[gI].xyz+= vp * mp * wip; // calculate added gridVelocity
+
+        vec3 velocity = (vp * mp * wip);
+        atomicAdd(gv[gI].x,velocity.x);
+        atomicAdd(gv[gI].y,velocity.y);
+        atomicAdd(gv[gI].z,velocity.z);
+
+
         mat3 REp, SEp;
         computePD(FEp,REp,SEp);
         float JPp = determinant(FPp);
@@ -551,20 +557,25 @@ void main(void){
         //        = - sum_p [ Vp0 * (Jpn * 2 * mu(FPp)/Jpn * (FEp-REp) * FEp^(T) + Jpn* lamba(FPp)/Jpn* (JEp -1.0f) * JEp * FEp^(-T) * FEp^(T))*d_wipn]
         //        = - sum_p [ Vp0  * (2 * mu(FPp) * (FEp-REp) * FEp^(-T) + lamba(FPp)* (JEp -1.0f) * JEp * I )*d_wipn]
         if(pp0>0.0f){
-        fi[gI].xyz -=
 
-                ((mp/pp0)*
+        vec3 force = -
+
+                (mp/pp0)*
 
                 (  2.0f* mu(JPp)*
                              (FEp-REp)*transpose(FEp)
-                    + lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f)
+                    //+ lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f)
                     )
-                    )
+
                   *wipg
 
                 ;
-
+        //fi[gI].xyz += force;
+        atomicAdd(fi[gI].x,force.x);
+        atomicAdd(fi[gI].y,force.y);
+        atomicAdd(fi[gI].z,force.z);
         }
+
    }
 
 }

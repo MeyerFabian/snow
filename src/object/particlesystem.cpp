@@ -21,6 +21,19 @@ void ParticleSystem::updateVBOBuffer(){
 
 
 }
+void ParticleSystem::debug(){
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, FEpB);
+    std::cout << "FEpB"<<std::endl;
+    Matrix4f* m = (Matrix4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Matrix4f)* (particles)->size(), GL_MAP_READ_BIT));
+    m[15*15*15].print();
+    glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, FPpB);
+    std::cout << "test"<<std::endl;
+    Matrix4f* j = (Matrix4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Matrix4f)* (particles)->size(), GL_MAP_READ_BIT));
+    j[15*15*15].print();
+    glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
+}
 
 void ParticleSystem::initSSBO(){
 
@@ -32,7 +45,7 @@ void ParticleSystem::initSSBO(){
     pPositions =(Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f) * (particles)->size(),GL_MAP_WRITE_BIT |  GL_MAP_INVALIDATE_BUFFER_BIT));
     for(int i = 0; i<particles->size();i++){
         pPositions[i] = particles->at(i).position;
-        pPositions[i].w = particles->at(i).mass;
+        pPositions[i].w = 12.5;
     }
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, PARTICLE_POS_BUFFER , posB);

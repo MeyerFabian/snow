@@ -51,7 +51,7 @@ public:
     void initVBO();
     void resetSSBOBuffer();
     void render();
-
+    void debug();
     void initSSBO();
 private:
 

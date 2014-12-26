@@ -28,13 +28,14 @@ layout(std140, binding = 9) buffer pDeltaVeln {
 
 
 
+
 //QUATERNION MATH
 struct quat{
     float data[4];
 };
 
-void multUpScalar ( inout quat q, const float s )
-{ q.data[0] *= s; q.data[1] *= s; q.data[2] *= s; q.data[3] *= s;}
+void multUpScalar ( inout vec4 q, const float s )
+{ q[0] *= s; q[1] *= s; q[2] *= s; q[3] *= s;}
 //quat operator * ( float f ) const { return quat( w*f, x*f, y*f, z*f ); }
 
 //MATRIX MATH
@@ -51,25 +52,25 @@ vec3 column( int i ,const mat3 data) {
 #define CSTAR 0.923879532 // cos(pi/8)
 #define SSTAR 0.3826834323 // sin(p/8)
 #define EPSILON 1e-6
-void fromQuat( const quat q, inout mat3 M )
+void fromQuat( const vec4 q, inout mat3 M )
 {
-    float qxx = q.data[1]*q.data[1];
-    float qyy = q.data[2]*q.data[2];
-    float qzz = q.data[3]*q.data[3];
-    float qxz = q.data[1]*q.data[3];
-    float qxy = q.data[1]*q.data[2];
-    float qyz = q.data[2]*q.data[3];
-    float qwx = q.data[0]*q.data[1];
-    float qwy = q.data[0]*q.data[2];
-    float qwz = q.data[0]*q.data[3];
+    float qxx = q[1]*q[1];
+    float qyy = q[2]*q[2];
+    float qzz = q[3]*q[3];
+    float qxz = q[1]*q[3];
+    float qxy = q[1]*q[2];
+    float qyz = q[2]*q[3];
+    float qwx = q[0]*q[1];
+    float qwy = q[0]*q[2];
+    float qwz = q[0]*q[3];
     M[0][0] = 1.f - 2.f*(qyy+qzz);
-    M[0][1] = 2.f * (qxy+qwz);
-    M[0][2] = 2.f * (qxz-qwy);
-    M[1][0] = 2.f * (qxy-qwz);
+    M[1][0] = 2.f * (qxy+qwz);
+    M[2][0] = 2.f * (qxz-qwy);
+    M[0][1] = 2.f * (qxy-qwz);
     M[1][1] = 1.f - 2.f*(qxx+qzz);
-    M[1][2] = 2.f * (qyz+qwx);
-    M[2][0] = 2.f * (qxz+qwy);
-    M[2][1] = 2.f * (qyz-qwx);
+    M[2][1] = 2.f * (qyz+qwx);
+    M[0][2] = 2.f * (qxz+qwy);
+    M[1][2] = 2.f * (qyz-qwx);
     M[2][2] = 1.f - 2.f*(qxx+qyy);
 }
 /*
@@ -98,37 +99,39 @@ static mat3 fromQuat( const quat &q )
 }
 */
 
-void jacobiConjugation( int x, int y, int z, inout mat3 S, inout quat qV )
+void jacobiConjugation( int x, int y, int z, inout mat3 S, inout vec4 qV ,inout vec3 test)
 {
 
  // eliminate off-diagonal entries Spq, Sqp
- float ch = 2.f * (S[0][0]-S[1][1]), ch2 = ch*ch;
+ float ch = 2.0f * (S[0][0]-S[1][1]), ch2 = ch*ch;
  //float ch = 2.f * (S[0]-S[4]), ch2 = ch*ch;
  float sh = S[0][1], sh2 = sh*sh;
  //float sh = S[3], sh2 = sh*sh;
-
+ test.x = ch;
+ test.y = sh;
  bool flag = ( GAMMA * sh2 < ch2 );
 
- float w = inversesqrt( ch2 + sh2 );
+ float w = 1.0f/sqrt( ch2 + sh2 );
 //float w = rsqrtf( ch2 + sh2 );
 
  ch = flag ? w*ch : CSTAR; ch2 = ch*ch;
  sh = flag ? w*sh : SSTAR; sh2 = sh*sh;
+
  // build rotation matrix Q
- float scale = 1.f / (ch2 + sh2);
- float a = (ch2-sh2) * scale;
+ float scale = 1.0f / (ch2 + sh2);
+float a = (ch2-sh2) * scale;
  float b = (2.f*sh*ch) * scale;
  float a2 = a*a, b2 = b*b, ab = a*b;
 
  // Use what we know about Q to simplify S = Q' * S * Q
  // and the re-arranging step.
- float s0 = a2*S[0][0] + 2*ab*S[1][0] + b2*S[1][1];
+ float s0 = a2*S[0][0] + 2.0f*ab*S[1][0] + b2*S[1][1];
  //float s0 = a2*S[0] + 2*ab*S[1] + b2*S[4];
  float s2 = a*S[2][0] + b*S[2][1];
  //float s2 = a*S[2] + b*S[5];
  float s3 = (a2-b2)*S[1][0] + ab*(S[1][1]-S[0][0]);
  //float s3 = (a2-b2)*S[1] + ab*(S[4]-S[0]);
- float s4 = b2*S[0][0] - 2*ab*S[1][0] + a2*S[1][1];
+ float s4 = b2*S[0][0] - 2.0f*ab*S[1][0] + a2*S[1][1];
   //float s4 = b2*S[0] - 2*ab*S[1] + a2*S[4];
  float s5 = a*S[1][2] - b*S[0][2];
  //float s5 = a*S[7] - b*S[6];
@@ -138,47 +141,54 @@ void jacobiConjugation( int x, int y, int z, inout mat3 S, inout quat qV )
  S = mat3( s4, s5, s3,
  s5, s8, s2,
  s3, s2, s0 );
-
- vec3 tmp=vec3( sh * qV.data[1], sh*qV.data[2], sh*qV.data[3] );
+ vec3 tmp=vec3( sh * qV.y, sh*qV.z, sh*qV.w );
  // vec3 tmp( sh*qV.x, sh*qV.y, sh*qV.z );
- sh *= qV.data[0];
+ sh *= qV.x;
  //sh *= qV.w;
 
  // original
- multUpScalar(qV,ch);
+qV*=ch;
  //qV *= ch;
 
- qV.data[z+1] += sh;
- qV.data[0] -=tmp[z];
+ qV[z+1] += sh;
+ qV.x -=tmp[z];
  //qV.w -= tmp[z];
- qV.data[x+1] += tmp[y];
- qV.data[y+1] -= tmp[x];
-//qV.data[0]=1; qV.data[1]=0; qV.data[2]=0; qV.data[3]=0;
+ qV[x+1] += tmp[y];
+ qV[y+1] -= tmp[x];
+//qV[0]=1; qV[1]=0; qV[2]=0; qV[3]=0;
 }
 
-void jacobiEigenanalysis(inout mat3 S,inout quat qV )
+void jacobiEigenanalysis(inout mat3 S,inout vec4 qV )
 {
- qV.data[0]=1; qV.data[1]=0; qV.data[2]=0; qV.data[3]=0;// = quat( 1,0,0,0 );
-
- jacobiConjugation( 0, 1, 2, S, qV );
- jacobiConjugation( 1, 2, 0, S, qV );
- jacobiConjugation( 2, 0, 1, S, qV );
-
- jacobiConjugation( 0, 1, 2, S, qV );
- jacobiConjugation( 1, 2, 0, S, qV );
- jacobiConjugation( 2, 0, 1, S, qV );
-
- jacobiConjugation( 0, 1, 2, S, qV );
- jacobiConjugation( 1, 2, 0, S, qV );
- jacobiConjugation( 2, 0, 1, S, qV );
-
- jacobiConjugation( 0, 1, 2, S, qV );
- jacobiConjugation( 1, 2, 0, S, qV );
- jacobiConjugation( 2, 0, 1, S, qV );
+ qV[0]=1.0f; qV[1]=0.0f; qV[2]=0.0f; qV[3]=0.0f;// = quat( 1,0,0,0 );
+vec3 tmp;
+ jacobiConjugation( 0, 1, 2, S, qV ,tmp);
+ jacobiConjugation( 1, 2, 0, S, qV ,tmp);
+ jacobiConjugation( 2, 0, 1, S, qV ,tmp);
 
 
+ jacobiConjugation( 0, 1, 2, S, qV ,tmp);
 
- //qV.data[0]=1; qV.data[1]=0; qV.data[2]=0; qV.data[3]=0;// = quat( 1,0,0,0 );
+ qV.x = tmp.x;
+ qV.y =tmp.y;
+ qV.z = 0.0f;
+ qV.w =0.0f;
+/*
+ jacobiConjugation( 1, 2, 0, S, qV,tmp );
+ jacobiConjugation( 2, 0, 1, S, qV ,tmp);
+
+ jacobiConjugation( 0, 1, 2, S, qV ,tmp);
+ jacobiConjugation( 1, 2, 0, S, qV,tmp );
+ jacobiConjugation( 2, 0, 1, S, qV,tmp );
+
+ jacobiConjugation( 0, 1, 2, S, qV ,tmp);
+ jacobiConjugation( 1, 2, 0, S, qV ,tmp);
+ jacobiConjugation( 2, 0, 1, S, qV,tmp );
+
+*/
+
+
+ //qV[0]=1; qV[1]=0; qV[2]=0; qV[3]=0;// = quat( 1,0,0,0 );
 }
 
 /*
@@ -245,23 +255,23 @@ void sortSingularValues(inout mat3 B,inout mat3 V )
 }
 
 
-void QRGivensQuaternion( float a1, float a2,inout float ch,inout float sh )
+ void QRGivensQuaternion( float a1, float a2,inout float ch,inout float sh )
 {
-   // a1 = pivot point on diagonal
-   // a2 = lower triangular entry we want to annihilate
+    // a1 = pivot point on diagonal
+    // a2 = lower triangular entry we want to annihilate
 
-   float rho = sqrt( a1*a1 + a2*a2 );
-   //float rho = sqrtf( a1*a1 + a2*a2 );
+    float rho = sqrt( a1*a1 + a2*a2 );
+    //float rho = sqrtf( a1*a1 + a2*a2 );
 
-   sh = rho > EPSILON ? a2 : 0;
-   ch = abs(a1) + max( rho, EPSILON );
-   //ch = fabsf(a1) + fmaxf( rho, EPSILON );
-   bool b = a1 < 0;
-   condSwap( b, sh, ch );
-   float w = inversesqrt( ch*ch + sh*sh );
-   //float w = rsqrtf( ch*ch + sh*sh );
-   ch *= w;
-   sh *= w;
+    sh = rho > EPSILON ? a2 : 0;
+    ch = abs(a1) + max( rho, EPSILON );
+    //ch = fabsf(a1) + fmaxf( rho, EPSILON );
+    bool b = a1 < 0;
+    condSwap( b, sh, ch );
+    float w = inversesqrt( ch*ch + sh*sh );
+    //float w = rsqrtf( ch*ch + sh*sh );
+    ch *= w;
+    sh *= w;
 }
 
 
@@ -274,7 +284,7 @@ void QRGivensQuaternion( float a1, float a2,inout float ch,inout float sh )
 
      // QR decomposition of 3x3 matrices using Givens rotations to
      // eliminate elements B21, B31, B32
-     quat qQ; // cumulative rotation
+     vec4 qQ; // cumulative rotation
      mat3 U;
      float ch, sh, s0, s1;
 
@@ -290,14 +300,14 @@ void QRGivensQuaternion( float a1, float a2,inout float ch,inout float sh )
      R= transpose(U)*R;
      //R = mat3::multiplyAtB( U, R );
 
-     qQ.data[0]=1; qQ.data[1]=0; qQ.data[2]=0; qQ.data[3]=0;
+     qQ[0]=1.0; qQ[1]=0.0; qQ[2]=0.0; qQ[3]=0.0;
 
      // update cumulative rotation
-     float q0 = ch*qQ.data[0]-sh*qQ.data[3];
-     float q1 = ch*qQ.data[1]+sh*qQ.data[2];
-     float q2 = ch*qQ.data[2]-sh*qQ.data[1];
-     float q3 = sh*qQ.data[0]+ch*qQ.data[3];
-     qQ.data[0]=q0; qQ.data[1]=q1; qQ.data[2]=q2; qQ.data[3]=q3;
+     float q0 = ch*qQ[0]-sh*qQ[3];
+     float q1 = ch*qQ[1]+sh*qQ[2];
+     float q2 = ch*qQ[2]-sh*qQ[1];
+     float q3 = sh*qQ[0]+ch*qQ[3];
+     qQ[0]=q0; qQ[1]=q1; qQ[2]=q2; qQ[3]=q3;
      //qQ = quat( ch*qQ.w-sh*qQ.z, ch*qQ.x+sh*qQ.y, ch*qQ.y-sh*qQ.x, sh*qQ.w+ch*qQ.z );
 
      // second givens rotation
@@ -314,11 +324,11 @@ void QRGivensQuaternion( float a1, float a2,inout float ch,inout float sh )
      //R = mat3::multiplyAtB( U, R );
 
      // update cumulative rotation
-     q0 = ch*qQ.data[0]+sh*qQ.data[2];
-     q1 = ch*qQ.data[1]+sh*qQ.data[3];
-     q2 = ch*qQ.data[2]-sh*qQ.data[0];
-     q3 = ch*qQ.data[3]-sh*qQ.data[1];
-     qQ.data[0]=q0; qQ.data[1]=q1; qQ.data[2]=q2; qQ.data[3]=q3;
+     q0 = ch*qQ[0]+sh*qQ[2];
+     q1 = ch*qQ[1]+sh*qQ[3];
+     q2 = ch*qQ[2]-sh*qQ[0];
+     q3 = ch*qQ[3]-sh*qQ[1];
+     qQ[0]=q0; qQ[1]=q1; qQ[2]=q2; qQ[3]=q3;
      //qQ = quat( ch*qQ.w+sh*qQ.y, ch*qQ.x+sh*qQ.z, ch*qQ.y-sh*qQ.w, ch*qQ.z-sh*qQ.x );
 
      // third Givens rotation
@@ -334,41 +344,47 @@ void QRGivensQuaternion( float a1, float a2,inout float ch,inout float sh )
      //R = mat3::multiplyAtB( U, R );
 
      // update cumulative rotation
-     q0 =  ch*qQ.data[0]-sh*qQ.data[1];
-     q1 = sh*qQ.data[0]+ch*qQ.data[1];
-     q2 = ch*qQ.data[2]+sh*qQ.data[3];
-     q3 = ch*qQ.data[3]-sh*qQ.data[2];
-     qQ.data[0]=q0; qQ.data[1]=q1; qQ.data[2]=q2; qQ.data[3]=q3;
+     q0 =  ch*qQ[0]-sh*qQ[1];
+     q1 = sh*qQ[0]+ch*qQ[1];
+     q2 = ch*qQ[2]+sh*qQ[3];
+     q3 = ch*qQ[3]-sh*qQ[2];
+     qQ[0]=q0; qQ[1]=q1; qQ[2]=q2; qQ[3]=q3;
      //qQ = quat( ch*qQ.w-sh*qQ.x, sh*qQ.w+ch*qQ.x, ch*qQ.y+sh*qQ.z, ch*qQ.z-sh*qQ.y );
-    qQ.data[0]=0.0; qQ.data[1]=0.707107; qQ.data[2]=0.0; qQ.data[3]=0.707107;
+    //qQ[0] =0.0 ;  qQ[1] = 1/sqrt(2);  qQ[2] = 0.0;  qQ[3] = 1/(sqrt(2));
      // qQ now contains final rotation for Q
      fromQuat(qQ,Q);
 
-     //Q = mat3(0.0,0.0,1.0,0.0,-1.0,0.0,1.0,0.0,0.0);
+
+
  }
 
- void computeSVD( const mat3 A,inout mat3 W,inout mat3 S,inout mat3 V )
- {
-     // normal equations matrix
-     mat3 AT = transpose(A);
-     mat3 ATA = AT * A ;
- /// 2. Symmetric Eigenanlysis
-     quat qV;
-     jacobiEigenanalysis( ATA, qV );
-     fromQuat(qV,V);
-     //V = mat3::fromQuat(qV);
-
-     mat3 B = A*V;
- /// 3. Sorting the singular values (find V)
-     sortSingularValues( B, V );
-
- /// 4. QR decomposition
-     QRDecomposition( B, W, S );
+void computeSVD( const mat3 A,inout mat3 W,inout mat3 S,inout mat3 V )
+{
+    // normal equations matrix
+    mat3 AT = transpose(A);
+    mat3 ATA = AT * A ;
+/// 2. Symmetric Eigenanlysis
+    vec4 qV;
+    jacobiEigenanalysis( ATA, qV );
 
 
-     S =mat3(1.0f);
- }
 
+    V[0][0] = qV.x;
+    V[0][1] = qV.y;
+    V[0][2] = qV.z;
+    V[1][0] = qV.w;
+//V= ATA;
+/*
+    fromQuat(qV,V);
+    //V = mat3::fromQuat(qV);
+    mat3 B =  A*V;
+/// 3. Sorting the singular values (find V)
+    sortSingularValues( B, V );
+/// 4. QR decomposition
+    QRDecomposition( B, W, S );
+
+    */
+}
 
 
 void computePD( const mat3 A, inout mat3 R, inout mat3 P )
@@ -397,54 +413,74 @@ void main(void){
     uint pI = gl_GlobalInvocationID.x;
     // UPDATE DEFORMATION GRADIENT
     mat4 FEp4 = mat4(pFE[pI]);
-    mat3 FEp = mat3(FEp4[0][0],FEp4[0][1],FEp4[0][2],
-            FEp4[1][0],FEp4[1][1],FEp4[1][2],
-            FEp4[2][0],FEp4[2][1],FEp4[2][2]);
+    mat3 FEp = mat3(FEp4);
     mat4 FPp4 = mat4(pFP[pI]);
     mat3 FPp = mat3(FPp4[0][0],FPp4[0][1],FPp4[0][2],
             FPp4[1][0],FPp4[1][1],FPp4[1][2],
             FPp4[2][0],FPp4[2][1],FPp4[2][2]);
 
     mat4 dvp4 = mat4(deltapvn[pI]);
-    mat3 dvp =mat3( dvp4[0][0],dvp4[0][1],dvp4[0][2],
-                    dvp4[1][0],dvp4[1][1],dvp4[1][2],
-                    dvp4[2][0],dvp4[2][1],dvp4[2][2]);
+    mat3 dvp =mat3( dvp4);
 
-    dvp =mat3(0.0f);
-    mat3 FEpn = (mat3(1.0f) + dt * dvp)* FEp;
+    //dvp =mat3(0.0f);
+    mat3 FEpn = (mat3(1.0f) + dt * dvp)*FEp;
     mat3 Fpn = (mat3(1.0f) + dt * dvp)* (FEp*FPp);
     mat3 FPpn = FPp;
+    FEpn =mat3(0.999998, -1.77191e-007, 0.0,
+                   1.77191e-007, 0.999998, -1.77192e-007 ,
+                   -2.38418e-007, 1.77191e-007, 1.0
 
-    mat3 W,S,V;
+                   );
+
+    mat3 W =mat3(0.0f);
+    mat3 S =mat3(0.0f);
+    mat3 V =mat3(0.0f);
     computeSVD(FEpn,W,S,V);
-
+/*
     clamp(S[0][0], 1.0f-critComp,1.0f+critStretch);
     clamp(S[1][1], 1.0f-critComp,1.0f+critStretch);
     clamp(S[2][2], 1.0f-critComp,1.0f+critStretch);
+*/
     FEpn = W*S *transpose(V);
-
+/*
     mat3 S_I = S;
+
     S_I[0][0]=(S_I[0][0]<0.0f)?1.0f: 1.0f/S_I[0][0];
     S_I[1][1]= (S_I[1][1]<0.0f)?1.0f: 1.0f/S_I[1][1];
     S_I[2][2]= (S_I[2][2]<0.0f)?1.0f: 1.0f/S_I[2][2];
     FPpn =V   * S_I * transpose(W) *Fpn;
+    */
+    FPpn =V;
 /*
-    pFE[gl_GlobalInvocationID.x][0].xyz =vec3(0.0f,0.0f,0.0f);
+    pFE[gl_GlobalInvocationID.x][0].xyz =vec3(0.0f,0.0f,1.0f);
     pFE[gl_GlobalInvocationID.x][1].xyz =vec3(0.0f,1.0f,0.0f);
     pFE[gl_GlobalInvocationID.x][2].xyz =vec3(1.0f,0.0f,0.0f);
-*/
 
-    pFE[gl_GlobalInvocationID.x] = mat4( FEpn[0][0],FEpn[0][1],FEpn[0][2],0.0f,
-                                         FEpn[1][0],FEpn[1][1],FEpn[1][2],0.0f,
-                                         FEpn[2][0],FEpn[2][1],FEpn[2][2],0.0f,
-                                         0.0f,0.0f,0.0f,0.0);
+*/
+/*
+    pFE[gl_GlobalInvocationID.x] = mat4(1.0,0.0,0.0,0.0f,
+                                        0.0,1.0,0.0,0.0f,
+                                        0.0,0.0,1.0,0.0f,
+                                        0.0f,0.0f,0.0f,0.0f);
+
+
+*/
+    pFE[gl_GlobalInvocationID.x] = mat4( FEpn[0][0],FEpn[1][0],FEpn[2][0],0.0f,
+                                         FEpn[0][1],FEpn[1][1],FEpn[2][1],0.0f,
+                                         FEpn[0][2],FEpn[1][2],FEpn[2][2],0.0f,
+                                         0.0f,0.0f,0.0f,0.0f);
+
+
+    pFP[gl_GlobalInvocationID.x] = mat4( FPpn[0][0],FPpn[1][0],FPpn[2][0],0.0f,
+                                         FPpn[0][1],FPpn[1][1],FPpn[2][1],0.0f,
+                                         FPpn[0][2],FPpn[1][2],FPpn[2][2],0.0f,
+                                         0.0f,0.0f,0.0f,0.0f);
 
 /*
     pFP[gl_GlobalInvocationID.x] = mat4( FPpn[0][0],FPpn[0][1],FPpn[0][2],0.0f,
                                          FPpn[1][0],FPpn[1][1],FPpn[1][2],0.0f,
                                          FPpn[2][0],FPpn[2][1],FPpn[2][2],0.0f,
                                          0.0f,0.0f,0.0f,1.0);
-
 
     pFE[gl_GlobalInvocationID.x][0].xyz =column(0,FEpn);
     pFE[gl_GlobalInvocationID.x][1].xyz =column(1,FEpn);

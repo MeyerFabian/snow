@@ -141,6 +141,24 @@ struct Matrix3f{
 
     void print() const;
 };
+struct Matrix4d{
+    double m[4][4];
+    Matrix4d() =default;
+    Matrix4d(double f){
+        for(int j = 0; j< 4; j++){
+            for(int i = 0; i<4;i++){
+                if(j==i){
+                    this->m[j][i] = f;
+                }
+                else{
+                    this->m[j][i] = 0.0f;
+                }
+            }
+        }
+    }
+    void print() const ;
+};
+
 struct Matrix4f{
 
     float m[4][4];
