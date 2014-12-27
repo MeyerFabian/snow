@@ -105,7 +105,7 @@ void ExplicitTimeUpdate::update(double dt){
     vUp.setDt(dt);
     glDispatchComputeGroupSizeARB(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-    //grid->debug();
+    grid->debug();
 
 
     pVU.plugTechnique();
@@ -114,16 +114,16 @@ void ExplicitTimeUpdate::update(double dt){
     pVU.setGridSpacing(grid->h);
     glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier ( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
-std::cout<<"Vor FEp Update"<<std::endl;
- particlesystem->debug();
+//std::cout<<"Vor FEp Update"<<std::endl;
+ //particlesystem->debug();
     pU.plugTechnique();
     pU.setDt(dt);   
     pU.setCritComp();
     pU.setCritStretch();
     glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-    std::cout<<"Nach FEp Update"<<std::endl;
- particlesystem->debug();
+ //   std::cout<<"Nach FEp Update"<<std::endl;
+ //particlesystem->debug();
 
 /*
  * obsolete can be done in previous compute shader

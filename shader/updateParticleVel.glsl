@@ -2,6 +2,7 @@
 #extension GL_ARB_compute_variable_group_size :require
 #define alpha 0.95
 #extension  NV_shader_atomic_float:require
+#extension GL_ARB_gpu_shader_fp64 : require
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;
@@ -157,12 +158,23 @@ void main(void){
         atomicAdd(pvn[gl_GlobalInvocationID.x].z,vpn.z);
         //pvn[gl_GlobalInvocationID.x].xyz +=vin*wip;
         //d_vpn+1 = sum_i [vin+1 * d_wipn^(T)]
- /*
-        deltapvn[gl_GlobalInvocationID.x] += mat4( vin.x * gwip.x,vin.x * gwip.y, vin.x *gwip.z,0.0f,
+/*
+        atomicAdd(deltapvn[gl_GlobalInvocationID.x][0][0],vin.x * gwip.x);
+        atomicAdd(deltapvn[gl_GlobalInvocationID.x][0][1],vin.x * gwip.y);
+        atomicAdd(deltapvn[gl_GlobalInvocationID.x][0][2],vin.x * gwip.z);
+        atomicAdd(deltapvn[gl_GlobalInvocationID.x][1][0],vin.y * gwip.x);
+        atomicAdd(deltapvn[gl_GlobalInvocationID.x][1][1],vin.y * gwip.y);
+        atomicAdd(deltapvn[gl_GlobalInvocationID.x][1][2],vin.y * gwip.z);
+        atomicAdd(deltapvn[gl_GlobalInvocationID.x][2][0],vin.z * gwip.x);
+        atomicAdd(deltapvn[gl_GlobalInvocationID.x][2][1],vin.z * gwip.y);
+        atomicAdd(deltapvn[gl_GlobalInvocationID.x][2][2],vin.z * gwip.z);
+        */
+        /*
+        deltapvn[gl_GlobalInvocationID.x][0][0] += mat4( vin.x * gwip.x,vin.x * gwip.y, vin.x *gwip.z,0.0f,
                                                    vin.y * gwip.x,vin.y * gwip.y, vin.y *gwip.z,0.0f,
                                                    vin.z * gwip.x,vin.z * gwip.y, vin.z *gwip.z,0.0f,
                                                    0.0f,0.0f,0.0f,0.0f);
-
+/*
         deltapvn[gl_GlobalInvocationID.x] += mat4( 0.0f,0.0f, 0.0f,0.0f,
                                                    0.0f,0.0f, 0.0f,0.0f,
                                                    0.0f,0.0f, 0.0f,0.0f,

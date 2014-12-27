@@ -1,6 +1,7 @@
 #version 440
 #extension GL_ARB_compute_variable_group_size :require
 #define alpha 0.95
+#extension GL_ARB_gpu_shader_fp64 : require
 uniform float dt;
 uniform float critComp;
 uniform float critStretch;
@@ -41,7 +42,7 @@ void multUpScalar ( inout vec4 q, const float s )
 //MATRIX MATH
 vec3 column( int i ,const mat3 data) {
     //int j = 3*i;
-    return vec3( data[0][i], data[1][i], data[2][i]);
+    return vec3( data[i][0], data[i][1], data[i][2]);
     // return vec3( data[j], data[j+1], data[j+2] );
 }
 
@@ -64,13 +65,13 @@ void fromQuat( const vec4 q, inout mat3 M )
     float qwy = q[0]*q[2];
     float qwz = q[0]*q[3];
     M[0][0] = 1.f - 2.f*(qyy+qzz);
-    M[1][0] = 2.f * (qxy+qwz);
-    M[2][0] = 2.f * (qxz-qwy);
-    M[0][1] = 2.f * (qxy-qwz);
+    M[0][1] = 2.f * (qxy+qwz);
+    M[0][2] = 2.f * (qxz-qwy);
+    M[1][0] = 2.f * (qxy-qwz);
     M[1][1] = 1.f - 2.f*(qxx+qzz);
-    M[2][1] = 2.f * (qyz+qwx);
-    M[0][2] = 2.f * (qxz+qwy);
-    M[1][2] = 2.f * (qyz-qwx);
+    M[1][2] = 2.f * (qyz+qwx);
+    M[2][0] = 2.f * (qxz+qwy);
+    M[2][1] = 2.f * (qyz-qwx);
     M[2][2] = 1.f - 2.f*(qxx+qyy);
 }
 /*
@@ -103,11 +104,11 @@ void jacobiConjugation( int x, int y, int z, inout mat3 S, inout vec4 qV ,inout 
 {
 
  // eliminate off-diagonal entries Spq, Sqp
- float ch = 2.0f * (S[0][0]-S[1][1]), ch2 = ch*ch;
+ float ch = 2.0f * ((S[0][0])-(S[1][1])), ch2 = ch*ch;
  //float ch = 2.f * (S[0]-S[4]), ch2 = ch*ch;
  float sh = S[0][1], sh2 = sh*sh;
  //float sh = S[3], sh2 = sh*sh;
- test.x = ch;
+ test.x = S[0][0]-S[1][1];
  test.y = sh;
  bool flag = ( GAMMA * sh2 < ch2 );
 
@@ -168,12 +169,13 @@ vec3 tmp;
 
 
  jacobiConjugation( 0, 1, 2, S, qV ,tmp);
-
+/*
  qV.x = tmp.x;
  qV.y =tmp.y;
  qV.z = 0.0f;
  qV.w =0.0f;
-/*
+*/
+
  jacobiConjugation( 1, 2, 0, S, qV,tmp );
  jacobiConjugation( 2, 0, 1, S, qV ,tmp);
 
@@ -185,7 +187,7 @@ vec3 tmp;
  jacobiConjugation( 1, 2, 0, S, qV ,tmp);
  jacobiConjugation( 2, 0, 1, S, qV,tmp );
 
-*/
+
 
 
  //qV[0]=1; qV[1]=0; qV[2]=0; qV[3]=0;// = quat( 1,0,0,0 );
@@ -252,6 +254,9 @@ void sortSingularValues(inout mat3 B,inout mat3 V )
     B = mat3( b1,b2,b3);
     V = mat3( v1,v2,v3);
 
+
+
+
 }
 
 
@@ -292,11 +297,11 @@ void sortSingularValues(inout mat3 B,inout mat3 V )
      QRGivensQuaternion( R[0][0], R[1][0], ch, sh );
      //QRGivensQuaternion( R[0], R[1], ch, sh );
 
-     s0 = 1-2*sh*sh;
-     s1 = 2*sh*ch;
-     U = mat3(  s0, s1, 0,
-               -s1, s0, 0,
-                 0,  0, 1 );
+     s0 = 1.0f-2.0f*sh*sh;
+     s1 = 2.0f*sh*ch;
+     U = mat3(  s0, s1, 0.0,
+               -s1, s0, 0.0,
+                 0,  0, 1.0 );
      R= transpose(U)*R;
      //R = mat3::multiplyAtB( U, R );
 
@@ -314,11 +319,11 @@ void sortSingularValues(inout mat3 B,inout mat3 V )
      QRGivensQuaternion( R[0][0], R[2][0], ch, sh );
      //QRGivensQuaternion( R[0], R[2], ch, sh );
 
-     s0 = 1-2*sh*sh;
-     s1 = 2*sh*ch;
-     U = mat3(  s0, 0, s1,
-                 0, 1,  0,
-               -s1, 0, s0 );
+     s0 = 1.0f-2.0f*sh*sh;
+     s1 = 2.0f*sh*ch;
+     U = mat3(  s0, 0.0f, s1,
+                 0.0f, 1.0f,  0.0f,
+               -s1, 0.0f, s0 );
 
      R= transpose(U)*R;
      //R = mat3::multiplyAtB( U, R );
@@ -335,11 +340,11 @@ void sortSingularValues(inout mat3 B,inout mat3 V )
      QRGivensQuaternion( R[1][1], R[2][1], ch, sh );
      //QRGivensQuaternion( R[4], R[5], ch, sh );
 
-     s0 = 1-2*sh*sh;
-     s1 = 2*sh*ch;
-     U = mat3( 1,   0,  0,
-               0,  s0, s1,
-               0, -s1, s0 );
+     s0 = 1.0f-2.0f*sh*sh;
+     s1 = 2.0f*sh*ch;
+     U = mat3( 1.0f,   0.0f,  0.0f,
+               0.0f,  s0, s1,
+               0.0f, -s1, s0 );
      R= transpose(U)*R;
      //R = mat3::multiplyAtB( U, R );
 
@@ -368,22 +373,24 @@ void computeSVD( const mat3 A,inout mat3 W,inout mat3 S,inout mat3 V )
     jacobiEigenanalysis( ATA, qV );
 
 
-
+/*
     V[0][0] = qV.x;
     V[0][1] = qV.y;
     V[0][2] = qV.z;
     V[1][0] = qV.w;
+*/
 //V= ATA;
-/*
+
     fromQuat(qV,V);
     //V = mat3::fromQuat(qV);
-    mat3 B =  A*V;
+    mat3 B =A*V;
 /// 3. Sorting the singular values (find V)
     sortSingularValues( B, V );
+    //V=B;
 /// 4. QR decomposition
     QRDecomposition( B, W, S );
 
-    */
+
 }
 
 
@@ -426,31 +433,34 @@ void main(void){
     mat3 FEpn = (mat3(1.0f) + dt * dvp)*FEp;
     mat3 Fpn = (mat3(1.0f) + dt * dvp)* (FEp*FPp);
     mat3 FPpn = FPp;
-    FEpn =mat3(0.999998, -1.77191e-007, 0.0,
-                   1.77191e-007, 0.999998, -1.77192e-007 ,
-                   -2.38418e-007, 1.77191e-007, 1.0
 
-                   );
-
+    //FEpn= mat3(1.0f);
+    //FEpn= mat3(2.0f,1.0f,1.0f,0.0f,3.0f,1.0f,2.0f,1.4f,2.4f);
     mat3 W =mat3(0.0f);
     mat3 S =mat3(0.0f);
     mat3 V =mat3(0.0f);
     computeSVD(FEpn,W,S,V);
-/*
+
     clamp(S[0][0], 1.0f-critComp,1.0f+critStretch);
     clamp(S[1][1], 1.0f-critComp,1.0f+critStretch);
     clamp(S[2][2], 1.0f-critComp,1.0f+critStretch);
-*/
+
     FEpn = W*S *transpose(V);
-/*
+
+    for(int i=0; i<3; i++){
+        for(int j=0;j<3;j++){
+            FEpn[i][j] =round(100000.0f *FEpn[i][j])/100000.0f ;
+        }
+    }
+
+
     mat3 S_I = S;
 
-    S_I[0][0]=(S_I[0][0]<0.0f)?1.0f: 1.0f/S_I[0][0];
-    S_I[1][1]= (S_I[1][1]<0.0f)?1.0f: 1.0f/S_I[1][1];
-    S_I[2][2]= (S_I[2][2]<0.0f)?1.0f: 1.0f/S_I[2][2];
+    S_I[0][0]= 1.0f/S_I[0][0];
+    S_I[1][1]= 1.0f/S_I[1][1];
+    S_I[2][2]= 1.0f/S_I[2][2];
     FPpn =V   * S_I * transpose(W) *Fpn;
-    */
-    FPpn =V;
+
 /*
     pFE[gl_GlobalInvocationID.x][0].xyz =vec3(0.0f,0.0f,1.0f);
     pFE[gl_GlobalInvocationID.x][1].xyz =vec3(0.0f,1.0f,0.0f);

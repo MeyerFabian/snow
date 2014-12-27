@@ -1,6 +1,7 @@
 #version 440
 #extension GL_ARB_compute_variable_group_size :require
 #extension  NV_shader_atomic_float:require
+#extension GL_ARB_gpu_shader_fp64 : require
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;
@@ -39,19 +40,20 @@ layout(std140, binding = 6) buffer gForce{
 };
 
 
+
 //QUATERNION MATH
 struct quat{
     float data[4];
 };
 
-void multUpScalar ( inout quat q, const float s )
-{ q.data[0] *= s; q.data[1] *= s; q.data[2] *= s; q.data[3] *= s;}
+void multUpScalar ( inout vec4 q, const float s )
+{ q[0] *= s; q[1] *= s; q[2] *= s; q[3] *= s;}
 //quat operator * ( float f ) const { return quat( w*f, x*f, y*f, z*f ); }
 
 //MATRIX MATH
 vec3 column( int i ,const mat3 data) {
     //int j = 3*i;
-    return vec3( data[0][i], data[1][i], data[2][i]);
+    return vec3( data[i][0], data[i][1], data[i][2]);
     // return vec3( data[j], data[j+1], data[j+2] );
 }
 
@@ -62,25 +64,25 @@ vec3 column( int i ,const mat3 data) {
 #define CSTAR 0.923879532 // cos(pi/8)
 #define SSTAR 0.3826834323 // sin(p/8)
 #define EPSILON 1e-6
-void fromQuat( const quat q, inout mat3 M )
+void fromQuat( const vec4 q, inout mat3 M )
 {
-    float qxx = q.data[1]*q.data[1];
-    float qyy = q.data[2]*q.data[2];
-    float qzz = q.data[3]*q.data[3];
-    float qxz = q.data[1]*q.data[3];
-    float qxy = q.data[1]*q.data[2];
-    float qyz = q.data[2]*q.data[3];
-    float qwx = q.data[0]*q.data[1];
-    float qwy = q.data[0]*q.data[2];
-    float qwz = q.data[0]*q.data[3];
+    float qxx = q[1]*q[1];
+    float qyy = q[2]*q[2];
+    float qzz = q[3]*q[3];
+    float qxz = q[1]*q[3];
+    float qxy = q[1]*q[2];
+    float qyz = q[2]*q[3];
+    float qwx = q[0]*q[1];
+    float qwy = q[0]*q[2];
+    float qwz = q[0]*q[3];
     M[0][0] = 1.f - 2.f*(qyy+qzz);
-    M[1][0] = 2.f * (qxy+qwz);
-    M[2][0] = 2.f * (qxz-qwy);
-    M[0][1] = 2.f * (qxy-qwz);
+    M[0][1] = 2.f * (qxy+qwz);
+    M[0][2] = 2.f * (qxz-qwy);
+    M[1][0] = 2.f * (qxy-qwz);
     M[1][1] = 1.f - 2.f*(qxx+qzz);
-    M[2][1] = 2.f * (qyz+qwx);
-    M[0][2] = 2.f * (qxz+qwy);
-    M[1][2] = 2.f * (qyz-qwx);
+    M[1][2] = 2.f * (qyz+qwx);
+    M[2][0] = 2.f * (qxz+qwy);
+    M[2][1] = 2.f * (qyz-qwx);
     M[2][2] = 1.f - 2.f*(qxx+qyy);
 }
 /*
@@ -109,37 +111,39 @@ static mat3 fromQuat( const quat &q )
 }
 */
 
-void jacobiConjugation( int x, int y, int z, inout mat3 S, inout quat qV )
+void jacobiConjugation( int x, int y, int z, inout mat3 S, inout vec4 qV ,inout vec3 test)
 {
 
  // eliminate off-diagonal entries Spq, Sqp
- float ch = 2.f * (S[0][0]-S[1][1]), ch2 = ch*ch;
+ float ch = 2.0f * ((S[0][0])-(S[1][1])), ch2 = ch*ch;
  //float ch = 2.f * (S[0]-S[4]), ch2 = ch*ch;
  float sh = S[0][1], sh2 = sh*sh;
  //float sh = S[3], sh2 = sh*sh;
-
+ test.x = S[0][0]-S[1][1];
+ test.y = sh;
  bool flag = ( GAMMA * sh2 < ch2 );
 
- float w = 1/sqrt( ch2 + sh2 );
+ float w = 1.0f/sqrt( ch2 + sh2 );
 //float w = rsqrtf( ch2 + sh2 );
 
  ch = flag ? w*ch : CSTAR; ch2 = ch*ch;
  sh = flag ? w*sh : SSTAR; sh2 = sh*sh;
+
  // build rotation matrix Q
- float scale = 1.f / (ch2 + sh2);
- float a = (ch2-sh2) * scale;
+ float scale = 1.0f / (ch2 + sh2);
+float a = (ch2-sh2) * scale;
  float b = (2.f*sh*ch) * scale;
  float a2 = a*a, b2 = b*b, ab = a*b;
 
  // Use what we know about Q to simplify S = Q' * S * Q
  // and the re-arranging step.
- float s0 = a2*S[0][0] + 2*ab*S[1][0] + b2*S[1][1];
+ float s0 = a2*S[0][0] + 2.0f*ab*S[1][0] + b2*S[1][1];
  //float s0 = a2*S[0] + 2*ab*S[1] + b2*S[4];
  float s2 = a*S[2][0] + b*S[2][1];
  //float s2 = a*S[2] + b*S[5];
  float s3 = (a2-b2)*S[1][0] + ab*(S[1][1]-S[0][0]);
  //float s3 = (a2-b2)*S[1] + ab*(S[4]-S[0]);
- float s4 = b2*S[0][0] - 2*ab*S[1][0] + a2*S[1][1];
+ float s4 = b2*S[0][0] - 2.0f*ab*S[1][0] + a2*S[1][1];
   //float s4 = b2*S[0] - 2*ab*S[1] + a2*S[4];
  float s5 = a*S[1][2] - b*S[0][2];
  //float s5 = a*S[7] - b*S[6];
@@ -149,47 +153,55 @@ void jacobiConjugation( int x, int y, int z, inout mat3 S, inout quat qV )
  S = mat3( s4, s5, s3,
  s5, s8, s2,
  s3, s2, s0 );
-
- vec3 tmp=vec3( sh * qV.data[1], sh*qV.data[2], sh*qV.data[3] );
+ vec3 tmp=vec3( sh * qV.y, sh*qV.z, sh*qV.w );
  // vec3 tmp( sh*qV.x, sh*qV.y, sh*qV.z );
- sh *= qV.data[0];
+ sh *= qV.x;
  //sh *= qV.w;
 
  // original
- multUpScalar(qV,ch);
+qV*=ch;
  //qV *= ch;
 
- qV.data[z+1] += sh;
- qV.data[0] -=tmp[z];
+ qV[z+1] += sh;
+ qV.x -=tmp[z];
  //qV.w -= tmp[z];
- qV.data[x+1] += tmp[y];
- qV.data[y+1] -= tmp[x];
-//qV.data[0]=1; qV.data[1]=0; qV.data[2]=0; qV.data[3]=0;
+ qV[x+1] += tmp[y];
+ qV[y+1] -= tmp[x];
+//qV[0]=1; qV[1]=0; qV[2]=0; qV[3]=0;
 }
 
-void jacobiEigenanalysis(inout mat3 S,inout quat qV )
+void jacobiEigenanalysis(inout mat3 S,inout vec4 qV )
 {
- qV.data[0]=1; qV.data[1]=0; qV.data[2]=0; qV.data[3]=0;// = quat( 1,0,0,0 );
-
- jacobiConjugation( 0, 1, 2, S, qV );
- jacobiConjugation( 1, 2, 0, S, qV );
- jacobiConjugation( 2, 0, 1, S, qV );
-
- jacobiConjugation( 0, 1, 2, S, qV );
- jacobiConjugation( 1, 2, 0, S, qV );
- jacobiConjugation( 2, 0, 1, S, qV );
-
- jacobiConjugation( 0, 1, 2, S, qV );
- jacobiConjugation( 1, 2, 0, S, qV );
- jacobiConjugation( 2, 0, 1, S, qV );
-
- jacobiConjugation( 0, 1, 2, S, qV );
- jacobiConjugation( 1, 2, 0, S, qV );
- jacobiConjugation( 2, 0, 1, S, qV );
+ qV[0]=1.0f; qV[1]=0.0f; qV[2]=0.0f; qV[3]=0.0f;// = quat( 1,0,0,0 );
+vec3 tmp;
+ jacobiConjugation( 0, 1, 2, S, qV ,tmp);
+ jacobiConjugation( 1, 2, 0, S, qV ,tmp);
+ jacobiConjugation( 2, 0, 1, S, qV ,tmp);
 
 
+ jacobiConjugation( 0, 1, 2, S, qV ,tmp);
+/*
+ qV.x = tmp.x;
+ qV.y =tmp.y;
+ qV.z = 0.0f;
+ qV.w =0.0f;
+*/
 
- //qV.data[0]=1; qV.data[1]=0; qV.data[2]=0; qV.data[3]=0;// = quat( 1,0,0,0 );
+ jacobiConjugation( 1, 2, 0, S, qV,tmp );
+ jacobiConjugation( 2, 0, 1, S, qV ,tmp);
+
+ jacobiConjugation( 0, 1, 2, S, qV ,tmp);
+ jacobiConjugation( 1, 2, 0, S, qV,tmp );
+ jacobiConjugation( 2, 0, 1, S, qV,tmp );
+
+ jacobiConjugation( 0, 1, 2, S, qV ,tmp);
+ jacobiConjugation( 1, 2, 0, S, qV ,tmp);
+ jacobiConjugation( 2, 0, 1, S, qV,tmp );
+
+
+
+
+ //qV[0]=1; qV[1]=0; qV[2]=0; qV[3]=0;// = quat( 1,0,0,0 );
 }
 
 /*
@@ -253,6 +265,9 @@ void sortSingularValues(inout mat3 B,inout mat3 V )
     B = mat3( b1,b2,b3);
     V = mat3( v1,v2,v3);
 
+
+
+
 }
 
 
@@ -285,7 +300,7 @@ void sortSingularValues(inout mat3 B,inout mat3 V )
 
      // QR decomposition of 3x3 matrices using Givens rotations to
      // eliminate elements B21, B31, B32
-     quat qQ; // cumulative rotation
+     vec4 qQ; // cumulative rotation
      mat3 U;
      float ch, sh, s0, s1;
 
@@ -293,65 +308,65 @@ void sortSingularValues(inout mat3 B,inout mat3 V )
      QRGivensQuaternion( R[0][0], R[1][0], ch, sh );
      //QRGivensQuaternion( R[0], R[1], ch, sh );
 
-     s0 = 1-2*sh*sh;
-     s1 = 2*sh*ch;
-     U = mat3(  s0, s1, 0,
-               -s1, s0, 0,
-                 0,  0, 1 );
+     s0 = 1.0f-2.0f*sh*sh;
+     s1 = 2.0f*sh*ch;
+     U = mat3(  s0, s1, 0.0,
+               -s1, s0, 0.0,
+                 0,  0, 1.0 );
      R= transpose(U)*R;
      //R = mat3::multiplyAtB( U, R );
 
-     qQ.data[0]=1; qQ.data[1]=0; qQ.data[2]=0; qQ.data[3]=0;
+     qQ[0]=1.0; qQ[1]=0.0; qQ[2]=0.0; qQ[3]=0.0;
 
      // update cumulative rotation
-     float q0 = ch*qQ.data[0]-sh*qQ.data[3];
-     float q1 = ch*qQ.data[1]+sh*qQ.data[2];
-     float q2 = ch*qQ.data[2]-sh*qQ.data[1];
-     float q3 = sh*qQ.data[0]+ch*qQ.data[3];
-     qQ.data[0]=q0; qQ.data[1]=q1; qQ.data[2]=q2; qQ.data[3]=q3;
+     float q0 = ch*qQ[0]-sh*qQ[3];
+     float q1 = ch*qQ[1]+sh*qQ[2];
+     float q2 = ch*qQ[2]-sh*qQ[1];
+     float q3 = sh*qQ[0]+ch*qQ[3];
+     qQ[0]=q0; qQ[1]=q1; qQ[2]=q2; qQ[3]=q3;
      //qQ = quat( ch*qQ.w-sh*qQ.z, ch*qQ.x+sh*qQ.y, ch*qQ.y-sh*qQ.x, sh*qQ.w+ch*qQ.z );
 
      // second givens rotation
      QRGivensQuaternion( R[0][0], R[2][0], ch, sh );
      //QRGivensQuaternion( R[0], R[2], ch, sh );
 
-     s0 = 1-2*sh*sh;
-     s1 = 2*sh*ch;
-     U = mat3(  s0, 0, s1,
-                 0, 1,  0,
-               -s1, 0, s0 );
+     s0 = 1.0f-2.0f*sh*sh;
+     s1 = 2.0f*sh*ch;
+     U = mat3(  s0, 0.0f, s1,
+                 0.0f, 1.0f,  0.0f,
+               -s1, 0.0f, s0 );
 
      R= transpose(U)*R;
      //R = mat3::multiplyAtB( U, R );
 
      // update cumulative rotation
-     q0 = ch*qQ.data[0]+sh*qQ.data[2];
-     q1 = ch*qQ.data[1]+sh*qQ.data[3];
-     q2 = ch*qQ.data[2]-sh*qQ.data[0];
-     q3 = ch*qQ.data[3]-sh*qQ.data[1];
-     qQ.data[0]=q0; qQ.data[1]=q1; qQ.data[2]=q2; qQ.data[3]=q3;
+     q0 = ch*qQ[0]+sh*qQ[2];
+     q1 = ch*qQ[1]+sh*qQ[3];
+     q2 = ch*qQ[2]-sh*qQ[0];
+     q3 = ch*qQ[3]-sh*qQ[1];
+     qQ[0]=q0; qQ[1]=q1; qQ[2]=q2; qQ[3]=q3;
      //qQ = quat( ch*qQ.w+sh*qQ.y, ch*qQ.x+sh*qQ.z, ch*qQ.y-sh*qQ.w, ch*qQ.z-sh*qQ.x );
 
      // third Givens rotation
      QRGivensQuaternion( R[1][1], R[2][1], ch, sh );
      //QRGivensQuaternion( R[4], R[5], ch, sh );
 
-     s0 = 1-2*sh*sh;
-     s1 = 2*sh*ch;
-     U = mat3( 1,   0,  0,
-               0,  s0, s1,
-               0, -s1, s0 );
+     s0 = 1.0f-2.0f*sh*sh;
+     s1 = 2.0f*sh*ch;
+     U = mat3( 1.0f,   0.0f,  0.0f,
+               0.0f,  s0, s1,
+               0.0f, -s1, s0 );
      R= transpose(U)*R;
      //R = mat3::multiplyAtB( U, R );
 
      // update cumulative rotation
-     q0 =  ch*qQ.data[0]-sh*qQ.data[1];
-     q1 = sh*qQ.data[0]+ch*qQ.data[1];
-     q2 = ch*qQ.data[2]+sh*qQ.data[3];
-     q3 = ch*qQ.data[3]-sh*qQ.data[2];
-     qQ.data[0]=q0; qQ.data[1]=q1; qQ.data[2]=q2; qQ.data[3]=q3;
+     q0 =  ch*qQ[0]-sh*qQ[1];
+     q1 = sh*qQ[0]+ch*qQ[1];
+     q2 = ch*qQ[2]+sh*qQ[3];
+     q3 = ch*qQ[3]-sh*qQ[2];
+     qQ[0]=q0; qQ[1]=q1; qQ[2]=q2; qQ[3]=q3;
      //qQ = quat( ch*qQ.w-sh*qQ.x, sh*qQ.w+ch*qQ.x, ch*qQ.y+sh*qQ.z, ch*qQ.z-sh*qQ.y );
-    //qQ.data[0] =0.0 ;  qQ.data[1] = 1/sqrt(2);  qQ.data[2] = 0.0;  qQ.data[3] = 1/(sqrt(2));
+    //qQ[0] =0.0 ;  qQ[1] = 1/sqrt(2);  qQ[2] = 0.0;  qQ[3] = 1/(sqrt(2));
      // qQ now contains final rotation for Q
      fromQuat(qQ,Q);
 
@@ -365,15 +380,24 @@ void computeSVD( const mat3 A,inout mat3 W,inout mat3 S,inout mat3 V )
     mat3 AT = transpose(A);
     mat3 ATA = AT * A ;
 /// 2. Symmetric Eigenanlysis
-    quat qV;
+    vec4 qV;
     jacobiEigenanalysis( ATA, qV );
+
+
+/*
+    V[0][0] = qV.x;
+    V[0][1] = qV.y;
+    V[0][2] = qV.z;
+    V[1][0] = qV.w;
+*/
+//V= ATA;
+
     fromQuat(qV,V);
     //V = mat3::fromQuat(qV);
-
-
-    mat3 B =  A*V;
+    mat3 B =A*V;
 /// 3. Sorting the singular values (find V)
     sortSingularValues( B, V );
+    //V=B;
 /// 4. QR decomposition
     QRDecomposition( B, W, S );
 
@@ -394,7 +418,6 @@ void computePD( const mat3 A, inout mat3 R, inout mat3 P )
     P = V*S*transpose(V);
 }
 //* SVD IMPLEMENTATION SNOW CUDA END*//
-
 
 /*
 * E0 Young Modulus
@@ -564,7 +587,7 @@ void main(void){
 
                 (  2.0f* mu(JPp)*
                              (FEp-REp)*transpose(FEp)
-                    //+ lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f)
+                    + lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f)
                     )
 
                   *wipg

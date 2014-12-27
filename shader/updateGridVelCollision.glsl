@@ -1,6 +1,7 @@
 #version 440
 #extension GL_ARB_compute_variable_group_size :require
 #extension  NV_shader_atomic_float:require
+#extension GL_ARB_gpu_shader_fp64 : require
 uniform float dt;
 
 layout(local_size_variable)in;
@@ -19,7 +20,7 @@ layout(std140, binding = 7) buffer gVeln {
 };
 float n = 0.0f;
 vec3 zeroVelocity = vec3(0.0f,0.0f,0.0f);
-vec3 g = vec3(0.0f,0.0f,0.0f);
+vec3 g = vec3(0.0f,-9.81f,0.0f);
 
 //vec3 readVel; //2
 void main(void){
@@ -33,8 +34,8 @@ void main(void){
 
     gvn[gI].xyz =vi/mi + dt
              * (
-                //fi/(mi)
-               + g)
+                fi/(mi)
+               + g/mi)
             ;
 
     //fi[gI].xyz += force;
