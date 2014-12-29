@@ -32,12 +32,16 @@ public:
     Matrix4f* pForcesE= nullptr ;
     Matrix4f* pForcesP= nullptr ;
     Vector4f* pVelocitiesn = nullptr;
-    Matrix4f* pdeltaVelocitiesn =nullptr;
+    Vector4f* pdeltaVelocitiesn0 =nullptr;
+    Vector4f* pdeltaVelocitiesn1 =nullptr;
+    Vector4f* pdeltaVelocitiesn2 =nullptr;
 private:
 
 
 
-    GLuint gvelBn;
+    GLuint gvelBn0;
+    GLuint gvelBn1;
+    GLuint gvelBn2;
     GLuint posB;
     GLuint velB;
     GLuint velBn;

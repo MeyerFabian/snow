@@ -1,7 +1,7 @@
 #version 440
 #extension GL_ARB_compute_variable_group_size :require
 #define alpha 0.95
-#extension GL_ARB_gpu_shader_fp64 : require
+#extension  NV_shader_atomic_float:require
 uniform float dt;
 uniform float critComp;
 uniform float critStretch;
@@ -23,8 +23,14 @@ layout(std140, binding = 8) buffer pVeln {
     vec4 pvn[ ];
 };
 
-layout(std140, binding = 9) buffer pDeltaVeln {
-    mat4 deltapvn[ ];
+layout(std140, binding = 9) buffer pDeltaVeln0 {
+    vec4 deltapvn0[ ];
+};
+layout(std140, binding = 10) buffer pDeltaVeln1 {
+    vec4 deltapvn1[ ];
+};
+layout(std140, binding = 11) buffer pDeltaVeln2 {
+    vec4 deltapvn2[ ];
 };
 
 
@@ -426,14 +432,16 @@ void main(void){
             FPp4[1][0],FPp4[1][1],FPp4[1][2],
             FPp4[2][0],FPp4[2][1],FPp4[2][2]);
 
-    mat4 dvp4 = mat4(deltapvn[pI]);
-    mat3 dvp =mat3( dvp4);
+    mat3 dvp =mat3( deltapvn0[pI],deltapvn1[pI],deltapvn2[pI]);
 
-    //dvp =mat3(0.0f);
     mat3 FEpn = (mat3(1.0f) + dt * dvp)*FEp;
     mat3 Fpn = (mat3(1.0f) + dt * dvp)* (FEp*FPp);
     mat3 FPpn = FPp;
-
+    for(int i=0; i<3; i++){
+        for(int j=0;j<3;j++){
+            FEpn[i][j] =round(100000.0f *FEpn[i][j])/100000.0f ;
+        }
+    }
     //FEpn= mat3(1.0f);
     //FEpn= mat3(2.0f,1.0f,1.0f,0.0f,3.0f,1.0f,2.0f,1.4f,2.4f);
     mat3 W =mat3(0.0f);
@@ -512,5 +520,7 @@ void main(void){
 
     //Reset vpn+1 and delta vpn+1 to (0,0,0)
     pvn[pI].xyz = zeroVelocity;
-    deltapvn[pI] = mat4(0.0f);
+    deltapvn0[pI].xyz = zeroVelocity;
+    deltapvn1[pI].xyz = zeroVelocity;
+    deltapvn2[pI].xyz = zeroVelocity;
 }

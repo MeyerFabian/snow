@@ -2,7 +2,6 @@
 #extension GL_ARB_compute_variable_group_size :require
 #define alpha 0.95
 #extension  NV_shader_atomic_float:require
-#extension GL_ARB_gpu_shader_fp64 : require
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;
@@ -38,10 +37,15 @@ layout(std140, binding = 7) buffer gVeln {
 layout(std140, binding = 8) buffer pVeln {
     vec4 pvn[ ];
 };
-layout(std140, binding = 9) buffer pDeltaVeln {
-    mat4 deltapvn[ ];
+layout(std140, binding = 9) buffer pDeltaVeln0 {
+    vec4 deltapvn0[ ];
 };
-
+layout(std140, binding = 10) buffer pDeltaVeln1 {
+    vec4 deltapvn1[ ];
+};
+layout(std140, binding = 11) buffer pDeltaVeln2 {
+    vec4 deltapvn2[ ];
+};
 
 /**
  * Takes an integer vector ijk and returns the respective buffer index.
@@ -158,17 +162,18 @@ void main(void){
         atomicAdd(pvn[gl_GlobalInvocationID.x].z,vpn.z);
         //pvn[gl_GlobalInvocationID.x].xyz +=vin*wip;
         //d_vpn+1 = sum_i [vin+1 * d_wipn^(T)]
-/*
-        atomicAdd(deltapvn[gl_GlobalInvocationID.x][0][0],vin.x * gwip.x);
-        atomicAdd(deltapvn[gl_GlobalInvocationID.x][0][1],vin.x * gwip.y);
-        atomicAdd(deltapvn[gl_GlobalInvocationID.x][0][2],vin.x * gwip.z);
-        atomicAdd(deltapvn[gl_GlobalInvocationID.x][1][0],vin.y * gwip.x);
-        atomicAdd(deltapvn[gl_GlobalInvocationID.x][1][1],vin.y * gwip.y);
-        atomicAdd(deltapvn[gl_GlobalInvocationID.x][1][2],vin.y * gwip.z);
-        atomicAdd(deltapvn[gl_GlobalInvocationID.x][2][0],vin.z * gwip.x);
-        atomicAdd(deltapvn[gl_GlobalInvocationID.x][2][1],vin.z * gwip.y);
-        atomicAdd(deltapvn[gl_GlobalInvocationID.x][2][2],vin.z * gwip.z);
-        */
+
+        atomicAdd(deltapvn0[gl_GlobalInvocationID.x].x,vin.x * gwip.x);
+        atomicAdd(deltapvn0[gl_GlobalInvocationID.x].y,vin.y * gwip.x);
+        atomicAdd(deltapvn0[gl_GlobalInvocationID.x].z,vin.z * gwip.x);
+        atomicAdd(deltapvn1[gl_GlobalInvocationID.x].x,vin.x * gwip.y);
+        atomicAdd(deltapvn1[gl_GlobalInvocationID.x].y,vin.y * gwip.y);
+        atomicAdd(deltapvn1[gl_GlobalInvocationID.x].z,vin.z * gwip.y);
+        atomicAdd(deltapvn2[gl_GlobalInvocationID.x].x,vin.x * gwip.z);
+        atomicAdd(deltapvn2[gl_GlobalInvocationID.x].y,vin.y * gwip.z);
+        atomicAdd(deltapvn2[gl_GlobalInvocationID.x].z,vin.z * gwip.z);
+
+
         /*
         deltapvn[gl_GlobalInvocationID.x][0][0] += mat4( vin.x * gwip.x,vin.x * gwip.y, vin.x *gwip.z,0.0f,
                                                    vin.y * gwip.x,vin.y * gwip.y, vin.y *gwip.z,0.0f,

@@ -1,7 +1,6 @@
 #version 440
 #extension GL_ARB_compute_variable_group_size :require
 #extension  NV_shader_atomic_float:require
-#extension GL_ARB_gpu_shader_fp64 : require
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;

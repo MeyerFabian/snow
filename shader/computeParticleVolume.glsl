@@ -1,7 +1,6 @@
 #version 440
 #extension GL_ARB_compute_variable_group_size :require
 #extension  NV_shader_atomic_float:require
-#extension GL_ARB_gpu_shader_fp64 : require
 
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
@@ -116,10 +115,10 @@ void main(void){
         barrier();
         float mi = gxm[gI].w;
         // pp0 = sum_i[ mi0 *wip0 / h^(3)]
-        if(mi>0.0f)
+
         //pv[pIndex].w += (mi * wip / gCellVolume)  ;
 
-
+        if(mi>0.0f)
         atomicAdd(pv[pIndex].w, (mi * wip / gCellVolume));
 
    }
