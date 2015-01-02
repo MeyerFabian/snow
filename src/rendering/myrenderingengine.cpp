@@ -43,11 +43,13 @@ ParticleTechnique PT;
 
 
 
+pipeline world;
 GLuint textureID;
 shared_ptr<Texture> helitex;
 
 
-static float stepsize=0.2f;
+static float anglesize=0.001f;
+static float stepsize = 0.05f;
 static float rotation=0.0f;
 
 Vector3f lightpos;
@@ -77,6 +79,9 @@ void myRenderingEngine::initVBO(){
 
     helitex = make_shared<Texture>("textures/test.png");
     helitex->Load(GL_TEXTURE_2D);
+
+    world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 50.0f);
+    world.setCamera(2.0f,2.1f,6.5f,0.0,2.1f,0.0f,0.0f,1.0f,0.0f);
 }
 
 void initShader(){
@@ -187,14 +192,11 @@ void initShader(){
     glClearColor(0.5,0.5,0.5,0);
 
 
-    pipeline world;
 
     //
     glm::mat4x4 matrix;
     glm::mat4x4 tmatrix;
 
-    world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 50.0f);
-    world.setCamera(2.0f,2.1f,6.5f,0.0,2.1f,0.0f,0.0f,1.0f,0.0f);
 
 
     lighting.plugTechnique();
@@ -282,26 +284,36 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     glfwSetWindowShouldClose(window, GL_TRUE);
     else if(key == GLFW_KEY_Q ){
-        if(action == GLFW_PRESS)
-        rotation += 0.1f;
+        if(action == GLFW_PRESS){
+
+        }
     }
     else if(key == GLFW_KEY_E ){
-        if(action == GLFW_PRESS)
-        rotation -= 0.1f;
+        if(action == GLFW_PRESS){
+
+        }
     }
     else if(key == GLFW_KEY_W){
-        if(action == GLFW_PRESS)
-        lighty += 1.0f;
+        if(action == GLFW_PRESS){
+
+        }
+
     }
     else if(key == GLFW_KEY_S){
-        if(action == GLFW_PRESS)
-        lighty -= 1.0f;
+        if(action == GLFW_PRESS){
+
+        }
     }
     else{
-    //world.update(key,stepsize);
+    world.update(key,stepsize);
     }
 }
-
+static void mouse_callback(GLFWwindow* window, double xpos, double ypos){
+    double mouse_x = (xpos - WINDOW_WIDTH/2)*anglesize;
+    double mouse_y = (-ypos + WINDOW_HEIGHT/2)*anglesize;
+    world.update(mouse_x,mouse_y);
+    glfwSetCursorPos(window, WINDOW_WIDTH/2,WINDOW_HEIGHT/2);
+}
 bool myRenderingEngine::init(){
 
     //GLFW INIT: ORDER IS IMPORTANT
@@ -315,7 +327,9 @@ bool myRenderingEngine::init(){
     }
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, key_callback);
-
+    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_NORMAL) ;
+    glfwSetCursorPos(window, WINDOW_WIDTH/2,WINDOW_HEIGHT/2);
+    glfwSetCursorPosCallback(window,mouse_callback);
     //GLEW INIT
     GLenum err = glewInit();
 
