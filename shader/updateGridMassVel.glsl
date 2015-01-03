@@ -40,6 +40,7 @@ layout(std140, binding = 6) buffer gForce{
 
 
 
+
 //QUATERNION MATH
 struct quat{
     float data[4];
@@ -304,7 +305,7 @@ void sortSingularValues(inout mat3 B,inout mat3 V )
      float ch, sh, s0, s1;
 
      // first givens rotation
-     QRGivensQuaternion( R[0][0], R[1][0], ch, sh );
+     QRGivensQuaternion( R[0][0], R[0][1], ch, sh );
      //QRGivensQuaternion( R[0], R[1], ch, sh );
 
      s0 = 1.0f-2.0f*sh*sh;
@@ -326,7 +327,7 @@ void sortSingularValues(inout mat3 B,inout mat3 V )
      //qQ = quat( ch*qQ.w-sh*qQ.z, ch*qQ.x+sh*qQ.y, ch*qQ.y-sh*qQ.x, sh*qQ.w+ch*qQ.z );
 
      // second givens rotation
-     QRGivensQuaternion( R[0][0], R[2][0], ch, sh );
+     QRGivensQuaternion( R[0][0], R[0][2], ch, sh );
      //QRGivensQuaternion( R[0], R[2], ch, sh );
 
      s0 = 1.0f-2.0f*sh*sh;
@@ -347,7 +348,7 @@ void sortSingularValues(inout mat3 B,inout mat3 V )
      //qQ = quat( ch*qQ.w+sh*qQ.y, ch*qQ.x+sh*qQ.z, ch*qQ.y-sh*qQ.w, ch*qQ.z-sh*qQ.x );
 
      // third Givens rotation
-     QRGivensQuaternion( R[1][1], R[2][1], ch, sh );
+     QRGivensQuaternion( R[1][1], R[1][2], ch, sh );
      //QRGivensQuaternion( R[4], R[5], ch, sh );
 
      s0 = 1.0f-2.0f*sh*sh;
@@ -392,10 +393,14 @@ void computeSVD( const mat3 A,inout mat3 W,inout mat3 S,inout mat3 V )
 //V= ATA;
 
     fromQuat(qV,V);
+
     //V = mat3::fromQuat(qV);
     mat3 B =A*V;
+
+
 /// 3. Sorting the singular values (find V)
     sortSingularValues( B, V );
+
     //V=B;
 /// 4. QR decomposition
     QRDecomposition( B, W, S );
