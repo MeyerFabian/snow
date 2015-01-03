@@ -68,6 +68,10 @@ void ExplicitTimeUpdate::init(){
     divVelMass = OverGrid();
     divVelMass.init(cs);
 */
+    rg.plugTechnique();
+    glDispatchComputeGroupSizeARB(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
     cVolume.plugTechnique();
     cVolume.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     cVolume.setGridDim(grid->dimx, grid->dimy, grid->dimz);
@@ -81,7 +85,7 @@ void ExplicitTimeUpdate::init(){
 
 
 void ExplicitTimeUpdate::update(double dt){
-
+//std::cout<<"Frame begin:"<<std::endl;
     rg.plugTechnique();
     glDispatchComputeGroupSizeARB(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
@@ -104,7 +108,7 @@ void ExplicitTimeUpdate::update(double dt){
     vUp.setDt(dt);
     glDispatchComputeGroupSizeARB(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-    //grid->debug();
+    //
 
 
     pVU.plugTechnique();
@@ -113,8 +117,10 @@ void ExplicitTimeUpdate::update(double dt){
     pVU.setGridSpacing(grid->h);
     glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier ( GL_SHADER_IMAGE_ACCESS_BARRIER_BIT );
-//std::cout<<"Vor FEp Update"<<std::endl;
- //particlesystem->debug();
+
+
+    //std::cout<<"Vor FEp Update"<<std::endl;
+    //particlesystem->debug();
     //grid->debug();
     pU.plugTechnique();
     pU.setDt(dt);   
@@ -122,7 +128,11 @@ void ExplicitTimeUpdate::update(double dt){
     pU.setCritStretch();
     glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
- //   std::cout<<"Nach FEp Update"<<std::endl;
+
+//   std::cout<<"Nach FEp Update"<<std::endl;
+    //particlesystem->debug();
+
+    //grid->debug();
 
 /*
  * obsolete can be done in previous compute shader

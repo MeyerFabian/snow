@@ -20,7 +20,7 @@ int launchSnow(){
 
 
     shared_ptr<ParticleSystem> const pPs= make_shared<ParticleSystem > ();
-    float xpos=0.0f,ypos=2.5f,zpos=0.0f;
+    float xpos=5.0f,ypos=2.5f,zpos=5.0f;
     for(int x = 0; x < 32; x+=1){
         xpos += 0.025f;
         for(int y = 0; y < 32; y+=1){
@@ -29,7 +29,7 @@ int launchSnow(){
                 zpos += 0.025f;
                 pPs->particles->push_back(Particle(Vector3f(xpos,ypos,zpos)));
             }
-            zpos = 0.0f;
+            zpos = 5.0f;
         }
         ypos = 2.5f;
     }
@@ -38,12 +38,12 @@ int launchSnow(){
 
     Mesh jeep;
     jeep.LoadMesh("model/jeep.obj");
-    jeep.setPosition(-.54f,-0.25f,0.0f);
+    jeep.setPosition(4.0f,-0.25f,4.0f);
     jeep.setScale(0.003f,0.003f,0.003f);
     jeep.setRotation(0,0,0);
     Mesh quad;
     quad.LoadMesh("model/box.obj");
-    quad.setPosition(0,-3.0f,0.0f);
+    quad.setPosition(5.0f,-3.0f,5.0f);
     quad.setScale(10.0f,1.0f,10.0f);
     quad.setRotation(0,0,0);
     meshes->push_back(std::move(jeep));

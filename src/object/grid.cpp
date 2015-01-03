@@ -20,13 +20,29 @@ void Grid::render(){
 
     glDisableVertexAttribArray(0);
 }
+
+void Grid::renderBorders(){
+
+    glEnableVertexAttribArray(0);
+
+        glBindBuffer(GL_ARRAY_BUFFER, borderVB);
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,borderIB);
+        glDrawElements(GL_LINE_STRIP,(iGridBorders).size(),GL_UNSIGNED_INT,0);
+
+
+
+    glDisableVertexAttribArray(0);
+
+}
+
 void Grid::resetSSBOBuffer(){
     //glBindBuffer(GL_SHADER_STORAGE_BUFFER,posB);
   //glBufferData(GL_ARRAY_BUFFER, sizeof(Vector3f) * (pPositions)->size(), NULL, GL_STREAM_DRAW);
    // glBufferSubData(GL_SHADER_STORAGE_BUFFER, 12, sizeof(Vector4f) * (gridPoints)->size(),0);
 }
 void Grid::debug(){
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, velBn);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, forceB);
 
     Vector4f* l = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (gridPoints)->size(), GL_MAP_READ_BIT));
     l[22+55*201+28*201*101].print();
@@ -34,6 +50,16 @@ void Grid::debug(){
 }
 
 void Grid::initSSBO(){
+
+    glGenBuffers(1,&borderVB);
+    glBindBuffer(GL_ARRAY_BUFFER, borderVB);
+    glBufferData(GL_ARRAY_BUFFER,sizeof(Vector4f) * gridBorders.size(), &gridBorders[0], GL_STATIC_DRAW);
+
+    glGenBuffers(1,&borderIB);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,borderIB);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(unsigned int) * iGridBorders.size(),&iGridBorders[0], GL_STATIC_DRAW);
+
+
     //approacing zero driver overhead
     GLbitfield mapFlags = GL_MAP_WRITE_BIT| GL_MAP_INVALIDATE_BUFFER_BIT;
 

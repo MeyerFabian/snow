@@ -113,13 +113,12 @@ void main(void){
 
         atomicAdd(gxm[gI].w, mp * wip);
         barrier();
-        float mi = gxm[gI].w;
         // pp0 = sum_i[ mi0 *wip0 / h^(3)]
 
         //pv[pIndex].w += (mi * wip / gCellVolume)  ;
 
-        if(mi>0.0f)
-        atomicAdd(pv[pIndex].w, (mi * wip / gCellVolume));
+        if(gxm[gI].w>0.0f)
+        atomicAdd(pv[pIndex].w, (gxm[gI].w * wip / gCellVolume));
 
    }
 

@@ -162,7 +162,6 @@ void main(void){
         atomicAdd(pvn[gl_GlobalInvocationID.x].z,vpn.z);
         //pvn[gl_GlobalInvocationID.x].xyz +=vin*wip;
         //d_vpn+1 = sum_i [vin+1 * d_wipn^(T)]
-
         atomicAdd(deltapvn0[gl_GlobalInvocationID.x].x,vin.x * gwip.x);
         atomicAdd(deltapvn0[gl_GlobalInvocationID.x].y,vin.y * gwip.x);
         atomicAdd(deltapvn0[gl_GlobalInvocationID.x].z,vin.z * gwip.x);

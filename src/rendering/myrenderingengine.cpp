@@ -81,7 +81,7 @@ void myRenderingEngine::initVBO(){
     helitex->Load(GL_TEXTURE_2D);
 
     world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 50.0f);
-    world.setCamera(2.0f,2.1f,6.5f,0.0,2.1f,0.0f,0.0f,1.0f,0.0f);
+    world.setCamera(5.5f,2.1f,23.0f,5.5,2.1f,5.0f,0.0f,1.0f,0.0f);
 }
 
 void initShader(){
@@ -256,6 +256,7 @@ void initShader(){
     PT.plugTechnique();
     PT.setWVP(world.getMVP());
 
+    grid->renderBorders();
     //particlesystem->updateVBOBuffer();
     particlesystem->render();
     //double timeS = glfwGetTime ();
@@ -327,9 +328,9 @@ bool myRenderingEngine::init(){
     }
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, key_callback);
-    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_NORMAL) ;
-    glfwSetCursorPos(window, WINDOW_WIDTH/2,WINDOW_HEIGHT/2);
-    glfwSetCursorPosCallback(window,mouse_callback);
+    //glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_NORMAL) ;
+    //glfwSetCursorPos(window, WINDOW_WIDTH/2,WINDOW_HEIGHT/2);
+    //glfwSetCursorPosCallback(window,mouse_callback);
     //GLEW INIT
     GLenum err = glewInit();
 

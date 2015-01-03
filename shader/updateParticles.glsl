@@ -433,7 +433,7 @@ void main(void){
             FPp4[2][0],FPp4[2][1],FPp4[2][2]);
 
     mat3 dvp =mat3( deltapvn0[pI],deltapvn1[pI],deltapvn2[pI]);
-
+    dvp = mat3(0.0f);
     mat3 FEpn = (mat3(1.0f) + dt * dvp)*FEp;
     mat3 Fpn = (mat3(1.0f) + dt * dvp)* (FEp*FPp);
     mat3 FPpn = FPp;
@@ -469,6 +469,11 @@ void main(void){
     S_I[2][2]= 1.0f/S_I[2][2];
     FPpn =V   * S_I * transpose(W) *Fpn;
 
+    for(int i=0; i<3; i++){
+        for(int j=0;j<3;j++){
+            FPpn[i][j] =round(100000.0f *FPpn[i][j])/100000.0f ;
+        }
+    }
 /*
     pFE[gl_GlobalInvocationID.x][0].xyz =vec3(0.0f,0.0f,1.0f);
     pFE[gl_GlobalInvocationID.x][1].xyz =vec3(0.0f,1.0f,0.0f);
@@ -483,6 +488,7 @@ void main(void){
 
 
 */
+
     pFE[gl_GlobalInvocationID.x] = mat4( FEpn[0][0],FEpn[1][0],FEpn[2][0],0.0f,
                                          FEpn[0][1],FEpn[1][1],FEpn[2][1],0.0f,
                                          FEpn[0][2],FEpn[1][2],FEpn[2][2],0.0f,
