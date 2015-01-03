@@ -81,7 +81,7 @@ void myRenderingEngine::initVBO(){
     helitex->Load(GL_TEXTURE_2D);
 
     world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 50.0f);
-    world.setCamera(5.5f,2.1f,23.0f,5.5,2.1f,5.0f,0.0f,1.0f,0.0f);
+    world.setCamera(6.5f,2.5f,9.0f,5.5,2.5f,5.0f,0.0f,1.0f,0.0f);
 }
 
 void initShader(){

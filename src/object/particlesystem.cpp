@@ -22,51 +22,59 @@ void ParticleSystem::updateVBOBuffer(){
 
 }
 void ParticleSystem::debug(){
-/*
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, FEpB);
-    std::cout << "FEpB"<<std::endl;
-    Matrix4f* m = (Matrix4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Matrix4f)* (particles)->size(), GL_MAP_READ_BIT));
-    m[31*31*31].print();
-    glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
-*/
+
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
     std::cout << "pos"<<std::endl;
     Vector4f* p = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (particles)->size(), GL_MAP_READ_BIT));
-    p[31*31*31].print();
+    p[32*32*32-1].print();
+    glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
+
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, velB);
+    std::cout << "vel"<<std::endl;
+    Vector4f* a = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (particles)->size(), GL_MAP_READ_BIT));
+    a[32*32*32-1].print();
+    glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
+
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, velBn);
+    std::cout << "velBn"<<std::endl;
+    Vector4f* vb = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (particles)->size(), GL_MAP_READ_BIT));
+    vb[32*32*32-1].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, FPpB);
     std::cout << "FPpB"<<std::endl;
     Matrix4f* f= (Matrix4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Matrix4f)* (particles)->size(), GL_MAP_READ_BIT));
     //p[15*15*15].print();
-    f[31*31*31].print();
+    f[32*32*32-1].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
 
-/*
-
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, velB);
-    std::cout << "vel"<<std::endl;
-    Vector4f* a = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (particles)->size(), GL_MAP_READ_BIT));
-    a[31*31*31].print();
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, FEpB);
+    std::cout << "FEpB"<<std::endl;
+    Matrix4f* m = (Matrix4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Matrix4f)* (particles)->size(), GL_MAP_READ_BIT));
+    m[32*32*32-1].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
-/*
+
+
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, gvelBn0);
     std::cout << "dvp"<<std::endl;
     Vector4f* k = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (particles)->size(), GL_MAP_READ_BIT));
-    k[31*31*31].print();
+    k[32*32*32-1].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, gvelBn1);
     Vector4f* j = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (particles)->size(), GL_MAP_READ_BIT));
-    j[31*31*31].print();
+    j[32*32*32-1].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, gvelBn2);
     Vector4f* z = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (particles)->size(), GL_MAP_READ_BIT));
-    z[31*31*31].print();
+    z[32*32*32-1].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
-*/
+
+
 
 
 }

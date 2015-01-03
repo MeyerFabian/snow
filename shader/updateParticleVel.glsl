@@ -155,13 +155,16 @@ void main(void){
         float mi = gxm[gI].w;
         //vpn+1 = a * vpn + temp_vpn+1
         //temp_vpn+1 = sum_i [(1-a) * vin+1 * wipn + (a) * (vin+1 - vin)* wipn]
+        if(mi>0.0f){
         vec3 vpn = ((1.0f-alpha) *vin * wip)+(alpha*(vin-vi/mi)*wip); // add ParticleMass to gridPointMass
         //fi[gI].xyz += force;
         atomicAdd(pvn[gl_GlobalInvocationID.x].x,vpn.x);
         atomicAdd(pvn[gl_GlobalInvocationID.x].y,vpn.y);
         atomicAdd(pvn[gl_GlobalInvocationID.x].z,vpn.z);
+        }
         //pvn[gl_GlobalInvocationID.x].xyz +=vin*wip;
         //d_vpn+1 = sum_i [vin+1 * d_wipn^(T)]
+
         atomicAdd(deltapvn0[gl_GlobalInvocationID.x].x,vin.x * gwip.x);
         atomicAdd(deltapvn0[gl_GlobalInvocationID.x].y,vin.y * gwip.x);
         atomicAdd(deltapvn0[gl_GlobalInvocationID.x].z,vin.z * gwip.x);

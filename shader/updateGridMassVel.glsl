@@ -574,7 +574,6 @@ void main(void){
         float JEp = determinant(FEp);
         vec3 wipg;
         weightingGradient(gridDistanceToParticle,wipg);
-
         // fi(^x) = - sum_p [ Vpn * sigmaP * d_wipn]
         //        = - sum_p [ Vp0 * (Jpn * 2 * mu(FPp)/Jpn * (FEp-REp) * FEp^(T) + Jpn* lamba(FPp)/Jpn* (JEp -1.0f) * JEp * FEp^(-T) * FEp^(T))*d_wipn]
         //        = - sum_p [ Vp0  * (2 * mu(FPp) * (FEp-REp) * FEp^(-T) + lamba(FPp)* (JEp -1.0f) * JEp * I )*d_wipn]

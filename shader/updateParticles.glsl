@@ -424,21 +424,28 @@ void clamp (inout float f, const float lb, const float ub){
 
 void main(void){
     uint pI = gl_GlobalInvocationID.x;
+
     // UPDATE DEFORMATION GRADIENT
     mat4 FEp4 = mat4(pFE[pI]);
     mat3 FEp = mat3(FEp4);
     mat4 FPp4 = mat4(pFP[pI]);
-    mat3 FPp = mat3(FPp4[0][0],FPp4[0][1],FPp4[0][2],
-            FPp4[1][0],FPp4[1][1],FPp4[1][2],
-            FPp4[2][0],FPp4[2][1],FPp4[2][2]);
+    mat3 FPp = mat3(FPp4);
 
     mat3 dvp =mat3( deltapvn0[pI],deltapvn1[pI],deltapvn2[pI]);
-    dvp = mat3(0.0f);
+
+
+    for(int i=0; i<3; i++){
+        for(int j=0;j<3;j++){
+            dvp[i][j] =round(100000.0f *dvp[i][j])/100000.0f ;
+        }
+    }
     mat3 FEpn = (mat3(1.0f) + dt * dvp)*FEp;
     mat3 Fpn = (mat3(1.0f) + dt * dvp)* (FEp*FPp);
     mat3 FPpn = FPp;
+
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
+            Fpn[i][j] =round(100000.0f *Fpn[i][j])/100000.0f ;
             FEpn[i][j] =round(100000.0f *FEpn[i][j])/100000.0f ;
         }
     }
@@ -462,18 +469,20 @@ void main(void){
     }
 
 
-    mat3 S_I = S;
+    mat3 S_I = mat3(0.0f);
 
-    S_I[0][0]= 1.0f/S_I[0][0];
-    S_I[1][1]= 1.0f/S_I[1][1];
-    S_I[2][2]= 1.0f/S_I[2][2];
+    S_I[0][0]= 1.0f/S[0][0];
+    S_I[1][1]= 1.0f/S[1][1];
+    S_I[2][2]= 1.0f/S[2][2];
     FPpn =V   * S_I * transpose(W) *Fpn;
 
+    //FPpn = inverse(FEpn) *Fpn;
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
             FPpn[i][j] =round(100000.0f *FPpn[i][j])/100000.0f ;
         }
     }
+
 /*
     pFE[gl_GlobalInvocationID.x][0].xyz =vec3(0.0f,0.0f,1.0f);
     pFE[gl_GlobalInvocationID.x][1].xyz =vec3(0.0f,1.0f,0.0f);
@@ -519,10 +528,9 @@ void main(void){
             vpn;
 
     // UPDATE POSITION
-    vpn = pv[pI].xyz;
     // xpn+1 = xpn + d_t * vpn+1
 
-    pxm[pI].xyz += dt * vpn;
+    pxm[pI].xyz += dt *  pv[pI].xyz;
 
     //Reset vpn+1 and delta vpn+1 to (0,0,0)
     pvn[pI].xyz = zeroVelocity;
