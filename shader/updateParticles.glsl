@@ -435,27 +435,27 @@ void main(void){
     mat4 FPp4 = mat4(pFP[pI]);
     mat3 FPp = mat3(FPp4);
 
-    mat3 dvp =mat3( deltapvn0[pI],deltapvn1[pI],deltapvn2[pI]);
+    mat3 dvp =mat3( deltapvn0[pI].xyz,deltapvn1[pI].xyz,deltapvn2[pI].xyz);
 
-/*
+
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
             dvp[i][j] =round(100000.0f *dvp[i][j])/100000.0f ;
         }
     }
-    */
+
     mat3 FEpn = (mat3(1.0f) + dt * dvp)*FEp;
     mat3 Fpn = (mat3(1.0f) + dt * dvp)* (FEp*FPp);
     mat3 FPpn = FPp;
-    //FEpn = mat3(2.0f,1e-5f,1.0f,4.0f,1.0f,3.0f,0.5f,5.5f,3.2f);
-    /*
+    //FEpn = mat3(1.0025f);
+
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
-            //Fpn[i][j] =round(100000.0f *Fpn[i][j])/100000.0f ;
-            //FEpn[i][j] =round(100000.0f *FEpn[i][j])/100000.0f ;
+            Fpn[i][j] =round(100000.0f *Fpn[i][j])/100000.0f ;
+            FEpn[i][j] =round(100000.0f *FEpn[i][j])/100000.0f ;
         }
     }
-    */
+
     //FEpn= mat3(1.0f);
     //FEpn= mat3(2.0f,1.0f,1.0f,0.0f,3.0f,1.0f,2.0f,1.4f,2.4f);
     mat3 W =mat3(0.0f);

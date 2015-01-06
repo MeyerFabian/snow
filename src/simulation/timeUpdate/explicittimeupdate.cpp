@@ -95,7 +95,6 @@ void ExplicitTimeUpdate::init(){
     glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
-    //particlesystem->debug();
 
 
 }
@@ -120,6 +119,7 @@ void ExplicitTimeUpdate::update(double dt){
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
 
+   // particlesystem->debug();
 
     vUp.plugTechnique();
     vUp.setDt(dt);
@@ -137,6 +137,7 @@ void ExplicitTimeUpdate::update(double dt){
 
 
     //std::cout<<"Vor FEp Update"<<std::endl;
+
     //particlesystem->debug();
     //grid->debug();
     pU.plugTechnique();
@@ -147,7 +148,6 @@ void ExplicitTimeUpdate::update(double dt){
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
     //std::cout<<"Nach FEp Update"<<std::endl;
-
    // grid->debug();
 
 /*

@@ -168,6 +168,7 @@ void main(void){
         }
         //pvn[gl_GlobalInvocationID.x].xyz +=vin*wip;
         //d_vpn+1 = sum_i [vin+1 * d_wipn^(T)]
+        /*
         atomicAdd(deltapvn0[gl_GlobalInvocationID.x].x,vin.x * gwip.x);
         atomicAdd(deltapvn0[gl_GlobalInvocationID.x].y,vin.y * gwip.x);
         atomicAdd(deltapvn0[gl_GlobalInvocationID.x].z,vin.z * gwip.x);
@@ -177,8 +178,8 @@ void main(void){
         atomicAdd(deltapvn2[gl_GlobalInvocationID.x].x,vin.x * gwip.z);
         atomicAdd(deltapvn2[gl_GlobalInvocationID.x].y,vin.y * gwip.z);
         atomicAdd(deltapvn2[gl_GlobalInvocationID.x].z,vin.z * gwip.z);
-        /*
 
+*/
 
         atomicAdd(deltapvn0[gl_GlobalInvocationID.x].x,vin.x * gwip.x);
         atomicAdd(deltapvn0[gl_GlobalInvocationID.x].y,vin.x * gwip.y);
@@ -187,9 +188,9 @@ void main(void){
         atomicAdd(deltapvn1[gl_GlobalInvocationID.x].y,vin.y * gwip.y);
         atomicAdd(deltapvn1[gl_GlobalInvocationID.x].z,vin.y * gwip.z);
         atomicAdd(deltapvn2[gl_GlobalInvocationID.x].x,vin.z * gwip.x);
-        atomicAdd(deltapvn2[gl_GlobalInvocationID.x].y,vin.z * gwip.z);
+        atomicAdd(deltapvn2[gl_GlobalInvocationID.x].y,vin.z * gwip.y);
         atomicAdd(deltapvn2[gl_GlobalInvocationID.x].z,vin.z * gwip.z);
-*/
+
         /*
         deltapvn[gl_GlobalInvocationID.x][0][0] += mat4( vin.x * gwip.x,vin.x * gwip.y, vin.x *gwip.z,0.0f,
                                                    vin.y * gwip.x,vin.y * gwip.y, vin.y *gwip.z,0.0f,
