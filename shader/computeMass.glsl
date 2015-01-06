@@ -130,11 +130,13 @@ void main(void){
         // mi0 = sum_p [mp *wip0]
         //gxm[gI].w+=mp * wip;
 
+        atomicAdd(gxm[gI].w, mp * wip);
+        //memoryBarrier();
         // pp0 = sum_i[ mi0 *wip0 / h^(3)]
-// atomicAdd(gxm[gI].w, mp * wip);
+
         //pv[pIndex].w += (mi * wip / gCellVolume)  ;
 
-        atomicAdd(pv[pIndex].w, (gxm[gI].w * wip / gCellVolume));
+
 
    }
 

@@ -37,6 +37,7 @@ shader/updateGridMassVel.glsl
 shader/updateParticleVel.glsl
 shader/updateParticles.glsl
 shader/computeParticleVolume.glsl
+shader/computeMass.glsl
 shader/overGridAndParticles.glsl
 shader/resetGrid.glsl
 shader/updateGridVelCollision.glsl

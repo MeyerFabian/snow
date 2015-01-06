@@ -15,6 +15,7 @@ public:
     ParticleCompute cVolume;
     ParticleCompute pc;
     ParticleCompute pVU;
+    ParticleCompute cMass;
     OverGrid rg;
     OverGrid vUp;
     OverGrid pU;

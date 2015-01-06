@@ -47,6 +47,7 @@ layout(std140, binding = 11) buffer pDeltaVeln2 {
     vec4 deltapvn2[ ];
 };
 
+
 /**
  * Takes an integer vector ijk and returns the respective buffer index.
  * i of [0,x-GridDimension]
@@ -75,6 +76,7 @@ void getIJK(const  int index,inout ivec3 ijk){
  * Returns weight distribution by grid basis function (dyadic products of one-dimensional
  * cubic B-splines) from particle to actual grid neighbors dependant on their distance to the particle.
  */
+
 float weighting(const float x){
     const float absX = abs(x);
     if(absX < 1.0f){
@@ -111,6 +113,8 @@ void weightingGradient(const vec3 distanceVector, inout vec3 wg){
 }
 
 
+
+
 int n= 0;
 void main(void){
 
@@ -141,7 +145,7 @@ void main(void){
 
     if(gridIndex.x>= n && gridIndex.y>=n && gridIndex.z>=n && gridIndex.x< gGridDim[0].x && gridIndex.y <gGridDim[1].x &&gridIndex.z< gGridDim[2].x ){
 
-        vec3 gridDistanceToParticle = ParticleInGrid- vec3(gridIndex);
+        vec3 gridDistanceToParticle = vec3(gridIndex)- ParticleInGrid;
         float wip = .0f;
         weighting (gridDistanceToParticle,wip);
 

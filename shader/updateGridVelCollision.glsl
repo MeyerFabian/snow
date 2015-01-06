@@ -41,4 +41,7 @@ void main(void){
     //fi[gI].xyz += force;
 
     }
+    else{
+        gvn[gI].xyz =zeroVelocity;
+    }
 }

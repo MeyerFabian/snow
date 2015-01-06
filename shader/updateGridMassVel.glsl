@@ -525,9 +525,7 @@ void main(void){
     mat4 FEp4 = mat4(pFE[pIndex]);
     mat3 FEp =mat3(FEp4);
     mat4 FPp4 = mat4(pFP[pIndex]);
-    mat3 FPp = mat3(FPp4[0][0],FPp4[0][1],FPp4[0][2],
-            FPp4[1][0],FPp4[1][1],FPp4[1][2],
-            FPp4[2][0],FPp4[2][1],FPp4[2][2]);
+    mat3 FPp = mat3(FPp4);
 
     vec3 xp= particle.xyz; //particle position
     float mp = particle.w; // particle mass
@@ -553,7 +551,7 @@ void main(void){
 
     if(gridIndex.x>= n && gridIndex.y>=n && gridIndex.z>=n && gridIndex.x< gGridDim[0].x && gridIndex.y <gGridDim[1].x &&gridIndex.z< gGridDim[2].x ){
 
-        vec3 gridDistanceToParticle = ParticleInGrid- vec3(gridIndex);
+        vec3 gridDistanceToParticle = vec3(gridIndex)- ParticleInGrid;
         float wip = .0f;
         weighting (gridDistanceToParticle,wip);
 
@@ -575,6 +573,11 @@ void main(void){
 
         mat3 REp, SEp;
         computePD(FEp,REp,SEp);
+        for(int i=0; i<3; i++){
+            for(int j=0;j<3;j++){
+                REp[i][j] =round(100000.0f *REp[i][j])/100000.0f ;
+            }
+        }
         float JPp = determinant(FPp);
         float JEp = determinant(FEp);
         vec3 wipg;
@@ -583,7 +586,7 @@ void main(void){
         //        = - sum_p [ Vp0 * (Jpn * 2 * mu(FPp)/Jpn * (FEp-REp) * FEp^(T) + Jpn* lamba(FPp)/Jpn* (JEp -1.0f) * JEp * FEp^(-T) * FEp^(T))*d_wipn]
         //        = - sum_p [ Vp0  * (2 * mu(FPp) * (FEp-REp) * FEp^(-T) + lamba(FPp)* (JEp -1.0f) * JEp * I )*d_wipn]
         if(pp0>0.0f){
-
+           // if(gridOffset ==0 &&gridOffset ==0 &&gridOffset ==0){
         vec3 force = -
 
                 (mp/pp0)*
@@ -593,15 +596,16 @@ void main(void){
                     + lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f)
                     )
 
-                  *wipg
+                  *
 
-                ;
+        wipg;
+        //force = wipg;
         //fi[gI].xyz += force;
         atomicAdd(fi[gI].x,force.x);
         atomicAdd(fi[gI].y,force.y);
         atomicAdd(fi[gI].z,force.z);
-        }
 
+        }
    }
 
 }

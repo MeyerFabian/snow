@@ -328,9 +328,9 @@ bool myRenderingEngine::init(){
     }
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, key_callback);
-    //glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_NORMAL) ;
-    //glfwSetCursorPos(window, WINDOW_WIDTH/2,WINDOW_HEIGHT/2);
-    //glfwSetCursorPosCallback(window,mouse_callback);
+    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_NORMAL) ;
+    glfwSetCursorPos(window, WINDOW_WIDTH/2,WINDOW_HEIGHT/2);
+    glfwSetCursorPosCallback(window,mouse_callback);
     //GLEW INIT
     GLenum err = glewInit();
 

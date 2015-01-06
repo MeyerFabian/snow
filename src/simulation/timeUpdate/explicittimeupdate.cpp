@@ -2,6 +2,7 @@
 
 void ExplicitTimeUpdate::init(){
     const char* pComputeVolumeFileName = "shader/computeParticleVolume.glsl";
+    const char* pMassFileName = "shader/computeMass.glsl";
     const char* pPCFileName = "shader/updateGridMassVel.glsl";
     const char* pResetGridFileName ="shader/resetGrid.glsl";
     const char* pUpdateGridVelocity = "shader/updateGridVelCollision.glsl";
@@ -53,6 +54,14 @@ void ExplicitTimeUpdate::init(){
     pU.init(cs);
 
     cs.clear();
+    if(!ReadFile(pMassFileName,cs)){
+      fprintf(stderr, "Error: vs\n");
+       exit(1);
+    };
+    cMass = ParticleCompute();
+    cMass.init(cs);
+
+    cs.clear();
     if(!ReadFile(pComputeVolumeFileName,cs)){
       fprintf(stderr, "Error: vs\n");
        exit(1);
@@ -72,6 +81,13 @@ void ExplicitTimeUpdate::init(){
     glDispatchComputeGroupSizeARB(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
+    cMass.plugTechnique();
+    cMass.setGridPos(grid->x_off, grid->y_off, grid->z_off);
+    cMass.setGridDim(grid->dimx, grid->dimy, grid->dimz);
+    cMass.setGridSpacing(grid->h);
+    glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1,NUM_OF_GPGPU_THREADS_X,1,1);
+    glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
+
     cVolume.plugTechnique();
     cVolume.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     cVolume.setGridDim(grid->dimx, grid->dimy, grid->dimz);
@@ -79,6 +95,7 @@ void ExplicitTimeUpdate::init(){
     glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
+    //particlesystem->debug();
 
 
 }
@@ -130,9 +147,8 @@ void ExplicitTimeUpdate::update(double dt){
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
     //std::cout<<"Nach FEp Update"<<std::endl;
-    //particlesystem->debug();
 
-    //grid->debug();
+   // grid->debug();
 
 /*
  * obsolete can be done in previous compute shader
