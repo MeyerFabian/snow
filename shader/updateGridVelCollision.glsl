@@ -28,6 +28,7 @@ void main(void){
     vec3 vi =  gv[gI].xyz; //needs to be normalized with mi
     vec3 fi = gf[gI].xyz;//+vec3(0.0001,0.0002,0.0);
     //vin+1 = vin + d_t * mi^(-1) * fin
+
     if(mi>0.0f){
 
 
