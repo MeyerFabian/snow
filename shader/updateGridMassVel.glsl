@@ -1,6 +1,5 @@
 #version 440
 #extension GL_ARB_compute_variable_group_size :require
-#extension  NV_shader_atomic_float:require
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;
@@ -19,14 +18,14 @@ layout(std140, binding = 0) buffer pPosMass {
 };
 
 layout(std140, binding = 1) buffer pVelVolume {
-    vec4 pv[ ];
+    ivec4 pv[ ];
 };
 
 layout(std140, binding = 2) buffer gPosMass {
     vec4 gxm[ ];
 };
 layout(std140, binding = 3) buffer gVel {
-    vec4 gv[ ];
+    ivec4 gv[ ];
 };
 layout(std140, binding = 4) buffer pForceElastic {
     mat4 pFE[ ];
@@ -35,7 +34,7 @@ layout(std140, binding = 5) buffer pForcePlastic {
     mat4 pFP[ ];
 };
 layout(std140, binding = 6) buffer gForce{
-    vec4 fi[] ;
+    ivec4 fi[] ;
 };
 
 
@@ -530,7 +529,7 @@ void main(void){
     vec3 xp= particle.xyz; //particle position
     float mp = particle.w; // particle mass
     vec3 vp = particleVelocity.xyz; //particle velocity
-    float pp0 = particleVelocity.w; //particle density
+    float pp0 = float(particleVelocity.w) / (1000000.0f); //particle density
 
     int gridOffsetOfParticle = int(globalInvocY); //  21
     ivec3 gridOffset;
@@ -560,15 +559,15 @@ void main(void){
 
         //min = sum_p [ mp *wipn]
         //gxm[gI].w+= mp * wip;
-        atomicAdd(gxm[gI].w, mp * wip);
+        atomicAdd(gv[gI].w,  int(mp * wip* 1000000.0f));
 
         //vin = sum_p [ vpn * mp *wipn / min]
         //gv[gI].xyz+= vp * mp * wip; // calculate added gridVelocity
 
         vec3 velocity = (vp * mp * wip);
-        atomicAdd(gv[gI].x,velocity.x);
-        atomicAdd(gv[gI].y,velocity.y);
-        atomicAdd(gv[gI].z,velocity.z);
+        atomicAdd(gv[gI].x,int(velocity.x));
+        atomicAdd(gv[gI].y,int(velocity.y));
+        atomicAdd(gv[gI].z,int(velocity.z));
 
 
         mat3 REp, SEp;
@@ -601,9 +600,9 @@ void main(void){
         wipg;
         //force = wipg;
         //fi[gI].xyz += force;
-        atomicAdd(fi[gI].x,force.x);
-        atomicAdd(fi[gI].y,force.y);
-        atomicAdd(fi[gI].z,force.z);
+        atomicAdd(fi[gI].x,int(force.x*1000000.0f));
+        atomicAdd(fi[gI].y,int(force.y*1000000.0f));
+        atomicAdd(fi[gI].z,int(force.z*1000000.0f));
 
         }
    }

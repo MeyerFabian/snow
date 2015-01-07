@@ -20,7 +20,7 @@ layout(std140, binding = 2) buffer gPosMass {
     vec4 gxm[ ];
 };
 layout(std140, binding = 3) buffer gVel {
-    vec4 gv[ ];
+    ivec4 gv[ ];
 };
 
 
@@ -133,7 +133,7 @@ void main(void){
 // atomicAdd(gxm[gI].w, mp * wip);
         //pv[pIndex].w += (mi * wip / gCellVolume)  ;
 
-        atomicAdd(pv[pIndex].w, int(gv[gI].w * wip / gCellVolume));
+        atomicAdd(pv[pIndex].w, int(float(gv[gI].w)/1000000.0f * wip / gCellVolume));
 
    }
 

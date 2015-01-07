@@ -31,10 +31,10 @@ public:
     Vector4i* pVelocities= nullptr ;
     Matrix4f* pForcesE= nullptr ;
     Matrix4f* pForcesP= nullptr ;
-    Vector4f* pVelocitiesn = nullptr;
-    Vector4f* pdeltaVelocitiesn0 =nullptr;
-    Vector4f* pdeltaVelocitiesn1 =nullptr;
-    Vector4f* pdeltaVelocitiesn2 =nullptr;
+    Vector4i* pVelocitiesn = nullptr;
+    Vector4i* pdeltaVelocitiesn0 =nullptr;
+    Vector4i* pdeltaVelocitiesn1 =nullptr;
+    Vector4i* pdeltaVelocitiesn2 =nullptr;
 private:
 
 

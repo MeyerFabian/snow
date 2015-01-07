@@ -13,7 +13,7 @@ layout(std140, binding = 0) buffer pPosMass {
 };
 
 layout(std140, binding = 1) buffer pVelVolume {
-    vec4 pv[ ];
+    ivec4 pv[ ];
 };
 
 layout(std140, binding = 2) buffer gPosMass {
@@ -128,8 +128,8 @@ void main(void){
         getIndex(gridIndex,gI);
         // mi0 = sum_p [mp *wip0]
         //gxm[gI].w+=mp * wip;
-
-        atomicAdd(gv[gI].w, int(floor(mp * wip*1000000.0f)));
+    //gv[gI].w+= n;
+        atomicAdd(gv[gI].w, int(mp * wip* 1000000.0f));
         //memoryBarrier();
         // pp0 = sum_i[ mi0 *wip0 / h^(3)]
 

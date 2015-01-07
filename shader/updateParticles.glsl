@@ -1,7 +1,6 @@
 #version 440
 #extension GL_ARB_compute_variable_group_size :require
 #define alpha 0.95
-#extension  NV_shader_atomic_float:require
 uniform float dt;
 uniform float critComp;
 uniform float critStretch;
@@ -11,7 +10,7 @@ layout(std140, binding = 0) buffer pPosMass {
     vec4 pxm[ ];
 };
 layout(std140, binding = 1) buffer pVelVolume {
-    vec4 pv[ ];
+    ivec4 pv[ ];
 };
 layout(std140, binding = 4) buffer pForceElastic {
     mat4 pFE[ ];
@@ -20,17 +19,17 @@ layout(std140, binding = 5) buffer pForcePlastic {
     mat4 pFP[ ];
 };
 layout(std140, binding = 8) buffer pVeln {
-    vec4 pvn[ ];
+    ivec4 pvn[ ];
 };
 
 layout(std140, binding = 9) buffer pDeltaVeln0 {
-    vec4 deltapvn0[ ];
+    ivec4 deltapvn0[ ];
 };
 layout(std140, binding = 10) buffer pDeltaVeln1 {
-    vec4 deltapvn1[ ];
+    ivec4 deltapvn1[ ];
 };
 layout(std140, binding = 11) buffer pDeltaVeln2 {
-    vec4 deltapvn2[ ];
+    ivec4 deltapvn2[ ];
 };
 
 
@@ -435,14 +434,10 @@ void main(void){
     mat4 FPp4 = mat4(pFP[pI]);
     mat3 FPp = mat3(FPp4);
 
-    mat3 dvp =mat3( deltapvn0[pI].xyz,deltapvn1[pI].xyz,deltapvn2[pI].xyz);
+    mat3 dvp =mat3( vec3(deltapvn0[pI].xyz)/1000000.0f,vec3(deltapvn1[pI].xyz)/1000000.0f,vec3(deltapvn2[pI].xyz)/1000000.0f);
 
 
-    for(int i=0; i<3; i++){
-        for(int j=0;j<3;j++){
-            dvp[i][j] =round(100000.0f *dvp[i][j])/100000.0f ;
-        }
-    }
+
 
     mat3 FEpn = (mat3(1.0f) + dt * dvp)*FEp;
     mat3 Fpn = (mat3(1.0f) + dt * dvp)* (FEp*FPp);
@@ -529,20 +524,20 @@ void main(void){
 */
     // UPDATE VELOCITIES
 
-    vec3 vpn = pvn[pI].xyz;
-    vec3 vp = pv[pI].xyz;
+    ivec3 vpn = pvn[pI].xyz;
+    ivec3 vp = pv[pI].xyz;
     //vpn+1 = a * vpn + temp_vpn+1
-    pv[pI].xyz = vp * alpha +
+    pv[pI].xyz = ivec3(vec3(vp * alpha)) +
             vpn;
 
     // UPDATE POSITION
     // xpn+1 = xpn + d_t * vpn+1
 
-    pxm[pI].xyz += dt *  pv[pI].xyz;
+    pxm[pI].xyz += dt *  vec3(pv[pI].xyz)/1000000.0f;
 
     //Reset vpn+1 and delta vpn+1 to (0,0,0)
-    pvn[pI].xyz = zeroVelocity;
-    deltapvn0[pI].xyz = zeroVelocity;
-    deltapvn1[pI].xyz = zeroVelocity;
-    deltapvn2[pI].xyz = zeroVelocity;
+    pvn[pI].xyz = ivec3(0,0,0);
+    deltapvn0[pI].xyz = ivec3(0,0,0);
+    deltapvn1[pI].xyz = ivec3(0,0,0);
+    deltapvn2[pI].xyz = ivec3(0,0,0);
 }
