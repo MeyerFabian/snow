@@ -28,6 +28,17 @@ void Vector3f::print() const{
 void Vector4f::print() const{
     std::cout<<"Vector4f=   " << this->x << " "<< this->y << " "<< this->z << " " <<this->w << std::endl;
 }
+
+void Vector3i::print() const{
+    std::cout<<"Vector3i=   " << this->x << " "<< this->y << " "<< this->z << std::endl;
+}
+
+
+void Vector4i::print() const{
+    std::cout<<"Vector4i=   " << this->x << " "<< this->y << " "<< this->z << " " <<this->w << std::endl;
+}
+
+
 /*
  *
  * Matrix3f

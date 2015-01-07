@@ -4,18 +4,18 @@
 struct Particle
 {
     Particle(Vector3f r = Vector3f(0.0f,0.0f,0.0f),
-             Vector3f v = Vector3f(0.0f,0.0f,0.0f),
+             Vector3i v = Vector3i(0,0,0),
              float m = 10.5f, float V= 1e-9,
-             Matrix4f Fe = Matrix4f(1.0025f),
+             Matrix4f Fe = Matrix4f(1.0f),
              Matrix4f Fp = Matrix4f(1.0f))
         : position(r), velocity(v), mass(m), volume(V) , forceElastic(Fe), forcePlastic(Fp){
     }
 
     Vector3f position;
-    Vector3f velocity;
+    Vector3i velocity;
 
     float mass;
-    float volume;
+    int volume;
 
     Matrix4f forceElastic;
     Matrix4f forcePlastic;

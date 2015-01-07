@@ -87,7 +87,7 @@ void ExplicitTimeUpdate::init(){
     cMass.setGridSpacing(grid->h);
     glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
-
+    grid->debug();
     cVolume.plugTechnique();
     cVolume.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     cVolume.setGridDim(grid->dimx, grid->dimy, grid->dimz);
@@ -95,6 +95,7 @@ void ExplicitTimeUpdate::init(){
     glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
+    particlesystem->debug();
 
 
 }
@@ -102,6 +103,7 @@ void ExplicitTimeUpdate::init(){
 
 void ExplicitTimeUpdate::update(double dt){
 //std::cout<<"Frame begin:"<<std::endl;
+    /*
     rg.plugTechnique();
     glDispatchComputeGroupSizeARB(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
@@ -149,7 +151,7 @@ void ExplicitTimeUpdate::update(double dt){
 
     //std::cout<<"Nach FEp Update"<<std::endl;
    // grid->debug();
-
+*/
 /*
  * obsolete can be done in previous compute shader
     divVelMass.plugTechnique();

@@ -8,7 +8,7 @@ layout(std140, binding = 2) buffer gPos {
     vec4 gPositionsMass[ ];
 };
 layout(std140, binding = 3) buffer gVel {
-    vec4 gVelocities[ ];
+    ivec4 gVelocities[ ];
 };
 layout(std140, binding = 6) buffer gForce{
     vec4 fi[] ;
@@ -29,6 +29,6 @@ void main(void){
     gPositionsMass[gl_GlobalInvocationID.x].w = n; //1&2
 
     //if( readVel.x > 1e-10 || readVel.y > 1e-10 || readVel.z > 1e-10)//2
-    gVelocities[gl_GlobalInvocationID.x].xyz = zeroVelocity;//1&2
+    gVelocities[gl_GlobalInvocationID.x].xyz = ivec3(0,0,0);//1&2
     fi[gl_GlobalInvocationID.x].xyz = zeroVelocity;
 }

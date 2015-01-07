@@ -94,6 +94,37 @@ struct Vector4f{
     }
     void print() const;
 };
+struct Vector3i{
+    int x;
+    int y;
+    int z;
+    Vector3i(float x, float y, float z){
+        this->x=x;
+        this->y=y;
+        this->z=z;
+    }
+
+    void print() const;
+};
+struct Vector4i{
+    int x;
+    int y;
+    int z;
+    int w;
+    Vector4i(float x, float y, float z,float w){
+        this->x=x;
+        this->y=y;
+        this->z=z;
+        this->w = w;
+    }
+    Vector4i(const Vector3i &vec){
+        this->x = vec.x;
+        this->y = vec.y;
+        this->z = vec.z;
+        this->w = 0;
+    }
+    void print() const;
+};
 
 struct persp_info{
     float fov;

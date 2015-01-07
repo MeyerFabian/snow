@@ -1,6 +1,5 @@
 #version 440
 #extension GL_ARB_compute_variable_group_size :require
-#extension  NV_shader_atomic_float:require
 
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
@@ -14,7 +13,7 @@ layout(std140, binding = 0) buffer pPosMass {
 };
 
 layout(std140, binding = 1) buffer pVelVolume {
-    vec4 pv[ ];
+    ivec4 pv[ ];
 };
 
 layout(std140, binding = 2) buffer gPosMass {
@@ -134,7 +133,7 @@ void main(void){
 // atomicAdd(gxm[gI].w, mp * wip);
         //pv[pIndex].w += (mi * wip / gCellVolume)  ;
 
-        atomicAdd(pv[pIndex].w, (gxm[gI].w * wip / gCellVolume));
+        atomicAdd(pv[pIndex].w, int(gv[gI].w * wip / gCellVolume));
 
    }
 
