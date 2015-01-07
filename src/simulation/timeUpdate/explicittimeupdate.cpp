@@ -137,8 +137,8 @@ void ExplicitTimeUpdate::update(double dt){
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
 
-    particlesystem->debug();
-    grid->debug();
+    //particlesystem->debug();
+    //grid->debug();
     //std::cout<<"Vor FEp Update"<<std::endl;
 
     //particlesystem->debug();

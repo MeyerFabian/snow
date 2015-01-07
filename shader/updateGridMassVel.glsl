@@ -529,7 +529,7 @@ void main(void){
     vec3 xp= particle.xyz; //particle position
     float mp = particle.w; // particle mass
     vec3 vp = particleVelocity.xyz; //particle velocity
-    float pp0 = float(particleVelocity.w) / (1000000.0f); //particle density
+    float pp0 = float(particleVelocity.w); //particle density
 
     int gridOffsetOfParticle = int(globalInvocY); //  21
     ivec3 gridOffset;
