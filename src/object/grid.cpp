@@ -42,7 +42,7 @@ void Grid::resetSSBOBuffer(){
    // glBufferSubData(GL_SHADER_STORAGE_BUFFER, 12, sizeof(Vector4f) * (gridPoints)->size(),0);
 }
 void Grid::debug(){
-
+    std::cout << "grid"<< std::endl;
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
 
     Vector4f* p = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (gridPoints)->size(), GL_MAP_READ_BIT));
