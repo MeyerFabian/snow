@@ -48,6 +48,13 @@ void Grid::debug(){
     Vector4f* p = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (gridPoints)->size(), GL_MAP_READ_BIT));
     p[95+45*201+95*201*201].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, velB);
+
+    Vector4f* j = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (gridPoints)->size(), GL_MAP_READ_BIT));
+    j[95+45*201+95*201*201].print();
+    glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
+
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, forceB);
 
     Vector4f* l = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (gridPoints)->size(), GL_MAP_READ_BIT));
