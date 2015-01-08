@@ -9,12 +9,12 @@
 #define GRID_RENDERING_RESOLUTION_Z 10
 
 //SET THESE ONTO -1.000 , 0.0000, -1.000 and it completely bugs out need to check algorithm for that
-#define GRID_POS_X 4.0125
-#define GRID_POS_Y 2.0125
-#define GRID_POS_Z 4.0125
-#define GRID_DIM_X 64
-#define GRID_DIM_Y 64
-#define GRID_DIM_Z 64
+#define GRID_POS_X 0.5125
+#define GRID_POS_Y 0.5125
+#define GRID_POS_Z 0.5125
+#define GRID_DIM_X 201
+#define GRID_DIM_Y 201
+#define GRID_DIM_Z 201
 #define GRID_SPACING 0.05
 #define PARTICLE_TO_GRID_SIZE 64
 

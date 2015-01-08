@@ -426,14 +426,14 @@ void main(void){
 
     mat3 dvp =mat3( float(pvn[3*pI+1].x)/1000000.0f,float(pvn[3*pI+1].y)/1000000.0f,float(pvn[3*pI+1].z)/1000000.0f,
                     float(pvn[3*pI+1].y)/1000000.0f,float(pvn[3*pI+2].x)/1000000.0f,float(pvn[3*pI+2].y)/1000000.0f,
-                    float(pvn[3*pI+2].z)/1000000.0f,float(pvn[3*pI+2].y)/1000000.0f,float(pvn[3*pI+2].z)/1000000.0f);
-
+                    float(pvn[3*pI+1].z)/1000000.0f,float(pvn[3*pI+2].y)/1000000.0f,float(pvn[3*pI+2].z)/1000000.0f);
+/*
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
             dvp[i][j] =round(10.0f *dvp[i][j])/10.0f ;
         }
     }
-
+*/
 
     mat3 FEpn = (mat3(1.0f) + dt * dvp)*FEp;
     mat3 Fpn = (mat3(1.0f) + dt * dvp)* (FEp*FPp);
