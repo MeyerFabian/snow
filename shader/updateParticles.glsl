@@ -29,10 +29,6 @@ layout(std140, binding = 9) buffer pDeltaVeln0 {
 layout(std140, binding = 10) buffer pDeltaVeln1 {
     vec4 deltapvn1[ ];
 };
-layout(std140, binding = 11) buffer pDeltaVeln2 {
-    vec4 deltapvn2[ ];
-};
-
 
 
 
@@ -435,7 +431,9 @@ void main(void){
     mat4 FPp4 = mat4(pFP[pI]);
     mat3 FPp = mat3(FPp4);
 
-    mat3 dvp =mat3( deltapvn0[pI].xyz,deltapvn1[pI].xyz,deltapvn2[pI].xyz);
+    mat3 dvp =mat3( deltapvn0[pI].x,deltapvn0[pI].y,deltapvn0[pI].z,
+                    deltapvn0[pI].y,deltapvn1[pI].x,deltapvn1[pI].y,
+                    deltapvn0[pI].z,deltapvn1[pI].y,deltapvn1[pI].z);
 
 
     for(int i=0; i<3; i++){
@@ -544,5 +542,4 @@ void main(void){
     pvn[pI].xyz = zeroVelocity;
     deltapvn0[pI].xyz = zeroVelocity;
     deltapvn1[pI].xyz = zeroVelocity;
-    deltapvn2[pI].xyz = zeroVelocity;
 }

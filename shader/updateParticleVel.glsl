@@ -43,9 +43,6 @@ layout(std140, binding = 9) buffer pDeltaVeln0 {
 layout(std140, binding = 10) buffer pDeltaVeln1 {
     vec4 deltapvn1[ ];
 };
-layout(std140, binding = 11) buffer pDeltaVeln2 {
-    vec4 deltapvn2[ ];
-};
 
 
 /**
@@ -184,12 +181,9 @@ void main(void){
         atomicAdd(deltapvn0[gl_GlobalInvocationID.x].x,vin.x * gwip.x);
         atomicAdd(deltapvn0[gl_GlobalInvocationID.x].y,vin.x * gwip.y);
         atomicAdd(deltapvn0[gl_GlobalInvocationID.x].z,vin.x * gwip.z);
-        atomicAdd(deltapvn1[gl_GlobalInvocationID.x].x,vin.y * gwip.x);
-        atomicAdd(deltapvn1[gl_GlobalInvocationID.x].y,vin.y * gwip.y);
-        atomicAdd(deltapvn1[gl_GlobalInvocationID.x].z,vin.y * gwip.z);
-        atomicAdd(deltapvn2[gl_GlobalInvocationID.x].x,vin.z * gwip.x);
-        atomicAdd(deltapvn2[gl_GlobalInvocationID.x].y,vin.z * gwip.y);
-        atomicAdd(deltapvn2[gl_GlobalInvocationID.x].z,vin.z * gwip.z);
+        atomicAdd(deltapvn1[gl_GlobalInvocationID.x].x,vin.y * gwip.y);
+        atomicAdd(deltapvn1[gl_GlobalInvocationID.x].y,vin.y * gwip.z);
+        atomicAdd(deltapvn1[gl_GlobalInvocationID.x].z,vin.z * gwip.z);
 
         /*
         deltapvn[gl_GlobalInvocationID.x][0][0] += mat4( vin.x * gwip.x,vin.x * gwip.y, vin.x *gwip.z,0.0f,
