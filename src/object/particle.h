@@ -5,7 +5,7 @@ struct Particle
 {
     Particle(Vector3f r = Vector3f(0.0f,0.0f,0.0f),
              Vector3i v = Vector3i(0,0,0),
-             float m = 10.5f, float V= 1e-9,
+             float m = 6.25f, float V= 1e-9,
              Matrix4f Fe = Matrix4f(1.0025f),
              Matrix4f Fp = Matrix4f(1.0f))
         : position(r), velocity(v), mass(m), volume(V) , forceElastic(Fe), forcePlastic(Fp){
