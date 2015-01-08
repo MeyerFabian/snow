@@ -10,14 +10,15 @@ void ExplicitTimeUpdate::init(){
     const char* pUpdateParticles = "shader/updateParticles.glsl";
 
     string cs;
+    particlesystem->initSSBO();
+    grid->initSSBO();
 
     if(!ReadFile(pPCFileName,cs)){
       fprintf(stderr, "Error: vs\n");
        exit(1);
     };
     pc = ParticleCompute();
-    particlesystem->initSSBO();
-    grid->initSSBO();
+
     pc.init(cs);
 
     cs.clear();
@@ -68,6 +69,7 @@ void ExplicitTimeUpdate::init(){
     };
     cVolume = ParticleCompute();
     cVolume.init(cs);
+
 /*
     cs.clear();
     if(!ReadFile(pDivideByMass,cs)){
@@ -78,33 +80,36 @@ void ExplicitTimeUpdate::init(){
     divVelMass.init(cs);
 */
     rg.plugTechnique();
-    glDispatchComputeGroupSizeARB(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
+    glDispatchCompute(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z,1,1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
     cMass.plugTechnique();
     cMass.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     cMass.setGridDim(grid->dimx, grid->dimy, grid->dimz);
     cMass.setGridSpacing(grid->h);
-    glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1,NUM_OF_GPGPU_THREADS_X,1,1);
+    glDispatchCompute(NUMOFPARTICLES,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
     cVolume.plugTechnique();
     cVolume.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     cVolume.setGridDim(grid->dimx, grid->dimy, grid->dimz);
     cVolume.setGridSpacing(grid->h);
-    glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1,NUM_OF_GPGPU_THREADS_X,1,1);
+    glDispatchCompute(NUMOFPARTICLES,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
+    grid->debug();
+    particlesystem->debug();
 
-
-
+GLint* i;
+glGetIntegerv(0x90DD,i);
+std::cout <<"GL_MAX_SHADER_STORAGE_BUFFER_OBJECT_BINDINGS" << *i <<std::endl;
 }
 
 
 void ExplicitTimeUpdate::update(double dt){
 //std::cout<<"Frame begin:"<<std::endl;
-
+/*
     rg.plugTechnique();
-    glDispatchComputeGroupSizeARB(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
+    glDispatchCompute(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
     pc.plugTechnique();
@@ -116,7 +121,7 @@ void ExplicitTimeUpdate::update(double dt){
     pc.setHardening();
     pc.setCritComp();
     pc.setCritStretch();
-    glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1,NUM_OF_GPGPU_THREADS_X,1,1);
+    glDispatchCompute(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
 
@@ -124,7 +129,7 @@ void ExplicitTimeUpdate::update(double dt){
 
     vUp.plugTechnique();
     vUp.setDt(dt);
-    glDispatchComputeGroupSizeARB(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
+    glDispatchCompute(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
     //
 
@@ -133,7 +138,7 @@ void ExplicitTimeUpdate::update(double dt){
     pVU.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     pVU.setGridDim(grid->dimx, grid->dimy, grid->dimz);
     pVU.setGridSpacing(grid->h);
-    glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1,NUM_OF_GPGPU_THREADS_X,1,1);
+    glDispatchCompute(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
 
@@ -141,19 +146,18 @@ void ExplicitTimeUpdate::update(double dt){
     //grid->debug();
     //std::cout<<"Vor FEp Update"<<std::endl;
 
-    //particlesystem->debug();
-    //grid->debug();
+
     pU.plugTechnique();
     pU.setDt(dt);   
     pU.setCritComp();
     pU.setCritStretch();
-    glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
+    glDispatchCompute(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
 
     //std::cout<<"Nach FEp Update"<<std::endl;
    // grid->debug();
-
+*/
 /*
  * obsolete can be done in previous compute shader
     divVelMass.plugTechnique();

@@ -1,10 +1,10 @@
 #version 440
-#extension GL_ARB_compute_variable_group_size :require
 #define alpha 0.95
 uniform float dt;
 uniform float critComp;
 uniform float critStretch;
-layout(local_size_variable)in;
+
+layout(local_size_x = 1024,local_size_x = 1,local_size_x = 1) in;
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pxm[ ];
@@ -18,20 +18,9 @@ layout(std140, binding = 4) buffer pForceElastic {
 layout(std140, binding = 5) buffer pForcePlastic {
     mat4 pFP[ ];
 };
-layout(std140, binding = 8) buffer pVeln {
+layout(std140, binding = 6) buffer pVeln {
     ivec4 pvn[ ];
 };
-
-layout(std140, binding = 9) buffer pDeltaVeln0 {
-    ivec4 deltapvn0[ ];
-};
-layout(std140, binding = 10) buffer pDeltaVeln1 {
-    ivec4 deltapvn1[ ];
-};
-layout(std140, binding = 11) buffer pDeltaVeln2 {
-    ivec4 deltapvn2[ ];
-};
-
 
 
 
@@ -421,7 +410,7 @@ void computePD( const mat3 A, inout mat3 R, inout mat3 P )
 float n = 0.0f;
 vec3 zeroVelocity = vec3(0.0f,0.0f,0.0f);
 
-void clamp (inout float f, const float lb, const float ub){
+void clampS(const float lb, const float ub,inout float f){
     f = (f<lb)? lb : (f>ub)? ub : f;
 }
 
@@ -434,7 +423,10 @@ void main(void){
     mat4 FPp4 = mat4(pFP[pI]);
     mat3 FPp = mat3(FPp4);
 
-    mat3 dvp =mat3( vec3(deltapvn0[pI].xyz)/1000000.0f,vec3(deltapvn1[pI].xyz)/1000000.0f,vec3(deltapvn2[pI].xyz)/1000000.0f);
+    mat3 dvp =mat3( (pvn[3*pI+1].x)/1000000.0f,(pvn[pI*3+1].y)/1000000.0f,(pvn[pI*3+1].z)/1000000.0f,
+                   ( pvn[3*pI+1].y)/1000000.0f,(pvn[pI*3+2].x)/1000000.0f,(pvn[pI*3+2].y)/1000000.0f,
+                    (pvn[3*pI+1].z)/1000000.0f,(pvn[pI*3+2].y)/1000000.0f,(pvn[pI*3+2].z)/1000000.0f
+            );
 
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
@@ -462,9 +454,9 @@ void main(void){
     mat3 V =mat3(0.0f);
     computeSVD(FEpn,W,S,V);
 
-    clamp(S[0][0], 1.0f-critComp,1.0f+critStretch);
-    clamp(S[1][1], 1.0f-critComp,1.0f+critStretch);
-    clamp(S[2][2], 1.0f-critComp,1.0f+critStretch);
+    clampS(1.0f-critComp,1.0f+critStretch,S[0][0]);
+    clampS(1.0f-critComp,1.0f+critStretch,S[1][1]);
+    clampS(1.0f-critComp,1.0f+critStretch,S[2][2]);
 
     FEpn = W*S*transpose(V);
 
@@ -528,7 +520,7 @@ void main(void){
 */
     // UPDATE VELOCITIES
 
-    ivec3 vpn = pvn[pI].xyz;
+    ivec3 vpn = pvn[3*pI].xyz;
     ivec3 vp = pv[pI].xyz;
     //vpn+1 = a * vpn + temp_vpn+1
     pv[pI].xyz = ivec3(vec3(vp * alpha)) +
@@ -540,8 +532,7 @@ void main(void){
     pxm[pI].xyz += dt *  vec3(pv[pI].xyz)/1000000.0f;
 
     //Reset vpn+1 and delta vpn+1 to (0,0,0)
-    pvn[pI].xyz = ivec3(0,0,0);
-    deltapvn0[pI].xyz = ivec3(0,0,0);
-    deltapvn1[pI].xyz = ivec3(0,0,0);
-    deltapvn2[pI].xyz = ivec3(0,0,0);
+    pvn[3*pI].xyz = ivec3(0,0,0);
+    pvn[3*pI+1].xyz = ivec3(0,0,0);
+    pvn[3*pI+2].xyz = ivec3(0,0,0);
 }

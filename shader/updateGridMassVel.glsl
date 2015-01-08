@@ -1,5 +1,4 @@
 #version 440
-#extension GL_ARB_compute_variable_group_size :require
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;
@@ -11,7 +10,8 @@ uniform float critStretch;
 
 
 
-layout(local_size_variable)in;
+
+layout(local_size_x = 1024,local_size_x = 1,local_size_x = 1) in;
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pxm[ ];
@@ -32,9 +32,6 @@ layout(std140, binding = 4) buffer pForceElastic {
 };
 layout(std140, binding = 5) buffer pForcePlastic {
     mat4 pFP[ ];
-};
-layout(std140, binding = 6) buffer gForce{
-    ivec4 fi[] ;
 };
 
 
@@ -559,15 +556,15 @@ void main(void){
 
         //min = sum_p [ mp *wipn]
         //gxm[gI].w+= mp * wip;
-        atomicAdd(gv[gI].w,  int(mp * wip* 1000000.0f));
+        atomicAdd(gv[2*gI].w,  int(mp * wip* 1000000.0f));
 
         //vin = sum_p [ vpn * mp *wipn / min]
         //gv[gI].xyz+= vp * mp * wip; // calculate added gridVelocity
 
         vec3 velocity = (vp * mp * wip);
-        atomicAdd(gv[gI].x,int(velocity.x));
-        atomicAdd(gv[gI].y,int(velocity.y));
-        atomicAdd(gv[gI].z,int(velocity.z));
+        atomicAdd(gv[2*gI].x,int(velocity.x));
+        atomicAdd(gv[2*gI].y,int(velocity.y));
+        atomicAdd(gv[2*gI].z,int(velocity.z));
 
 
         mat3 REp, SEp;
@@ -600,9 +597,9 @@ void main(void){
         wipg;
         //force = wipg;
         //fi[gI].xyz += force;
-        atomicAdd(fi[gI].x,int(force.x*1000000.0f));
-        atomicAdd(fi[gI].y,int(force.y*1000000.0f));
-        atomicAdd(fi[gI].z,int(force.z*1000000.0f));
+        atomicAdd(gv[2*gI+1].x,int(force.x*1000000.0f));
+        atomicAdd(gv[2*gI+1].y,int(force.y*1000000.0f));
+        atomicAdd(gv[2*gI+1].z,int(force.z*1000000.0f));
 
         }
    }

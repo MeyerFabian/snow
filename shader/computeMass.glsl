@@ -1,12 +1,11 @@
-#version 440
-#extension GL_ARB_compute_variable_group_size :require
+#version 430
 
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;
 
 
-layout(local_size_variable)in;
+layout(local_size_x = 1024,local_size_x = 1,local_size_x = 1) in;
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pxm[ ];
@@ -21,6 +20,7 @@ layout(std140, binding = 2) buffer gPosMass {
 };
 layout(std140, binding = 3) buffer gVel {
     ivec4 gv[ ];
+
 };
 
 
@@ -128,7 +128,9 @@ void main(void){
         getIndex(gridIndex,gI);
         // mi0 = sum_p [mp *wip0]
         //gxm[gI].w+=mp * wip;
-    //gv[gI].w+= n;
+        //gv[gI].w+= int(mp * wip* 1000000.0f);
+
+
         atomicAdd(gv[gI].w, int(mp * wip* 1000000.0f));
         //memoryBarrier();
         // pp0 = sum_i[ mi0 *wip0 / h^(3)]
