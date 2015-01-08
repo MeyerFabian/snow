@@ -80,22 +80,23 @@ void ExplicitTimeUpdate::init(){
     divVelMass.init(cs);
 */
     rg.plugTechnique();
-    glDispatchCompute(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z,1,1);
+    glDispatchCompute(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/1024,1,1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
     cMass.plugTechnique();
     cMass.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     cMass.setGridDim(grid->dimx, grid->dimy, grid->dimz);
     cMass.setGridSpacing(grid->h);
-    glDispatchComputeGroupSizeARB(NUMOFPARTICLES/1024,PARTICLE_TO_GRID_SIZE,1,1024,1,1);
+    glDispatchCompute(NUMOFPARTICLES/1024,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
     cVolume.plugTechnique();
     cVolume.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     cVolume.setGridDim(grid->dimx, grid->dimy, grid->dimz);
     cVolume.setGridSpacing(grid->h);
-    glDispatchCompute(NUMOFPARTICLES,PARTICLE_TO_GRID_SIZE,1);
+    glDispatchCompute(NUMOFPARTICLES/1024,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
+
     grid->debug();
     particlesystem->debug();
 

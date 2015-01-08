@@ -26,6 +26,5 @@ void main(void){
 
     //if( readVel.x > 1e-10 || readVel.y > 1e-10 || readVel.z > 1e-10)//2
 
-    gVelocities[2*gl_GlobalInvocationID.x] = ivec4(0,0,0,0);//1&2
-    gVelocities[2*gl_GlobalInvocationID.x+1] = ivec4(0,0,0,0);//1&2
+    gVelocities[gl_GlobalInvocationID.x] = ivec4(0,0,0,0);//1&2
 }

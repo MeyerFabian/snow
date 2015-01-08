@@ -1,12 +1,12 @@
-#version 430
+#version 440
 
-#extension GL_ARB_compute_variable_group_size : require
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;
 
 
-layout(local_size_variable)in;
+layout(local_size_x = 1024,local_size_x = 1,local_size_x = 1) in;
+
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pxm[ ];

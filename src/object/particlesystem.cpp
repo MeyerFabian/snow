@@ -42,7 +42,7 @@ void ParticleSystem::debug(){
     a[32*32-31-1].print();
     a[32*32-1].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
-
+/*
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, velBn);
     std::cout << "velBn"<<std::endl;
     Vector4i* vb = (Vector4i*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,3 * sizeof(Vector4i)* (particles)->size(), GL_MAP_READ_BIT));
@@ -62,7 +62,7 @@ void ParticleSystem::debug(){
     m[32-1].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
 
-
+*/
 
 
 
