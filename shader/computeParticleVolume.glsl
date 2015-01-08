@@ -5,8 +5,7 @@ uniform ivec3 gGridDim;
 uniform float gridSpacing;
 
 
-
-layout(local_size_x = 1024,local_size_x = 1,local_size_x = 1) in;
+layout(local_size_x =1024, local_size_y =1,local_size_z =1)in;
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pxm[ ];
@@ -131,12 +130,9 @@ void main(void){
 
         // pp0 = sum_i[ mi0 *wip0 / h^(3)]
 // atomicAdd(gxm[gI].w, mp * wip);
-
         //pv[pIndex].w += (mi * wip / gCellVolume)  ;
-//int m =;
-      // pv[0].w =  int(gv[gI].x*100000.0f);
-   // gv[0].w = int(float(gv[0].w)/1000000.0f * wip / gCellVolume);
-        atomicAdd(pv[gI].w, int(float(gv[gI].w)/1000000.0f * wip / gCellVolume));
+
+        atomicAdd(pv[pIndex].w, int(float(gv[2*gI].w)/1000000.0f * wip / gCellVolume));
 
    }
 

@@ -10,8 +10,7 @@ uniform float critStretch;
 
 
 
-
-layout(local_size_x = 1024,local_size_x = 1,local_size_x = 1) in;
+layout(local_size_x =1024, local_size_y =1,local_size_z =1)in;
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pxm[ ];
@@ -33,7 +32,6 @@ layout(std140, binding = 4) buffer pForceElastic {
 layout(std140, binding = 5) buffer pForcePlastic {
     mat4 pFP[ ];
 };
-
 
 
 

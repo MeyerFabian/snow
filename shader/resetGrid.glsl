@@ -1,8 +1,7 @@
 #version 440
 
 
-//layout(local_size_variable)in;
-layout(local_size_x = 1024,local_size_x = 1,local_size_x = 1) in;
+layout(local_size_x =1024, local_size_y =1,local_size_z =1)in;
 
 layout(std140, binding = 2) buffer gPos {
     vec4 gPositionsMass[ ];
@@ -25,6 +24,6 @@ void main(void){
     //if(gPositionsMass[gl_GlobalInvocationID.x].w > 1e-10) //2
 
     //if( readVel.x > 1e-10 || readVel.y > 1e-10 || readVel.z > 1e-10)//2
-
-    gVelocities[gl_GlobalInvocationID.x] = ivec4(0,0,0,0);//1&2
+    gVelocities[2*gl_GlobalInvocationID.x] = ivec4(0,0,0,0);//1&2
+    gVelocities[2*gl_GlobalInvocationID.x+1].xyz = ivec3(0,0,0);
 }

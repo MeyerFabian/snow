@@ -75,7 +75,6 @@ public:
     GLuint posB;
     GLuint velB;
     GLuint velBn;
-    GLuint forceB;
     GLuint borderVB;
     GLuint borderIB;
 

@@ -11,9 +11,7 @@ uniform float critStretch;
 
 
 
-
-layout(local_size_x = 1024,local_size_x = 1,local_size_x = 1) in;
-
+layout(local_size_x =1024, local_size_y =1,local_size_z =1)in;
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pxm[ ];
 };
@@ -152,9 +150,9 @@ void main(void){
         if(mi>0.0f){
         vec3 vpn = ((1.0f-alpha) *vin * wip)+(alpha*(vin-vi/mi)*wip); // add ParticleMass to gridPointMass
         //fi[gI].xyz += force;
-        atomicAdd(pvn[gl_GlobalInvocationID.x].x,int(vpn.x*1000000.0f));
-        atomicAdd(pvn[gl_GlobalInvocationID.x].y,int(vpn.y*1000000.0f));
-        atomicAdd(pvn[gl_GlobalInvocationID.x].z,int(vpn.z*1000000.0f));
+        atomicAdd(pvn[3*gl_GlobalInvocationID.x].x,int(vpn.x*1000000.0f));
+        atomicAdd(pvn[3*gl_GlobalInvocationID.x].y,int(vpn.y*1000000.0f));
+        atomicAdd(pvn[3*gl_GlobalInvocationID.x].z,int(vpn.z*1000000.0f));
         }
         //pvn[gl_GlobalInvocationID.x].xyz +=vin*wip;
         //d_vpn+1 = sum_i [vin+1 * d_wipn^(T)]
@@ -171,12 +169,12 @@ void main(void){
 
 */
 
-        atomicAdd(pvn[gl_GlobalInvocationID.x*3+1].x,int(vin.x * gwip.x*1000000.0f));
-        atomicAdd(pvn[gl_GlobalInvocationID.x*3+1].y,int(vin.x * gwip.y*1000000.0f));
-        atomicAdd(pvn[gl_GlobalInvocationID.x*3+1].z,int(vin.x * gwip.z*1000000.0f));
-        atomicAdd(pvn[gl_GlobalInvocationID.x*3+2].y,int(vin.y * gwip.y*1000000.0f));
-        atomicAdd(pvn[gl_GlobalInvocationID.x*3+2].z,int(vin.y * gwip.z*1000000.0f));
-        atomicAdd(pvn[gl_GlobalInvocationID.x*3+2].z,int(vin.z * gwip.z*1000000.0f));
+        atomicAdd(pvn[3*gl_GlobalInvocationID.x+1].x,int(vin.x * gwip.x*1000000.0f));
+        atomicAdd(pvn[3*gl_GlobalInvocationID.x+1].y,int(vin.x * gwip.y*1000000.0f));
+        atomicAdd(pvn[3*gl_GlobalInvocationID.x+1].z,int(vin.x * gwip.z*1000000.0f));
+        atomicAdd(pvn[3*gl_GlobalInvocationID.x+2].x,int(vin.y * gwip.y*1000000.0f));
+        atomicAdd(pvn[3*gl_GlobalInvocationID.x+2].y,int(vin.y * gwip.z*1000000.0f));
+        atomicAdd(pvn[3*gl_GlobalInvocationID.x+2].z,int(vin.z * gwip.z*1000000.0f));
 
         /*
         deltapvn[gl_GlobalInvocationID.x][0][0] += mat4( vin.x * gwip.x,vin.x * gwip.y, vin.x *gwip.z,0.0f,

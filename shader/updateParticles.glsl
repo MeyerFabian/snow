@@ -3,8 +3,7 @@
 uniform float dt;
 uniform float critComp;
 uniform float critStretch;
-
-layout(local_size_x = 1024,local_size_x = 1,local_size_x = 1) in;
+layout(local_size_x =1024, local_size_y =1,local_size_z =1)in;
 
 layout(std140, binding = 0) buffer pPosMass {
     vec4 pxm[ ];
@@ -21,6 +20,8 @@ layout(std140, binding = 5) buffer pForcePlastic {
 layout(std140, binding = 6) buffer pVeln {
     ivec4 pvn[ ];
 };
+
+
 
 
 
@@ -410,7 +411,7 @@ void computePD( const mat3 A, inout mat3 R, inout mat3 P )
 float n = 0.0f;
 vec3 zeroVelocity = vec3(0.0f,0.0f,0.0f);
 
-void clampS(const float lb, const float ub,inout float f){
+void sclamp (inout float f, const float lb, const float ub){
     f = (f<lb)? lb : (f>ub)? ub : f;
 }
 
@@ -423,10 +424,9 @@ void main(void){
     mat4 FPp4 = mat4(pFP[pI]);
     mat3 FPp = mat3(FPp4);
 
-    mat3 dvp =mat3( (pvn[3*pI+1].x)/1000000.0f,(pvn[pI*3+1].y)/1000000.0f,(pvn[pI*3+1].z)/1000000.0f,
-                   ( pvn[3*pI+1].y)/1000000.0f,(pvn[pI*3+2].x)/1000000.0f,(pvn[pI*3+2].y)/1000000.0f,
-                    (pvn[3*pI+1].z)/1000000.0f,(pvn[pI*3+2].y)/1000000.0f,(pvn[pI*3+2].z)/1000000.0f
-            );
+    mat3 dvp =mat3( float(pvn[3*pI+1].x)/1000000.0f,float(pvn[3*pI+1].y)/1000000.0f,float(pvn[3*pI+1].z)/1000000.0f,
+                    float(pvn[3*pI+1].y)/1000000.0f,float(pvn[3*pI+2].x)/1000000.0f,float(pvn[3*pI+2].y)/1000000.0f,
+                    float(pvn[3*pI+2].z)/1000000.0f,float(pvn[3*pI+2].y)/1000000.0f,float(pvn[3*pI+2].z)/1000000.0f);
 
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
@@ -454,9 +454,9 @@ void main(void){
     mat3 V =mat3(0.0f);
     computeSVD(FEpn,W,S,V);
 
-    clampS(1.0f-critComp,1.0f+critStretch,S[0][0]);
-    clampS(1.0f-critComp,1.0f+critStretch,S[1][1]);
-    clampS(1.0f-critComp,1.0f+critStretch,S[2][2]);
+    sclamp(S[0][0], 1.0f-critComp,1.0f+critStretch);
+    sclamp(S[1][1], 1.0f-critComp,1.0f+critStretch);
+    sclamp(S[2][2], 1.0f-critComp,1.0f+critStretch);
 
     FEpn = W*S*transpose(V);
 
