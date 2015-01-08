@@ -87,7 +87,7 @@ void ExplicitTimeUpdate::init(){
     cMass.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     cMass.setGridDim(grid->dimx, grid->dimy, grid->dimz);
     cMass.setGridSpacing(grid->h);
-    glDispatchCompute(NUMOFPARTICLES,PARTICLE_TO_GRID_SIZE,1);
+    glDispatchComputeGroupSizeARB(NUMOFPARTICLES/1024,PARTICLE_TO_GRID_SIZE,1,1024,1,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
     cVolume.plugTechnique();

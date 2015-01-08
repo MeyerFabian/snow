@@ -134,7 +134,7 @@ void main(void){
 
         //pv[pIndex].w += (mi * wip / gCellVolume)  ;
 //int m =;
-        pv[0].w =  int(gv[0].x*100000.0f);
+       // pv[0].w =  int(gv[0].x*100000.0f);
    // gv[0].w = int(float(gv[0].w)/1000000.0f * wip / gCellVolume);
         //atomicAdd(pv[0].w, int(float(gv[2*(95+45*201+95*201*201)].w)/1000000.0f * wip / gCellVolume));
 
