@@ -2,7 +2,8 @@
 #extension GL_ARB_compute_variable_group_size :require
 #extension  NV_shader_atomic_float:require
 uniform float dt;
-
+uniform int collisionOffset;
+uniform ivec3 gGridDim;
 layout(local_size_variable)in;
 
 layout(std140, binding = 2) buffer gPosMass {
@@ -19,26 +20,93 @@ layout(std140, binding = 7) buffer gVeln {
 };
 float n = 0.0f;
 vec3 zeroVelocity = vec3(0.0f,0.0f,0.0f);
-vec3 g = vec3(0.0f,0.0f,0.0f);
+vec3 g = vec3(0.0f,-9.81f,0.0f);
+
+
+int numCollisionObjects = 6;
+/*
+vec4 cpositions[6] = vec4[6](
+            vec4(gxm[collisionOffset*gGridDim[0].x*gGridDim[1].x+collisionOffset*gGridDim[0].x+collisionOffset]),
+            vec4(gxm[collisionOffset*gGridDim[0].x*gGridDim[1].x+collisionOffset*gGridDim[0].x+collisionOffset]),
+            vec4(gxm[collisionOffset*gGridDim[0].x*gGridDim[1].x+collisionOffset*gGridDim[0].x+collisionOffset]),
+            vec4(gxm[(gGridDim[2].x-collisionOffset)*gGridDim[0].x*gGridDim[1].x+(gGridDim[1].x-collisionOffset)*gGridDim[0].x+(gGridDim[0].x-collisionOffset)]),
+            vec4(gxm[(gGridDim[2].x-collisionOffset)*gGridDim[0].x*gGridDim[1].x+(gGridDim[1].x-collisionOffset)*gGridDim[0].x+(gGridDim[0].x-collisionOffset)]),
+            vec4(gxm[(gGridDim[2].x-collisionOffset)*gGridDim[0].x*gGridDim[1].x+(gGridDim[1].x-collisionOffset)*gGridDim[0].x+(gGridDim[0].x-collisionOffset)])
+
+            );
+            */
+vec4 cpositions[6] = vec4[6](
+            vec4(0.7125f),
+            vec4(0.7125f),
+            vec4(0.7125f),
+            vec4(10.3625f),
+            vec4(10.3625f),
+            vec4(10.3625f)
+
+            );
+vec4 cnormals[6] = vec4[6](
+            vec4(1.0f,0.0f,0.0f,0.0f),
+            vec4(0.0f,1.0f,0.0f,0.0f),
+            vec4(0.0f,0.0f,1.0f,0.0f),
+            vec4(-1.0f,0.0f,0.0f,0.0f),
+            vec4(0.0f,-1.0f,0.0f,0.0f),
+            vec4(0.0f,0.0f,-1.0f,0.0f)
+            );
+vec4 cvelocities[6] = vec4[6](
+            vec4(0.0f,0.0f,0.0f,0.0f),
+            vec4(0.0f,0.0f,0.0f,0.0f),
+            vec4(0.0f,0.0f,0.0f,0.0f),
+            vec4(0.0f,0.0f,0.0f,0.0f),
+            vec4(0.0f,0.0f,0.0f,0.0f),
+            vec4(0.0f,0.0f,0.0f,0.0f)
+            );
+float cfriction[6] = float[6](0.1f,0.1f,0.1f,0.1f,0.1f,0.1f);
+
+bool collides(const vec3 pPos,const  vec3 cPos,const vec3 cNormal){
+ return dot((pPos-cPos),cNormal) <= 0;
+}
 
 //vec3 readVel; //2
 void main(void){
     uint gI = gl_GlobalInvocationID.x;
+    vec3 xi = gxm[gI].xyz;
     float mi = gxm[gI].w;
     vec3 vi =  gv[gI].xyz; //needs to be normalized with mi
     vec3 fi = gf[gI].xyz;//+vec3(0.0001,0.0002,0.0);
     //vin+1 = vin + d_t * mi^(-1) * fin
 
     if(mi>0.0f){
-
-
-    gvn[gI].xyz =vi/mi + dt
+        vec3 vin =vi/mi + dt
              * (
                fi/mi+
                 g)
             ;
 
-    //fi[gI].xyz += force;
+        for(int i = 0 ; i<numCollisionObjects; i++){
+            vec3 p = cpositions[i].xyz;
+            vec3 n = cnormals[i].xyz;
+            if(collides(xi,p,n)){
+                vec3 vco = cvelocities[i].xyz;
+                vec3 vrel = vin - vco;
+                float vn = dot(vrel,n);
+                if(vn<0){
+                    vec3 vt = vrel - n*vn;
+                    float muvn = cfriction[i] * vn;
+                    vec3 vrelt;
+                    float lengthvt=length(vt);
+                    if(lengthvt<= - muvn){
+                        vrelt = vec3(0.0f);
+                    }
+                    else{
+                        vrelt = vt + muvn*vt/(lengthvt);
+                    }
+                    vin = vrelt + vco;
+                }
+            }
+        }
+
+
+        gvn[gI].xyz = vin;
 
     }
     else{

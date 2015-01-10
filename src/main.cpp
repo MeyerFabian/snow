@@ -12,7 +12,7 @@
 #include "GLFW/glfw3.h"
 using namespace  std;
 
-double dt =  0.01666666666;
+double dt =  DT;
 
 
 int launchSnow(){
@@ -20,7 +20,7 @@ int launchSnow(){
 
 
     shared_ptr<ParticleSystem> const pPs= make_shared<ParticleSystem > ();
-    float xpos=5.0f,ypos=2.5f,zpos=5.0f;
+    float xpos=1.0f,ypos=0.750f,zpos=5.0f;
     for(int x = 0; x < 32; x+=1){
         xpos += 0.025f;
         for(int y = 0; y < 32; y+=1){
@@ -31,7 +31,7 @@ int launchSnow(){
             }
             zpos = 5.0f;
         }
-        ypos = 2.5f;
+        ypos = 0.750f;
     }
 
     shared_ptr<std::vector<Mesh> > const  meshes = make_shared<std::vector<Mesh> >();

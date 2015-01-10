@@ -27,10 +27,10 @@ void ParticleSystem::debug(){
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
     std::cout << "pos"<<std::endl;
     Vector4f* p = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (particles)->size(), GL_MAP_READ_BIT));
-    p[16*32*32+16*32+16].print();
-    p[32-1].print();
-    p[32*32-31-1].print();
-    p[32*32-1].print();
+    p[2*32*32+2*32+2].print();
+    p[0].print();
+    p[32*32*32-1].print();
+    p[29*32*32+29*32+29].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
 
 

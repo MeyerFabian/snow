@@ -94,7 +94,7 @@ void ExplicitTimeUpdate::init(){
     cVolume.setGridSpacing(grid->h);
     glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
-    particlesystem->debug();
+    //particlesystem->debug();
 
 
 }
@@ -124,6 +124,8 @@ void ExplicitTimeUpdate::update(double dt){
 
     vUp.plugTechnique();
     vUp.setDt(dt);
+    vUp.setGridDim(grid->dimx, grid->dimy, grid->dimz);
+    vUp.setCollisionOffset();
     glDispatchComputeGroupSizeARB(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
     //
@@ -145,6 +147,8 @@ void ExplicitTimeUpdate::update(double dt){
     pU.setDt(dt);   
     pU.setCritComp();
     pU.setCritStretch();
+    pU.setGridDim(grid->dimx, grid->dimy, grid->dimz);
+    pU.setCollisionOffset();
     glDispatchComputeGroupSizeARB(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 

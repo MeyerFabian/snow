@@ -81,7 +81,7 @@ void myRenderingEngine::initVBO(){
     helitex->Load(GL_TEXTURE_2D);
 
     world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 50.0f);
-    world.setCamera(6.5f,2.5f,9.0f,5.5,2.5f,5.0f,0.0f,1.0f,0.0f);
+    world.setCamera(1.5f,2.7125f,11.0f,1.5,2.7125,5.0f,0.0f,1.0f,0.0f);
 }
 
 void initShader(){
@@ -182,7 +182,7 @@ void initShader(){
  void myRenderingEngine::renderPass(){
 
     //pipeline light;
-    lightpos = Vector3f(0.0,lighty+ 3.0f,1.0f);
+    lightpos = Vector3f(4.0,lighty+ 3.0f,4.0f);
 
 
     //SMFBO.BindForReading(GL_TEXTURE1);

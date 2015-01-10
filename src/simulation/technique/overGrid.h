@@ -10,11 +10,15 @@ public:
 void setDt(const float dt);
 void setCritComp();
 void setCritStretch();
+void setCollisionOffset();
+void setGridDim(const int gridDimx,const int gridDimy,const int gridDimz);
 
 private:
     GLuint dt;
     GLuint critComp;
     GLuint critStretch;
+    GLuint collisionOffset;
+    GLuint gGridDimension;
 };
 
 #endif // resetGrid_H
