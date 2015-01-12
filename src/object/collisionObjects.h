@@ -1,24 +1,24 @@
-#ifndef PARTICLESYSTEM_H
-#define PARTICLESYSTEM_H
+#ifndef COLLISIONOBJECTS_H
+#define COLLISIONOBJECTS_H
 #define GLEW_STATIC
 #include "glew.h"
 
-#include "particle.h"
+#include "collider.h"
 #include <memory>
 #include <vector>
 #include "../math3d.h"
 
 #include "../defines.h"
-class ParticleSystem{
+class CollisionObjects{
 public:
 
-    ParticleSystem() = default;
-    ~ParticleSystem(){
+    CollisionObjects() = default;
+    ~CollisionObjects(){
         delete pPositions;
         delete pVelocities;
     }
 
-    std::shared_ptr<std::vector<Particle> > const particles = std::make_shared<std::vector<Particle> >();
+    std::shared_ptr<std::vector<Collider> > const colliders = std::make_shared<std::vector<Collider> >();
 
     void initVBO();
     void updateVBOBuffer();
@@ -36,10 +36,12 @@ private:
 
 
 
+    GLuint gvelBn0;
+    GLuint gvelBn1;
     GLuint posB;
     GLuint velB;
     GLuint velBn;
     GLuint FEpB;
     GLuint FPpB;
 };
-#endif // PARTICLESYSTEM_H
+#endif // COLLISIONOBJECTS_H

@@ -98,7 +98,7 @@ struct Vector3i{
     int x;
     int y;
     int z;
-    Vector3i(float x, float y, float z){
+    Vector3i(int x, int y, int z){
         this->x=x;
         this->y=y;
         this->z=z;

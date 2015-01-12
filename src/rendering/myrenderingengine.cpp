@@ -41,7 +41,9 @@ const char* pVSParticleFileName = "shader/particleShader.vert";
 const char* pFSParticleFileName = "shader/particleShader.frag";
 ParticleTechnique PT;
 
-
+const char* pVSBorderFileName = "shader/borderShader.vert";
+const char* pFSBorderFileName = "shader/borderShader.frag";
+ParticleTechnique PTB;
 
 pipeline world;
 GLuint textureID;
@@ -74,6 +76,11 @@ void myRenderingEngine::initVBO(){
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_CULL_FACE);
     glEnable(GL_PROGRAM_POINT_SIZE);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_POINT_SPRITE);
+
+    glEnable( GL_POINT_SMOOTH);
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 
     fillBufferFromMeshes();
 
@@ -81,7 +88,7 @@ void myRenderingEngine::initVBO(){
     helitex->Load(GL_TEXTURE_2D);
 
     world.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 50.0f);
-    world.setCamera(6.5f,2.5f,9.0f,5.5,2.5f,5.0f,0.0f,1.0f,0.0f);
+    world.setCamera(3.0,3.5f,14.0f,2.5125f,0.0f,0.0f,0.0f,1.0f,0.0f);
 }
 
 void initShader(){
@@ -111,7 +118,25 @@ void initShader(){
 
          vs.clear();
          fs.clear();
+         if(!ReadFile(pVSBorderFileName,vs)){
+           fprintf(stderr, "Error: vs\n");
+            exit(1);
+         };
 
+         if(!ReadFile(pFSBorderFileName,fs)){
+
+          fprintf(stderr, "Error: fs \n");
+          exit(1);
+         };
+
+         PTB = ParticleTechnique();
+
+         if(!PTB.init(vs,fs)){
+             printf("PT init failed");
+         }
+
+         vs.clear();
+         fs.clear();
        if(!ReadFile(pVSFileName,vs)){
          fprintf(stderr, "Error: vs\n");
           exit(1);
@@ -128,8 +153,8 @@ void initShader(){
         lighting= LightingTechnique();
         lighting.init(vs,fs);
 
-
 /*
+
        vs.clear();
        fs.clear();
 
@@ -182,7 +207,7 @@ void initShader(){
  void myRenderingEngine::renderPass(){
 
     //pipeline light;
-    lightpos = Vector3f(0.0,lighty+ 3.0f,1.0f);
+    lightpos = Vector3f(4.0,lighty+ 3.0f,4.0f);
 
 
     //SMFBO.BindForReading(GL_TEXTURE1);
@@ -224,7 +249,7 @@ void initShader(){
         lighting.setInverse(&matrix);
         lighting.setWVP(world.getMVP());
 
-        (*meshes)[i].Render();
+        //(*meshes)[i].Render();
         //world.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
         //lighting.setLightMVP(world.getMVP());//TODO
 
@@ -253,11 +278,13 @@ void initShader(){
     world.setPosition(Vector3f(0.0f,0.0f,0.0f));
     world.setScale(Vector3f(1.0f,1.0f,1.0f));
     world.setRotation(Vector3f(0.0f,0.0f,0.0f));
-    PT.plugTechnique();
-    PT.setWVP(world.getMVP());
 
+    PTB.plugTechnique();
+    PTB.setWVP(world.getMVP());
     grid->renderBorders();
     //particlesystem->updateVBOBuffer();
+    PT.plugTechnique();
+    PT.setWVP(world.getMVP());
     particlesystem->render();
     //double timeS = glfwGetTime ();
     //grid->render();
@@ -340,7 +367,6 @@ bool myRenderingEngine::init(){
 
         return 1;
     }
-
     initVBO();
 
     initShader();

@@ -11,12 +11,10 @@ void Grid::render(){
 
 
     glEnableVertexAttribArray(0);
-
         glBindBuffer(GL_ARRAY_BUFFER, posB);
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
         glDrawArrays(GL_POINTS,0,(gridPoints)->size());
-
-
 
     glDisableVertexAttribArray(0);
 }
@@ -45,17 +43,18 @@ void Grid::debug(){
     std::cout << "grid"<< std::endl;
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
     Vector4f* p = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (gridPoints)->size(), GL_MAP_READ_BIT));
-    p[95+45*201+95*201*201].print();
+    p[99+4*201+99*201*201].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, velB);
     Vector4i* c = (Vector4i*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,2*sizeof(Vector4i)* (gridPoints)->size(), GL_MAP_READ_BIT));
-    c[2*(95+45*201+95*201*201)].print();
+    c[2*(99+4*201+99*201*201)].print();
+    c[2*(99+4*201+99*201*201)+1].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, velBn);
     Vector4f* v = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (gridPoints)->size(), GL_MAP_READ_BIT));
-    v[95+45*201+95*201*201].print();
+    v[95+0*201+95*201*201].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
 
 

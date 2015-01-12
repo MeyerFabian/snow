@@ -27,17 +27,20 @@ public:
          for(int i = 0; i< dimx*dimy*dimz ; i++){
             gridPoints->push_back(GridPoint());
          }
-         float above = spacing*((float) y);
-         float besides =  spacing*((float) x);
-         float before =  spacing*((float) z);
-         gridBorders.push_back(Vector4f(pos_x,pos_y,pos_z,1.0f));
-         gridBorders.push_back(Vector4f(pos_x,pos_y+above,pos_z,1.0f));
-         gridBorders.push_back(Vector4f(pos_x+besides,pos_y+above,pos_z,1.0f));
-         gridBorders.push_back(Vector4f(pos_x+besides,pos_y,pos_z,1.0f));
-         gridBorders.push_back(Vector4f(pos_x,pos_y,pos_z+before,1.0f));
-         gridBorders.push_back(Vector4f(pos_x,pos_y+above,pos_z+before,1.0f));
-         gridBorders.push_back(Vector4f(pos_x+besides,pos_y+above,pos_z+before,1.0f));
-         gridBorders.push_back(Vector4f(pos_x+besides,pos_y,pos_z+before,1.0f));
+         float above = spacing*((float) y)-(float(GRID_COLLISION_PLANE_OFFSET))*spacing ;
+         float right = spacing*((float) x)-(float(GRID_COLLISION_PLANE_OFFSET))*spacing ;
+         float before = spacing*((float) z)-(float(GRID_COLLISION_PLANE_OFFSET))*spacing ;
+         float behind = (float(GRID_COLLISION_PLANE_OFFSET))*spacing;
+         float left =(float(GRID_COLLISION_PLANE_OFFSET))*spacing;
+         float below = (float(GRID_COLLISION_PLANE_OFFSET))*spacing;
+         gridBorders.push_back(Vector4f(pos_x+left, pos_y+below, pos_z+behind,1.0f));
+         gridBorders.push_back(Vector4f(pos_x+left, pos_y+above, pos_z+behind,1.0f));
+         gridBorders.push_back(Vector4f(pos_x+right, pos_y+above, pos_z+behind,1.0f));
+         gridBorders.push_back(Vector4f(pos_x+right, pos_y+below, pos_z+behind,1.0f));
+         gridBorders.push_back(Vector4f(pos_x+left, pos_y+below, pos_z+before,1.0f));
+         gridBorders.push_back(Vector4f(pos_x+left, pos_y+above, pos_z+before,1.0f));
+         gridBorders.push_back(Vector4f(pos_x+right, pos_y+above, pos_z+before,1.0f));
+         gridBorders.push_back(Vector4f(pos_x+right, pos_y+below, pos_z+before,1.0f));
 
          iGridBorders.push_back(0);
          iGridBorders.push_back(1);

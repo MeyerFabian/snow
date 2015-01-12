@@ -94,7 +94,8 @@ void ExplicitTimeUpdate::init(){
     cVolume.setGridSpacing(grid->h);
     glDispatchCompute(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
-
+    //particlesystem->debug();
+    //grid->debug();
 
 
 }
@@ -120,14 +121,15 @@ void ExplicitTimeUpdate::update(double dt){
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
 
-   // particlesystem->debug();
 
     vUp.plugTechnique();
     vUp.setDt(dt);
+    vUp.setGridDim(grid->dimx, grid->dimy, grid->dimz);
+    vUp.setCollisionOffset();
     glDispatchCompute(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
     //
-
+ //grid->debug();
 
     pVU.plugTechnique();
     pVU.setGridPos(grid->x_off, grid->y_off, grid->z_off);
@@ -137,6 +139,7 @@ void ExplicitTimeUpdate::update(double dt){
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
 
+   // particlesystem->debug();
     //particlesystem->debug();
     //grid->debug();
     //std::cout<<"Vor FEp Update"<<std::endl;
@@ -147,12 +150,14 @@ void ExplicitTimeUpdate::update(double dt){
     pU.setDt(dt);   
     pU.setCritComp();
     pU.setCritStretch();
+    pU.setGridDim(grid->dimx, grid->dimy, grid->dimz);
+    pU.setCollisionOffset();
     glDispatchCompute(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
 
     //std::cout<<"Nach FEp Update"<<std::endl;
-   // grid->debug();
+
 
 /*
  * obsolete can be done in previous compute shader

@@ -33,6 +33,8 @@ shader/m_shadow.vert
 shader/m_shadow.frag
 shader/particleShader.vert
 shader/particleShader.frag
+shader/borderShader.vert
+shader/borderShader.frag
 shader/updateGridMassVel.glsl
 shader/updateParticleVel.glsl
 shader/updateParticles.glsl
@@ -69,6 +71,9 @@ src/simulation/timeUpdate/semiimplicittimeupdate.cpp
 src/object/particle.h
 src/object/grid.h
 src/object/grid.cpp
+src/object/collisionObjects.h
+src/object/collisionObjects.cpp
+src/object/collider.h
 src/object/gridpoint.h
 src/object/particlesystem.h
 src/object/particlesystem.cpp
