@@ -15,5 +15,5 @@ void main(void)
 
     z = Position.x;
     w = Position.w;
-    gl_PointSize = 8;
+    gl_PointSize = 6;
 }

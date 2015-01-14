@@ -16,6 +16,9 @@ public:
     ~ParticleSystem(){
         delete pPositions;
         delete pVelocities;
+        delete pForcesE;
+        delete pForcesP;
+        delete pVelocitiesn;
     }
 
     std::shared_ptr<std::vector<Particle> > const particles = std::make_shared<std::vector<Particle> >();

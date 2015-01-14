@@ -38,6 +38,7 @@ shader/borderShader.frag
 shader/updateGridMassVel.glsl
 shader/updateParticleVel.glsl
 shader/updateParticles.glsl
+shader/updateRigids.glsl
 shader/computeParticleVolume.glsl
 shader/computeMass.glsl
 shader/overGridAndParticles.glsl

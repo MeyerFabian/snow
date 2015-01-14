@@ -7,6 +7,7 @@
 #include <vector>
 #include "object/grid.h"
 #include "object/particlesystem.h"
+#include "object/collisionObjects.h"
 #include "simulation/timeUpdate.h"
 #include "defines.h"
 #include "GLFW/glfw3.h"
@@ -73,7 +74,7 @@ void scene2(shared_ptr<ParticleSystem> const pPs){
 }
 void scene3(shared_ptr<ParticleSystem> const pPs){
     int x = 0;
-    float xpos=1.5f,ypos=2.125f,zpos=5.0f;
+    float xpos=1.5f,ypos=2.525f,zpos=5.0f;
     while(x<32*32*32){
         float width = 0.8;
         float radius = width/2.0f;
@@ -84,7 +85,7 @@ void scene3(shared_ptr<ParticleSystem> const pPs){
         pPs->particles->push_back(Particle(Vector3f(
                                                xpos + rand1,
                                                ypos + rand2,
-                                               zpos + rand3),Vector3i(-1*1000000,0,1*1000000)));
+                                               zpos + rand3),Vector3i(10*1000000,-5*1000000,1*1000000)));
         x+=1;
         }
     }
@@ -96,10 +97,12 @@ int launchSnow(){
 
     shared_ptr<ParticleSystem> const pPs= make_shared<ParticleSystem > ();
 
+    shared_ptr<CollisionObjects> const pCO= make_shared<CollisionObjects > ();
+
      srand (time(NULL));
      //scene1(pPs);
      //scene2(pPs);
-     scene2(pPs);
+     scene3(pPs);
 /*
     for(int x = 0; x < 32; x+=1){
         xpos += 0.025f;
@@ -139,25 +142,66 @@ int launchSnow(){
     std:: cout <<(float(rand())/32727.0f)*0.8<<std::endl;
     std:: cout <<(float(rand())/32727.0f)*0.8<<std::endl;
 */
-    shared_ptr<std::vector<Mesh> > const  meshes = make_shared<std::vector<Mesh> >();
+    shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes = make_shared<std::vector<shared_ptr<Mesh>>>();
 
-    Mesh jeep;
-    jeep.LoadMesh("model/jeep.obj");
-    jeep.setPosition(4.0f,-0.25f,4.0f);
-    jeep.setScale(0.003f,0.003f,0.003f);
-    jeep.setRotation(0,0,0);
+    shared_ptr<Mesh> sphere=make_shared<Mesh>() ;
+    sphere->LoadMesh("model/sphere.obj");
+    sphere->setPosition(4.0f,2.0f,5.5f);
+    sphere->setScale(0.2f,0.2f,0.2f);
+    sphere->setRotation(0,0,0);
+
+    meshes->push_back(sphere);
+    pCO->colliders->push_back(Collider(sphere,0.2f,1,Vector3f(-10.0f,0.0f,0.0f),Vector3f(0.0f,0.0f,0.0f)));
+
+    shared_ptr<Mesh> halfplane=make_shared<Mesh>() ;
+    halfplane->setPosition(0.7125f,0.7125f,0.7125f);
+
+    pCO->colliders->push_back(Collider(halfplane,0.0f,0,Vector3f(0.0f,0.0f,0.0f),Vector3f(1.0f,0.0f,0.0f)));
+
+    shared_ptr<Mesh> halfplane2=make_shared<Mesh>() ;
+    halfplane2->setPosition(0.7125f,0.7125f,0.7125f);
+
+    pCO->colliders->push_back(Collider(halfplane2,0.0f,0,Vector3f(0.0f,0.0f,0.0f),Vector3f(0.0f,1.0f,0.0f)));
+
+    shared_ptr<Mesh> halfplane3=make_shared<Mesh>() ;
+    halfplane3->setPosition(0.7125f,0.7125f,0.7125f);
+
+    pCO->colliders->push_back(Collider(halfplane3,0.0f,0,Vector3f(0.0f,0.0f,0.0f),Vector3f(0.0f,0.0f,1.0f)));
+
+
+    shared_ptr<Mesh> halfplane4=make_shared<Mesh>() ;
+    halfplane4->setPosition(10.3625f,10.3625f,10.3625f);
+
+    pCO->colliders->push_back(Collider(halfplane4,0.0f,0,Vector3f(0.0f,0.0f,0.0f),Vector3f(-1.0f,0.0f,0.0f)));
+
+    shared_ptr<Mesh> halfplane5=make_shared<Mesh>() ;
+    halfplane5->setPosition(10.3625f,10.3625f,10.3625f);
+
+    pCO->colliders->push_back(Collider(halfplane5,0.0f,0,Vector3f(0.0f,0.0f,0.0f),Vector3f(0.0f,-1.0f,0.0f)));
+
+    shared_ptr<Mesh> halfplane6=make_shared<Mesh>() ;
+    halfplane6->setPosition(10.3625f,10.3625f,10.3625f);
+
+    pCO->colliders->push_back(Collider(halfplane6,0.0f,0,Vector3f(0.0f,0.0f,0.0f),Vector3f(0.0,0.0f,-1.0f)));
+
+    /*
+            Mesh halfplane;
+    halfplane.setPosition(0.7125f,0.7125f,0.7125f);
+    pCo->colliders->push_back(Collider(halfplane));
+*/
+
+    /*
     Mesh quad;
     quad.LoadMesh("model/box.obj");
     quad.setPosition(5.0f,-3.0f,5.0f);
     quad.setScale(10.0f,1.0f,10.0f);
     quad.setRotation(0,0,0);
-    meshes->push_back(std::move(jeep));
     meshes->push_back(std::move(quad));
 
-
+*/
     shared_ptr<renderingEngine> const rE = make_shared<myRenderingEngine>(meshes,pPs, grid);
 
-    shared_ptr<TimeUpdate> const update = make_shared<ExplicitTimeUpdate> (meshes,pPs,grid);
+    shared_ptr<TimeUpdate> const update = make_shared<ExplicitTimeUpdate> (pCO,pPs,grid);
 
     shared_ptr<physicEngine> const  pE= make_shared<myPhysicEngine>(update);
     bool re_err = rE->init();

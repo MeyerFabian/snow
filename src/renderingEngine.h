@@ -7,7 +7,7 @@
 #include "object/grid.h"
 class renderingEngine{
     public :
-    renderingEngine(std::shared_ptr<std::vector< Mesh >> const meshesToRender, shared_ptr<ParticleSystem> const particlesToRender,shared_ptr<Grid> const gridToRender)
+    renderingEngine(std::shared_ptr<std::vector<shared_ptr<Mesh> > > const meshesToRender, shared_ptr<ParticleSystem> const particlesToRender,shared_ptr<Grid> const gridToRender)
         :meshes(meshesToRender), particlesystem(particlesToRender), grid(gridToRender){}
 
     virtual bool init() = 0;
@@ -15,7 +15,7 @@ class renderingEngine{
     virtual bool shouldClose() = 0;
     virtual void stop() = 0;
 
-    std::shared_ptr<std::vector< Mesh >> const  meshes;
+    std::shared_ptr<std::vector<shared_ptr<Mesh> >> const  meshes;
     std::shared_ptr<ParticleSystem> const  particlesystem;
     std::shared_ptr<Grid> const grid;
 };

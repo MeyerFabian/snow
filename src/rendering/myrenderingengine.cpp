@@ -60,7 +60,7 @@ static float lighty=0.0f;
 
 void myRenderingEngine::fillBufferFromMeshes(){
     for(int i= 0;i< meshes->size(); i++){
-       (*meshes)[i].initVBO();
+       (*meshes)[i]->initVBO();
     }
     //particlesystem->initVBO();
     //grid->initVBO();
@@ -207,7 +207,7 @@ void initShader(){
  void myRenderingEngine::renderPass(){
 
     //pipeline light;
-    lightpos = Vector3f(4.0,lighty+ 3.0f,4.0f);
+    lightpos = Vector3f(4.0,5.0f,4.0f);
 
 
     //SMFBO.BindForReading(GL_TEXTURE1);
@@ -226,15 +226,15 @@ void initShader(){
 
     lighting.plugTechnique();
     lighting.setSampler(0);
-    lighting.setLight(lightpos,0.1,Vector3f(1.0,1.0,1.0) ,0.90);
+    lighting.setLight(lightpos,0.1,Vector3f(1.0,1.0,1.0) ,0.2);
     Vector3f specIntens(1.0,1.0,1.0);
     lighting.setSpecularIntensity(specIntens);
     lighting.setSpecularPower(10);
-
+    lighting.setCameraPos(world.getCameraPos());
     for(int i= 0;i< meshes->size(); i++){
-        world.setPosition((*meshes)[i].getPosition());
-        world.setScale((*meshes)[i].getScale());
-        world.setRotation((*meshes)[i].getRotation());
+        world.setPosition((*meshes)[i]->getPosition());
+        world.setScale((*meshes)[i]->getScale());
+        world.setRotation((*meshes)[i]->getRotation());
 
         matrix= glm::mat4x4(    world.getModelMatrix()->m[0][0], world.getModelMatrix()->m[0][1], world.getModelMatrix()->m[0][2], world.getModelMatrix()->m[0][3],
                                             world.getModelMatrix()->m[1][0], world.getModelMatrix()->m[1][1], world.getModelMatrix()->m[1][2], world.getModelMatrix()->m[1][3],
@@ -248,10 +248,11 @@ void initShader(){
         lighting.setWorldMatrix(world.getModelMatrix());
         lighting.setInverse(&matrix);
         lighting.setWVP(world.getMVP());
+        lighting.setLightMVP(world.getMVP());//TODO
 
-        //(*meshes)[i].Render();
+        (*meshes)[i]->Render();
         //world.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
-        //lighting.setLightMVP(world.getMVP());//TODO
+
 
 
 

@@ -16,5 +16,5 @@ void main(void)
     Position0 = gModel* vec4(Position.xyz,1.0);
     //LightSpacePos = gLightMVP * vec4(Position.xyz,1.0);
     Texture0 = Texture;
-    Normal0 =(inverse* vec4(Normal, 0.0));
+    Normal0 = vec4(Normal, 0.0);
 }

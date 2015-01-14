@@ -14,34 +14,32 @@ public:
 
     CollisionObjects() = default;
     ~CollisionObjects(){
-        delete pPositions;
-        delete pVelocities;
+        delete cPositions;
+        delete cVelocities;
+        delete cType;
+        delete cFriction;
+        delete cNormals;
     }
 
     std::shared_ptr<std::vector<Collider> > const colliders = std::make_shared<std::vector<Collider> >();
 
-    void initVBO();
-    void updateVBOBuffer();
-    void render();
 
     void initSSBO();
-    void updateSSBOBuffer();
+    void updateRenderBuffer(float dt);
     void debug();
-    Vector4f* pPositions= nullptr ;
-    Vector4i* pVelocities= nullptr ;
-    Matrix4f* pForcesE= nullptr ;
-    Matrix4f* pForcesP= nullptr ;
-    Vector4i* pVelocitiesn = nullptr;
+    Vector4f* cPositions= nullptr ;
+    Vector4f* cVelocities= nullptr ;
+    int* cType= nullptr ;
+    float* cFriction= nullptr ;
+    Vector4f* cNormals= nullptr;
 private:
 
 
 
-    GLuint gvelBn0;
-    GLuint gvelBn1;
     GLuint posB;
     GLuint velB;
-    GLuint velBn;
-    GLuint FEpB;
-    GLuint FPpB;
+    GLuint norB;
+    GLuint typeB;
+    GLuint fricB;
 };
 #endif // COLLISIONOBJECTS_H

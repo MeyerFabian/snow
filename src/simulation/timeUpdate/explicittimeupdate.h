@@ -7,7 +7,7 @@
 class ExplicitTimeUpdate : public TimeUpdate
 {
 public:
-    ExplicitTimeUpdate(std::shared_ptr<std::vector< Mesh >> const meshesToSimulate, shared_ptr<ParticleSystem> const particlesToSimulate, std::shared_ptr<Grid> const grid) : TimeUpdate(meshesToSimulate,particlesToSimulate, grid) {
+    ExplicitTimeUpdate(std::shared_ptr<CollisionObjects> const collisonsToSimulate, shared_ptr<ParticleSystem> const particlesToSimulate, std::shared_ptr<Grid> const grid) : TimeUpdate(collisonsToSimulate,particlesToSimulate, grid) {
 
     }
     void init();
@@ -19,6 +19,7 @@ public:
     OverGrid rg;
     OverGrid vUp;
     OverGrid pU;
+    OverGrid rigidSim;
     //OverGrid divVelMass;
 };
 

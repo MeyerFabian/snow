@@ -14,6 +14,7 @@ bool OverGrid::init(string cs){
 
     collisionOffset=glGetUniformLocation(this->ShaderProgram, "collisionOffset");
     gGridDimension =glGetUniformLocation(this->ShaderProgram, "gGridDimension");
+    gNumColliders =glGetUniformLocation(this->ShaderProgram, "gNumColliders");
     return true;
 }
 void OverGrid::setDt(const float deltat){
@@ -31,4 +32,7 @@ glUniform1i(collisionOffset,GRID_COLLISION_PLANE_OFFSET);
 }
 void OverGrid::setGridDim(const int gridDimx,const int gridDimy,const int gridDimz){
 glUniform3i(gGridDimension, gridDimx, gridDimy, gridDimz);
+}
+void OverGrid::setnumColliders(const int numColliders){
+glUniform1i(gNumColliders, numColliders);
 }

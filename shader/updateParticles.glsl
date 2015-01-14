@@ -7,6 +7,7 @@ uniform float critStretch;
 
 uniform int collisionOffset;
 uniform ivec3 gGridDim;
+uniform int gNumColliders;
 layout(local_size_x =1024, local_size_y =1,local_size_z =1)in;
 
 layout(std140, binding = 0) buffer pPosMass {
@@ -29,7 +30,21 @@ layout(std140, binding = 6) buffer pVeln {
     ivec4 pvn[ ];
 };
 
-
+layout(std140, binding = 8) buffer cPos {
+    vec4 cx[ ];
+};
+layout(std140, binding = 9) buffer cVel {
+    vec4 cv[ ];
+};
+layout(std140, binding = 10) buffer cNor {
+    vec4 cn[ ];
+};
+layout(std140, binding = 11) buffer cType {
+    int ct[ ];
+};
+layout(std140, binding = 12) buffer cFric {
+    float cf[ ];
+};
 
 
 
@@ -423,7 +438,6 @@ void sclamp (inout float f, const float lb, const float ub){
     f = (f<lb)? lb : (f>ub)? ub : f;
 }
 
-int numCollisionObjects = 6;
 /*
 vec4 cpositions[6] = vec4[6](
 vec4(gxm[collisionOffset*gGridDim[0].x*gGridDim[1].x+collisionOffset*gGridDim[0].x+collisionOffset]),
@@ -435,37 +449,20 @@ vec4(gxm[(gGridDim[2].x-collisionOffset)*gGridDim[0].x*gGridDim[1].x+(gGridDim[1
 );
 */
 
-vec4 cpositions[6] = vec4[6](
-    vec4(0.7125f),
-    vec4(0.7125f),
-    vec4(0.7125f),
-    vec4(10.3625f),
-    vec4(10.3625f),
-    vec4(10.3625f)
-);
+bool collidesHalfPlane(const vec3 pPos,const int i){
+    return dot((pPos-cx[i].xyz),cn[i].xyz) <= 0;
+}
+bool collidesSphere(const vec3 pPos,const int i, inout vec3 n){
+    float radius = cv[i].w;
+    n = normalize(pPos-cx[i].xyz);
+    return length(pPos-cx[i].xyz) < radius;
+}
 
-vec4 cnormals[6] = vec4[6](
-    vec4(1.0f,0.0f,0.0f,0.0f),
-    vec4(0.0f,1.0f,0.0f,0.0f),
-    vec4(0.0f,0.0f,1.0f,0.0f),
-    vec4(-1.0f,0.0f,0.0f,0.0f),
-    vec4(0.0f,-1.0f,0.0f,0.0f),
-    vec4(0.0f,0.0f,-1.0f,0.0f)
-);
-
-vec4 cvelocities[6] = vec4[6](
-    vec4(0.0f,0.0f,0.0f,0.0f),
-    vec4(0.0f,0.0f,0.0f,0.0f),
-    vec4(0.0f,0.0f,0.0f,0.0f),
-    vec4(0.0f,0.0f,0.0f,0.0f),
-    vec4(0.0f,0.0f,0.0f,0.0f),
-    vec4(0.0f,0.0f,0.0f,0.0f)
-);
-
-float cfriction[6] = float[6](0.025f,0.025f,0.025f,0.025f,0.025f,0.025f);
-
-bool collides(const vec3 pPos,const vec3 cPos,const vec3 cNormal){
-    return dot((pPos-cPos),cNormal) <= 0;
+bool collides(const vec3 pPos,const int i, inout vec3 n){
+    return (ct[i] ==0)? collidesHalfPlane(pPos,i)
+           :(ct[i] ==1)?collidesSphere(pPos,i,n)
+                      :
+                        false;
 }
 
 void main(void){
@@ -579,17 +576,17 @@ void main(void){
 
 
     vec3 vpn1 = vec3(vp * alpha + vpn)/1000000.0f;
-    for(int i = 0 ; i<numCollisionObjects; i++){
-        vec3 p = cpositions[i].xyz;
-        vec3 n = cnormals[i].xyz;
+    for(int i = 0 ; i<gNumColliders; i++){
+        vec3 p = cx[i].xyz;
+        vec3 n = cn[i].xyz;
        vec3 particlePos = pxm[pI].xyz;
-       if(collides(particlePos,p,n)){
-           vec3 vco = cvelocities[i].xyz;
+       if(collides(particlePos,i,n)){
+           vec3 vco = cv[i].xyz;
            vec3 vrel = vpn - vco;
            float vn = dot(vrel,n);
            if(vn<0){
                vec3 vt = vrel - n*vn;
-               float muvn = cfriction[i] * vn;
+               float muvn = cf[i] * vn;
                vec3 vrelt;
                float lengthvt=length(vt);
                if(lengthvt<= - muvn){

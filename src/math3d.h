@@ -92,7 +92,14 @@ struct Vector4f{
         this->z = vec.z;
         this->w = 0;
     }
+    Vector4f(const Vector3f &vec, const float w){
+        this->x = vec.x;
+        this->y = vec.y;
+        this->z = vec.z;
+        this->w = w;
+    }
     void print() const;
+    Vector3f xyz();
 };
 struct Vector3i{
     int x;

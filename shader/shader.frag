@@ -21,7 +21,7 @@ void main(void)
     vec4 ambientColor = vec4(gColor,0.0) * gAmbient;
 
     vec3 I = normalize(gLightPosition.xyz-Position0.xyz);
-    vec3 N = normalize(Normal0).xyz;
+    vec3 N = normalize(Normal0.xyz);
 
     //Diffuse
     float diffuseIntensity = dot(N, I);
@@ -54,5 +54,9 @@ void main(void)
  //   }
 
 
-    gl_FragColor = clamp(textureColor * (ambientColor + (diffuseColor + specColor)),0.0,1.0);
+    gl_FragColor = clamp(//textureColor *
+                         (ambientColor
+                          +(diffuseColor
+                           +specColor
+                           )),0.0,1.0);
 }

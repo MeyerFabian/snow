@@ -50,7 +50,12 @@ public:
         position.y = y;
         position.z = z;
     }
-    const Vector3f& getPosition(){
+    void setPosition(const Vector3f& pos){
+        position=pos;
+    }
+
+
+    const Vector3f& getPosition() const{
         return position;
     }
     const Vector3f& getRotation(){
