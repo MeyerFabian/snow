@@ -39,12 +39,8 @@ layout(std140, binding = 9) buffer cVel {
 layout(std140, binding = 10) buffer cNor {
     vec4 cn[ ];
 };
-layout(std140, binding = 11) buffer cType {
-    int ct[ ];
-};
-layout(std140, binding = 12) buffer cFric {
-    float cf[ ];
-};
+
+
 
 
 
@@ -459,10 +455,9 @@ bool collidesSphere(const vec3 pPos,const int i, inout vec3 n){
 }
 
 bool collides(const vec3 pPos,const int i, inout vec3 n){
-    return (ct[i] ==0)? collidesHalfPlane(pPos,i)
-           :(ct[i] ==1)?collidesSphere(pPos,i,n)
-                      :
-                        false;
+    return (uint( cx[i].w) ==0)? collidesHalfPlane(pPos,i)
+           :(uint(cx[i].w) ==1)?collidesSphere(pPos,i,n)
+                      :false;
 }
 
 void main(void){
@@ -575,7 +570,8 @@ void main(void){
     //vpn+1 = a * vpn + temp_vpn+1
 
 
-    vec3 vpn1 = vec3(vp * alpha + vpn)/1000000.0f;
+    vec3 vpn1 = vec3(vec3(vp) * alpha + vec3(vpn))/1000000.0f;
+/*
     for(int i = 0 ; i<gNumColliders; i++){
         vec3 p = cx[i].xyz;
         vec3 n = cn[i].xyz;
@@ -584,7 +580,7 @@ void main(void){
            vec3 vco = cv[i].xyz;
            vec3 vrel = vpn - vco;
            float vn = dot(vrel,n);
-           if(vn<0){
+           if(vn<0.0f){
                vec3 vt = vrel - n*vn;
                float muvn = cf[i] * vn;
                vec3 vrelt;
@@ -599,6 +595,7 @@ void main(void){
             }
         }
     }
+*/
     pv[pI].xyz = ivec3(vpn1*1000000.0f);
     // UPDATE POSITION
     // xpn+1 = xpn + d_t * vpn+1

@@ -13,7 +13,7 @@ struct Collider{
      * @param f
      * @param t
      */
-    Collider(std::shared_ptr<Mesh> const attachedMesh,float w=0.0f,int t= 0, Vector3f v = Vector3f(0.0f,0.0f,0.0f),Vector3f n = Vector3f(0.0f,0.0f,0.0f), float f = 0.1f)
+    Collider(std::shared_ptr<Mesh> const attachedMesh,float w=0.0f,GLint t= 0, Vector3f v = Vector3f(0.0f,0.0f,0.0f),Vector3f n = Vector3f(0.0f,0.0f,0.0f), float f = 0.1f)
             : mesh(attachedMesh),velocity(v,w),normal(n), friction(f), type(t){
 
     }
@@ -23,7 +23,7 @@ struct Collider{
     Vector4f velocity;
     Vector3f normal;
     float friction;
-    int type;
+    GLint type;
 
 };
 

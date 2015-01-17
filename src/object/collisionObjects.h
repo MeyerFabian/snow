@@ -29,7 +29,7 @@ public:
     void debug();
     Vector4f* cPositions= nullptr ;
     Vector4f* cVelocities= nullptr ;
-    int* cType= nullptr ;
+    GLint* cType= nullptr ;
     float* cFriction= nullptr ;
     Vector4f* cNormals= nullptr;
 private:

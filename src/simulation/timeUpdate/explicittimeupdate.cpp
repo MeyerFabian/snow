@@ -123,7 +123,7 @@ void ExplicitTimeUpdate::update(double dt){
     rigidSim.setDt(dt);
     glDispatchCompute(collisionObjects->colliders->size(),1,1);
     collisionObjects->updateRenderBuffer(dt);
-   // collisionObjects->debug();
+    collisionObjects->debug();
 
     rg.plugTechnique();
     glDispatchCompute(GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1);

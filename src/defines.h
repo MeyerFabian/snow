@@ -12,15 +12,16 @@
 #define GRID_POS_X 0.5125
 #define GRID_POS_Y 0.5125
 #define GRID_POS_Z 0.5125
-#define GRID_DIM_X 201
-#define GRID_DIM_Y 201
-#define GRID_DIM_Z 201
+#define GRID_DIM_X 64
+#define GRID_DIM_Y 64
+#define GRID_DIM_Z 64
 #define GRID_SPACING 0.05
 #define PARTICLE_TO_GRID_SIZE 64
 #define GRID_COLLISION_PLANE_OFFSET 4
-#define DT 1e-5
+#define DT 1e-4
+#define RENDER_DT 0.0333333*4.0
 
-#define NUMOFPARTICLES 32*32*32
+#define NUMOFPARTICLES 64*64*64
 
 #define NUM_OF_GPGPU_THREADS_X 1024
 

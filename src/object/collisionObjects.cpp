@@ -7,7 +7,7 @@
 
 
 void CollisionObjects::debug(){
-
+/*
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
     std::cout << "pos"<<std::endl;
     Vector4f* p = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (colliders)->size(), GL_MAP_READ_BIT));
@@ -18,7 +18,13 @@ void CollisionObjects::debug(){
     p[4].print();
     p[5].print();
     p[6].print();
+    p[7].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
+
+*/
+
+
+
 }
 
 void CollisionObjects::initSSBO(){
@@ -29,6 +35,7 @@ void CollisionObjects::initSSBO(){
     cPositions =(Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f) * (colliders)->size(), GL_MAP_WRITE_BIT |  GL_MAP_INVALIDATE_BUFFER_BIT));
     for(int i = 0; i<colliders->size();i++){
         cPositions[i] = colliders->at(i).mesh->getPosition();
+        cPositions[i].w =(float)colliders->at(i).type;
     }
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, COLLIDER_POS_BUFFER , posB);
@@ -49,29 +56,11 @@ void CollisionObjects::initSSBO(){
     cNormals =(Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f) * (colliders)->size(),GL_MAP_WRITE_BIT |  GL_MAP_INVALIDATE_BUFFER_BIT));
     for(int i = 0; i<colliders->size();i++){
         cNormals[i] = colliders->at(i).normal;
+        cNormals[i].w = colliders->at(i).friction;
     }
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, COLLIDER_NOR_BUFFER , norB);
 
-    glGenBuffers(1,&typeB);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, typeB);
-    glBufferData(GL_SHADER_STORAGE_BUFFER,sizeof(int) * (colliders)->size(), NULL, GL_STATIC_DRAW);
-    cType =(int*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(int) * (colliders)->size(),GL_MAP_WRITE_BIT |  GL_MAP_INVALIDATE_BUFFER_BIT));
-    for(int i = 0; i<colliders->size();i++){
-        cType[i] = colliders->at(i).type;
-    }
-    glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, COLLIDER_TYPE_BUFFER , typeB);
-
-    glGenBuffers(1,&fricB);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, fricB);
-    glBufferData(GL_SHADER_STORAGE_BUFFER,sizeof(float) * (colliders)->size(), NULL, GL_STATIC_DRAW);
-    cFriction =(float*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(float) * (colliders)->size(),GL_MAP_WRITE_BIT |  GL_MAP_INVALIDATE_BUFFER_BIT));
-    for(int i = 0; i<colliders->size();i++){
-        cFriction[i] = colliders->at(i).friction;
-    }
-    glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, COLLIDER_FRIC_BUFFER , fricB);
 
 
 }

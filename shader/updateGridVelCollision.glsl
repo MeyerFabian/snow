@@ -26,13 +26,11 @@ layout(std140, binding = 9) buffer cVel {
 layout(std140, binding = 10) buffer cNor {
     vec4 cn[ ];
 };
-layout(std140, binding = 11) buffer cType {
-    int ct[ ];
-};
-layout(std140, binding = 12) buffer cFric {
-    float cf[ ];
-};
 
+
+
+
+//int ct[]={1,1,0,0,0,0,0,0,0,0};
 float n = 0.0f;
 vec3 zeroVelocity = vec3(0.0f,0.0f,0.0f);
 vec3 g = vec3(0.0f,-9.81f,0.0f);
@@ -44,10 +42,10 @@ bool collidesSphere(const vec3 pPos,const int i, inout vec3 n){
     n = normalize(pPos-cx[i].xyz);
     return length(pPos-cx[i].xyz) < radius;
 }
-
+int null=0;int eins =1;
 bool collides(const vec3 pPos,const int i, inout vec3 n){
-    return (ct[i] ==0)? collidesHalfPlane(pPos,i)
-           :(ct[i] ==1)?collidesSphere(pPos,i,n)
+    return (uint( cx[i].w) ==null)? collidesHalfPlane(pPos,i)
+           :(uint(cx[i].w) ==eins)?collidesSphere(pPos,i,n)
                       :false;
 }
 
@@ -67,6 +65,7 @@ void main(void){
             fi/mi+
             g)
         ;
+
         for(int i = 0 ; i<gNumColliders; i++){
             vec3 p = cx[i].xyz;
             vec3 n = cn[i].xyz;
@@ -74,16 +73,16 @@ void main(void){
                 vec3 vco = cv[i].xyz;
                 vec3 vrel = vin - vco;
                 float vn = dot(vrel,n);
-                if(vn<0){
+                if(vn<0.0f){
                     vec3 vt = vrel - n*vn;
-                    float muvn = cf[i] * vn;
-                    vec3 vrelt;
+                    float muvn = cn[i].w * vn;
+                    vec3 vrelt=vt;
                     float lengthvt=length(vt);
                     if(lengthvt<= - muvn){
                         vrelt = vec3(0.0f);
                     }
                     else{
-                        vrelt = vt + muvn*vt/(lengthvt);
+                        vrelt+=  muvn*vt/(lengthvt);
                     }
                 vin = vrelt + vco;
                 }
