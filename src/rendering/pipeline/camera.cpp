@@ -23,6 +23,14 @@ void Camera::update(const int key,const  float stepsize){
     else if(key == GLFW_KEY_UP){
 
         this->pos = this->pos + (this->zAxis *stepsize);
+        pos.print();
+    }
+    else if(key ==GLFW_KEY_1){
+        setCamera(-0.0695547f, 4.16257f, 6.31657f,2.5f,1.0f,2.0f,0.0f,1.0f,0.0f);
+    }
+    else if(key ==GLFW_KEY_2){
+        setCamera(-2.37719f, 2.00813f, 2.79671f,-1.37719f,1.90813f,2.59671f,0.0f,1.0f,0.0f);
+
     }
     else{
         std::cerr << key << " was not recognised and thrown away." <<std::endl;

@@ -91,7 +91,7 @@ void scene3(shared_ptr<ParticleSystem> const pPs){
     }
 
 }
-void scene4(shared_ptr<ParticleSystem> const pPs){
+void scene4(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
     int x = 0;
     float xpos=GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
             ypos=GRID_POS_Y+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
@@ -111,6 +111,66 @@ void scene4(shared_ptr<ParticleSystem> const pPs){
         x+=1;
       // }
     }
+
+    shared_ptr<Mesh> sphere2=make_shared<Mesh>() ;
+    sphere2->LoadMesh("model/sphere.obj");
+    sphere2->setPosition(0.4125f,1.0125f,2.8f);
+    sphere2->setScale(0.2f,0.2f,0.2f);
+    sphere2->setRotation(0,0,0);
+
+    meshes->push_back(sphere2);
+    pCO->colliders->push_back(Collider(sphere2,0.2f,1,Vector3f(10.0f,0.0f,0.0f),Vector3f(0.0f,0.0f,0.0f)));
+
+    shared_ptr<Mesh> sphere=make_shared<Mesh>() ;
+    sphere->LoadMesh("model/sphere.obj");
+    sphere->setPosition(4.0125f,1.0125f,1.2f);
+    sphere->setScale(0.2f,0.2f,0.2f);
+    sphere->setRotation(0,0,0);
+
+    meshes->push_back(sphere);
+    pCO->colliders->push_back(Collider(sphere,0.2f,1,Vector3f(-10.0f,0.0f,0.0f),Vector3f(0.0f,0.0f,0.0f)));
+
+    shared_ptr<Mesh> sphere3=make_shared<Mesh>() ;
+    sphere3->LoadMesh("model/sphere.obj");
+    sphere3->setPosition(1.2f,1.0125f,0.4125f);
+    sphere3->setScale(0.2f,0.2f,0.2f);
+    sphere3->setRotation(0,0,0);
+
+    meshes->push_back(sphere3);
+    pCO->colliders->push_back(Collider(sphere3,0.2f,1,Vector3f(0.0f,0.0f,10.0f),Vector3f(0.0f,0.0f,0.0f)));
+
+}
+
+void scene5(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
+    int x = 0;
+    float xpos=GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
+            ypos=GRID_POS_Y+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
+            zpos=GRID_POS_Z+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING;
+    while(x<NUMOFPARTICLES){
+        float height = 0.2;
+        float width = ((GRID_DIM_X-2.0f*GRID_COLLISION_PLANE_OFFSET)*GRID_SPACING);
+        //float radius = width/2.0f;
+        float rand1=(float(rand())/32727.0f)*width;
+        float rand2=(float(rand())/32727.0f)*height;
+        float rand3=(float(rand())/32727.0f)*width;
+       // if(((rand1 -radius)*(rand1 -radius)+(rand2 -radius)*(rand2 -radius)+(rand3 -radius)*(rand3 -radius)) < (radius*radius)){
+        pPs->particles->push_back(Particle(Vector3f(
+                                               xpos + rand1,
+                                               ypos + rand2,
+                                               zpos + rand3)));
+        x+=1;
+      // }
+    }
+
+    shared_ptr<Mesh> sphere=make_shared<Mesh>() ;
+    sphere->LoadMesh("model/sphere.obj");
+    sphere->setPosition(4.0125f,1.0125f,1.2f);
+    sphere->setScale(0.2f,0.2f,0.2f);
+    sphere->setRotation(0,0,0);
+
+    meshes->push_back(sphere);
+    pCO->colliders->push_back(Collider(sphere,0.2f,1,Vector3f(0.0f,-10.0f,0.0f),Vector3f(0.0f,0.0f,0.0f)));
+
 }
 int launchSnow(){
     shared_ptr<Grid>const  grid = make_shared<Grid >(GRID_DIM_X,GRID_DIM_Y,GRID_DIM_Z, GRID_SPACING, GRID_POS_X,GRID_POS_Y,GRID_POS_Z);
@@ -124,7 +184,6 @@ int launchSnow(){
      //scene1(pPs);
      //scene2(pPs);
     // scene3(pPs);
-     scene4(pPs);
 /*
     for(int x = 0; x < 32; x+=1){
         xpos += 0.025f;
@@ -166,25 +225,7 @@ int launchSnow(){
 */
     shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes = make_shared<std::vector<shared_ptr<Mesh>>>();
 
-    shared_ptr<Mesh> sphere2=make_shared<Mesh>() ;
-    sphere2->LoadMesh("model/sphere.obj");
-    sphere2->setPosition(0.4125f,1.0125f,2.8f);
-    sphere2->setScale(0.2f,0.2f,0.2f);
-    sphere2->setRotation(0,0,0);
-
-    meshes->push_back(sphere2);
-    pCO->colliders->push_back(Collider(sphere2,0.2f,1,Vector3f(10.0f,0.0f,0.0f),Vector3f(0.0f,0.0f,0.0f)));
-
-    shared_ptr<Mesh> sphere=make_shared<Mesh>() ;
-    sphere->LoadMesh("model/sphere.obj");
-    sphere->setPosition(0.4125f,1.0125f,1.2f);
-    sphere->setScale(0.2f,0.2f,0.2f);
-    sphere->setRotation(0,0,0);
-
-    meshes->push_back(sphere);
-    pCO->colliders->push_back(Collider(sphere,0.2f,1,Vector3f(10.0f,0.0f,0.0f),Vector3f(0.0f,0.0f,0.0f)));
-
-
+    scene4(pPs,pCO,meshes);
 
     shared_ptr<Mesh> halfplane=make_shared<Mesh>() ;
     halfplane->setPosition(GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING

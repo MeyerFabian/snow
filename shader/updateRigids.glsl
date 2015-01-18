@@ -19,10 +19,10 @@ layout(std140, binding = 10) buffer pNormal {
 
 void main(void){
     uint pI = gl_GlobalInvocationID.x;
+    //rv[pI].xyz += dt * vec3(0.0f,20.0f,0.0f);
 
-    vec3 rv = rv[pI].xyz;
+    rp[pI].xyz += dt *  rv[pI].xyz;
 
-    rp[pI].xyz += dt *  rv;
     //rp[pI].w =0.0f;
 }
 
