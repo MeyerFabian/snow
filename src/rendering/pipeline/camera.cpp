@@ -23,7 +23,7 @@ void Camera::update(const int key,const  float stepsize){
     else if(key == GLFW_KEY_UP){
 
         this->pos = this->pos + (this->zAxis *stepsize);
-        pos.print();
+        //pos.print();
     }
     else if(key ==GLFW_KEY_1){
         setCamera(-0.0695547f, 4.16257f, 6.31657f,2.5f,1.0f,2.0f,0.0f,1.0f,0.0f);

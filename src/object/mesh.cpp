@@ -87,6 +87,16 @@ bool Mesh::InitFromScene(const aiScene* pScene, const std::string& Filename){
         return InitMaterials(pScene,Filename);
   
 }
+void Mesh::InitParticlesFromMesh(shared_ptr<ParticleSystem> const pPs){
+
+    for(unsigned int i = 0; i < m_Entries.size();i++){
+
+        for(unsigned int j = 0 ; j< m_Entries[i].Vertices.size();j++){
+            Vertex v= m_Entries[i].Vertices[j];
+            pPs->particles->push_back(Particle(v.pos.x * 2.0f+2.0f,m_Entries[i].Vertices[j].pos.y * 2.0f+1.5f,m_Entries[i].Vertices[j].pos.z * 2.0f+1.5f));
+        }
+    }
+}
 
 void Mesh::InitMesh(unsigned int Index, const aiMesh* paiMesh){
 

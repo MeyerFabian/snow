@@ -10,6 +10,7 @@
 #include "../math3d.h"
 #include "texture.h"
 #include <memory>
+#include "particlesystem.h"
 struct Vertex{
 public:
     Vector3f pos;
@@ -35,6 +36,7 @@ public:
     bool LoadMesh(const std::string& Filename);
     void Render();
     void initVBO();
+    void InitParticlesFromMesh(shared_ptr<ParticleSystem> const pPs);
     void setScale(const float x,const float y,const float z){
         scale.x = x;
         scale.y = y;

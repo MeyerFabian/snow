@@ -100,14 +100,14 @@ void ExplicitTimeUpdate::init(){
     cMass.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     cMass.setGridDim(grid->dimx, grid->dimy, grid->dimz);
     cMass.setGridSpacing(grid->h);
-    glDispatchCompute(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1);
+    glDispatchCompute((particlesystem->particles->size()+1023)/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
     cVolume.plugTechnique();
     cVolume.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     cVolume.setGridDim(grid->dimx, grid->dimy, grid->dimz);
     cVolume.setGridSpacing(grid->h);
-    glDispatchCompute(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1);
+    glDispatchCompute((particlesystem->particles->size()+1023)/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
     //particlesystem->debug();
     //grid->debug();
@@ -138,7 +138,7 @@ void ExplicitTimeUpdate::update(double dt){
     pc.setHardening();
     pc.setCritComp();
     pc.setCritStretch();
-    glDispatchCompute(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1);
+    glDispatchCompute((particlesystem->particles->size()+1023)/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
 
@@ -157,7 +157,7 @@ void ExplicitTimeUpdate::update(double dt){
     pVU.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     pVU.setGridDim(grid->dimx, grid->dimy, grid->dimz);
     pVU.setGridSpacing(grid->h);
-    glDispatchCompute(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1);
+    glDispatchCompute((particlesystem->particles->size()+1023)/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
 
@@ -176,7 +176,7 @@ void ExplicitTimeUpdate::update(double dt){
     pU.setCollisionOffset();
 
     pU.setnumColliders(collisionObjects->colliders->size());
-    glDispatchCompute(NUMOFPARTICLES/NUM_OF_GPGPU_THREADS_X,1,1);
+    glDispatchCompute((particlesystem->particles->size()+1023)/NUM_OF_GPGPU_THREADS_X,1,1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
 

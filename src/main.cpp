@@ -164,12 +164,44 @@ void scene5(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
 
     shared_ptr<Mesh> sphere=make_shared<Mesh>() ;
     sphere->LoadMesh("model/sphere.obj");
-    sphere->setPosition(4.0125f,1.0125f,1.2f);
+    sphere->setPosition(0.4125f,1.3125f,1.8f);
     sphere->setScale(0.2f,0.2f,0.2f);
     sphere->setRotation(0,0,0);
 
     meshes->push_back(sphere);
-    pCO->colliders->push_back(Collider(sphere,0.2f,1,Vector3f(0.0f,-10.0f,0.0f),Vector3f(0.0f,0.0f,0.0f)));
+    pCO->colliders->push_back(Collider(sphere,0.2f,1,Vector3f(10.0f,-3.0f,0.0f),Vector3f(0.0f,0.0f,0.0f)));
+
+
+}
+void scene6(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
+    int x = 0;
+    float xpos=GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
+            ypos=GRID_POS_Y+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
+            zpos=GRID_POS_Z+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING;
+    shared_ptr<Mesh> bunny=make_shared<Mesh>() ;
+    bunny->LoadMesh("model/bunnygoodres.obj");
+    bunny->InitParticlesFromMesh(pPs);
+    //bunny->setPosition(1.5f,1.5f,1.5f);
+    //bunny->setScale(3.0f,3.0f,3.0f);
+    //bunny->setRotation(0,0,0);
+
+    //meshes->push_back(bunny);
+    /*while(x<NUMOFPARTICLES){
+        float height = 0.2;
+        float width = ((GRID_DIM_X-2.0f*GRID_COLLISION_PLANE_OFFSET)*GRID_SPACING);
+        //float radius = width/2.0f;
+        float rand1=(float(rand())/32727.0f)*width;
+        float rand2=(float(rand())/32727.0f)*height;
+        float rand3=(float(rand())/32727.0f)*width;
+       // if(((rand1 -radius)*(rand1 -radius)+(rand2 -radius)*(rand2 -radius)+(rand3 -radius)*(rand3 -radius)) < (radius*radius)){
+        pPs->particles->push_back(Particle(Vector3f(
+                                               xpos + rand1,
+                                               ypos + rand2,
+                                               zpos + rand3)));
+        x+=1;
+      // }
+    }
+*/
 
 }
 int launchSnow(){
@@ -225,7 +257,7 @@ int launchSnow(){
 */
     shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes = make_shared<std::vector<shared_ptr<Mesh>>>();
 
-    scene4(pPs,pCO,meshes);
+    scene6(pPs,pCO,meshes);
 
     shared_ptr<Mesh> halfplane=make_shared<Mesh>() ;
     halfplane->setPosition(GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING

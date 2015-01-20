@@ -8,7 +8,7 @@
 
 void CollisionObjects::debug(){
 /*
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, velB);
     std::cout << "pos"<<std::endl;
     Vector4f* p = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (colliders)->size(), GL_MAP_READ_BIT));
     p[0].print();
@@ -20,8 +20,8 @@ void CollisionObjects::debug(){
     p[6].print();
     p[7].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
-
 */
+
 
 
 
@@ -71,8 +71,11 @@ void CollisionObjects::updateRenderBuffer(float dt){
     Vector3f position = colliders->at(i).mesh->getPosition();
     Vector3f velocity = colliders->at(i).velocity.xyz();
     Vector3f uPos(position+velocity*dt);
-
     colliders->at(i).mesh->setPosition(uPos);
+    if(colliders->at(i).type == 1){
+        velocity = velocity + Vector3f(0.0f,dt * 12.0f,0.0f);
+        colliders->at(i).velocity = velocity;
+    }
     }
 
 }

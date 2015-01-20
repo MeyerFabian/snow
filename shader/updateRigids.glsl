@@ -22,7 +22,10 @@ void main(void){
     //rv[pI].xyz += dt * vec3(0.0f,20.0f,0.0f);
 
     rp[pI].xyz += dt *  rv[pI].xyz;
+    if(uint( rp[pI].w) == 1){
 
+        rv[pI].xyz +=  vec3(0.0f,12.0f*dt,0.0f);
+    }
     //rp[pI].w =0.0f;
 }
 
