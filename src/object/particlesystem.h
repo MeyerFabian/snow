@@ -7,7 +7,8 @@
 #include <memory>
 #include <vector>
 #include "../math3d.h"
-
+#include <fstream>
+#include <string>
 #include "../defines.h"
 class ParticleSystem{
 public:
@@ -26,7 +27,7 @@ public:
     void initVBO();
     void updateVBOBuffer();
     void render();
-
+    void initParticlesFromFile(const std::string& filename);
     void initSSBO();
     void updateSSBOBuffer();
     void debug();

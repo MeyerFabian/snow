@@ -21,6 +21,29 @@ void ParticleSystem::updateVBOBuffer(){
 
 
 }
+void ParticleSystem::initParticlesFromFile(const std::string& filename){
+    std::ifstream file;
+    file.open(filename);
+    if(file.is_open()){
+        std::cout << "Opened File: " << filename  << std::endl;
+        std::string line;
+        while(std::getline(file,line)){
+            float x = std::stof(line.substr(0,line.find(',')));
+            line.erase(0,line.find(',')+1);
+            float y = std::stof(line.substr(0,line.find(',')));
+            line.erase(0,line.find(',')+1);
+            float z = std::stof(line);
+            //std::cout << x << ", "  << y <<", " << z <<std::endl;
+            this->particles->push_back(Particle(Vector3f(3.0f*x+1.5f,3.0f*y+1.5f,3.0f*z+1.5f)));
+        }
+        file.close();
+    }
+    else{
+        std::cout << "Error: File "<< filename << " not found." <<std::endl;
+    }
+
+}
+
 void ParticleSystem::debug(){
 
 

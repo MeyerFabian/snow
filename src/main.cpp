@@ -179,8 +179,8 @@ void scene6(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
             ypos=GRID_POS_Y+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
             zpos=GRID_POS_Z+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING;
     shared_ptr<Mesh> bunny=make_shared<Mesh>() ;
-    bunny->LoadMesh("model/bunnygoodres.obj");
-    bunny->InitParticlesFromMesh(pPs);
+    std::string filename = "model/bunny.voxel";
+    pPs->initParticlesFromFile(filename);
     //bunny->setPosition(1.5f,1.5f,1.5f);
     //bunny->setScale(3.0f,3.0f,3.0f);
     //bunny->setRotation(0,0,0);

@@ -33,7 +33,7 @@ layout(std140, binding = 10) buffer cNor {
 //int ct[]={1,1,0,0,0,0,0,0,0,0};
 float n = 0.0f;
 vec3 zeroVelocity = vec3(0.0f,0.0f,0.0f);
-vec3 g = vec3(0.0f,0.0f,0.0f);
+vec3 g = vec3(0.0f,-9.81f,0.0f);
 bool collidesHalfPlane(const vec3 pPos,const int i){
     return dot((pPos-cx[i].xyz),cn[i].xyz) <= 0;
 }

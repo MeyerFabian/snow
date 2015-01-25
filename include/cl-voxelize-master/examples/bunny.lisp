@@ -63,16 +63,13 @@ light_source {
 
 (defun sphere (voxel)
   (destructuring-bind (x y z) voxel
-    (format nil "sphere {
-  <~F,~F,~F>,0.0033
-  texture {
-    pigment { color White }
-  }
-}" x y z)))
+    (format nil
+"~F,~F,~F
+"
+x y z)))
 
 (defun output (path voxels)
   (with-open-file (out path :direction :output :if-exists :supersede)
-    (princ (head) out)
     (dolist (voxel voxels)
       (princ (sphere voxel) out))))
 
@@ -82,10 +79,9 @@ light_source {
 ;;;
 
 (defun main ()
-  (let* ((ply-path (asdf:system-relative-pathname :cl-voxelize
-                                                  #P"examples/bunny.ply"))
-         (pov-path (make-pathname :type "pov" :defaults ply-path)))
+  (let* ((ply-path (make-pathname :defaults "C:/Users/Fabs/Desktop/github/snow/include/cl-voxelize-master/examples/bunny.ply"))
+         (pov-path (make-pathname :type "voxel" :defaults "C:/Users/Fabs/Desktop/github/snow/model/bunny")))
     (let ((triangles (ply-to-triangles ply-path))
-          (delta 0.006))
+          (delta 0.002))
       (output pov-path
         (voxelize triangles delta)))))
