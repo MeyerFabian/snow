@@ -19,7 +19,7 @@ double dt =  RENDER_DT;
 
 double t = 0.0;
 
-void scene1(shared_ptr<ParticleSystem> const pPs){
+void scene1(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
     int x = 0;
     float xpos=0.8f,ypos=1.7125f,zpos=5.0f;
     while(x<32*32*32){
@@ -37,7 +37,7 @@ void scene1(shared_ptr<ParticleSystem> const pPs){
         }
     }
 }
-void scene2(shared_ptr<ParticleSystem> const pPs){
+void scene2(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
     int x = 0;
     float xpos=2.0f,ypos=1.7125f,zpos=5.0f;
     while(x<32*32*16){
@@ -72,7 +72,7 @@ void scene2(shared_ptr<ParticleSystem> const pPs){
         }
     }
 }
-void scene3(shared_ptr<ParticleSystem> const pPs){
+void scene3(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
     int x = 0;
     float xpos=1.5f,ypos=2.525f,zpos=5.0f;
     while(x<32*32*32){
@@ -181,27 +181,10 @@ void scene6(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
     shared_ptr<Mesh> bunny=make_shared<Mesh>() ;
     std::string filename = "model/bunny.voxel";
     pPs->initParticlesFromFile(filename);
-    //bunny->setPosition(1.5f,1.5f,1.5f);
-    //bunny->setScale(3.0f,3.0f,3.0f);
-    //bunny->setRotation(0,0,0);
 
-    //meshes->push_back(bunny);
-    /*while(x<NUMOFPARTICLES){
-        float height = 0.2;
-        float width = ((GRID_DIM_X-2.0f*GRID_COLLISION_PLANE_OFFSET)*GRID_SPACING);
-        //float radius = width/2.0f;
-        float rand1=(float(rand())/32727.0f)*width;
-        float rand2=(float(rand())/32727.0f)*height;
-        float rand3=(float(rand())/32727.0f)*width;
-       // if(((rand1 -radius)*(rand1 -radius)+(rand2 -radius)*(rand2 -radius)+(rand3 -radius)*(rand3 -radius)) < (radius*radius)){
-        pPs->particles->push_back(Particle(Vector3f(
-                                               xpos + rand1,
-                                               ypos + rand2,
-                                               zpos + rand3)));
-        x+=1;
-      // }
-    }
-*/
+    //1. Test 91897 Particles 400kg/m Density 6.25Mass
+    //2. Test 190000 Particles 900kg/m Density 6.25 Mass SAME RESULT
+    //3. Test
 
 }
 int launchSnow(){

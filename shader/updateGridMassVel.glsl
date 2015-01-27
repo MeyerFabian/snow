@@ -515,7 +515,7 @@ void main(void){
     //pxm[pIndex].x +=0.00005;
 
     vec4 particle = pxm[pIndex];
-    vec4 particleVelocity = pv[pIndex];
+    vec4 particleVelocity = vec4(pv[pIndex]);
     mat4 FEp4 = mat4(pFE[pIndex]);
     mat3 FEp =mat3(FEp4);
     mat4 FPp4 = mat4(pFP[pIndex]);

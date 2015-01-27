@@ -34,7 +34,7 @@ void ParticleSystem::initParticlesFromFile(const std::string& filename){
             line.erase(0,line.find(',')+1);
             float z = std::stof(line);
             //std::cout << x << ", "  << y <<", " << z <<std::endl;
-            this->particles->push_back(Particle(Vector3f(3.0f*x+1.5f,3.0f*y+1.5f,3.0f*z+1.5f)));
+            this->particles->push_back(Particle(Vector3f(12.5f*x+4.1f,12.5f*y+0.3225f,12.5f*z+4.5f)));
         }
         file.close();
     }
@@ -50,16 +50,21 @@ void ParticleSystem::debug(){
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
     std::cout << "pos"<<std::endl;
     Vector4f* p = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (particles)->size(), GL_MAP_READ_BIT));
-    p[16*32*32+0*32+16].print();
+    p[4000].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
 
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, velB);
     std::cout << "vel"<<std::endl;
     Vector4i* a = (Vector4i*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4i)* (particles)->size(), GL_MAP_READ_BIT));
-    a[16*32*32+0*32+16].print();
+    a[40000].print();
+    a[10000].print();
+    a[20000].print();
+    a[50000].print();
+    a[60000].print();
+    a[70000].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
-
+/*
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, velBn);
     std::cout << "velBn"<<std::endl;
     Vector4i* vb = (Vector4i*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,3* sizeof(Vector4i)* (particles)->size(), GL_MAP_READ_BIT));
@@ -81,7 +86,7 @@ void ParticleSystem::debug(){
     m[(16*32*32+0*32+16)].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
 
-
+*/
 
 
 

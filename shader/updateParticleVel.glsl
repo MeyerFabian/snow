@@ -110,7 +110,7 @@ void main(void){
     uint globalInvocY = gl_GlobalInvocationID.y;
 
     vec4 particle = pxm[pIndex];
-    vec4 particleVelocity = pv[pIndex];
+    vec4 particleVelocity = vec4(pv[pIndex]);
 
     vec3 xp= particle.xyz; //particle position
 

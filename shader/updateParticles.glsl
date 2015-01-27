@@ -571,31 +571,31 @@ void main(void){
 
 
     vec3 vpn1 = vec3(vec3(vp) * alpha + vec3(vpn))/1000000.0f;
-/*
+
     for(int i = 0 ; i<gNumColliders; i++){
         vec3 p = cx[i].xyz;
         vec3 n = cn[i].xyz;
        vec3 particlePos = pxm[pI].xyz;
        if(collides(particlePos,i,n)){
            vec3 vco = cv[i].xyz;
-           vec3 vrel = vpn - vco;
+           vec3 vrel = vpn1 - vco;
            float vn = dot(vrel,n);
            if(vn<0.0f){
                vec3 vt = vrel - n*vn;
-               float muvn = cf[i] * vn;
-               vec3 vrelt;
+               float muvn = cn[i].w * vn;
+               vec3 vrelt=vt;
                float lengthvt=length(vt);
                if(lengthvt<= - muvn){
                     vrelt = vec3(0.0f);
                }
                else{
-                    vrelt = vt + muvn*vt/(lengthvt);
+                    vrelt+=  muvn*vt/(lengthvt);
                }
                vpn1 = vrelt + vco;
             }
         }
     }
-*/
+
     pv[pI].xyz = ivec3(vpn1*1000000.0f);
     // UPDATE POSITION
     // xpn+1 = xpn + d_t * vpn+1

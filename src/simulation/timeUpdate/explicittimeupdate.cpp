@@ -109,7 +109,7 @@ void ExplicitTimeUpdate::init(){
     cVolume.setGridSpacing(grid->h);
     glDispatchCompute((particlesystem->particles->size()+1023)/NUM_OF_GPGPU_THREADS_X,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
-    //particlesystem->debug();
+    particlesystem->debug();
     //grid->debug();
 
 
