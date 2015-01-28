@@ -18,6 +18,31 @@ using namespace  std;
 double dt =  RENDER_DT;
 
 double t = 0.0;
+void scene0(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
+    int x = 0;
+    int y=0;
+    int z=0;
+    float xpos=0.7625f,ypos=0.7125f,zpos=0.7625f;
+    while(y<32){
+        while(z<32){
+            while(x<32){
+                pPs->particles->push_back(Particle(Vector3f(
+                                               xpos + ((float)x)*0.025f,
+                                               ypos + ((float)y)*0.025f,
+                                               zpos + ((float)z)*0.025f)));
+
+                x+=1;
+            }
+            x=0;
+            z+=1;
+
+        }
+        z=0;
+
+        y+=1;
+    }
+
+}
 
 void scene1(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
     int x = 0;
@@ -184,7 +209,7 @@ void scene6(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
 
     //1. Test 91897 Particles 400kg/m Density 6.25Mass
     //2. Test 190000 Particles 900kg/m Density 6.25 Mass SAME RESULT
-    //3. Test
+    //3. Test 91897 Particles 600kg/m Density 9.5Mass SAME RESULT
 
 }
 int launchSnow(){
@@ -240,7 +265,7 @@ int launchSnow(){
 */
     shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes = make_shared<std::vector<shared_ptr<Mesh>>>();
 
-    scene6(pPs,pCO,meshes);
+    scene0(pPs,pCO,meshes);
 
     shared_ptr<Mesh> halfplane=make_shared<Mesh>() ;
     halfplane->setPosition(GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING

@@ -469,7 +469,7 @@ void main(void){
     mat4 FPp4 = mat4(pFP[pI]);
     mat3 FPp = mat3(FPp4);
 
-    mat3 dvp =mat3( float(pvn[3*pI+1].x)/1000000.0f,float(pvn[3*pI+1].y)/1000000.0f,float(pvn[3*pI+1].z)/1000000.0f,
+    mat3 dvp = mat3( float(pvn[3*pI+1].x)/1000000.0f,float(pvn[3*pI+1].y)/1000000.0f,float(pvn[3*pI+1].z)/1000000.0f,
                     float(pvn[3*pI+1].y)/1000000.0f,float(pvn[3*pI+2].x)/1000000.0f,float(pvn[3*pI+2].y)/1000000.0f,
                     float(pvn[3*pI+1].z)/1000000.0f,float(pvn[3*pI+2].y)/1000000.0f,float(pvn[3*pI+2].z)/1000000.0f);
 /*
@@ -552,6 +552,7 @@ void main(void){
                                          FPpn[0][1],FPpn[1][1],FPpn[2][1],0.0f,
                                          FPpn[0][2],FPpn[1][2],FPpn[2][2],0.0f,
                                          0.0f,0.0f,0.0f,0.0f);
+
 
 /*
     pFP[gl_GlobalInvocationID.x] = mat4( FPpn[0][0],FPpn[0][1],FPpn[0][2],0.0f,

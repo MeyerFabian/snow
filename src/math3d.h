@@ -220,6 +220,17 @@ struct Matrix4f{
         this->m[2][0]=0.0f; this->m[2][1]=0.0f; this->m[2][2]=1.0f; this->m[2][3]=0.0f;
         this->m[3][0]=0.0f; this->m[3][1]=0.0f; this->m[3][2]=0.0f; this->m[3][3]=1.0f;
     }
+    Matrix4f(float f1,float f2,float f3,float f4,
+             float f5,float f6,float f7,float f8,
+             float f9,float f10,float f11,float f12,
+             float f13,float f14,float f15,float f16){
+
+        this->m[0][0]=f1; this->m[0][1]=f2; this->m[0][2]=f3; this->m[0][3]=f4;
+        this->m[1][0]=f5; this->m[1][1]=f6; this->m[1][2]=f7; this->m[1][3]=f8;
+        this->m[2][0]=f9; this->m[2][1]=f10; this->m[2][2]=f11; this->m[2][3]=f12;
+        this->m[3][0]=f13; this->m[3][1]=f14; this->m[3][2]=f15; this->m[3][3]=f16;
+    }
+
     inline Matrix4f operator*(const Matrix4f operand){
         Matrix4f returnMatrix;
         for(int j = 0; j< 4; j++){
