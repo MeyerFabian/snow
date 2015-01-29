@@ -17,7 +17,7 @@
 #define GRID_SPACING 0.05
 #define PARTICLE_TO_GRID_SIZE 64
 #define GRID_COLLISION_PLANE_OFFSET 4
-#define DT 1e-4
+#define DT 1e-5
 #define RENDER_DT 0.01
 
 #define NUMOFPARTICLES 64*64*64

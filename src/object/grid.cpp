@@ -43,18 +43,18 @@ void Grid::debug(){
     std::cout << "Grid"<< std::endl;
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
     Vector4f* p = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (gridPoints)->size(), GL_MAP_READ_BIT));
-    std::cout << "xi: ";p[9+4*201+9*201*201].print();
+    std::cout << "xi: ";p[9+5*201+9*201*201].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, velB);
     Vector4i* c = (Vector4i*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,2*sizeof(Vector4i)* (gridPoints)->size(), GL_MAP_READ_BIT));
-    std::cout << "vi: ";c[2*(9+4*201+9*201*201)].print();
-    std::cout << "fi: ";c[2*(9+4*201+9*201*201)+1].print();
+    std::cout << "vi: ";c[2*(9+5*201+9*201*201)].print();
+    std::cout << "fi: ";c[2*(9+5*201+9*201*201)+1].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, velBn);
     Vector4f* v = (Vector4f*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4f)* (gridPoints)->size(), GL_MAP_READ_BIT));
-    std::cout << "gvn: ";v[(9+4*201+9*201*201)].print();
+    std::cout << "gvn: ";v[(9+5*201+9*201*201)].print();
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER);
 
 

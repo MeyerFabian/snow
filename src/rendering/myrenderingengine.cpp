@@ -56,7 +56,7 @@ static float rotation=0.0f;
 
 Vector3f lightpos;
 static float lighty=0.0f;
-
+bool debug;
 
 void myRenderingEngine::fillBufferFromMeshes(){
     for(int i= 0;i< meshes->size(); i++){
@@ -286,7 +286,12 @@ void initShader(){
     //particlesystem->updateVBOBuffer();
     PT.plugTechnique();
     PT.setWVP(world.getMVP());
+
     particlesystem->render();
+    if(debug == true){
+        particlesystem->debug();
+        grid->debug();
+    }
     //double timeS = glfwGetTime ();
     //grid->render();
     //double timeE = glfwGetTime();
@@ -331,6 +336,14 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     else if(key == GLFW_KEY_S){
         if(action == GLFW_PRESS){
 
+        }
+    }
+    else if(key == GLFW_KEY_D){
+        if(action == GLFW_PRESS){
+            debug = true;
+        }
+        else if(action == GLFW_RELEASE){
+            debug = false;
         }
     }
     else{

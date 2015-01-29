@@ -167,7 +167,7 @@ void ExplicitTimeUpdate::update(double dt){
     //std::cout<<"Vor FEp Update"<<std::endl;
 
     //particlesystem->debug();
-    //grid->debug();
+   // grid->debug();
     pU.plugTechnique();
     pU.setDt(dt);   
     pU.setCritComp();

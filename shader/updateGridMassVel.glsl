@@ -585,18 +585,20 @@ void main(void){
         //        = - sum_p [ Vp0  * (2 * mu(FPp) * (FEp-REp) * FEp^(T) + lamba(FPp)* (JEp -1.0f) * JEp * I )*d_wipn]
         if(pp0>0.0f){
            // if(gridOffset ==0 &&gridOffset ==0 &&gridOffset ==0){
-        vec3 force = -
+        vec3 force =-
 
                 (mp/pp0)*
 
-                (  2.0f* mu(JPp)*
+                ((  2.0f* mu(JPp)*
                              (FEp-REp)*transpose(FEp)
                     + lambda(JPp)*(JEp -1.0f)*(JEp)* mat3(1.0f)
                     )
 
                   *
 
-        wipg;
+        wipg)
+
+        ;
         //force = wipg;
         //fi[gI].xyz += force;
         atomicAdd(gv[2*gI+1].x,int(force.x*1000000.0f));

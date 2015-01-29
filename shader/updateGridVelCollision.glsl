@@ -65,7 +65,7 @@ void main(void){
            fi/mi+
             g)
         ;
-/*
+
         for(int i = 0 ; i<gNumColliders; i++){
             vec3 p = cx[i].xyz;
             vec3 n = cn[i].xyz;
@@ -88,7 +88,7 @@ void main(void){
                 }
             }
         }
-*/
+
         gvn[gI].xyz = vin;
             ;
 
