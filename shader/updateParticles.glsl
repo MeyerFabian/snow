@@ -469,9 +469,9 @@ void main(void){
     mat4 FPp4 = mat4(pFP[pI]);
     mat3 FPp = mat3(FPp4);
 
-    mat3 dvp = mat3( float(pvn[3*pI+1].x)/1000000.0f,float(pvn[3*pI+1].y)/1000000.0f,float(pvn[3*pI+1].z)/1000000.0f,
-                    float(pvn[3*pI+1].y)/1000000.0f,float(pvn[3*pI+2].x)/1000000.0f,float(pvn[3*pI+2].y)/1000000.0f,
-                    float(pvn[3*pI+1].z)/1000000.0f,float(pvn[3*pI+2].y)/1000000.0f,float(pvn[3*pI+2].z)/1000000.0f);
+    mat3 dvp = mat3( float(pvn[3*pI+1].x)*1e-9f,float(pvn[3*pI+1].y)*1e-9f,float(pvn[3*pI+1].z)*1e-9f,
+                    float(pvn[3*pI+1].y)*1e-9f,float(pvn[3*pI+2].x)*1e-9f,float(pvn[3*pI+2].y)*1e-9f,
+                    float(pvn[3*pI+1].z)*1e-9f,float(pvn[3*pI+2].y)*1e-9f,float(pvn[3*pI+2].z)*1e-9f);
 /*
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
@@ -565,12 +565,12 @@ void main(void){
 */
     // UPDATE VELOCITIES
 
-    ivec3 vpn = pvn[3*pI].xyz;
-    ivec3 vp = pv[pI].xyz;
+    vec3 vpn = vec3(pvn[3*pI].xyz)*1e-9f;
+    vec3 vp = vec3(pv[pI].xyz)*1e-9f;
     //vpn+1 = a * vpn + temp_vpn+1
 
 
-    vec3 vpn1 = vec3(vec3(vp) * alpha + vec3(vpn))/1000000.0f;
+    vec3 vpn1 = vp * alpha + vpn;
 
     for(int i = 0 ; i<gNumColliders; i++){
         vec3 p = cx[i].xyz;
@@ -596,7 +596,7 @@ void main(void){
         }
     }
 
-    pv[pI].xyz = ivec3(vpn1*1000000.0f);
+    pv[pI].xyz = ivec3(vpn1*1e9f);
     // UPDATE POSITION
     // xpn+1 = xpn + d_t * vpn+1
 

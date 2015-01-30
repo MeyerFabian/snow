@@ -22,7 +22,7 @@ void scene0(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
     int x = 0;
     int y=0;
     int z=0;
-    float xpos=0.8125f,ypos=0.7625f,zpos=0.8125f;
+    float xpos=0.8125f,ypos=1.225f,zpos=0.8125f;
     while(y<32){
         while(z<32){
             while(x<32){

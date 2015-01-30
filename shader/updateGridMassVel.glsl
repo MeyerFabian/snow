@@ -528,7 +528,7 @@ void main(void){
     vec3 xp= particle.xyz; //particle position
     float mp = particle.w; // particle mass
     vec3 vp = particleVelocity.xyz; //particle velocity
-    float pp0 = float(particleVelocity.w); //particle density
+    float pp0 = float(particleVelocity.w)/1e3f; //particle density
 
     int gridOffsetOfParticle = int(globalInvocY); //  21
     ivec3 gridOffset;
@@ -558,7 +558,7 @@ void main(void){
 
         //min = sum_p [ mp *wipn]
         //gxm[gI].w+= mp * wip;
-        atomicAdd(gv[2*gI].w,  int(mp * wip* 1000000.0f));
+        atomicAdd(gv[2*gI].w,  int(mp * wip* 1e9f));
 
         //vin = sum_p [ vpn * mp *wipn / min]
         //gv[gI].xyz+= vp * mp * wip; // calculate added gridVelocity
@@ -571,6 +571,7 @@ void main(void){
 
         mat3 REp, SEp;
         computePD(FEp,REp,SEp);
+
         for(int i=0; i<3; i++){
             for(int j=0;j<3;j++){
                 REp[i][j] =round(100000.0f *REp[i][j])/100000.0f ;
@@ -601,9 +602,9 @@ void main(void){
         ;
         //force = wipg;
         //fi[gI].xyz += force;
-        atomicAdd(gv[2*gI+1].x,int(force.x*1000000.0f));
-        atomicAdd(gv[2*gI+1].y,int(force.y*1000000.0f));
-        atomicAdd(gv[2*gI+1].z,int(force.z*1000000.0f));
+        atomicAdd(gv[2*gI+1].x,int(force.x*1e9f));
+        atomicAdd(gv[2*gI+1].y,int(force.y*1e9f));
+        atomicAdd(gv[2*gI+1].z,int(force.z*1e9f));
 
         }
    }
