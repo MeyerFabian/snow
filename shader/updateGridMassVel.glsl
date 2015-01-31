@@ -32,6 +32,9 @@ layout(std140, binding = 4) buffer pForceElastic {
 layout(std140, binding = 5) buffer pForcePlastic {
     mat4 pFP[ ];
 };
+layout(std140, binding = 16) buffer gForce {
+    ivec4 gf[ ];
+};
 
 
 
@@ -528,7 +531,7 @@ void main(void){
     vec3 xp= particle.xyz; //particle position
     float mp = particle.w; // particle mass
     vec3 vp = particleVelocity.xyz; //particle velocity
-    float pp0 = float(particleVelocity.w)/1e3f; //particle density
+    float pp0 = float(particleVelocity.w)*1e-6f; //particle density
 
     int gridOffsetOfParticle = int(globalInvocY); //  21
     ivec3 gridOffset;
@@ -558,15 +561,15 @@ void main(void){
 
         //min = sum_p [ mp *wipn]
         //gxm[gI].w+= mp * wip;
-        atomicAdd(gv[2*gI].w,  int(mp * wip* 1e9f));
+        atomicAdd(gv[gI].w,  int(mp * wip* 1e9f));
 
         //vin = sum_p [ vpn * mp *wipn / min]
         //gv[gI].xyz+= vp * mp * wip; // calculate added gridVelocity
 
         vec3 velocity = (vp * mp * wip);
-        atomicAdd(gv[2*gI].x,int(velocity.x));
-        atomicAdd(gv[2*gI].y,int(velocity.y));
-        atomicAdd(gv[2*gI].z,int(velocity.z));
+        atomicAdd(gv[gI].x,int(velocity.x));
+        atomicAdd(gv[gI].y,int(velocity.y));
+        atomicAdd(gv[gI].z,int(velocity.z));
 
 
         mat3 REp, SEp;
@@ -574,9 +577,11 @@ void main(void){
 
         for(int i=0; i<3; i++){
             for(int j=0;j<3;j++){
-                REp[i][j] =round(100000.0f *REp[i][j])/100000.0f ;
+                REp[i][j] =round(1e5f*REp[i][j])/1e5f ;
             }
         }
+
+        //REp =mat3(1.0f);
         float JPp = determinant(FPp);
         float JEp = determinant(FEp);
         vec3 wipg;
@@ -586,7 +591,7 @@ void main(void){
         //        = - sum_p [ Vp0  * (2 * mu(FPp) * (FEp-REp) * FEp^(T) + lamba(FPp)* (JEp -1.0f) * JEp * I )*d_wipn]
         if(pp0>0.0f){
            // if(gridOffset ==0 &&gridOffset ==0 &&gridOffset ==0){
-        vec3 force =-
+        vec3 force =
 
                 (mp/pp0)*
 
@@ -602,9 +607,9 @@ void main(void){
         ;
         //force = wipg;
         //fi[gI].xyz += force;
-        atomicAdd(gv[2*gI+1].x,int(force.x*1e9f));
-        atomicAdd(gv[2*gI+1].y,int(force.y*1e9f));
-        atomicAdd(gv[2*gI+1].z,int(force.z*1e9f));
+        atomicAdd(gf[gI].x,int(force.x*1e9f));
+        atomicAdd(gf[gI].y,int(force.y*1e9f));
+        atomicAdd(gf[gI].z,int(force.z*1e9f));
 
         }
    }

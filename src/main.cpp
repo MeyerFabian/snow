@@ -22,7 +22,7 @@ void scene0(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
     int x = 0;
     int y=0;
     int z=0;
-    float xpos=0.8125f,ypos=1.225f,zpos=0.8125f;
+    float xpos=0.9625f,ypos=0.7135f,zpos=0.9625;
     while(y<32){
         while(z<32){
             while(x<32){
@@ -75,7 +75,7 @@ void scene2(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
         pPs->particles->push_back(Particle(Vector3f(
                                                xpos + rand1,
                                                ypos + rand2,
-                                               zpos + rand3),Vector3i(10*1000000,1*1000000,1*1000000)));
+                                               zpos + rand3),Vector3i(30*1e9,15*1e9,1*1e9)));
         x+=1;
         }
     }
@@ -92,7 +92,7 @@ void scene2(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
         pPs->particles->push_back(Particle(Vector3f(
                                                xpos + rand1,
                                                ypos + rand2,
-                                               zpos + rand3),Vector3i(-30*1000000,15*1000000,-1*1000000)));
+                                               zpos + rand3),Vector3i(-20*1e9,15*1e9,-1*1e9)));
         x+=1;
         }
     }
@@ -101,7 +101,7 @@ void scene3(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
     int x = 0;
     float xpos=1.5f,ypos=2.525f,zpos=5.0f;
     while(x<32*32*32){
-        float width = 0.8;
+        float width = 1.8;
         float radius = width/2.0f;
         float rand1=(float(rand())/32727.0f)*width;
         float rand2=(float(rand())/32727.0f)*width;
@@ -110,7 +110,7 @@ void scene3(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
         pPs->particles->push_back(Particle(Vector3f(
                                                xpos + rand1,
                                                ypos + rand2,
-                                               zpos + rand3),Vector3i(10*1000000,-5*1000000,1*1000000)));
+                                               zpos + rand3),Vector3i(2*1e9,-30*1e9,-1*1e9),1.25e-3f));
         x+=1;
         }
     }
@@ -265,7 +265,7 @@ int launchSnow(){
 */
     shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes = make_shared<std::vector<shared_ptr<Mesh>>>();
 
-    scene0(pPs,pCO,meshes);
+    scene3(pPs,pCO,meshes);
 
     shared_ptr<Mesh> halfplane=make_shared<Mesh>() ;
     halfplane->setPosition(GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING

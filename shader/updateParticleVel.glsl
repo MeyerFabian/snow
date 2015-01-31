@@ -34,8 +34,15 @@ layout(std140, binding = 7) buffer gVeln {
 layout(std140, binding = 6) buffer pVeln {
     ivec4 pvn[ ];
 };
-
-
+layout(std140, binding = 13) buffer pDeltaVel0{
+    ivec4 pdvp0[];
+};
+layout(std140, binding = 14) buffer pDeltaVel1{
+    ivec4 pdvp1[];
+};
+layout(std140, binding = 15) buffer pDeltaVel2{
+    ivec4 pdvp2[];
+};
 /**
  * Takes an integer vector ijk and returns the respective buffer index.
  * i of [0,x-GridDimension]
@@ -138,22 +145,22 @@ void main(void){
         weighting (gridDistanceToParticle,wip);
 
         vec3 gwip =vec3(.0f);
-        weightingGradient(gridDistanceToParticle,gwip);
+        weightingGradient(-gridDistanceToParticle,gwip);
         int gI;
         getIndex(gridIndex,gI);
 
         vec3 vin =gvn[gI].xyz;
-        vec3 vi =vec3(gv[2*gI].xyz)*1e-9f; //needs to be normalized with mi
-        float mi = float(gv[2*gI].w)*1e-9f;
+        vec3 vi =vec3(gv[gI].xyz)*1e-9f; //needs to be normalized with mi
+        float mi = float(gv[gI].w)*1e-9f;
         //vpn+1 = a * vpn + temp_vpn+1
         //temp_vpn+1 = sum_i [(1-a) * vin+1 * wipn + (a) * (vin+1 - vin)* wipn]
         if(mi>0.0f){
         vec3 vpn = ((1.0f-alpha) *vin * wip)+(alpha*(vin-vi/mi)*wip); // add ParticleMass to gridPointMass
         //fi[gI].xyz += force;
-        atomicAdd(pvn[3*gl_GlobalInvocationID.x].x,int(vpn.x*1e9f));
-        atomicAdd(pvn[3*gl_GlobalInvocationID.x].y,int(vpn.y*1e9f));
-        atomicAdd(pvn[3*gl_GlobalInvocationID.x].z,int(vpn.z*1e9f));
-        }
+        atomicAdd(pvn[gl_GlobalInvocationID.x].x,int(vpn.x*1e9f));
+        atomicAdd(pvn[gl_GlobalInvocationID.x].y,int(vpn.y*1e9f));
+        atomicAdd(pvn[gl_GlobalInvocationID.x].z,int(vpn.z*1e9f));
+
         //pvn[gl_GlobalInvocationID.x].xyz +=vin*wip;
         //d_vpn+1 = sum_i [vin+1 * d_wipn^(T)]
         /*
@@ -169,13 +176,16 @@ void main(void){
 
 */
 
-        atomicAdd(pvn[3*gl_GlobalInvocationID.x+1].x,int(vin.x * gwip.x*1e9f));
-        atomicAdd(pvn[3*gl_GlobalInvocationID.x+1].y,int(vin.x * gwip.y*1e9f));
-        atomicAdd(pvn[3*gl_GlobalInvocationID.x+1].z,int(vin.x * gwip.z*1e9f));
-        atomicAdd(pvn[3*gl_GlobalInvocationID.x+2].x,int(vin.y * gwip.y*1e9f));
-        atomicAdd(pvn[3*gl_GlobalInvocationID.x+2].y,int(vin.y * gwip.z*1e9f));
-        atomicAdd(pvn[3*gl_GlobalInvocationID.x+2].z,int(vin.z * gwip.z*1e9f));
-
+        atomicAdd(pdvp0[gl_GlobalInvocationID.x].x,int(vin.x * gwip.x*1e9f));
+        atomicAdd(pdvp1[gl_GlobalInvocationID.x].x,int(vin.x * gwip.y*1e9f));
+        atomicAdd(pdvp2[gl_GlobalInvocationID.x].x,int(vin.x * gwip.z*1e9f));
+        atomicAdd(pdvp0[gl_GlobalInvocationID.x].y,int(vin.y * gwip.x*1e9f));
+        atomicAdd(pdvp1[gl_GlobalInvocationID.x].y,int(vin.y * gwip.y*1e9f));
+        atomicAdd(pdvp2[gl_GlobalInvocationID.x].y,int(vin.y * gwip.z*1e9f));
+        atomicAdd(pdvp0[gl_GlobalInvocationID.x].z,int(vin.z * gwip.x*1e9f));
+        atomicAdd(pdvp1[gl_GlobalInvocationID.x].z,int(vin.z * gwip.y*1e9f));
+        atomicAdd(pdvp2[gl_GlobalInvocationID.x].z,int(vin.z * gwip.z*1e9f));
+}
         /*
         deltapvn[gl_GlobalInvocationID.x][0][0] += mat4( vin.x * gwip.x,vin.x * gwip.y, vin.x *gwip.z,0.0f,
                                                    vin.y * gwip.x,vin.y * gwip.y, vin.y *gwip.z,0.0f,

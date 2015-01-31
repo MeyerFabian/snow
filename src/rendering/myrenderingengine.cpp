@@ -205,7 +205,10 @@ void initShader(){
 
 }
  void myRenderingEngine::renderPass(){
-
+     if(debug == true){
+         particlesystem->debug();
+         grid->debug();
+     }
     //pipeline light;
     lightpos = Vector3f(4.0,5.0f,4.0f);
 
@@ -288,10 +291,7 @@ void initShader(){
     PT.setWVP(world.getMVP());
 
     particlesystem->render();
-    if(debug == true){
-        particlesystem->debug();
-        grid->debug();
-    }
+
     //double timeS = glfwGetTime ();
     //grid->render();
     //double timeE = glfwGetTime();

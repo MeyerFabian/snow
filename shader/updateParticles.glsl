@@ -39,7 +39,15 @@ layout(std140, binding = 9) buffer cVel {
 layout(std140, binding = 10) buffer cNor {
     vec4 cn[ ];
 };
-
+layout(std140, binding = 13) buffer pDeltaVel0{
+    ivec4 pdvp0[];
+};
+layout(std140, binding = 14) buffer pDeltaVel1{
+    ivec4 pdvp1[];
+};
+layout(std140, binding = 15) buffer pDeltaVel2{
+    ivec4 pdvp2[];
+};
 
 
 
@@ -469,9 +477,7 @@ void main(void){
     mat4 FPp4 = mat4(pFP[pI]);
     mat3 FPp = mat3(FPp4);
 
-    mat3 dvp = mat3( float(pvn[3*pI+1].x)*1e-9f,float(pvn[3*pI+1].y)*1e-9f,float(pvn[3*pI+1].z)*1e-9f,
-                    float(pvn[3*pI+1].y)*1e-9f,float(pvn[3*pI+2].x)*1e-9f,float(pvn[3*pI+2].y)*1e-9f,
-                    float(pvn[3*pI+1].z)*1e-9f,float(pvn[3*pI+2].y)*1e-9f,float(pvn[3*pI+2].z)*1e-9f);
+    mat3 dvp = mat3( vec3(pdvp0[pI])*1e-9f,vec3(pdvp1[pI])*1e-9f,vec3(pdvp2[pI])*1e-9f);
 /*
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
@@ -483,14 +489,14 @@ void main(void){
     mat3 Fpn = (mat3(1.0f) + dt * dvp)* (FEp*FPp);
     mat3 FPpn = FPp;
     //FEpn = mat3(1.0025f);
-/*
+
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
-            Fpn[i][j] =round(100000.0f *Fpn[i][j])/100000.0f ;
-            FEpn[i][j] =round(100000.0f *FEpn[i][j])/100000.0f ;
+            Fpn[i][j] =round(1e5f*Fpn[i][j])/1e5f ;
+            FEpn[i][j] =round(1e5f *FEpn[i][j])/1e5f ;
         }
     }
-*/
+
     //FEpn= mat3(1.0f);
     //FEpn= mat3(2.0f,1.0f,1.0f,0.0f,3.0f,1.0f,2.0f,1.4f,2.4f);
     mat3 W =mat3(0.0f);
@@ -503,13 +509,13 @@ void main(void){
     sclamp(S[2][2], 1.0f-critComp,1.0f+critStretch);
 
     FEpn = W*S*transpose(V);
-/*
+
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
-            FEpn[i][j] =round(100000.0f *FEpn[i][j])/100000.0f ;
+            FEpn[i][j] =round(1e5f *FEpn[i][j])/1e5f ;
         }
     }
-*/
+
 
     mat3 S_I = mat3(0.0f);
 
@@ -522,7 +528,7 @@ void main(void){
 /*
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
-            FPpn[i][j] =round(100000.0f *FPpn[i][j])/100000.0f ;
+            FPpn[i][j] =round(1e5f *FPpn[i][j])/1e5f ;
         }
     }
 */
@@ -565,7 +571,7 @@ void main(void){
 */
     // UPDATE VELOCITIES
 
-    vec3 vpn = vec3(pvn[3*pI].xyz)*1e-9f;
+    vec3 vpn = vec3(pvn[pI].xyz)*1e-9f;
     vec3 vp = vec3(pv[pI].xyz)*1e-9f;
     //vpn+1 = a * vpn + temp_vpn+1
 
@@ -603,7 +609,8 @@ void main(void){
     pxm[pI].xyz += dt *  vpn1;
 
     //Reset vpn+1 and delta vpn+1 to (0,0,0)
-    pvn[3*pI].xyz = ivec3(0,0,0);
-    pvn[3*pI+1].xyz = ivec3(0,0,0);
-    pvn[3*pI+2].xyz = ivec3(0,0,0);
+    pvn[pI].xyz = ivec3(0,0,0);
+    pdvp0[pI].xyz = ivec3(0,0,0);
+    pdvp1[pI].xyz = ivec3(0,0,0);
+    pdvp2[pI].xyz = ivec3(0,0,0);
 }

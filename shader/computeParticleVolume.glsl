@@ -131,9 +131,9 @@ void main(void){
         // pp0 = sum_i[ mi0 *wip0 / h^(3)]
 // atomicAdd(gxm[gI].w, mp * wip);
         //pv[pIndex].w += (mi * wip / gCellVolume)  ;
-        float mi = float(gv[2*gI].w)*1e-9f;
+        float mi = float(gv[gI].w)*1e-9f;
         atomicAdd(pv[pIndex].w, int(
-                                mi * wip / gCellVolume*1e3f)
+                                mi * wip / gCellVolume*1e6f)
                                 );
 
    }
