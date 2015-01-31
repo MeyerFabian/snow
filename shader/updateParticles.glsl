@@ -489,14 +489,14 @@ void main(void){
     mat3 Fpn = (mat3(1.0f) + dt * dvp)* (FEp*FPp);
     mat3 FPpn = FPp;
     //FEpn = mat3(1.0025f);
-
+/*
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
             Fpn[i][j] =round(1e5f*Fpn[i][j])/1e5f ;
             FEpn[i][j] =round(1e5f *FEpn[i][j])/1e5f ;
         }
     }
-
+*/
     //FEpn= mat3(1.0f);
     //FEpn= mat3(2.0f,1.0f,1.0f,0.0f,3.0f,1.0f,2.0f,1.4f,2.4f);
     mat3 W =mat3(0.0f);
@@ -509,13 +509,13 @@ void main(void){
     sclamp(S[2][2], 1.0f-critComp,1.0f+critStretch);
 
     FEpn = W*S*transpose(V);
-
+/*
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
             FEpn[i][j] =round(1e5f *FEpn[i][j])/1e5f ;
         }
     }
-
+*/
 
     mat3 S_I = mat3(0.0f);
 

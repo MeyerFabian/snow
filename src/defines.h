@@ -17,7 +17,7 @@
 #define GRID_SPACING 0.05
 #define PARTICLE_TO_GRID_SIZE 64
 #define GRID_COLLISION_PLANE_OFFSET 4
-#define DT 1e-5
+#define DT 1e-3
 #define RENDER_DT 0.016666
 
 #define NUMOFPARTICLES 64*64*64
@@ -45,7 +45,7 @@
 #define COLLIDER_FRIC_BUFFER 12
 
 #define YOUNG_MODULUS 1.4e5
-#define POISSON 0.35
+#define POISSON 0.2
 #define HARDENING 10.0
 #define CRIT_COMPRESSION 2.4e-2
 #define CRIT_STRETCH 7.5e-3

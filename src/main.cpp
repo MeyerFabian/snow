@@ -99,7 +99,7 @@ void scene2(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
 }
 void scene3(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
     int x = 0;
-    float xpos=1.5f,ypos=2.525f,zpos=5.0f;
+    float xpos=1.5f,ypos=3.025f,zpos=5.0f;
     while(x<32*32*32){
         float width = 1.8;
         float radius = width/2.0f;
@@ -110,7 +110,7 @@ void scene3(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
         pPs->particles->push_back(Particle(Vector3f(
                                                xpos + rand1,
                                                ypos + rand2,
-                                               zpos + rand3),Vector3i(2*1e9,-30*1e9,-1*1e9),1.25e-3f));
+                                               zpos + rand3),Vector3i(0*1e9,0*1e9,0*1e9),6.25e-4f));
         x+=1;
         }
     }
