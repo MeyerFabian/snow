@@ -30,11 +30,11 @@ void Camera::update(const int key,const  float stepsize){
         setCamera(-0.0695547f, 4.16257f, 6.31657f,2.5f,1.0f,2.0f,0.0f,1.0f,0.0f);
     }
     else if(key ==GLFW_KEY_2){
-        setCamera(-2.37719f, 2.00813f, 2.79671f,-1.37719f,1.90813f,2.59671f,0.0f,1.0f,0.0f);
+        setCamera(1.5f, 6.60813f, 13.79671f,4.7719f,1.90813f,6.59671f,0.0f,1.0f,0.0f);
 
     }
     else if(key == GLFW_KEY_3){
-        setCamera(2.2f, 1.95986f, 5.69347f,2.2f,1.0f,2.0f,0.0f,1.0f,0.0f);
+        setCamera(2.2f, 4.95986f, 8.69347f,2.2f,1.0f,2.0f,0.0f,1.0f,0.0f);
     }
     else{
         std::cerr << key << " was not recognised and thrown away." <<std::endl;

@@ -134,7 +134,7 @@ void jacobiConjugation( int x, int y, int z, inout mat3 S, inout vec4 qV ,inout 
  test.y = sh;
  bool flag = ( GAMMA * sh2 < ch2 );
 
- float w = 1.0f/sqrt( ch2 + sh2 );
+ float w = inversesqrt( ch2 + sh2 );
 //float w = rsqrtf( ch2 + sh2 );
 
  ch = flag ? w*ch : CSTAR; ch2 = ch*ch;
@@ -509,13 +509,13 @@ void main(void){
     sclamp(S[2][2], 1.0f-critComp,1.0f+critStretch);
 
     FEpn = W*S*transpose(V);
-/*
+
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
             FEpn[i][j] =round(1e5f *FEpn[i][j])/1e5f ;
         }
     }
-*/
+
 
     mat3 S_I = mat3(0.0f);
 
@@ -525,13 +525,13 @@ void main(void){
     FPpn =V   * S_I * transpose(W) *Fpn;
 
     //FPpn = inverse(FEpn) *Fpn;
-/*
+
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
             FPpn[i][j] =round(1e5f *FPpn[i][j])/1e5f ;
         }
     }
-*/
+
 /*
     pFE[gl_GlobalInvocationID.x][0].xyz =vec3(0.0f,0.0f,1.0f);
     pFE[gl_GlobalInvocationID.x][1].xyz =vec3(0.0f,1.0f,0.0f);

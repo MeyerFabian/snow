@@ -20,6 +20,9 @@ public:
         delete pForcesE;
         delete pForcesP;
         delete pVelocitiesn;
+        delete pDeltaV0;
+        delete pDeltaV1;
+        delete pDeltaV2;
     }
 
     std::shared_ptr<std::vector<Particle> > const particles = std::make_shared<std::vector<Particle> >();
@@ -36,6 +39,9 @@ public:
     Matrix4f* pForcesE= nullptr ;
     Matrix4f* pForcesP= nullptr ;
     Vector4i* pVelocitiesn = nullptr;
+    Vector4i* pDeltaV0 = nullptr;
+    Vector4i* pDeltaV1 = nullptr;
+    Vector4i* pDeltaV2 = nullptr;
 private:
 
 

@@ -118,7 +118,7 @@ struct Vector4i{
     int y;
     int z;
     int w;
-    Vector4i(float x, float y, float z,float w){
+    Vector4i(int x, int y, int z,int w){
         this->x=x;
         this->y=y;
         this->z=z;

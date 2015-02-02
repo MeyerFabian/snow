@@ -29,7 +29,7 @@ void scene0(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
                 pPs->particles->push_back(Particle(Vector3f(
                                                xpos + ((float)x)*0.025f,
                                                ypos + ((float)y)*0.025f,
-                                               zpos + ((float)z)*0.025f)));
+                                               zpos + ((float)z)*0.025f),Vector3i(0,0,0),6.25e-4f));
 
                 x+=1;
             }
@@ -99,9 +99,9 @@ void scene2(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
 }
 void scene3(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
     int x = 0;
-    float xpos=1.5f,ypos=3.025f,zpos=5.0f;
+    float xpos=3.5f,ypos=3.025f,zpos=5.0f;
     while(x<32*32*32){
-        float width = 1.8;
+        float width = 1.1;
         float radius = width/2.0f;
         float rand1=(float(rand())/32727.0f)*width;
         float rand2=(float(rand())/32727.0f)*width;
@@ -110,7 +110,7 @@ void scene3(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
         pPs->particles->push_back(Particle(Vector3f(
                                                xpos + rand1,
                                                ypos + rand2,
-                                               zpos + rand3),Vector3i(0*1e9,0*1e9,0*1e9),6.25e-4f));
+                                               zpos + rand3),Vector3i(0*1e9,0*1e9,0*1e9),2.25e-3f));
         x+=1;
         }
     }
@@ -203,7 +203,7 @@ void scene6(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
     float xpos=GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
             ypos=GRID_POS_Y+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
             zpos=GRID_POS_Z+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING;
-    shared_ptr<Mesh> bunny=make_shared<Mesh>() ;
+
     std::string filename = "model/bunny.voxel";
     pPs->initParticlesFromFile(filename);
 
@@ -265,7 +265,7 @@ int launchSnow(){
 */
     shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes = make_shared<std::vector<shared_ptr<Mesh>>>();
 
-    scene3(pPs,pCO,meshes);
+    scene2(pPs,pCO,meshes);
 
     shared_ptr<Mesh> halfplane=make_shared<Mesh>() ;
     halfplane->setPosition(GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING

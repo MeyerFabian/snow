@@ -153,6 +153,7 @@ void ExplicitTimeUpdate::update(double dt){
     //
  //grid->debug();
 
+   // particlesystem->debug();
     pVU.plugTechnique();
     pVU.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     pVU.setGridDim(grid->dimx, grid->dimy, grid->dimz);
@@ -161,8 +162,7 @@ void ExplicitTimeUpdate::update(double dt){
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
 
-   // particlesystem->debug();
-    //particlesystem->debug();
+   //particlesystem->debug();
    // grid->debug();
     //std::cout<<"Vor FEp Update"<<std::endl;
 

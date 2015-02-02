@@ -34,7 +34,7 @@ void ParticleSystem::initParticlesFromFile(const std::string& filename){
             line.erase(0,line.find(',')+1);
             float z = std::stof(line);
             //std::cout << x << ", "  << y <<", " << z <<std::endl;
-            this->particles->push_back(Particle(Vector3f(12.5f*x+4.1f,12.5f*y+1.2225f,12.5f*z+4.5f)));
+            this->particles->push_back(Particle(Vector3f(12.5f*x+4.1f,12.5f*y+3.0f,12.5f*z+4.5f)));
         }
         file.close();
     }
@@ -133,7 +133,10 @@ void ParticleSystem::initSSBO(){
     glGenBuffers(1,&velBn);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, velBn);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof (Vector4i) * (particles)->size(), NULL, GL_STATIC_DRAW);
-    pVelocitiesn = (Vector4i*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0, sizeof(Vector4i) * (particles)->size(), GL_MAP_WRITE_BIT| GL_MAP_INVALIDATE_BUFFER_BIT));
+    pVelocitiesn = (Vector4i*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0,sizeof(Vector4i) * (particles)->size(), GL_MAP_WRITE_BIT| GL_MAP_INVALIDATE_BUFFER_BIT));
+    for(int i = 0; i<particles->size();i++){
+        pVelocitiesn[i]= Vector4i(0,0,0,0);
+    }
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER ) ;
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, PARTICLE_VEL_N_BUFFER , velBn);
     std::cout << "ParticleVelocityBufferSize: "<<  sizeof(Vector4i) * (particles)->size()/1024 << " KB" <<std::endl;
@@ -142,6 +145,10 @@ void ParticleSystem::initSSBO(){
     glGenBuffers(1,&deltaV0);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, deltaV0);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof (Vector4i) * (particles)->size(), NULL, GL_STATIC_DRAW);
+    pDeltaV0 = (Vector4i*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0, sizeof(Vector4i) * (particles)->size(), GL_MAP_WRITE_BIT| GL_MAP_INVALIDATE_BUFFER_BIT));
+    for(int i = 0; i<particles->size();i++){
+        pDeltaV0[i]= Vector4i(0,0,0,0);
+    }
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER ) ;
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, PARTICLE_DELTA_VEL_BUFFER_0 , deltaV0);
     std::cout << "ParticleDelta0VelocityBufferSize: "<<  sizeof(Vector4i) * (particles)->size()/1024 << " KB" <<std::endl;
@@ -149,6 +156,10 @@ void ParticleSystem::initSSBO(){
     glGenBuffers(1,&deltaV1);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, deltaV1);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof (Vector4i) * (particles)->size(), NULL, GL_STATIC_DRAW);
+    pDeltaV1 = (Vector4i*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0, sizeof(Vector4i) * (particles)->size(), GL_MAP_WRITE_BIT| GL_MAP_INVALIDATE_BUFFER_BIT));
+    for(int i = 0; i<particles->size();i++){
+        pDeltaV1[i]= Vector4i(0,0,0,0);
+    }
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER ) ;
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, PARTICLE_DELTA_VEL_BUFFER_1 , deltaV1);
     std::cout << "ParticleDelta1VelocityBufferSize: "<<  sizeof(Vector4i) * (particles)->size()/1024 << " KB" <<std::endl;
@@ -156,6 +167,10 @@ void ParticleSystem::initSSBO(){
     glGenBuffers(1,&deltaV2);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, deltaV2);
     glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof (Vector4i) * (particles)->size(), NULL, GL_STATIC_DRAW);
+    pDeltaV2 = (Vector4i*) (glMapBufferRange(GL_SHADER_STORAGE_BUFFER,0, sizeof(Vector4i) * (particles)->size(), GL_MAP_WRITE_BIT| GL_MAP_INVALIDATE_BUFFER_BIT));
+    for(int i = 0; i<particles->size();i++){
+        pDeltaV2[i]= Vector4i(0,0,0,0);
+    }
     glUnmapBuffer ( GL_SHADER_STORAGE_BUFFER ) ;
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER,PARTICLE_DELTA_VEL_BUFFER_2  , deltaV2);
     std::cout << "ParticleDelta2VelocityBufferSize: "<<  sizeof(Vector4i) * (particles)->size()/1024 << " KB" <<std::endl;
