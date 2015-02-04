@@ -530,7 +530,7 @@ void main(void){
 
     vec3 xp= particle.xyz; //particle position
     float mp = particle.w; // particle mass
-    vec3 vp = particleVelocity.xyz; //particle velocity
+    vec3 vp = vec3(particleVelocity.xyz)*1e-6f; //particle velocity
     float pp0 = float(particleVelocity.w)*1e-6f; //particle density
 
     int gridOffsetOfParticle = int(globalInvocY); //  21
@@ -567,9 +567,9 @@ void main(void){
         //gv[gI].xyz+= vp * mp * wip; // calculate added gridVelocity
 
         vec3 velocity = (vp * mp * wip);
-        atomicAdd(gv[gI].x,int(velocity.x));
-        atomicAdd(gv[gI].y,int(velocity.y));
-        atomicAdd(gv[gI].z,int(velocity.z));
+        atomicAdd(gv[gI].x,int(velocity.x*1e6f));
+        atomicAdd(gv[gI].y,int(velocity.y*1e6f));
+        atomicAdd(gv[gI].z,int(velocity.z*1e6f));
 
 
         mat3 REp, SEp;
@@ -585,7 +585,7 @@ void main(void){
         float JPp = determinant(FPp);
         float JEp = determinant(FEp);
         vec3 wipg;
-        weightingGradient(-gridDistanceToParticle,wipg);
+        weightingGradient(gridDistanceToParticle,wipg);
         // fi(^x) = - sum_p [ Vpn * sigmaP * d_wipn]
         //        = - sum_p [ Vp0 * (Jpn * 2 * mu(FPp)/Jpn * (FEp-REp) * FEp^(T) + Jpn* lamba(FPp)/Jpn* (JEp -1.0f) * JEp * FEp^(-T) * FEp^(T))*d_wipn]
         //        = - sum_p [ Vp0  * (2 * mu(FPp) * (FEp-REp) * FEp^(T) + lamba(FPp)* (JEp -1.0f) * JEp * I )*d_wipn]
@@ -607,9 +607,9 @@ void main(void){
         ;
         //force = wipg;
         //fi[gI].xyz += force;
-        atomicAdd(gf[gI].x,int(force.x*1e9f));
-        atomicAdd(gf[gI].y,int(force.y*1e9f));
-        atomicAdd(gf[gI].z,int(force.z*1e9f));
+        atomicAdd(gf[gI].x,int(force.x*1e6f));
+        atomicAdd(gf[gI].y,int(force.y*1e6f));
+        atomicAdd(gf[gI].z,int(force.z*1e6f));
 
         }
    }

@@ -58,8 +58,8 @@ void main(void){
     uint gI = gl_GlobalInvocationID.x;
     vec3 xi = gxm[gI].xyz;
     float mi = float(gv[gI].w)*1e-9f;
-    vec3 vi =  vec3(gv[gI].xyz)*1e-9f; //needs to be normalized with mi
-    vec3 fi = vec3(gf[gI].xyz)*1e-9f;//+vec3(0.0001,0.0002,0.0);
+    vec3 vi =  vec3(gv[gI].xyz)*1e-6f; //needs to be normalized with mi
+    vec3 fi = vec3(gf[gI].xyz)*1e-6f;//+vec3(0.0001,0.0002,0.0);
     //vin+1 = vin + d_t * mi^(-1) * fin
 
     if(mi>0.0f){

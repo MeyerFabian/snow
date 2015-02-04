@@ -571,8 +571,8 @@ void main(void){
 */
     // UPDATE VELOCITIES
 
-    vec3 vpn = vec3(pvn[pI].xyz)*1e-9f;
-    vec3 vp = vec3(pv[pI].xyz)*1e-9f;
+    vec3 vpn = vec3(pvn[pI].xyz)*1e-6f;
+    vec3 vp = vec3(pv[pI].xyz)*1e-6f;
     //vpn+1 = a * vpn + temp_vpn+1
 
 
@@ -602,7 +602,7 @@ void main(void){
         }
     }
 
-    pv[pI].xyz = ivec3(vpn1*1e9f);
+    pv[pI].xyz = ivec3(vpn1*1e6f);
     // UPDATE POSITION
     // xpn+1 = xpn + d_t * vpn+1
 

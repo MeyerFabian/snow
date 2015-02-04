@@ -145,21 +145,21 @@ void main(void){
         weighting (gridDistanceToParticle,wip);
 
         vec3 gwip =vec3(.0f);
-        weightingGradient(-gridDistanceToParticle,gwip);
+        weightingGradient(gridDistanceToParticle,gwip);
         int gI;
         getIndex(gridIndex,gI);
 
         vec3 vin =gvn[gI].xyz;
-        vec3 vi =vec3(gv[gI].xyz)*1e-9f; //needs to be normalized with mi
+        vec3 vi =vec3(gv[gI].xyz)*1e-6f; //needs to be normalized with mi
         float mi = float(gv[gI].w)*1e-9f;
         //vpn+1 = a * vpn + temp_vpn+1
         //temp_vpn+1 = sum_i [(1-a) * vin+1 * wipn + (a) * (vin+1 - vin)* wipn]
         if(mi>0.0f){
         vec3 vpn = ((1.0f-alpha) *vin * wip)+(alpha*(vin-vi/mi)*wip); // add ParticleMass to gridPointMass
         //fi[gI].xyz += force;
-        atomicAdd(pvn[gl_GlobalInvocationID.x].x,int(vpn.x*1e9f));
-        atomicAdd(pvn[gl_GlobalInvocationID.x].y,int(vpn.y*1e9f));
-        atomicAdd(pvn[gl_GlobalInvocationID.x].z,int(vpn.z*1e9f));
+        atomicAdd(pvn[gl_GlobalInvocationID.x].x,int(vpn.x*1e6f));
+        atomicAdd(pvn[gl_GlobalInvocationID.x].y,int(vpn.y*1e6f));
+        atomicAdd(pvn[gl_GlobalInvocationID.x].z,int(vpn.z*1e6f));
 
         //pvn[gl_GlobalInvocationID.x].xyz +=vin*wip;
         //d_vpn+1 = sum_i [vin+1 * d_wipn^(T)]

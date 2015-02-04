@@ -34,7 +34,7 @@ void ParticleSystem::initParticlesFromFile(const std::string& filename){
             line.erase(0,line.find(',')+1);
             float z = std::stof(line);
             //std::cout << x << ", "  << y <<", " << z <<std::endl;
-            this->particles->push_back(Particle(Vector3f(12.5f*x+4.1f,12.5f*y+3.0f,12.5f*z+4.5f)));
+            this->particles->push_back(Particle(Vector3f(12.5f*x+4.1f,12.5f*y+3.0f,12.5f*z+4.5f),Vector3i(0,0,0),6.25e-3f));
         }
         file.close();
     }

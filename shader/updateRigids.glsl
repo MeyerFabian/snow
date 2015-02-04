@@ -24,7 +24,7 @@ void main(void){
     rp[pI].xyz += dt *  rv[pI].xyz;
     if(uint( rp[pI].w) == 1){
 
-        rv[pI].xyz +=  vec3(0.0f,12.0f*dt,0.0f);
+       // rv[pI].xyz +=  vec3(0.0f,12.0f*dt,0.0f);
     }
     //rp[pI].w =0.0f;
 }

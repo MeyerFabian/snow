@@ -6,7 +6,6 @@
 #include <vector>
 #include "gridPoint.h"
 #include <memory>
-#include <glm.hpp>
 #include <iostream>
 
 #include "../defines.h"
@@ -84,10 +83,6 @@ public:
 
     Vector4f* pPositions;
 
-    inline glm::ivec3 getIJK(int index){
-        int temp = index%(dimx*dimy);
-        return glm::ivec3(temp%dimx, temp/dimx, index/(dimx*dimy));
-    }
 
     void initVBO();
     void resetSSBOBuffer();

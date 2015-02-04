@@ -64,16 +64,25 @@ void CollisionObjects::initSSBO(){
 
 
 }
+/**
+ * @brief CollisionObjects::updateRenderBuffer
+ * @param dt
+ * Updates the uniform variables for render calls, not an optimal way of doing it.
+ * You could pass the ssbo containing positions from the compute shader to the vertexshader and give every mesh a uniform which
+ * indicates a position and work exactly on the same data, while this solution does the same thing on GPU and CPU, which is not recommandable.
+ * But works for now.
+ */
 void CollisionObjects::updateRenderBuffer(float dt){
 
     for(int i ; i< colliders->size();i++){
 
     Vector3f position = colliders->at(i).mesh->getPosition();
     Vector3f velocity = colliders->at(i).velocity.xyz();
+
     Vector3f uPos(position+velocity*dt);
     colliders->at(i).mesh->setPosition(uPos);
     if(colliders->at(i).type == 1){
-        velocity = velocity + Vector3f(0.0f,dt * 12.0f,0.0f);
+        velocity = velocity + Vector3f(0.0f,dt * 0.0f,0.0f);
         colliders->at(i).velocity = velocity;
     }
     }

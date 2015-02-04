@@ -2,6 +2,7 @@
 layout (location = 0) in vec4 Position;
 layout (location = 1) in vec3 Normal;
 layout (location = 2) in vec2 Texture;
+
 uniform mat4 gModel;
 uniform mat4 gMVP;
 uniform mat4 inverse;

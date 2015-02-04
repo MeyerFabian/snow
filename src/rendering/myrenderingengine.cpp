@@ -57,7 +57,6 @@ static float rotation=0.0f;
 Vector3f lightpos;
 static float lighty=0.0f;
 bool debug;
-
 void myRenderingEngine::fillBufferFromMeshes(){
     for(int i= 0;i< meshes->size(); i++){
        (*meshes)[i]->initVBO();
@@ -81,7 +80,7 @@ void myRenderingEngine::initVBO(){
 
     glEnable( GL_POINT_SMOOTH);
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-
+    glfwSwapInterval(1);
     fillBufferFromMeshes();
 
     helitex = make_shared<Texture>("textures/test.png");
@@ -238,7 +237,6 @@ void initShader(){
         world.setPosition((*meshes)[i]->getPosition());
         world.setScale((*meshes)[i]->getScale());
         world.setRotation((*meshes)[i]->getRotation());
-
         matrix= glm::mat4x4(    world.getModelMatrix()->m[0][0], world.getModelMatrix()->m[0][1], world.getModelMatrix()->m[0][2], world.getModelMatrix()->m[0][3],
                                             world.getModelMatrix()->m[1][0], world.getModelMatrix()->m[1][1], world.getModelMatrix()->m[1][2], world.getModelMatrix()->m[1][3],
                                             world.getModelMatrix()->m[2][0], world.getModelMatrix()->m[2][1], world.getModelMatrix()->m[2][2], world.getModelMatrix()->m[2][3],
@@ -274,7 +272,6 @@ void initShader(){
         lighting.setWVP(world.getMVP());
         lighting.setLightMVP(world.getMVP());
         */
-
     }
     //world.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
@@ -292,6 +289,8 @@ void initShader(){
 
     particlesystem->render();
 
+    glfwSwapBuffers(window);
+    glfwPollEvents();
     //double timeS = glfwGetTime ();
     //grid->render();
     //double timeE = glfwGetTime();
@@ -372,6 +371,7 @@ bool myRenderingEngine::init(){
     glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_NORMAL) ;
     glfwSetCursorPos(window, WINDOW_WIDTH/2,WINDOW_HEIGHT/2);
     glfwSetCursorPosCallback(window,mouse_callback);
+
     //GLEW INIT
     GLenum err = glewInit();
 
@@ -391,9 +391,6 @@ bool myRenderingEngine::init(){
 
 void myRenderingEngine::render(){
     renderQueue();
-
-    glfwSwapBuffers(window);
-    glfwPollEvents();
 }
 bool myRenderingEngine::shouldClose(){
 
