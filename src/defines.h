@@ -11,14 +11,14 @@
 #define GRID_POS_X 0.5125
 #define GRID_POS_Y 0.5125
 #define GRID_POS_Z 0.5125
-#define GRID_DIM_X 64
-#define GRID_DIM_Y 64
-#define GRID_DIM_Z 64
+#define GRID_DIM_X 201
+#define GRID_DIM_Y 201
+#define GRID_DIM_Z 201
 #define GRID_SPACING 0.05
 #define PARTICLE_TO_GRID_SIZE 64
 #define GRID_COLLISION_PLANE_OFFSET 4
-#define DT 1e-4
-#define RENDER_DT 0.033333
+#define DT 1e-5
+#define RENDER_DT 0.02
 
 #define NUMOFPARTICLES 32*64*64
 
@@ -44,7 +44,7 @@
 #define COLLIDER_TYPE_BUFFER 11
 #define COLLIDER_FRIC_BUFFER 12
 
-#define YOUNG_MODULUS 1.4e5
+#define YOUNG_MODULUS 1.4e6
 #define POISSON 0.2
 #define HARDENING 10.0
 #define CRIT_COMPRESSION 2.5e-2

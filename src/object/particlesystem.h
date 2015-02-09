@@ -30,7 +30,7 @@ public:
     void initVBO();
     void updateVBOBuffer();
     void render();
-    void initParticlesFromFile(const std::string& filename);
+    void initParticlesFromFile(const std::string& filename, const Vector3f& pos, const Vector3f& scale);
     void initSSBO();
     void updateSSBOBuffer();
     void debug();

@@ -391,6 +391,11 @@ void computeSVD( const mat3 A,inout mat3 W,inout mat3 S,inout mat3 V )
 
     fromQuat(qV,V);
 
+    for(int i=0; i<3; i++){
+        for(int j=0;j<3;j++){
+            V[i][j] =round(1e5f *V[i][j])/1e5f ;
+        }
+    }
     //V = mat3::fromQuat(qV);
     mat3 B =A*V;
 
@@ -577,7 +582,7 @@ void main(void){
 
         for(int i=0; i<3; i++){
             for(int j=0;j<3;j++){
-                REp[i][j] =round(1e5f*REp[i][j])/1e5f ;
+                REp[i][j] =round(1e9f*REp[i][j])/1e9f ;
             }
         }
 
@@ -585,7 +590,7 @@ void main(void){
         float JPp = determinant(FPp);
         float JEp = determinant(FEp);
         vec3 wipg;
-        weightingGradient(gridDistanceToParticle,wipg);
+        weightingGradient(-gridDistanceToParticle,wipg);
         // fi(^x) = - sum_p [ Vpn * sigmaP * d_wipn]
         //        = - sum_p [ Vp0 * (Jpn * 2 * mu(FPp)/Jpn * (FEp-REp) * FEp^(T) + Jpn* lamba(FPp)/Jpn* (JEp -1.0f) * JEp * FEp^(-T) * FEp^(T))*d_wipn]
         //        = - sum_p [ Vp0  * (2 * mu(FPp) * (FEp-REp) * FEp^(T) + lamba(FPp)* (JEp -1.0f) * JEp * I )*d_wipn]

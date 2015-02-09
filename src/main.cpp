@@ -22,7 +22,7 @@ void scene0(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
     int x = 0;
     int y=0;
     int z=0;
-    float xpos=0.9625f,ypos=0.7135f,zpos=0.9625;
+    float xpos=0.9625f,ypos=1.7135f,zpos=0.9625;
     while(y<32){
         while(z<32){
             while(x<32){
@@ -74,7 +74,7 @@ void scene1(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
 
 void scene2(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
     int x = 0;
-    float xpos=2.0f,ypos=1.7125f,zpos=5.0f;
+    float xpos=1.0f,ypos=1.7125f,zpos=5.0f;
     while(x<32*32*16){
         float width = 0.8;
         float radius = width/2.0f;
@@ -84,16 +84,18 @@ void scene2(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
 
         float rand4=(float(rand())/32727.0f)*width;
         if(((rand1 -radius)*(rand1 -radius)+(rand2 -radius)*(rand2 -radius)+(rand3 -radius)*(rand3 -radius)) < (radius*radius)){
+            //float mass = (rand4>0.5)? rand4*6.0f*5.0e-4f:10e-3f;
+            float mass = (rand4>0.5)? (((rand4-0.5)*10.0f)+1.0f)*8.0e-4f:10e-3f;
         pPs->particles->push_back(Particle(Vector3f(
                                                xpos + rand1,
                                                ypos + rand2,
-                                               zpos + rand3),Vector3i(10*1e6,5*1e6,1*1e6),6.25e-4f));
+                                               zpos + rand3),Vector3i(10*1e6,5*1e6,1*1e6),mass));
         x+=1;
         }
     }
 
     x = 0;
-    xpos=3.5f,ypos=1.7125f,zpos=5.5f;
+    xpos=4.5f,ypos=1.7125f,zpos=5.5f;
     while(x<32*32*16){
         float width = 0.8;
         float radius = width/2.0f;
@@ -103,10 +105,11 @@ void scene2(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
 
         float rand4=(float(rand())/32727.0f)*width;
         if(((rand1 -radius)*(rand1 -radius)+(rand2 -radius)*(rand2 -radius)+(rand3 -radius)*(rand3 -radius)) < (radius*radius)){
+            float mass = (rand4>0.5)? (((rand4-0.5)*10.0f)+1.0f)*8.0e-4f:10e-3f;
         pPs->particles->push_back(Particle(Vector3f(
                                                xpos + rand1,
                                                ypos + rand2,
-                                               zpos + rand3),Vector3i(-8*1e6,5*1e6,-1*1e6),6.25e-4f));
+                                               zpos + rand3),Vector3i(-8*1e6,5*1e6,-1*1e6),mass));
         x+=1;
         }
     }
@@ -131,13 +134,23 @@ void scene3(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
 
 }
 void scene4(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
+ /*
+  * #define DT 1e-4
+    #define RENDER_DT 0.033333
+    #define YOUNG_MODULUS 1.4e5
+    #define POISSON 0.2
+    #define HARDENING 10.0
+    #define CRIT_COMPRESSION 2.5e-2
+    #define CRIT_STRETCH 7.5e-3
+    */
+
     int x = 0;
     float xpos=GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
             ypos=GRID_POS_Y+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
             zpos=GRID_POS_Z+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING;
 
     while(x<NUMOFPARTICLES){
-        float height = 0.2;
+        float height = 0.5;
         float width = ((GRID_DIM_X-2.0f*GRID_COLLISION_PLANE_OFFSET)*GRID_SPACING);
         //float radius = width/2.0f;
         float rand1=(float(rand())/32727.0f)*width;
@@ -215,12 +228,14 @@ void scene5(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
 }
 void scene6(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
     int x = 0;
+    Vector3f pos(5.0f,0.5125f,5.0f);
+    Vector3f scale(12.0f,12.0f,12.0f);
     float xpos=GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
             ypos=GRID_POS_Y+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
             zpos=GRID_POS_Z+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING;
 
     std::string filename = "model/bunny.voxel";
-    pPs->initParticlesFromFile(filename);
+    pPs->initParticlesFromFile(filename, pos, scale);
 
     //1. Test 91897 Particles 400kg/m Density 6.25Mass
     //2. Test 190000 Particles 900kg/m Density 6.25 Mass SAME RESULT
@@ -301,7 +316,7 @@ int launchSnow(){
 */
     shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes = make_shared<std::vector<shared_ptr<Mesh>>>();
 
-    scene4(pPs,pCO,meshes);
+    scene0(pPs,pCO,meshes);
 
     shared_ptr<Mesh> halfplane=make_shared<Mesh>() ;
     halfplane->setPosition(GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING

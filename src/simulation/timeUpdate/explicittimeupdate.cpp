@@ -122,8 +122,6 @@ void ExplicitTimeUpdate::update(double dt){
     rigidSim.plugTechnique();
     rigidSim.setDt(dt);
     glDispatchCompute(collisionObjects->colliders->size(),1,1);
-
-    //HIGHLY UNSYNCHRONIZED CALL, DOESNT UPDATE WHEN MOVING THE CAMERA OR DOING NOTHING, WHEN USING FRAPS WINDOW IS UPDATED REGULARLY BUT CAMERA STILL STOPS IT
     collisionObjects->updateRenderBuffer(dt);
 
     rg.plugTechnique();
@@ -162,7 +160,7 @@ void ExplicitTimeUpdate::update(double dt){
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
 
-    //particlesystem->debug();
+    particlesystem->debug();
    //particlesystem->debug();
    // grid->debug();
     //std::cout<<"Vor FEp Update"<<std::endl;

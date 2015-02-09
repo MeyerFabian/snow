@@ -145,7 +145,7 @@ void main(void){
         weighting (gridDistanceToParticle,wip);
 
         vec3 gwip =vec3(.0f);
-        weightingGradient(gridDistanceToParticle,gwip);
+        weightingGradient(-gridDistanceToParticle,gwip);
         int gI;
         getIndex(gridIndex,gI);
 
@@ -177,13 +177,13 @@ void main(void){
 */
 
         atomicAdd(pdvp0[gl_GlobalInvocationID.x].x,int(vin.x * gwip.x*1e9f));
-        atomicAdd(pdvp0[gl_GlobalInvocationID.x].y,int(vin.x * gwip.y*1e9f));
-        atomicAdd(pdvp0[gl_GlobalInvocationID.x].z,int(vin.x * gwip.z*1e9f));
-        atomicAdd(pdvp1[gl_GlobalInvocationID.x].x,int(vin.y * gwip.x*1e9f));
+        atomicAdd(pdvp0[gl_GlobalInvocationID.x].y,int(vin.y * gwip.x*1e9f));
+        atomicAdd(pdvp0[gl_GlobalInvocationID.x].z,int(vin.z * gwip.x*1e9f));
+        atomicAdd(pdvp1[gl_GlobalInvocationID.x].x,int(vin.x * gwip.y*1e9f));
         atomicAdd(pdvp1[gl_GlobalInvocationID.x].y,int(vin.y * gwip.y*1e9f));
-        atomicAdd(pdvp1[gl_GlobalInvocationID.x].z,int(vin.y * gwip.z*1e9f));
-        atomicAdd(pdvp2[gl_GlobalInvocationID.x].x,int(vin.z * gwip.x*1e9f));
-        atomicAdd(pdvp2[gl_GlobalInvocationID.x].y,int(vin.z * gwip.y*1e9f));
+        atomicAdd(pdvp1[gl_GlobalInvocationID.x].z,int(vin.z * gwip.y*1e9f));
+        atomicAdd(pdvp2[gl_GlobalInvocationID.x].x,int(vin.x * gwip.z*1e9f));
+        atomicAdd(pdvp2[gl_GlobalInvocationID.x].y,int(vin.y * gwip.z*1e9f));
         atomicAdd(pdvp2[gl_GlobalInvocationID.x].z,int(vin.z * gwip.z*1e9f));
 }
         /*
