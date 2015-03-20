@@ -74,11 +74,9 @@ void myRenderingEngine::initVBO(){
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_CULL_FACE);
-    glEnable(GL_PROGRAM_POINT_SIZE);
     glEnable(GL_TEXTURE_2D);
-    glEnable(GL_POINT_SPRITE);
 
-    glEnable( GL_POINT_SMOOTH);
+    glEnable(GL_POINT_SPRITE);
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
     glfwSwapInterval(1);
     fillBufferFromMeshes();

@@ -482,7 +482,7 @@ void main(void){
     mat4 FPp4 = mat4(pFP[pI]);
     mat3 FPp = mat3(FPp4);
 
-    mat3 dvp = mat3( vec3(pdvp0[pI])*1e-9f,vec3(pdvp1[pI])*1e-9f,vec3(pdvp2[pI])*1e-9f);
+    mat3 dvp = mat3( vec3(pdvp0[pI])*1e-8f,vec3(pdvp1[pI])*1e-8f,vec3(pdvp2[pI])*1e-8f);
 /*
     for(int i=0; i<3; i++){
         for(int j=0;j<3;j++){
@@ -552,16 +552,10 @@ void main(void){
 
 */
 
-    pFE[gl_GlobalInvocationID.x] = mat4( FEpn[0][0],FEpn[1][0],FEpn[2][0],0.0f,
-                                         FEpn[0][1],FEpn[1][1],FEpn[2][1],0.0f,
-                                         FEpn[0][2],FEpn[1][2],FEpn[2][2],0.0f,
-                                         0.0f,0.0f,0.0f,0.0f);
+    pFE[gl_GlobalInvocationID.x] = mat4( FEpn);
 
 
-    pFP[gl_GlobalInvocationID.x] = mat4( FPpn[0][0],FPpn[1][0],FPpn[2][0],0.0f,
-                                         FPpn[0][1],FPpn[1][1],FPpn[2][1],0.0f,
-                                         FPpn[0][2],FPpn[1][2],FPpn[2][2],0.0f,
-                                         0.0f,0.0f,0.0f,0.0f);
+    pFP[gl_GlobalInvocationID.x] = mat4( FPpn);
 
 
 /*
@@ -576,8 +570,8 @@ void main(void){
 */
     // UPDATE VELOCITIES
 
-    vec3 vpn = vec3(pvn[pI].xyz)*1e-6f;
-    vec3 vp = vec3(pv[pI].xyz)*1e-6f;
+    vec3 vpn = vec3(pvn[pI].xyz)*1e-8f;
+    vec3 vp = vec3(pv[pI].xyz)*1e-8f;
     //vpn+1 = a * vpn + temp_vpn+1
 
 
@@ -607,7 +601,7 @@ void main(void){
         }
     }
 
-    pv[pI].xyz = ivec3(vpn1*1e6f);
+    pv[pI].xyz = ivec3(vpn1*1e8f);
     // UPDATE POSITION
     // xpn+1 = xpn + d_t * vpn+1
 

@@ -535,7 +535,7 @@ void main(void){
 
     vec3 xp= particle.xyz; //particle position
     float mp = particle.w; // particle mass
-    vec3 vp = vec3(particleVelocity.xyz)*1e-6f; //particle velocity
+    vec3 vp = vec3(particleVelocity.xyz)*1e-8f; //particle velocity
     float pp0 = float(particleVelocity.w)*1e-6f; //particle density
 
     int gridOffsetOfParticle = int(globalInvocY); //  21
@@ -566,15 +566,15 @@ void main(void){
 
         //min = sum_p [ mp *wipn]
         //gxm[gI].w+= mp * wip;
-        atomicAdd(gv[gI].w,  int(mp * wip* 1e9f));
+        atomicAdd(gv[gI].w,  int(mp * wip* 1e8f));
 
         //vin = sum_p [ vpn * mp *wipn / min]
         //gv[gI].xyz+= vp * mp * wip; // calculate added gridVelocity
 
         vec3 velocity = (vp * mp * wip);
-        atomicAdd(gv[gI].x,int(velocity.x*1e6f));
-        atomicAdd(gv[gI].y,int(velocity.y*1e6f));
-        atomicAdd(gv[gI].z,int(velocity.z*1e6f));
+        atomicAdd(gv[gI].x,int(velocity.x*1e8f));
+        atomicAdd(gv[gI].y,int(velocity.y*1e8f));
+        atomicAdd(gv[gI].z,int(velocity.z*1e8f));
 
 
         mat3 REp, SEp;

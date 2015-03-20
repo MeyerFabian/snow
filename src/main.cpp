@@ -15,21 +15,20 @@
 #include "math.h"
 using namespace  std;
 
-double dt =  RENDER_DT;
 
 double t = 0.0;
 void scene0(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
     int x = 0;
     int y=0;
     int z=0;
-    float xpos=0.9625f,ypos=1.7135f,zpos=0.9625;
+    float xpos=0.9625f,ypos=0.72f,zpos=0.9625;
     while(y<32){
         while(z<32){
             while(x<32){
                 pPs->particles->push_back(Particle(Vector3f(
                                                xpos + ((float)x)*0.025f,
                                                ypos + ((float)y)*0.025f,
-                                               zpos + ((float)z)*0.025f),Vector3i(0,0,0),6.25e-4f));
+                                               zpos + ((float)z)*0.025f),Vector3i(0,0,0)));
 
                 x+=1;
             }
@@ -56,17 +55,19 @@ void scene1(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
     int x = 0;
     float xpos=5.0f,ypos=1.7125f,zpos=5.0f;
     while(x<32*32*32){
-        float width = 0.8;
+        float width = 1.0;
         float radius = width/2.0f;
         float rand1=(float(rand())/32727.0f)*width;
         float rand2=(float(rand())/32727.0f)*width;
         float rand3=(float(rand())/32727.0f)*width;
         float rand4=(float(rand())/32727.0f)*width;
         if(((rand1 -radius)*(rand1 -radius)+(rand2 -radius)*(rand2 -radius)+(rand3 -radius)*(rand3 -radius)) < (radius*radius)){
-        pPs->particles->push_back(Particle(Vector3f(
+
+            float mass = (rand4>0.5)? (((rand4-0.5)*10.0f)+1.0f)*1.0e-4f:5e-3f;
+            pPs->particles->push_back(Particle(Vector3f(
                                                xpos + rand1,
                                                ypos + rand2,
-                                               zpos + rand3),Vector3i(0,0,0),6.25e-4f));
+                                               zpos + rand3),Vector3i(0,0,0),mass));
         x+=1;
         }
     }
@@ -89,7 +90,7 @@ void scene2(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
         pPs->particles->push_back(Particle(Vector3f(
                                                xpos + rand1,
                                                ypos + rand2,
-                                               zpos + rand3),Vector3i(10*1e6,5*1e6,1*1e6),mass));
+                                               zpos + rand3),Vector3i(10*1e8,0*1e8,1*1e8),mass));
         x+=1;
         }
     }
@@ -109,7 +110,7 @@ void scene2(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
         pPs->particles->push_back(Particle(Vector3f(
                                                xpos + rand1,
                                                ypos + rand2,
-                                               zpos + rand3),Vector3i(-8*1e6,5*1e6,-1*1e6),mass));
+                                               zpos + rand3),Vector3i(-12*1e8,1*1e8,-5*1e8),mass));
         x+=1;
         }
     }
@@ -196,16 +197,17 @@ void scene4(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
 
 void scene5(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
     int x = 0;
-    float xpos=GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
+    float xpos=0.8125,
             ypos=GRID_POS_Y+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
-            zpos=GRID_POS_Z+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING;
-    while(x<NUMOFPARTICLES){
-        float height = 0.2;
-        float width = ((GRID_DIM_X-2.0f*GRID_COLLISION_PLANE_OFFSET)*GRID_SPACING);
+            zpos=2.4;
+    while(x<32*32*64){
+        float height = 0.5;
+        float width = 2.0;
+        float length = 0.8;
         //float radius = width/2.0f;
         float rand1=(float(rand())/32727.0f)*width;
         float rand2=(float(rand())/32727.0f)*height;
-        float rand3=(float(rand())/32727.0f)*width;
+        float rand3=(float(rand())/32727.0f)*length;
        // if(((rand1 -radius)*(rand1 -radius)+(rand2 -radius)*(rand2 -radius)+(rand3 -radius)*(rand3 -radius)) < (radius*radius)){
         pPs->particles->push_back(Particle(Vector3f(
                                                xpos + rand1,
@@ -217,19 +219,19 @@ void scene5(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
 
     shared_ptr<Mesh> sphere=make_shared<Mesh>() ;
     sphere->LoadMesh("model/sphere.obj");
-    sphere->setPosition(0.4125f,1.3125f,1.8f);
-    sphere->setScale(0.2f,0.2f,0.2f);
+    sphere->setPosition(0.2125f,1.1125f,2.8f);
+    sphere->setScale(0.3f,0.3f,0.3f);
     sphere->setRotation(0,0,0);
 
     meshes->push_back(sphere);
-    pCO->colliders->push_back(Collider(sphere,0.2f,1,Vector3f(10.0f,-3.0f,0.0f),Vector3f(0.0f,0.0f,0.0f)));
+    pCO->colliders->push_back(Collider(sphere,0.3f,1,Vector3f(5.0f,0.0f,0.0f),Vector3f(0.0f,0.0f,0.0f)));
 
 
 }
 void scene6(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
     int x = 0;
     Vector3f pos(5.0f,0.5125f,5.0f);
-    Vector3f scale(12.0f,12.0f,12.0f);
+    Vector3f scale(12.5f*1.259f,12.5f*1.259f,12.5f*1.259f);
     float xpos=GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
             ypos=GRID_POS_Y+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
             zpos=GRID_POS_Z+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING;
@@ -240,14 +242,13 @@ void scene6(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
     //1. Test 91897 Particles 400kg/m Density 6.25Mass
     //2. Test 190000 Particles 900kg/m Density 6.25 Mass SAME RESULT
     //3. Test 91897 Particles 600kg/m Density 9.5Mass SAME RESULT
-
 }
 
 void scene7(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
     int x = 0;
     float xpos=2.0f,ypos=1.525f,zpos=5.0f;
-    while(x<32*32*16){
-        float width = 1.2;
+    while(x<32*32*32){
+        float width = 1.0;
         float radius = width/2.0f;
         float rand1=(float(rand())/32727.0f)*width;
         float rand2=(float(rand())/32727.0f)*width;
@@ -256,7 +257,7 @@ void scene7(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
         pPs->particles->push_back(Particle(Vector3f(
                                                xpos + rand1,
                                                ypos + rand2,
-                                               zpos + rand3),Vector3i(-20*1e6,0,0),6.25e-3f));
+                                               zpos + rand3),Vector3i(-10*1e8,0,0),6.25e-3f));
         x+=1;
         }
     }
@@ -272,51 +273,10 @@ int launchSnow(){
     shared_ptr<CollisionObjects> const pCO= make_shared<CollisionObjects > ();
 
      srand (time(NULL));
-     //scene1(pPs);
-     //scene2(pPs);
-    // scene3(pPs);
-/*
-    for(int x = 0; x < 32; x+=1){
-        xpos += 0.025f;
-        for(int y = 0; y < 32; y+=1){
-            ypos += 0.025f;
-            for(int z = 0; z < 32; z+=1){
-                zpos += 0.025f;
-                pPs->particles->push_back(Particle(Vector3f(xpos,ypos,zpos)));
-            }
-            zpos = 5.0f;
-        }
-        ypos = 2.5125f;
-    }
-*/
 
-/*
-    for(int x = 0; x<32*32*32; x+=1){
-        float rand1=(float(rand())/32727.0f)*0.4;
-        float rand2=(float(rand())/32727.0f)*0.4;
-        float rand3=(float(rand())/32727.0f)*0.4;
-        float randpi=(float(rand())/32727.0f)*M_PI;
-        float rand2pi=(float(rand())/32727.0f)*2.0f*M_PI;
-        pPs->particles->push_back(Particle(Vector3f(
-                                               xpos + rand1*sin(randpi)*cos(rand2pi),
-                                               ypos + rand2*sin(randpi)*sin(rand2pi),
-                                               zpos + rand3*cos(randpi))));
-    }
-*/
-/*
-
-    std:: cout <<(float(rand())/32727.0f)*0.8<<std::endl;
-    std:: cout <<(float(rand())/32727.0f)*0.8<<std::endl;
-    std:: cout <<(float(rand())/32727.0f)*0.8<<std::endl;
-    std:: cout <<(float(rand())/32727.0f)*0.8<<std::endl;
-    std:: cout <<(float(rand())/32727.0f)*0.8<<std::endl;
-    std:: cout <<(float(rand())/32727.0f)*0.8<<std::endl;
-    std:: cout <<(float(rand())/32727.0f)*0.8<<std::endl;
-    std:: cout <<(float(rand())/32727.0f)*0.8<<std::endl;
-*/
     shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes = make_shared<std::vector<shared_ptr<Mesh>>>();
 
-    scene0(pPs,pCO,meshes);
+    scene5(pPs,pCO,meshes);
 
     shared_ptr<Mesh> halfplane=make_shared<Mesh>() ;
     halfplane->setPosition(GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING
@@ -391,34 +351,30 @@ int launchSnow(){
     if(re_err){
         return 1;
     }
+
+    GLint* integerquery;
+    glGetIntegerv(0x90DD,integerquery);
+    cout <<endl;
+    cout <<"Grafikkarte unterstuetzt:" <<endl;
+    cout << *integerquery <<" SSBO Buffer" <<endl;
+    cout << "benoetigt werden in dieser Implementation 17  SSBO Buffer, "<<endl;
+    cout << "die Zahl laesst sich durch Zusammenlegen von Buffern reduzieren."<<endl;
+    cout <<endl;
+
     pE->init();
-   double t = 0.0;
    double currentTime = glfwGetTime(); //gafferongames.com
    double accumulator = 0.0;
   while (rE->shouldClose()){
-        //while(sim_t < static_fps){
-        //timeStepEnd = timeStart;
         double newTime = glfwGetTime();
         double frameTime = newTime -currentTime;
         currentTime = newTime;
         accumulator += frameTime;
-        while (accumulator >= dt){
+        while (accumulator >= STEP_DT){
 
-        //std::cout << (timeStart - timeStepEnd) * 1000 << " ms for TimeStep."<<std::endl;
-
-        pE->update(DT);
-        accumulator -=dt;
-        t+=dt;
+        pE->update(PHYSIC_DT);
+        accumulator -=STEP_DT;
         }
-        //sim_t += dt;
-        //}
-
-        //timeEndPhysic = glfwGetTime();
-        //std::cout << (timeEndPhysic - timeStart) * 1000 << " ms for Physic-Engine."<<std::endl;
-        //timeStartRendering = glfwGetTime();
         rE->render();
-        //timeEnd = glfwGetTime();
-        //std::cout << (timeEnd - timeStartRendering) * 1000 << " ms for Rendering-Engine.\n"<<std::endl << std::flush;
 
     }
     rE->stop();

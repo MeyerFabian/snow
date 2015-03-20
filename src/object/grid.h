@@ -40,7 +40,7 @@ public:
          gridBorders.push_back(Vector4f(pos_x+left, pos_y+above, pos_z+before,1.0f));
          gridBorders.push_back(Vector4f(pos_x+right, pos_y+above, pos_z+before,1.0f));
          gridBorders.push_back(Vector4f(pos_x+right, pos_y+below, pos_z+before,1.0f));
-
+            gridBorders.at(0).print();
          iGridBorders.push_back(0);
          iGridBorders.push_back(1);
          iGridBorders.push_back(5);

@@ -82,6 +82,6 @@ x y z)))
   (let* ((ply-path (make-pathname :defaults "C:/Users/Fabs/Desktop/github/snow/include/cl-voxelize-master/examples/bunny.ply"))
          (pov-path (make-pathname :type "voxel" :defaults "C:/Users/Fabs/Desktop/github/snow/model/bunny")))
     (let ((triangles (ply-to-triangles ply-path))
-          (delta 0.002))
+          (delta 0.00159))
       (output pov-path
         (voxelize triangles delta)))))

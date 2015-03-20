@@ -128,7 +128,7 @@ void main(void){
         // mi0 = sum_p [mp *wip0]
         //gxm[gI].w+=mp * wip;
     //gv[gI].w+= n;
-        atomicAdd(gv[gI].w, int(mp * wip* 1e9f));
+        atomicAdd(gv[gI].w, int(mp * wip* 1e8f));
         //memoryBarrier();
         // pp0 = sum_i[ mi0 *wip0 / h^(3)]
 

@@ -30,7 +30,7 @@ void Camera::update(const int key,const  float stepsize){
         setCamera(-0.0695547f, 4.16257f, 6.31657f,2.5f,1.0f,2.0f,0.0f,1.0f,0.0f);
     }
     else if(key ==GLFW_KEY_2){
-        setCamera(2.5f, 6.60813f, 13.79671f,2.7719f,0.0813f,0.59671f,0.0f,1.0f,0.0f);
+        setCamera(-1.5f, 5.60813f, 10.79671f,6.7719f,0.0813f,2.59671f,0.0f,1.0f,0.0f);
 
     }
     else if(key == GLFW_KEY_3){
