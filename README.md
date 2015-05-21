@@ -11,3 +11,4 @@ The grid velocities can be updated with the calculation of gradients in an FEM-m
 
 This bachelor thesis connects the recent developments in GPGPU techniques of OpenGL with the Material Point Method to efficiently simulate visually compelling, dynamic snow scenes.
 
+
