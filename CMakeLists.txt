@@ -1,100 +1,50 @@
 project(srccmake)
 cmake_minimum_required(VERSION 2.8)
 
-aux_source_directory(. SRC_LIST)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake CACHE PATH "Project specific path. Set manually if it was not found.")
+
+
+find_package(GLEW REQUIRED)
+find_package(ASSIMP REQUIRED)
+find_package(GLFW3 REQUIRED)
+find_package(GLM REQUIRED)
+#if(GLEW_FOUND)
+#	include_directories()
+#endif()
 
 include_directories(
-include/glm/glm
-include/glew-1.11.0/include/GL
-include/glfw-3.0.4/include
-include/assimp/include/assimp/
+${GLEW_INCLUDE_PATH}
+${ASSIMP_INCLUDE_DIR}
+${GLFW3_INCLUDE_PATH}
+${GLM_INCLUDE_PATH}
+#${CMAKE_SOURCE_DIR}/include
 stb_image
 )
-
-
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(DLLS ${ASSIMP_DLL} ${GLEW_DLL} ${GLFW3_DLL})
+file(COPY ${DLLS} DESTINATION /)
 
 file(COPY shader DESTINATION /)
 file(COPY textures DESTINATION /)
 file(COPY model DESTINATION /)
-add_executable(main
-src/main.cpp
-src/math3d.h
-src/math3d.cpp
-src/rendering/pipeline/pipeline.h
-src/rendering/pipeline/pipeline.cpp
-src/rendering/pipeline/camera.h
-src/rendering/pipeline/camera.cpp
-src/object/texture.h
-src/object/texture.cpp
-shader/shader.vert
-shader/shader.frag
-shader/m_shadow.vert
-shader/m_shadow.frag
-shader/particleShader.vert
-shader/particleShader.frag
-shader/borderShader.vert
-shader/borderShader.frag
-shader/updateGridMassVel.glsl
-shader/updateParticleVel.glsl
-shader/updateParticles.glsl
-shader/updateRigids.glsl
-shader/computeParticleVolume.glsl
-shader/computeMass.glsl
-shader/overGridAndParticles.glsl
-shader/resetGrid.glsl
-shader/updateGridVelCollision.glsl
-stb_image/stb_image.h
+
+file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
+
+add_executable(snow
 stb_image/stb_image.c
-src/technique.h
-src/technique.cpp
-src/rendering/technique/lightingTechnique.h
-src/rendering/technique/lightingTechnique.cpp
-src/rendering/technique/shadowMapTechnique.h
-src/rendering/technique/shadowMapTechnique.cpp
-src/rendering/technique/ParticleTechnique.h
-src/rendering/technique/ParticleTechnique.cpp
-src/object/mesh.h
-src/object/mesh.cpp
-src/rendering/technique/ShadowMapBufferObject.h
-src/rendering/technique/ShadowMapBufferObject.cpp
-src/renderingEngine.h
-src/rendering/myRenderingEngine.h
-src/rendering/myRenderingEngine.cpp
-src/physicEngine.h
-src/simulation/myPhysicEngine.h
-src/simulation/myPhysicEngine.cpp
-src/simulation/timeUpdate.h
-src/simulation/timeUpdate/explicittimeupdate.h
-src/simulation/timeUpdate/explicittimeupdate.cpp
-src/simulation/timeUpdate/semiimplicittimeupdate.h
-src/simulation/timeUpdate/semiimplicittimeupdate.cpp
-src/object/particle.h
-src/object/grid.h
-src/object/grid.cpp
-src/object/collisionObjects.h
-src/object/collisionObjects.cpp
-src/object/collider.h
-src/object/gridpoint.h
-src/object/particlesystem.h
-src/object/particlesystem.cpp
-src/simulation/technique/particleCompute.h
-src/simulation/technique/particleCompute.cpp
-src/simulation/technique/overGrid.h
-src/simulation/technique/overGrid.cpp
-src/defines.h
+${SOURCE_FILES}
 )
 
 
-target_link_libraries(main
+target_link_libraries(snow
 
+${GLEW_LIBRARY}
 
-${CMAKE_SOURCE_DIR}/include/glew-1.11.0/lib/Release/x64/glew32s.lib
 opengl32.lib
 
+${GLFW3_LIBRARY}
 
-${CMAKE_SOURCE_DIR}/include/glfw-3.0.4/lib-mingw/glfw3dll.a
-
-${CMAKE_SOURCE_DIR}/include/assimp/lib/libassimp.dll.a
+${ASSIMP_LIBRARY}
 
 )

@@ -1,7 +1,7 @@
 #ifndef PARTICLESYSTEM_H
 #define PARTICLESYSTEM_H
 #define GLEW_STATIC
-#include "glew.h"
+#include <GL/glew.h>
 
 #include "particle.h"
 #include <memory>

@@ -1,7 +1,7 @@
 #ifndef COLLISIONOBJECTS_H
 #define COLLISIONOBJECTS_H
 #define GLEW_STATIC
-#include "glew.h"
+#include <GL/glew.h>
 
 #include "collider.h"
 #include <memory>

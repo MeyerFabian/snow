@@ -1,7 +1,7 @@
 #ifndef GRID_H
 #define GRID_H
 #define GLEW_STATIC
-#include "glew.h"
+#include <GL/glew.h>
 
 #include <vector>
 #include "gridPoint.h"

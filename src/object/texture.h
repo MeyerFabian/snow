@@ -3,7 +3,7 @@
 #include "stb_image.h"
 
 #define GLEW_STATIC
-#include <glew.h>
+#include <GL/glew.h>
 #include <string>
 #include <iostream>
 using namespace std;

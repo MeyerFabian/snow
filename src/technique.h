@@ -2,7 +2,7 @@
 #define TECHNIQUE_H
 
 #define GLEW_STATIC
-#include "glew.h"
+#include <GL/glew.h>
 
 #include <string>
 #include <string.h>

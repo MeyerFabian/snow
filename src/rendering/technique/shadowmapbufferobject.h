@@ -2,7 +2,7 @@
 #define SHADOWMAPBUFFEROBJECT_H
 
 #define GLEW_STATIC
-#include <glew.h>
+#include <GL/glew.h>
 #include <stdio.h>
 class ShadowMapBufferObject
 {
