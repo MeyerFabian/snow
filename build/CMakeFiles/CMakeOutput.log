@@ -28,34 +28,34 @@ The CXX compiler identification is GNU, found in "C:/Users/Fabian/Desktop/Deskto
 Determining if the C compiler works passed with the following output:
 Change Dir: C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp
 
-Run Build Command:C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe "cmTryCompileExec1840786417/fast"
-C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTryCompileExec1840786417.dir\build.make CMakeFiles/cmTryCompileExec1840786417.dir/build
+Run Build Command:C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe "cmTryCompileExec4288133676/fast"
+C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTryCompileExec4288133676.dir\build.make CMakeFiles/cmTryCompileExec4288133676.dir/build
 mingw32-make.exe[1]: Entering directory 'C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp'
 "C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_progress_report C:\Users\Fabian\Desktop\Desktop\snow\build\CMakeFiles\CMakeTmp\CMakeFiles 1
-Building C object CMakeFiles/cmTryCompileExec1840786417.dir/testCCompiler.c.obj
-C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\gcc.exe    -o CMakeFiles\cmTryCompileExec1840786417.dir\testCCompiler.c.obj   -c C:\Users\Fabian\Desktop\Desktop\snow\build\CMakeFiles\CMakeTmp\testCCompiler.c
-Linking C executable cmTryCompileExec1840786417.exe
-"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTryCompileExec1840786417.dir\link.txt --verbose=1
-"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E remove -f CMakeFiles\cmTryCompileExec1840786417.dir/objects.a
-C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\ar.exe cr CMakeFiles\cmTryCompileExec1840786417.dir/objects.a @CMakeFiles\cmTryCompileExec1840786417.dir\objects1.rsp
-C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\gcc.exe       -Wl,--whole-archive CMakeFiles\cmTryCompileExec1840786417.dir/objects.a -Wl,--no-whole-archive  -o cmTryCompileExec1840786417.exe -Wl,--out-implib,libcmTryCompileExec1840786417.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
+Building C object CMakeFiles/cmTryCompileExec4288133676.dir/testCCompiler.c.obj
+C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\gcc.exe    -o CMakeFiles\cmTryCompileExec4288133676.dir\testCCompiler.c.obj   -c C:\Users\Fabian\Desktop\Desktop\snow\build\CMakeFiles\CMakeTmp\testCCompiler.c
+Linking C executable cmTryCompileExec4288133676.exe
+"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTryCompileExec4288133676.dir\link.txt --verbose=1
+"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E remove -f CMakeFiles\cmTryCompileExec4288133676.dir/objects.a
+C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\ar.exe cr CMakeFiles\cmTryCompileExec4288133676.dir/objects.a @CMakeFiles\cmTryCompileExec4288133676.dir\objects1.rsp
+C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\gcc.exe       -Wl,--whole-archive CMakeFiles\cmTryCompileExec4288133676.dir/objects.a -Wl,--no-whole-archive  -o cmTryCompileExec4288133676.exe -Wl,--out-implib,libcmTryCompileExec4288133676.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
 mingw32-make.exe[1]: Leaving directory 'C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp'
 
 
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp
 
-Run Build Command:C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe "cmTryCompileExec3001727743/fast"
-C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTryCompileExec3001727743.dir\build.make CMakeFiles/cmTryCompileExec3001727743.dir/build
+Run Build Command:C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe "cmTryCompileExec2186653094/fast"
+C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTryCompileExec2186653094.dir\build.make CMakeFiles/cmTryCompileExec2186653094.dir/build
 mingw32-make.exe[1]: Entering directory 'C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp'
 "C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_progress_report C:\Users\Fabian\Desktop\Desktop\snow\build\CMakeFiles\CMakeTmp\CMakeFiles 1
-Building C object CMakeFiles/cmTryCompileExec3001727743.dir/CMakeCCompilerABI.c.obj
-C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\gcc.exe    -o CMakeFiles\cmTryCompileExec3001727743.dir\CMakeCCompilerABI.c.obj   -c "C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CMakeCCompilerABI.c"
-Linking C executable cmTryCompileExec3001727743.exe
-"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTryCompileExec3001727743.dir\link.txt --verbose=1
-"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E remove -f CMakeFiles\cmTryCompileExec3001727743.dir/objects.a
-C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\ar.exe cr CMakeFiles\cmTryCompileExec3001727743.dir/objects.a @CMakeFiles\cmTryCompileExec3001727743.dir\objects1.rsp
-C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\gcc.exe     -v -Wl,--whole-archive CMakeFiles\cmTryCompileExec3001727743.dir/objects.a -Wl,--no-whole-archive  -o cmTryCompileExec3001727743.exe -Wl,--out-implib,libcmTryCompileExec3001727743.dll.a -Wl,--major-image-version,0,--minor-image-version,0   
+Building C object CMakeFiles/cmTryCompileExec2186653094.dir/CMakeCCompilerABI.c.obj
+C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\gcc.exe    -o CMakeFiles\cmTryCompileExec2186653094.dir\CMakeCCompilerABI.c.obj   -c "C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CMakeCCompilerABI.c"
+Linking C executable cmTryCompileExec2186653094.exe
+"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTryCompileExec2186653094.dir\link.txt --verbose=1
+"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E remove -f CMakeFiles\cmTryCompileExec2186653094.dir/objects.a
+C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\ar.exe cr CMakeFiles\cmTryCompileExec2186653094.dir/objects.a @CMakeFiles\cmTryCompileExec2186653094.dir\objects1.rsp
+C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\gcc.exe     -v -Wl,--whole-archive CMakeFiles\cmTryCompileExec2186653094.dir/objects.a -Wl,--no-whole-archive  -o cmTryCompileExec2186653094.exe -Wl,--out-implib,libcmTryCompileExec2186653094.dll.a -Wl,--major-image-version,0,--minor-image-version,0   
 Using built-in specs.
 COLLECT_GCC=C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\gcc.exe
 COLLECT_LTO_WRAPPER=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/lto-wrapper.exe
@@ -65,8 +65,8 @@ Thread model: win32
 gcc version 4.9.1 (x86_64-win32-seh-rev0, Built by MinGW-W64 project) 
 COMPILER_PATH=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/;C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/;C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/bin/
 LIBRARY_PATH=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/;C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/;C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/;C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../lib/;C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/;C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec3001727743.exe' '-mtune=core2' '-march=nocona'
- C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/collect2.exe -plugin C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/liblto_plugin-0.dll -plugin-opt=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/lto-wrapper.exe -plugin-opt=-fresolution=C:\Users\Fabian\AppData\Local\Temp\ccPJmzbD.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw491/x86_64-491-win32-seh-rt_v3-rev0/mingw64 -m i386pep -Bdynamic -o cmTryCompileExec3001727743.exe C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtbegin.o -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1 -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../.. --whole-archive CMakeFiles\cmTryCompileExec3001727743.dir/objects.a --no-whole-archive --out-implib libcmTryCompileExec3001727743.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtend.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec2186653094.exe' '-mtune=core2' '-march=nocona'
+ C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/collect2.exe -plugin C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/liblto_plugin-0.dll -plugin-opt=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/lto-wrapper.exe -plugin-opt=-fresolution=C:\Users\Fabian\AppData\Local\Temp\ccy5WuOu.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw491/x86_64-491-win32-seh-rt_v3-rev0/mingw64 -m i386pep -Bdynamic -o cmTryCompileExec2186653094.exe C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtbegin.o -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1 -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../.. --whole-archive CMakeFiles\cmTryCompileExec2186653094.dir/objects.a --no-whole-archive --out-implib libcmTryCompileExec2186653094.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtend.o
 mingw32-make.exe[1]: Leaving directory 'C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp'
 
 
@@ -74,17 +74,17 @@ Parsed C implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld\.exe|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe "cmTryCompileExec3001727743/fast"]
-  ignore line: [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTryCompileExec3001727743.dir\build.make CMakeFiles/cmTryCompileExec3001727743.dir/build]
+  ignore line: [Run Build Command:C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe "cmTryCompileExec2186653094/fast"]
+  ignore line: [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTryCompileExec2186653094.dir\build.make CMakeFiles/cmTryCompileExec2186653094.dir/build]
   ignore line: [mingw32-make.exe[1]: Entering directory 'C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp']
   ignore line: ["C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_progress_report C:\Users\Fabian\Desktop\Desktop\snow\build\CMakeFiles\CMakeTmp\CMakeFiles 1]
-  ignore line: [Building C object CMakeFiles/cmTryCompileExec3001727743.dir/CMakeCCompilerABI.c.obj]
-  ignore line: [C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\gcc.exe    -o CMakeFiles\cmTryCompileExec3001727743.dir\CMakeCCompilerABI.c.obj   -c "C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CMakeCCompilerABI.c"]
-  ignore line: [Linking C executable cmTryCompileExec3001727743.exe]
-  ignore line: ["C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTryCompileExec3001727743.dir\link.txt --verbose=1]
-  ignore line: ["C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E remove -f CMakeFiles\cmTryCompileExec3001727743.dir/objects.a]
-  ignore line: [C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\ar.exe cr CMakeFiles\cmTryCompileExec3001727743.dir/objects.a @CMakeFiles\cmTryCompileExec3001727743.dir\objects1.rsp]
-  ignore line: [C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\gcc.exe     -v -Wl,--whole-archive CMakeFiles\cmTryCompileExec3001727743.dir/objects.a -Wl,--no-whole-archive  -o cmTryCompileExec3001727743.exe -Wl,--out-implib,libcmTryCompileExec3001727743.dll.a -Wl,--major-image-version,0,--minor-image-version,0   ]
+  ignore line: [Building C object CMakeFiles/cmTryCompileExec2186653094.dir/CMakeCCompilerABI.c.obj]
+  ignore line: [C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\gcc.exe    -o CMakeFiles\cmTryCompileExec2186653094.dir\CMakeCCompilerABI.c.obj   -c "C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CMakeCCompilerABI.c"]
+  ignore line: [Linking C executable cmTryCompileExec2186653094.exe]
+  ignore line: ["C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTryCompileExec2186653094.dir\link.txt --verbose=1]
+  ignore line: ["C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E remove -f CMakeFiles\cmTryCompileExec2186653094.dir/objects.a]
+  ignore line: [C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\ar.exe cr CMakeFiles\cmTryCompileExec2186653094.dir/objects.a @CMakeFiles\cmTryCompileExec2186653094.dir\objects1.rsp]
+  ignore line: [C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\gcc.exe     -v -Wl,--whole-archive CMakeFiles\cmTryCompileExec2186653094.dir/objects.a -Wl,--no-whole-archive  -o cmTryCompileExec2186653094.exe -Wl,--out-implib,libcmTryCompileExec2186653094.dll.a -Wl,--major-image-version,0,--minor-image-version,0   ]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\gcc.exe]
   ignore line: [COLLECT_LTO_WRAPPER=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/lto-wrapper.exe]
@@ -101,13 +101,13 @@ Parsed C implicit link information from above output:
   ignore line: [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../lib/]
   ignore line: [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/]
   ignore line: [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec3001727743.exe' '-mtune=core2' '-march=nocona']
-  link line: [ C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/collect2.exe -plugin C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/liblto_plugin-0.dll -plugin-opt=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/lto-wrapper.exe -plugin-opt=-fresolution=C:\Users\Fabian\AppData\Local\Temp\ccPJmzbD.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw491/x86_64-491-win32-seh-rt_v3-rev0/mingw64 -m i386pep -Bdynamic -o cmTryCompileExec3001727743.exe C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtbegin.o -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1 -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../.. --whole-archive CMakeFiles\cmTryCompileExec3001727743.dir/objects.a --no-whole-archive --out-implib libcmTryCompileExec3001727743.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtend.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec2186653094.exe' '-mtune=core2' '-march=nocona']
+  link line: [ C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/collect2.exe -plugin C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/liblto_plugin-0.dll -plugin-opt=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/lto-wrapper.exe -plugin-opt=-fresolution=C:\Users\Fabian\AppData\Local\Temp\ccy5WuOu.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw491/x86_64-491-win32-seh-rt_v3-rev0/mingw64 -m i386pep -Bdynamic -o cmTryCompileExec2186653094.exe C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtbegin.o -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1 -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../.. --whole-archive CMakeFiles\cmTryCompileExec2186653094.dir/objects.a --no-whole-archive --out-implib libcmTryCompileExec2186653094.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtend.o]
     arg [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/collect2.exe] ==> ignore
     arg [-plugin] ==> ignore
     arg [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/liblto_plugin-0.dll] ==> ignore
     arg [-plugin-opt=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/lto-wrapper.exe] ==> ignore
-    arg [-plugin-opt=-fresolution=C:\Users\Fabian\AppData\Local\Temp\ccPJmzbD.res] ==> ignore
+    arg [-plugin-opt=-fresolution=C:\Users\Fabian\AppData\Local\Temp\ccy5WuOu.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lmingw32] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_eh] ==> ignore
@@ -130,7 +130,7 @@ Parsed C implicit link information from above output:
     arg [i386pep] ==> ignore
     arg [-Bdynamic] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTryCompileExec3001727743.exe] ==> ignore
+    arg [cmTryCompileExec2186653094.exe] ==> ignore
     arg [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o] ==> ignore
     arg [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtbegin.o] ==> ignore
     arg [-LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1] ==> dir [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1]
@@ -140,10 +140,10 @@ Parsed C implicit link information from above output:
     arg [-LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib] ==> dir [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib]
     arg [-LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../..] ==> dir [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../..]
     arg [--whole-archive] ==> ignore
-    arg [CMakeFiles\cmTryCompileExec3001727743.dir/objects.a] ==> ignore
+    arg [CMakeFiles\cmTryCompileExec2186653094.dir/objects.a] ==> ignore
     arg [--no-whole-archive] ==> ignore
     arg [--out-implib] ==> ignore
-    arg [libcmTryCompileExec3001727743.dll.a] ==> ignore
+    arg [libcmTryCompileExec2186653094.dll.a] ==> ignore
     arg [--major-image-version] ==> ignore
     arg [0] ==> ignore
     arg [--minor-image-version] ==> ignore
@@ -184,34 +184,34 @@ Parsed C implicit link information from above output:
 Determining if the CXX compiler works passed with the following output:
 Change Dir: C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp
 
-Run Build Command:C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe "cmTryCompileExec2014246078/fast"
-C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTryCompileExec2014246078.dir\build.make CMakeFiles/cmTryCompileExec2014246078.dir/build
+Run Build Command:C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe "cmTryCompileExec3466977873/fast"
+C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTryCompileExec3466977873.dir\build.make CMakeFiles/cmTryCompileExec3466977873.dir/build
 mingw32-make.exe[1]: Entering directory 'C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp'
 "C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_progress_report C:\Users\Fabian\Desktop\Desktop\snow\build\CMakeFiles\CMakeTmp\CMakeFiles 1
-Building CXX object CMakeFiles/cmTryCompileExec2014246078.dir/testCXXCompiler.cxx.obj
-C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\G__~1.EXE     -o CMakeFiles\cmTryCompileExec2014246078.dir\testCXXCompiler.cxx.obj -c C:\Users\Fabian\Desktop\Desktop\snow\build\CMakeFiles\CMakeTmp\testCXXCompiler.cxx
-Linking CXX executable cmTryCompileExec2014246078.exe
-"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTryCompileExec2014246078.dir\link.txt --verbose=1
-"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E remove -f CMakeFiles\cmTryCompileExec2014246078.dir/objects.a
-C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\ar.exe cr CMakeFiles\cmTryCompileExec2014246078.dir/objects.a @CMakeFiles\cmTryCompileExec2014246078.dir\objects1.rsp
-C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\G__~1.EXE       -Wl,--whole-archive CMakeFiles\cmTryCompileExec2014246078.dir/objects.a -Wl,--no-whole-archive  -o cmTryCompileExec2014246078.exe -Wl,--out-implib,libcmTryCompileExec2014246078.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
+Building CXX object CMakeFiles/cmTryCompileExec3466977873.dir/testCXXCompiler.cxx.obj
+C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\G__~1.EXE     -o CMakeFiles\cmTryCompileExec3466977873.dir\testCXXCompiler.cxx.obj -c C:\Users\Fabian\Desktop\Desktop\snow\build\CMakeFiles\CMakeTmp\testCXXCompiler.cxx
+Linking CXX executable cmTryCompileExec3466977873.exe
+"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTryCompileExec3466977873.dir\link.txt --verbose=1
+"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E remove -f CMakeFiles\cmTryCompileExec3466977873.dir/objects.a
+C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\ar.exe cr CMakeFiles\cmTryCompileExec3466977873.dir/objects.a @CMakeFiles\cmTryCompileExec3466977873.dir\objects1.rsp
+C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\G__~1.EXE       -Wl,--whole-archive CMakeFiles\cmTryCompileExec3466977873.dir/objects.a -Wl,--no-whole-archive  -o cmTryCompileExec3466977873.exe -Wl,--out-implib,libcmTryCompileExec3466977873.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
 mingw32-make.exe[1]: Leaving directory 'C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp'
 
 
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp
 
-Run Build Command:C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe "cmTryCompileExec3287331711/fast"
-C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTryCompileExec3287331711.dir\build.make CMakeFiles/cmTryCompileExec3287331711.dir/build
+Run Build Command:C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe "cmTryCompileExec3413000663/fast"
+C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTryCompileExec3413000663.dir\build.make CMakeFiles/cmTryCompileExec3413000663.dir/build
 mingw32-make.exe[1]: Entering directory 'C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp'
 "C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_progress_report C:\Users\Fabian\Desktop\Desktop\snow\build\CMakeFiles\CMakeTmp\CMakeFiles 1
-Building CXX object CMakeFiles/cmTryCompileExec3287331711.dir/CMakeCXXCompilerABI.cpp.obj
-C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\G__~1.EXE     -o CMakeFiles\cmTryCompileExec3287331711.dir\CMakeCXXCompilerABI.cpp.obj -c "C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CMakeCXXCompilerABI.cpp"
-Linking CXX executable cmTryCompileExec3287331711.exe
-"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTryCompileExec3287331711.dir\link.txt --verbose=1
-"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E remove -f CMakeFiles\cmTryCompileExec3287331711.dir/objects.a
-C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\ar.exe cr CMakeFiles\cmTryCompileExec3287331711.dir/objects.a @CMakeFiles\cmTryCompileExec3287331711.dir\objects1.rsp
-C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\G__~1.EXE     -v -Wl,--whole-archive CMakeFiles\cmTryCompileExec3287331711.dir/objects.a -Wl,--no-whole-archive  -o cmTryCompileExec3287331711.exe -Wl,--out-implib,libcmTryCompileExec3287331711.dll.a -Wl,--major-image-version,0,--minor-image-version,0   
+Building CXX object CMakeFiles/cmTryCompileExec3413000663.dir/CMakeCXXCompilerABI.cpp.obj
+C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\G__~1.EXE     -o CMakeFiles\cmTryCompileExec3413000663.dir\CMakeCXXCompilerABI.cpp.obj -c "C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CMakeCXXCompilerABI.cpp"
+Linking CXX executable cmTryCompileExec3413000663.exe
+"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTryCompileExec3413000663.dir\link.txt --verbose=1
+"C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E remove -f CMakeFiles\cmTryCompileExec3413000663.dir/objects.a
+C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\ar.exe cr CMakeFiles\cmTryCompileExec3413000663.dir/objects.a @CMakeFiles\cmTryCompileExec3413000663.dir\objects1.rsp
+C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\G__~1.EXE     -v -Wl,--whole-archive CMakeFiles\cmTryCompileExec3413000663.dir/objects.a -Wl,--no-whole-archive  -o cmTryCompileExec3413000663.exe -Wl,--out-implib,libcmTryCompileExec3413000663.dll.a -Wl,--major-image-version,0,--minor-image-version,0   
 Using built-in specs.
 COLLECT_GCC=C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\G__~1.EXE
 COLLECT_LTO_WRAPPER=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/lto-wrapper.exe
@@ -221,8 +221,8 @@ Thread model: win32
 gcc version 4.9.1 (x86_64-win32-seh-rev0, Built by MinGW-W64 project) 
 COMPILER_PATH=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/;C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/;C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/bin/
 LIBRARY_PATH=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/;C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/;C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/;C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../lib/;C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/;C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec3287331711.exe' '-shared-libgcc' '-mtune=core2' '-march=nocona'
- C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/collect2.exe -plugin C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/liblto_plugin-0.dll -plugin-opt=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/lto-wrapper.exe -plugin-opt=-fresolution=C:\Users\Fabian\AppData\Local\Temp\cc4yszKe.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw491/x86_64-491-win32-seh-rt_v3-rev0/mingw64 -m i386pep -Bdynamic -o cmTryCompileExec3287331711.exe C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtbegin.o -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1 -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../.. --whole-archive CMakeFiles\cmTryCompileExec3287331711.dir/objects.a --no-whole-archive --out-implib libcmTryCompileExec3287331711.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtend.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec3413000663.exe' '-shared-libgcc' '-mtune=core2' '-march=nocona'
+ C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/collect2.exe -plugin C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/liblto_plugin-0.dll -plugin-opt=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/lto-wrapper.exe -plugin-opt=-fresolution=C:\Users\Fabian\AppData\Local\Temp\cccpclju.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw491/x86_64-491-win32-seh-rt_v3-rev0/mingw64 -m i386pep -Bdynamic -o cmTryCompileExec3413000663.exe C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtbegin.o -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1 -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../.. --whole-archive CMakeFiles\cmTryCompileExec3413000663.dir/objects.a --no-whole-archive --out-implib libcmTryCompileExec3413000663.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtend.o
 mingw32-make.exe[1]: Leaving directory 'C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp'
 
 
@@ -230,17 +230,17 @@ Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld\.exe|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe "cmTryCompileExec3287331711/fast"]
-  ignore line: [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTryCompileExec3287331711.dir\build.make CMakeFiles/cmTryCompileExec3287331711.dir/build]
+  ignore line: [Run Build Command:C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe "cmTryCompileExec3413000663/fast"]
+  ignore line: [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTryCompileExec3413000663.dir\build.make CMakeFiles/cmTryCompileExec3413000663.dir/build]
   ignore line: [mingw32-make.exe[1]: Entering directory 'C:/Users/Fabian/Desktop/Desktop/snow/build/CMakeFiles/CMakeTmp']
   ignore line: ["C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_progress_report C:\Users\Fabian\Desktop\Desktop\snow\build\CMakeFiles\CMakeTmp\CMakeFiles 1]
-  ignore line: [Building CXX object CMakeFiles/cmTryCompileExec3287331711.dir/CMakeCXXCompilerABI.cpp.obj]
-  ignore line: [C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\G__~1.EXE     -o CMakeFiles\cmTryCompileExec3287331711.dir\CMakeCXXCompilerABI.cpp.obj -c "C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CMakeCXXCompilerABI.cpp"]
-  ignore line: [Linking CXX executable cmTryCompileExec3287331711.exe]
-  ignore line: ["C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTryCompileExec3287331711.dir\link.txt --verbose=1]
-  ignore line: ["C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E remove -f CMakeFiles\cmTryCompileExec3287331711.dir/objects.a]
-  ignore line: [C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\ar.exe cr CMakeFiles\cmTryCompileExec3287331711.dir/objects.a @CMakeFiles\cmTryCompileExec3287331711.dir\objects1.rsp]
-  ignore line: [C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\G__~1.EXE     -v -Wl,--whole-archive CMakeFiles\cmTryCompileExec3287331711.dir/objects.a -Wl,--no-whole-archive  -o cmTryCompileExec3287331711.exe -Wl,--out-implib,libcmTryCompileExec3287331711.dll.a -Wl,--major-image-version,0,--minor-image-version,0   ]
+  ignore line: [Building CXX object CMakeFiles/cmTryCompileExec3413000663.dir/CMakeCXXCompilerABI.cpp.obj]
+  ignore line: [C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\G__~1.EXE     -o CMakeFiles\cmTryCompileExec3413000663.dir\CMakeCXXCompilerABI.cpp.obj -c "C:\Program Files (x86)\CMake 2.8\share\cmake-2.8\Modules\CMakeCXXCompilerABI.cpp"]
+  ignore line: [Linking CXX executable cmTryCompileExec3413000663.exe]
+  ignore line: ["C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTryCompileExec3413000663.dir\link.txt --verbose=1]
+  ignore line: ["C:\Program Files (x86)\CMake 2.8\bin\cmake.exe" -E remove -f CMakeFiles\cmTryCompileExec3413000663.dir/objects.a]
+  ignore line: [C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\ar.exe cr CMakeFiles\cmTryCompileExec3413000663.dir/objects.a @CMakeFiles\cmTryCompileExec3413000663.dir\objects1.rsp]
+  ignore line: [C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\G__~1.EXE     -v -Wl,--whole-archive CMakeFiles\cmTryCompileExec3413000663.dir/objects.a -Wl,--no-whole-archive  -o cmTryCompileExec3413000663.exe -Wl,--out-implib,libcmTryCompileExec3413000663.dll.a -Wl,--major-image-version,0,--minor-image-version,0   ]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=C:\PROGRA~1\MINGW-~1\X86_64~1.1-W\mingw64\bin\G__~1.EXE]
   ignore line: [COLLECT_LTO_WRAPPER=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/lto-wrapper.exe]
@@ -257,13 +257,13 @@ Parsed CXX implicit link information from above output:
   ignore line: [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../lib/]
   ignore line: [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/]
   ignore line: [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec3287331711.exe' '-shared-libgcc' '-mtune=core2' '-march=nocona']
-  link line: [ C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/collect2.exe -plugin C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/liblto_plugin-0.dll -plugin-opt=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/lto-wrapper.exe -plugin-opt=-fresolution=C:\Users\Fabian\AppData\Local\Temp\cc4yszKe.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw491/x86_64-491-win32-seh-rt_v3-rev0/mingw64 -m i386pep -Bdynamic -o cmTryCompileExec3287331711.exe C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtbegin.o -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1 -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../.. --whole-archive CMakeFiles\cmTryCompileExec3287331711.dir/objects.a --no-whole-archive --out-implib libcmTryCompileExec3287331711.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtend.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTryCompileExec3413000663.exe' '-shared-libgcc' '-mtune=core2' '-march=nocona']
+  link line: [ C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/collect2.exe -plugin C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/liblto_plugin-0.dll -plugin-opt=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/lto-wrapper.exe -plugin-opt=-fresolution=C:\Users\Fabian\AppData\Local\Temp\cccpclju.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt --sysroot=C:/mingw491/x86_64-491-win32-seh-rt_v3-rev0/mingw64 -m i386pep -Bdynamic -o cmTryCompileExec3413000663.exe C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtbegin.o -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1 -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib -LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../.. --whole-archive CMakeFiles\cmTryCompileExec3413000663.dir/objects.a --no-whole-archive --out-implib libcmTryCompileExec3413000663.dll.a --major-image-version 0 --minor-image-version 0 -lstdc++ -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc_s -lgcc -lmoldname -lmingwex -lmsvcrt C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtend.o]
     arg [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/collect2.exe] ==> ignore
     arg [-plugin] ==> ignore
     arg [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/liblto_plugin-0.dll] ==> ignore
     arg [-plugin-opt=C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../libexec/gcc/x86_64-w64-mingw32/4.9.1/lto-wrapper.exe] ==> ignore
-    arg [-plugin-opt=-fresolution=C:\Users\Fabian\AppData\Local\Temp\cc4yszKe.res] ==> ignore
+    arg [-plugin-opt=-fresolution=C:\Users\Fabian\AppData\Local\Temp\cccpclju.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lmingw32] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
@@ -286,7 +286,7 @@ Parsed CXX implicit link information from above output:
     arg [i386pep] ==> ignore
     arg [-Bdynamic] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTryCompileExec3287331711.exe] ==> ignore
+    arg [cmTryCompileExec3413000663.exe] ==> ignore
     arg [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o] ==> ignore
     arg [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib/../lib/crtbegin.o] ==> ignore
     arg [-LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1] ==> dir [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1]
@@ -296,10 +296,10 @@ Parsed CXX implicit link information from above output:
     arg [-LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib] ==> dir [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../../../x86_64-w64-mingw32/lib]
     arg [-LC:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../..] ==> dir [C:/PROGRA~1/MINGW-~1/X86_64~1.1-W/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.1/../../..]
     arg [--whole-archive] ==> ignore
-    arg [CMakeFiles\cmTryCompileExec3287331711.dir/objects.a] ==> ignore
+    arg [CMakeFiles\cmTryCompileExec3413000663.dir/objects.a] ==> ignore
     arg [--no-whole-archive] ==> ignore
     arg [--out-implib] ==> ignore
-    arg [libcmTryCompileExec3287331711.dll.a] ==> ignore
+    arg [libcmTryCompileExec3413000663.dll.a] ==> ignore
     arg [--major-image-version] ==> ignore
     arg [0] ==> ignore
     arg [--minor-image-version] ==> ignore
