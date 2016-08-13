@@ -276,7 +276,7 @@ int launchSnow(){
 
     shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes = make_shared<std::vector<shared_ptr<Mesh>>>();
 
-    scene5(pPs,pCO,meshes);
+    scene6(pPs,pCO,meshes);
 
     shared_ptr<Mesh> halfplane=make_shared<Mesh>() ;
     halfplane->setPosition(GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING
@@ -350,31 +350,24 @@ int launchSnow(){
 
     if(re_err){
         return 1;
-    }
-
-    GLint* integerquery;
-    glGetIntegerv(0x90DD,integerquery);
-    cout <<endl;
-    cout <<"Grafikkarte unterstuetzt:" <<endl;
-    cout << *integerquery <<" SSBO Buffer" <<endl;
-    cout << "benoetigt werden in dieser Implementation 17  SSBO Buffer, "<<endl;
-    cout << "die Zahl laesst sich durch Zusammenlegen von Buffern reduzieren."<<endl;
-    cout <<endl;
-
+	}
+	
     pE->init();
-   double currentTime = glfwGetTime(); //gafferongames.com
-   double accumulator = 0.0;
-  while (rE->shouldClose()){
+	double currentTime = glfwGetTime(); //gafferongames.com
+	double accumulator = 0.0;
+	std::cout << std::flush;
+	while (rE->shouldClose()){
+		
         double newTime = glfwGetTime();
         double frameTime = newTime -currentTime;
         currentTime = newTime;
         accumulator += frameTime;
         while (accumulator >= STEP_DT){
-
-        pE->update(PHYSIC_DT);
-        accumulator -=STEP_DT;
+			pE->update(PHYSIC_DT);
+			accumulator -=STEP_DT;
         }
-        rE->render();
+		
+		rE->render();
 
     }
     rE->stop();

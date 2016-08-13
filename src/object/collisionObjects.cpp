@@ -74,13 +74,13 @@ void CollisionObjects::initSSBO(){
  */
 void CollisionObjects::updateRenderBuffer(float dt){
 
-    for(int i ; i< colliders->size();i++){
+    for(int i=0 ; i< colliders->size();i++){
 
     Vector3f position = colliders->at(i).mesh->getPosition();
     Vector3f velocity = colliders->at(i).velocity.xyz();
 
     Vector3f uPos(position+velocity*dt);
-    colliders->at(i).mesh->setPosition(uPos);
+	colliders->at(i).mesh->setPosition(uPos);
     if(colliders->at(i).type == 1){
         velocity = velocity + Vector3f(0.0f,dt * 0.0f,0.0f);
         colliders->at(i).velocity = velocity;

@@ -6,87 +6,88 @@
 #  ASSIMP_INCLUDE_DIR - the Assimp include directory
 #  ASSIMP_LIBRARY - Link these to use Assimp
 
-set(_assimp_INCLUDE_SEARCH_DIRS_SYSTEM
-    C:/assimp/include
-    "$ENV{ProgramFiles}/assimp/include"
-    "$ENV{ProgramFiles}/assimp"
-    /sw/local/include
-  )
+SET( ASSIMP_SEARCH_PATHS
+    $ENV{ASSIMP}
+    $ENV{ASSIMP_ROOT}                  # ASSIMP!
+    ${DEPENDENCIES_ROOT}
+    ./lib/Assimp
+    $ENV{PROGRAMFILES}/ASSIMP           # WINDOWS
+		C:/assimp
+    ~/Library/Frameworks                # MAC
+    /Library/Frameworks                 # MAC
+    /usr/local                          # LINUX/MAC/UNIX
+    /usr                                # LINUX/MAC/UNIX
+    /opt                                # LINUX/MAC/UNIX
+    /sw                                 # Fink
+    /opt/local                          # DarwinPorts
+    /opt/csw                            # Blastwave
+)
 
-set(_assimp_LIB_SEARCH_DIRS_SYSTEM
-    C:/assimp/lib
-    "$ENV{ProgramFiles}/assimp/lib"
-    "$ENV{ProgramFiles}/assimp"
-    /sw/local/lib
-  )
-
-set(_assimp_BIN_SEARCH_DIRS_SYSTEM
-    C:/assimp/bin
-    "$ENV{ProgramFiles}/assimp/bin"
-    "$ENV{ProgramFiles}/assimp"
-    /sw/local/bin
-  )
-FIND_PATH(ASSIMP_INCLUDE_DIR assimp/ai_assert.h
-	$ENV{ASSIMPSDIR}/include
-	$ENV{ASSIMPSDIR}
-	$ENV{ASSIMPSDIR}/..
-	~/Library/Frameworks/AssImp.framework/Headers
-	/Library/Frameworks/AssImp.framework/Headers
-	/usr/local/include/assimp
-	/usr/local/include
-	/usr/include/assimp
-	/usr/include
-	/sw/include/assimp # Fink
-	/sw/include
-	/opt/local/include/assimp # DarwinPorts
-	/opt/local/include
-	/opt/csw/include/assimp # Blastwave
-	/opt/csw/include
-	/opt/include/assimp
-	/opt/include
-	${_assimp_INCLUDE_SEARCH_DIRS_SYSTEM}
+FIND_PATH(ASSIMP_INCLUDE_DIR
+NAMES
+        assimp/mesh.h
+    PATHS
+        ${ASSIMP_SEARCH_PATHS}
+    PATH_SUFFIXES
+        include
+    DOC
+        "The directory where assimp/mesh.h resides"
 	)
 IF(WIN32)
-FIND_LIBRARY(ASSIMP_LIBRARY_DEBUG 
+FIND_LIBRARY(ASSIMP_LIBRARY_DEBUG
 	NAMES libassimp.dll.a
 	PATHS
-	$ENV{ASSIMPSDIR}/lib
-	/usr/local/lib
-	/usr/lib
-	/sw/lib
-	/opt/local/lib
-	/opt/csw/lib
-	/opt/lib
-	${_assimp_LIB_SEARCH_DIRS_SYSTEM}
+        ${ASSIMP_SEARCH_PATHS}
 	)
 
-FIND_LIBRARY(ASSIMP_LIBRARY_RELEASE 
+FIND_LIBRARY(ASSIMP_LIBRARY_RELEASE
 	NAMES libassimp.dll.a
 	PATHS
-	$ENV{ASSIMPSDIR}/lib
-	/usr/local/lib
-	/usr/lib
-	/sw/lib
-	/opt/local/lib
-	/opt/csw/lib
-	/opt/lib
-	${_assimp_LIB_SEARCH_DIRS_SYSTEM}
+        ${ASSIMP_SEARCH_PATHS}
 	)
 FIND_LIBRARY(ASSIMP_DLL
 	NAMES libassimp.dll
 	PATHS
-	$ENV{ASSIMPSDIR}/bin
-	/usr/local/bin
-	/usr/bin
-	/sw/bin
-	/opt/local/bin
-	/opt/csw/bin
-	/opt/bin
-	${_assimp_BIN_SEARCH_DIRS_SYSTEM}
+        ${ASSIMP_SEARCH_PATHS}
 	)
-ELSE()	
+
+  IF(MSVC)
+      FIND_LIBRARY(ASSIMP_LIBRARY_DEBUG
+          NAMES
+              assimp.lib
+          PATHS
+              ${ASSIMP_SEARCH_PATHS}
+          PATH_SUFFIXES
+              lib/Release
+          DOC
+              "The libassimp.a library."
+      )
+
+      FIND_LIBRARY(ASSIMP_LIBRARY_RELEASE
+          NAMES
+              assimp.lib
+          PATHS
+              ${ASSIMP_SEARCH_PATHS}
+          PATH_SUFFIXES
+  	          lib/Release
+          DOC
+              "The libassimp.a library."
+      )
+
+      FIND_PATH(ASSIMP_DLL
+          NAMES
+              assimp.dll
+          PATHS
+              ${ASSIMP_SEARCH_PATHS}
+          PATH_SUFFIXES
+              bin/Release
+          DOC
+              "The assimp.dll library."
+      )
+  ENDIF(MSVC)
+ELSE(WIN32)
 FIND_LIBRARY(LIBASSIMP
-  NAMES 
+  NAMES
   ${ASSIMP}
   PATHS
   ${ASSIMP_DEPS_LIB_DIR}
@@ -100,7 +101,7 @@ FIND_LIBRARY(LIBASSIMP
 )
 ENDIF()
 SET (ASSIMP_LIBRARIES
-  ${LIBASSIMP} 
+  ${LIBASSIMP}
 )
 SET(ASSIMP_FOUND "NO")
 IF(ASSIMP_INCLUDE_DIR AND ASSIMP_LIBRARY_DEBUG AND ASSIMP_LIBRARY_RELEASE)

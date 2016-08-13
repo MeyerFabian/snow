@@ -202,6 +202,7 @@ void initShader(){
 
 }
  void myRenderingEngine::renderPass(){
+
      if(debug == true){
          particlesystem->debug();
          grid->debug();
@@ -287,8 +288,8 @@ void initShader(){
 
     particlesystem->render();
 
-    glfwSwapBuffers(window);
-    glfwPollEvents();
+	glfwSwapBuffers(window);
+	glfwPollEvents();
     //double timeS = glfwGetTime ();
     //grid->render();
     //double timeE = glfwGetTime();
@@ -302,7 +303,7 @@ void initShader(){
 
      //shadowMapPass();
 
-     renderPass();
+	 renderPass();
 
 }
 
@@ -348,10 +349,13 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     }
 }
 static void mouse_callback(GLFWwindow* window, double xpos, double ypos){
+	
     double mouse_x = (xpos - WINDOW_WIDTH/2)*anglesize;
     double mouse_y = (-ypos + WINDOW_HEIGHT/2)*anglesize;
-    world.update(mouse_x,mouse_y);
-    glfwSetCursorPos(window, WINDOW_WIDTH/2,WINDOW_HEIGHT/2);
+	
+	world.update(mouse_x,mouse_y);
+	glfwSetCursorPos(window, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+	
 }
 bool myRenderingEngine::init(){
 
@@ -359,6 +363,7 @@ bool myRenderingEngine::init(){
     glfwSetErrorCallback(error_callback);
     if (!glfwInit())
     exit(EXIT_FAILURE);
+
     window = glfwCreateWindow(WINDOW_WIDTH,WINDOW_HEIGHT, "OpenGL Project", NULL, NULL);
     if (!window){
         glfwTerminate();
@@ -366,7 +371,7 @@ bool myRenderingEngine::init(){
     }
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, key_callback);
-    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_NORMAL) ;
+    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED) ;
     glfwSetCursorPos(window, WINDOW_WIDTH/2,WINDOW_HEIGHT/2);
     glfwSetCursorPosCallback(window,mouse_callback);
 
@@ -388,7 +393,7 @@ bool myRenderingEngine::init(){
 }
 
 void myRenderingEngine::render(){
-    renderQueue();
+	renderQueue();
 }
 bool myRenderingEngine::shouldClose(){
 

@@ -177,7 +177,7 @@ void Mesh::initVBO(){
 
     for (int i = 0; i<m_Textures.size();i++){
         if(m_Textures[i]== nullptr || !m_Textures[i]->Load(GL_TEXTURE_2D)){
-            std::cout<< "Error loading texture"<<endl;
+			std::cout << "Error loading texture" << endl;
 
         }
         else{

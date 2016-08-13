@@ -6,24 +6,66 @@
 # GLEW_INCLUDE_PATH
 # GLEW_LIBRARY
 #
+SET(GLEW_SEARCH_PATHS
+    $ENV{GLEW}
+    $ENV{GLEW}                  # ASSIMP!
+    ${DEPENDENCIES_ROOT}
+    ./lib/glew
+    $ENV{PROGRAMFILES}/glew           # WINDOWS
+		C:/glew
+    ~/Library/Frameworks                # MAC
+    /Library/Frameworks                 # MAC
+    /usr/local                          # LINUX/MAC/UNIX
+    /usr                                # LINUX/MAC/UNIX
+    /opt                                # LINUX/MAC/UNIX
+    /sw                                 # Fink
+    /opt/local                          # DarwinPorts
+    /opt/csw                            # Blastwave
+)
 
 IF (WIN32)
-	FIND_PATH( GLEW_INCLUDE_PATH GL/glew.h
-		$ENV{PROGRAMFILES}/GLEW/include
-		C:/GLEW
-		DOC "The directory where GL/glew.h resides")
+	FIND_PATH( GLEW_INCLUDE_PATH
+		NAMES
+				GL/glew.h
+		PATHS
+				${GLEW_SEARCH_PATHS}
+    PATH_SUFFIXES
+        include
+		DOC
+				"The directory where GL/glew.h resides"
+		)
+
 	FIND_LIBRARY( GLEW_LIBRARY
-		NAMES glew32s.lib
+		NAMES
+				glew32s.lib
 		PATHS
-		$ENV{PROGRAMFILES}/GLEW/lib
-		$ENV{PROGRAMFILES}/GLEW/lib/Release/x64
-		DOC "The glew32s.lib library")
+				${GLEW_SEARCH_PATHS}
+		PATH_SUFFIXES
+				lib/Release/x64
+		DOC
+				"The glew32s.lib library"
+		)
 	FIND_LIBRARY( GLEW_DLL
-		NAMES glew32.dll
+		NAMES
+				glew32.dll
 		PATHS
-		$ENV{PROGRAMFILES}/GLEW/bin
-		$ENV{PROGRAMFILES}/GLEW/bin/Release/x64
-		DOC "The glew32.dll")
+				${GLEW_SEARCH_PATHS}
+		PATH_SUFFIXES
+				bin/Release/x64
+		DOC
+				"The glew32.dll")
+        IF(MSVC)
+          FIND_PATH( GLEW_DLL
+        		NAMES
+        				glew32.dll
+        		PATHS
+        				${GLEW_SEARCH_PATHS}
+        		PATH_SUFFIXES
+        				bin/Release/x64
+        		DOC
+        				"The glew32.dll")
+        ENDIF()
+
 ELSE (WIN32)
 	FIND_PATH( GLEW_INCLUDE_PATH GL/glew.h
 		/usr/include

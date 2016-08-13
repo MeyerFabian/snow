@@ -64,7 +64,7 @@ ELSEIF (MSVC)
 	)
 	FIND_LIBRARY(GLFW3_LIBRARY
     NAMES
-		glfw3dll.a
+				glfw3.lib
     PATHS
         ${GLFW3_SEARCH_PATHS}
     PATH_SUFFIXES
@@ -72,7 +72,16 @@ ELSEIF (MSVC)
     DOC
         "The directory where GLFW/glfw3.h resides"
 	)
-
+	FIND_PATH(GLFW3_DLL
+	    NAMES
+					glfw3.dll
+	    PATHS
+	        ${GLFW3_SEARCH_PATHS}
+			PATH_SUFFIXES
+	        lib-vc2013
+			DOC
+					"The glfw3dll.a library."
+	)
 ELSEIF(APPLE)
 
 FIND_PATH(GLFW3_INCLUDE_PATH

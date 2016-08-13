@@ -20,7 +20,7 @@ FIND_PATH(GLM_INCLUDE_PATH
     PATHS
         ${GLM_SEARCH_PATHS}
     PATH_SUFFIXES
-        include
+        glm
     DOC
         "The directory where glm/glm.hpp resides"
 )
