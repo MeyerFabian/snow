@@ -1,8 +1,9 @@
 Visuals
 ====
 Click the video folder for a video! :)
-<img src="https://github.com/MeyerFabian/snow/blob/master/picture/young.jpg" width="200"><img src="https://github.com/MeyerFabian/snow/blob/master/picture/col.jpg" width="200">
-https://github.com/favicon.ico
+
+<img src="https://github.com/MeyerFabian/snow/blob/master/picture/young.jpg" width="300"><img src="https://github.com/MeyerFabian/snow/blob/master/picture/coll.jpg" width="300">
+
 Project
 ====
 Ready for Windows: mingw-w64, VS (2013 tested)
