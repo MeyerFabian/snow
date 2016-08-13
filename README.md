@@ -2,7 +2,7 @@ Visuals
 ====
 Click the video folder for a video! :)
 
-<img src="https://github.com/MeyerFabian/snow/blob/master/picture/young.jpg" width="300"><img src="https://github.com/MeyerFabian/snow/blob/master/picture/coll.jpg" width="300">
+<img src="https://github.com/MeyerFabian/snow/blob/master/picture/young.jpg" width="350"><img src="https://github.com/MeyerFabian/snow/blob/master/picture/coll.jpg" width="350">
 
 Project
 ====
