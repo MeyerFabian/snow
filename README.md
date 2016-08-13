@@ -1,3 +1,17 @@
+Visuals
+====
+Click the video folder for a video! :)
+<img src="https://github.com/MeyerFabian/snow/blob/master/picture/young.jpg" width="200"><img src="https://github.com/MeyerFabian/snow/blob/master/picture/col.jpg" width="200">
+https://github.com/favicon.ico
+Project
+====
+Ready for Windows: mingw-w64, VS (2013 tested)
+Theoretically portable to unix-systems (no dependency restrictions)
+
+Usage
+====
+Manipulate the physical constants in defines.h to alter the simulation. (Changes might not be numerically stable) 
+
 Abstract
 =====
 

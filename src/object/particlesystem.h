@@ -23,6 +23,14 @@ public:
         delete pDeltaV0;
         delete pDeltaV1;
         delete pDeltaV2;
+		glDeleteBuffers(1, &posB);
+		glDeleteBuffers(1, &velB);
+		glDeleteBuffers(1, &velBn);
+		glDeleteBuffers(1, &deltaV0);
+		glDeleteBuffers(1, &deltaV1);
+		glDeleteBuffers(1, &deltaV2);
+		glDeleteBuffers(1, &FEpB);
+		glDeleteBuffers(1, &FPpB);
     }
 
     std::shared_ptr<std::vector<Particle> > const particles = std::make_shared<std::vector<Particle> >();
