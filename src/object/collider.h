@@ -1,6 +1,6 @@
 #ifndef COLLIDER_H
 #define COLLIDER_H
-#include "../math3d.h"
+#include "math3d.h"
 #include "mesh.h"
 struct Collider{
 

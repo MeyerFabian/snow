@@ -9,7 +9,7 @@
 #include "object/particlesystem.h"
 #include "object/collisionObjects.h"
 #include "simulation/timeUpdate.h"
-#include "defines.h"
+#include "defines/defines.h"
 #include "GLFW/glfw3.h"
 #include <time.h>
 #include "math.h"

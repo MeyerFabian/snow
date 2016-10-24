@@ -5,7 +5,7 @@ set(APPNAME snow)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake CACHE PATH "Project specific path. Set manually if it was not found.")
-
+set(SHADERS_PATH "${CMAKE_SOURCE_DIR}/shader" CACHE PATH "Path to code of shaders.")
 
 find_package(GLEW REQUIRED)
 find_package(ASSIMP REQUIRED)
@@ -20,8 +20,8 @@ ${GLEW_INCLUDE_PATH}
 ${ASSIMP_INCLUDE_DIR}
 ${GLFW3_INCLUDE_PATH}
 ${GLM_INCLUDE_PATH}
-#${CMAKE_SOURCE_DIR}/include
-stb_image
+include/stb_image
+include/math3d
 )
 
 
@@ -29,35 +29,53 @@ IF(MINGW)
 set(DLLS ${ASSIMP_DLL} ${GLEW_DLL} ${GLFW3_DLL})
 file(COPY ${DLLS} DESTINATION /)
 file(COPY shader DESTINATION /)
-file(COPY textures DESTINATION /)
-file(COPY model DESTINATION /)
+file(COPY resources/textures DESTINATION /)
+file(COPY resources/model DESTINATION /)
 ENDIF()
 
+if(EXISTS "${SHADERS_PATH}")
+        add_subdirectory("${SHADERS_PATH}")
+endif()
+
 file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
+#file(GLOB_RECURSE HEADER_FILES "src/*.h")
+#list(REMOVE_ITEM SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
+#add_library(SNOWGL_LIBRARY ${CMAKE_SOURCE_DIR} ${SOURCE_FILES} ${HEADER_FILES} 
+#)
+add_subdirectory(include/stb_image)
+add_subdirectory(include/math3d)
 
 
 add_executable(snow
-stb_image/stb_image.c
+src/main.cpp
 ${SOURCE_FILES}
 )
 
 
 target_link_libraries(snow
 
+${GLFW3_LIBRARY}
+
+#${SNOWGL_LIBRARY}
+
 ${GLEW_LIBRARY}
+
+stb_image
+
+math3d
 
 opengl32.lib
 
 ${GLFW3_LIBRARY}
 
 ${ASSIMP_LIBRARY}
-
 )
+
 IF(MSVC)
   set(CMAKE_CONFIGURATION_TYPES Release CACHE TYPE  INTERNAL FORCE )
   file(COPY shader DESTINATION Release/)
-  file(COPY textures DESTINATION Release/)
-  file(COPY model DESTINATION Release/)
+  file(COPY resources/textures DESTINATION Release/)
+  file(COPY resources/model DESTINATION Release/)
   # Copy dlls
   add_custom_command(TARGET ${APPNAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND}
@@ -79,8 +97,5 @@ IF(MSVC)
     "${GLEW_DLL}/glew32.dll"
     "${PROJECT_BINARY_DIR}/$<CONFIGURATION>/glew32.dll"
   )
-  add_custom_target(SHADERS SOURCES ${SHADER_TARGET})
-  add_custom_target(MODELS SOURCES ${MODEL_TARGET})
-  add_custom_target(TEXTURES SOURCES ${TEXTURE_TARGET})
 
 ENDIF()

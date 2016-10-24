@@ -1,7 +1,7 @@
 #ifndef overGrid_H
 #define overGrid_H
-#include "../../technique.h"
-#include "../../defines.h"
+#include "../../shader/technique.h"
+#include "../../defines/defines.h"
 class OverGrid :public Technique
 {
 public:

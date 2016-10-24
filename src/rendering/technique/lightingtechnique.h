@@ -1,8 +1,8 @@
 #ifndef LIGHTINGTECHNIQUE_H
 #define LIGHTINGTECHNIQUE_H
-#include "../../technique.h"
+#include "../../shader/technique.h"
 #include <string>
-#include "../../math3d.h"
+#include "math3d.h"
 #include "glm.hpp"
 using namespace std;
 class LightingTechnique : public Technique

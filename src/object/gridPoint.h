@@ -1,6 +1,6 @@
 #ifndef GRIDPOINT_H
 #define GRIDPOINT_H
-#include "../math3d.h"
+#include "math3d.h"
 struct GridPoint{
 
     GridPoint(Vector3f v = Vector3f(0.0f,0.0f,0.0f),

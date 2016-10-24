@@ -3,7 +3,7 @@
 #include "../timeUpdate.h"
 #include "../technique/particleCompute.h"
 #include "../technique/overGrid.h"
-#include "../../defines.h"
+#include "../../defines/defines.h"
 class ExplicitTimeUpdate : public TimeUpdate
 {
 public:

@@ -1,0 +1,1 @@
+add_library(math3d math3d.cpp)

@@ -1,9 +1,9 @@
-#include "myrenderingengine.h"
+#include "myRenderingEngine.h"
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "../math3d.h"
+#include "math3d.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -17,7 +17,7 @@
 #include "stb_image.h"
 #include <memory>
 #include "technique/particletechnique.h"
-#include "../defines.h"
+#include "../defines/defines.h"
 #include "../simulation/technique/particleCompute.h"
 using namespace std;
 

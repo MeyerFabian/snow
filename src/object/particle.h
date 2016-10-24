@@ -1,6 +1,6 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
-#include "../math3d.h"
+#include "math3d.h"
 struct Particle
 {
     Particle(Vector3f r = Vector3f(0.0f,0.0f,0.0f),

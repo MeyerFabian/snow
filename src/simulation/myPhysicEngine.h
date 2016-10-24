@@ -1,6 +1,6 @@
 #ifndef MYPHYSICENGINE_H
 #define MYPHYSICENGINE_H
-#include "../physicEngine.h"
+#include "../simulation/physicEngine.h"
 #include "timeUpdate.h"
 #include "timeUpdate/explicittimeupdate.h"
 #include "../object/grid.h"

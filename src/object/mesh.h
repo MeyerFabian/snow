@@ -7,7 +7,7 @@
 #include <string>
 #define GLEW_STATIC
 #include <GL/glew.h>
-#include "../math3d.h"
+#include "math3d.h"
 #include "texture.h"
 #include <memory>
 #include "particlesystem.h"
