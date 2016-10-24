@@ -1,3 +1,16 @@
+function(assign_source_group)
+    foreach(_source IN ITEMS ${ARGN})
+        if (IS_ABSOLUTE "${_source}")
+            file(RELATIVE_PATH _source_rel "${CMAKE_CURRENT_SOURCE_DIR}" "${_source}")
+        else()
+            set(source_rel "${_source}")
+        endif()
+        get_filename_component(_source_path "${_source_rel}" PATH)
+        string(REPLACE "/" "\\" _source_path_msvc "${_source_path}")
+        source_group("${_source_path_msvc}" FILES "${_source}")
+    endforeach()
+endfunction(assign_source_group)
+
 project(snowProject)
 cmake_minimum_required(VERSION 3.0.1)
 set(APPNAME snow)
@@ -42,15 +55,14 @@ file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
 #list(REMOVE_ITEM SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 #add_library(SNOWGL_LIBRARY ${CMAKE_SOURCE_DIR} ${SOURCE_FILES} ${HEADER_FILES} 
 #)
-add_subdirectory(include/stb_image)
-add_subdirectory(include/math3d)
-
 
 add_executable(snow
 src/main.cpp
 ${SOURCE_FILES}
 )
 
+add_subdirectory(include/math3d)
+add_subdirectory(include/stb_image)
 
 target_link_libraries(snow
 
@@ -70,6 +82,8 @@ ${GLFW3_LIBRARY}
 
 ${ASSIMP_LIBRARY}
 )
+
+assign_source_group(${SOURCE_FILES})
 
 IF(MSVC)
   set(CMAKE_CONFIGURATION_TYPES Release CACHE TYPE  INTERNAL FORCE )
