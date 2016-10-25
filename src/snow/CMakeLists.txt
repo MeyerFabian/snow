@@ -1,2 +1,23 @@
+
+
 list(REMOVE_ITEM SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
-add_library(SNOWGL_LIBRARY ${CMAKE_SOURCE_DIR} ${SOURCE_FILES} ${HEADER_FILES} )
+
+assign_source_group(${SOURCE_FILES})
+add_library(SNOWGL_LIBRARY ${CMAKE_SOURCE_DIR} ${SOURCE_FILES} )
+
+target_link_libraries(SNOWGL_LIBRARY
+
+${GLFW3_LIBRARY}
+
+${GLEW_LIBRARY}
+
+stb_image
+
+math3d
+
+opengl32.lib
+
+${GLFW3_LIBRARY}
+
+${ASSIMP_LIBRARY}
+)

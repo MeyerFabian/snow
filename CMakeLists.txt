@@ -50,37 +50,21 @@ if(EXISTS "${SHADERS_PATH}")
         add_subdirectory("${SHADERS_PATH}")
 endif()
 
-file(GLOB_RECURSE SOURCE_FILES "src/*.cpp" "src/*.h")
 
+file(GLOB_RECURSE SOURCE_FILES "src/snow/*.cpp" "src/snow/*.h")
+file(GLOB_RECURSE EXE_FILES "src/exe/*.cpp")
 
 add_executable(scene
 src/exe/main.cpp
 )
 
+target_link_libraries(scene
+SNOWGL_LIBRARY
+)
+
 add_subdirectory(include/math3d)
 add_subdirectory(include/stb_image)
 add_subdirectory(src/snow)
-
-target_link_libraries(scene
-
-${GLFW3_LIBRARY}
-
-SNOWGL_LIBRARY
-
-${GLEW_LIBRARY}
-
-stb_image
-
-math3d
-
-opengl32.lib
-
-${GLFW3_LIBRARY}
-
-${ASSIMP_LIBRARY}
-)
-
-assign_source_group(${SOURCE_FILES})
 
 IF(MSVC)
   set(CMAKE_CONFIGURATION_TYPES Release CACHE TYPE  INTERNAL FORCE )
