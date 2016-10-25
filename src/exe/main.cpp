@@ -1,15 +1,15 @@
 
-#include "rendering/myRenderingEngine.h"
-#include "simulation/myPhysicEngine.h"
+#include "../snow/rendering/myRenderingEngine.h"
+#include "../snow/simulation/myPhysicEngine.h"
 #include <iostream>
 #include <memory>
-#include "object/mesh.h"
+#include "../snow/object/mesh.h"
 #include <vector>
-#include "object/grid.h"
-#include "object/particlesystem.h"
-#include "object/collisionObjects.h"
-#include "simulation/timeUpdate.h"
-#include "defines/defines.h"
+#include "../snow/object/grid.h"
+#include "../snow/object/particlesystem.h"
+#include "../snow/object/collisionObjects.h"
+#include "../snow/simulation/timeUpdate.h"
+#include "../snow/defines/defines.h"
 #include "GLFW/glfw3.h"
 #include <time.h>
 #include "math.h"

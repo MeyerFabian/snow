@@ -13,7 +13,7 @@ endfunction(assign_source_group)
 
 project(snowProject)
 cmake_minimum_required(VERSION 3.0.1)
-set(APPNAME snow)
+set(APPNAME scene)
 
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -50,25 +50,22 @@ if(EXISTS "${SHADERS_PATH}")
         add_subdirectory("${SHADERS_PATH}")
 endif()
 
-file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
-#file(GLOB_RECURSE HEADER_FILES "src/*.h")
-#list(REMOVE_ITEM SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
-#add_library(SNOWGL_LIBRARY ${CMAKE_SOURCE_DIR} ${SOURCE_FILES} ${HEADER_FILES} 
-#)
+file(GLOB_RECURSE SOURCE_FILES "src/*.cpp" "src/*.h")
 
-add_executable(snow
-src/main.cpp
-${SOURCE_FILES}
+
+add_executable(scene
+src/exe/main.cpp
 )
 
 add_subdirectory(include/math3d)
 add_subdirectory(include/stb_image)
+add_subdirectory(src/snow)
 
-target_link_libraries(snow
+target_link_libraries(scene
 
 ${GLFW3_LIBRARY}
 
-#${SNOWGL_LIBRARY}
+SNOWGL_LIBRARY
 
 ${GLEW_LIBRARY}
 
