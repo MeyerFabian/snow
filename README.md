@@ -1,6 +1,7 @@
 Visuals
 ====
 Click the video folder for a video! :)
+or watch on youtube: https://www.youtube.com/watch?v=JlNf7CUW4UY
 
 <img src="https://github.com/MeyerFabian/snow/blob/master/video_and_thesis/young.jpg" width="350"><img src="https://github.com/MeyerFabian/snow/blob/master/video_and_thesis/coll.jpg" width="350">
 
