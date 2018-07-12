@@ -1,6 +1,6 @@
 #ifndef CAMERA_H
 #define CAMERA_H
-#include "math3d.h"
+#include "math3d.hpp"
 class Camera
 {
 public:

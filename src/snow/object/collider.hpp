@@ -1,7 +1,7 @@
 #ifndef COLLIDER_H
 #define COLLIDER_H
-#include "math3d.h"
-#include "mesh.h"
+#include "math3d.hpp"
+#include "mesh.hpp"
 struct Collider{
 
 

@@ -1,6 +1,6 @@
 #ifndef MYRENDERINGENGINE_H
 #define MYRENDERINGENGINE_H
-#include "../rendering/renderingEngine.h"
+#include "../rendering/renderingEngine.hpp"
 class myRenderingEngine : public renderingEngine
 {
 public:

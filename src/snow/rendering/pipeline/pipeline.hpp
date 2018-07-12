@@ -2,8 +2,8 @@
 #define PIPELINE_H
 
 
-#include "math3d.h"
-#include "camera.h"
+#include "math3d.hpp"
+#include "camera.hpp"
 
 class pipeline
 {

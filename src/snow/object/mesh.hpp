@@ -7,10 +7,10 @@
 #include <string>
 #define GLEW_STATIC
 #include <GL/glew.h>
-#include "math3d.h"
-#include "texture.h"
+#include "math3d.hpp"
+#include "texture.hpp"
 #include <memory>
-#include "particlesystem.h"
+#include "particlesystem.hpp"
 struct Vertex{
 public:
     Vector3f pos;

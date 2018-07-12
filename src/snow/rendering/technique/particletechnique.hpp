@@ -1,7 +1,7 @@
 #ifndef PARTICLETECHNIQUE_H
 #define PARTICLETECHNIQUE_H
-#include "../../shader/technique.h"
-#include "math3d.h"
+#include "../../shader/technique.hpp"
+#include "math3d.hpp"
 class ParticleTechnique :public Technique
 {
 public:

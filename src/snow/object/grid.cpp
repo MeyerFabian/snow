@@ -1,4 +1,4 @@
-#include "grid.h"
+#include "grid.hpp"
 void Grid::initVBO() {
     /*
     glGenBuffers(1,&VB);

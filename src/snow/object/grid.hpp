@@ -4,11 +4,11 @@
 #include <GL/glew.h>
 
 #include <vector>
-#include "gridPoint.h"
+#include "gridPoint.hpp"
 #include <memory>
 #include <iostream>
-#include "math3d.h"
-#include "../defines/defines.h"
+#include "math3d.hpp"
+#include "../defines/defines.hpp"
 class Grid{
 public:
     Grid()= default;

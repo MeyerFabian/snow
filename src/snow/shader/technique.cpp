@@ -1,4 +1,4 @@
-#include "technique.h"
+#include "technique.hpp"
 
 
 Technique::Technique()

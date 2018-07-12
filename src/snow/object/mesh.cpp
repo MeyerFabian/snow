@@ -1,4 +1,4 @@
-#include "mesh.h"
+#include "mesh.hpp"
 #include <assert.h>
 #include <iostream>
 #define INVALID_OGL_VALUE 0xffffffff

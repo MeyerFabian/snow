@@ -1,4 +1,4 @@
-#include "particletechnique.h"
+#include "particletechnique.hpp"
 #include <iostream>
 ParticleTechnique::ParticleTechnique()
 {

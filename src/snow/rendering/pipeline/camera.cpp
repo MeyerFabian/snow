@@ -1,4 +1,4 @@
-#include "camera.h"
+#include "camera.hpp"
 #include <iostream>
 #include <GLFW/glfw3.h>
 Camera::Camera(){

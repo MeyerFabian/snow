@@ -2,9 +2,9 @@
 #define RENDERINGENGINE_H
 #include <memory>
 #include <vector>
-#include "../object/mesh.h"
-#include "../object/particlesystem.h"
-#include "../object/grid.h"
+#include "../object/mesh.hpp"
+#include "../object/particlesystem.hpp"
+#include "../object/grid.hpp"
 class renderingEngine{
     public :
     renderingEngine(std::shared_ptr<std::vector<shared_ptr<Mesh> > > const meshesToRender, shared_ptr<ParticleSystem> const particlesToRender,shared_ptr<Grid> const gridToRender)

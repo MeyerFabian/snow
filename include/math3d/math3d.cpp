@@ -1,4 +1,4 @@
-#include "math3d.h"
+#include "math3d.hpp"
 #include <iostream>
 using namespace std;
 

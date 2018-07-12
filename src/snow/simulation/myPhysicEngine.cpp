@@ -1,4 +1,4 @@
-#include "myphysicengine.h"
+#include "myPhysicEngine.hpp"
 
 bool myPhysicEngine::init(){
      integration->init();

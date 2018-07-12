@@ -3,12 +3,12 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
-#include "collider.h"
+#include "collider.hpp"
 #include <memory>
 #include <vector>
-#include "math3d.h"
+#include "math3d.hpp"
 
-#include "../defines/defines.h"
+#include "../defines/defines.hpp"
 class CollisionObjects{
 public:
 

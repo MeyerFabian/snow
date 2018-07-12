@@ -1,24 +1,24 @@
-#include "myRenderingEngine.h"
+#include "myRenderingEngine.hpp"
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "math3d.h"
+#include "math3d.hpp"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "technique/lightingTechnique.h"
-#include "pipeline/pipeline.h"
-#include "../object/texture.h"
+#include "technique/lightingtechnique.hpp"
+#include "pipeline/pipeline.hpp"
+#include "../object/texture.hpp"
 #include <glm.hpp>
-#include "../object/mesh.h"
-#include "technique/shadowMapTechnique.h"
-#include "technique/shadowmapbufferobject.h"
+#include "../object/mesh.hpp"
+#include "technique/shadowMapTechnique.hpp"
+#include "technique/shadowmapbufferobject.hpp"
 #include "stb_image.h"
 #include <memory>
-#include "technique/particletechnique.h"
-#include "../defines/defines.h"
-#include "../simulation/technique/particleCompute.h"
+#include "technique/particletechnique.hpp"
+#include "../defines/defines.hpp"
+#include "../simulation/technique/particleCompute.hpp"
 using namespace std;
 
 GLFWwindow* window;

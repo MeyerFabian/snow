@@ -1,4 +1,4 @@
-#include "shadowmapbufferobject.h"
+#include "shadowmapbufferobject.hpp"
 
 ShadowMapBufferObject::ShadowMapBufferObject()
 {

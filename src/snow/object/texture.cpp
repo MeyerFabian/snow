@@ -1,4 +1,4 @@
-#include "texture.h"
+#include "texture.hpp"
 
 Texture::Texture(string filename)
 {

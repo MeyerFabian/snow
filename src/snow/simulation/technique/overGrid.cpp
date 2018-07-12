@@ -1,4 +1,4 @@
-#include "overGrid.h"
+#include "overGrid.hpp"
 #include <iostream>
 bool OverGrid::init(string cs){
 

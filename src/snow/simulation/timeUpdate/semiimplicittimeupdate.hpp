@@ -1,6 +1,8 @@
 #ifndef SEMIIMPLICITTIMEUPDATE_H
 #define SEMIIMPLICITTIMEUPDATE_H
-#include "../timeUpdate.h"
+#include "../timeUpdate.hpp"
+#include "../../object/collisionObjects.hpp"
+#include "../../object/grid.hpp"
 class SemiImplicitTimeUpdate :public TimeUpdate
 {
 public:

@@ -1,9 +1,11 @@
 #ifndef EXPLICITTIMEUPDATE_H
 #define EXPLICITTIMEUPDATE_H
-#include "../timeUpdate.h"
-#include "../technique/particleCompute.h"
-#include "../technique/overGrid.h"
-#include "../../defines/defines.h"
+#include "../timeUpdate.hpp"
+#include "../technique/particleCompute.hpp"
+#include "../technique/overGrid.hpp"
+#include "../../defines/defines.hpp"
+#include "../../object/collisionObjects.hpp"
+#include "../../object/grid.hpp"
 class ExplicitTimeUpdate : public TimeUpdate
 {
 public:

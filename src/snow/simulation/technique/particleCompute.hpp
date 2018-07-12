@@ -1,8 +1,8 @@
 #ifndef particleCompute_H
 #define particleCompute_H
-#include "../../shader/technique.h"
-#include "math3d.h"
-#include "../../defines/defines.h"
+#include "../../shader/technique.hpp"
+#include "math3d.hpp"
+#include "../../defines/defines.hpp"
 class ParticleCompute :public Technique
 {
 public:

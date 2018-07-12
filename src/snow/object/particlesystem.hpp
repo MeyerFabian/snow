@@ -3,13 +3,13 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
-#include "particle.h"
+#include "particle.hpp"
 #include <memory>
 #include <vector>
-#include "math3d.h"
+#include "math3d.hpp"
 #include <fstream>
 #include <string>
-#include "../defines/defines.h"
+#include "../defines/defines.hpp"
 class ParticleSystem{
 public:
 

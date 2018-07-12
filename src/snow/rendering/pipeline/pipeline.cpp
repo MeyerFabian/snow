@@ -1,4 +1,4 @@
-#include "pipeline.h"
+#include "pipeline.hpp"
 #include <iostream>
 const Matrix4f* pipeline::getMVP(){
     Matrix4f Cam,CamPos ,Persp;

@@ -1,4 +1,4 @@
-#include "shadowMapTechnique.h"
+#include "shadowMapTechnique.hpp"
 
 ShadowMapTechnique::ShadowMapTechnique()
 {

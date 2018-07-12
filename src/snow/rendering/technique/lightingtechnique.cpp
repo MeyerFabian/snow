@@ -1,4 +1,4 @@
-#include "lightingtechnique.h"
+#include "lightingtechnique.hpp"
 
 LightingTechnique::LightingTechnique()
 {

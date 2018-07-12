@@ -1,11 +1,11 @@
 #ifndef TIMEUPDATE_H
 #define TIMEUPDATE_H
 
-#include "../object/mesh.h"
-#include "../object/particlesystem.h"
+#include "../object/mesh.hpp"
+#include "../object/particlesystem.hpp"
 #include <memory>
-#include "../object/grid.h"
-#include "../object/collisionObjects.h"
+#include "../object/grid.hpp"
+#include "../object/collisionObjects.hpp"
 class TimeUpdate{
 public:
     TimeUpdate(std::shared_ptr<CollisionObjects> const collisionToSimulate, shared_ptr<ParticleSystem> const particlesToSimulate,shared_ptr<Grid> const gridToSimulate )

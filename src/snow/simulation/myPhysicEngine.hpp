@@ -1,9 +1,9 @@
 #ifndef MYPHYSICENGINE_H
 #define MYPHYSICENGINE_H
-#include "../simulation/physicEngine.h"
-#include "timeUpdate.h"
-#include "timeUpdate/explicittimeupdate.h"
-#include "../object/grid.h"
+#include "../simulation/physicEngine.hpp"
+#include "timeUpdate.hpp"
+#include "timeUpdate/explicittimeupdate.hpp"
+#include "../object/grid.hpp"
 
 
 class myPhysicEngine : public physicEngine

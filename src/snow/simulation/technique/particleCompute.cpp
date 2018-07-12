@@ -1,4 +1,4 @@
-#include "particleCompute.h"
+#include "particleCompute.hpp"
 #include <iostream>
 bool ParticleCompute::init(string cs){
 
