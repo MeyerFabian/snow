@@ -9,6 +9,9 @@ Makefile
 cmake_install.cmake
 install_manifest.txt
 
+# compile_commands
+compile_commands.json
+
 # Compiled Object files
 *.slo
 *.lo

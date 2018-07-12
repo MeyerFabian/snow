@@ -15,8 +15,8 @@ project(snowProject)
 cmake_minimum_required(VERSION 3.0.1)
 set(APPNAME scene)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake CACHE PATH "Project specific path. Set manually if it was not found.")
 set(SHADERS_PATH "${CMAKE_SOURCE_DIR}/shader" CACHE PATH "Path to code of shaders.")
 
@@ -67,30 +67,53 @@ add_subdirectory(include/stb_image)
 add_subdirectory(src/snow)
 
 IF(MSVC)
-  set(CMAKE_CONFIGURATION_TYPES Release CACHE TYPE  INTERNAL FORCE )
-  file(COPY shader DESTINATION Release/)
-  file(COPY resources/textures DESTINATION Release/)
-  file(COPY resources/model DESTINATION Release/)
-  # Copy dlls
-  add_custom_command(TARGET ${APPNAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    -E copy_if_different
-    "${ASSIMP_DLL}/assimp.dll"
-    "${PROJECT_BINARY_DIR}/$<CONFIGURATION>/assimp.dll"
-  )
 
-  add_custom_command(TARGET ${APPNAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    -E copy_if_different
-    "${GLFW3_DLL}/glfw3.dll"
-    "${PROJECT_BINARY_DIR}/$<CONFIGURATION>/glfw3.dll"
-  )
+	set(CMAKE_CONFIGURATION_TYPES Release CACHE TYPE  INTERNAL FORCE )
+	set(CMAKE_BUILD_TYPE Release CACHE TYPE  INTERNAL FORCE)
+	set(BUILD_DESTINATION Release/)
+	set(DLL_DESTINATION ${PROJECT_BINARY_DIR}/$<CONFIGURATION>)
 
-  add_custom_command(TARGET ${APPNAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    -E copy_if_different
-    "${GLEW_DLL}/glew.dll"
-    "${PROJECT_BINARY_DIR}/$<CONFIGURATION>/glew.dll"
-  )
+
+	#OVERWRITE in your path_to_cmake\Modules\Platform\Windows.cmake to use compile_commands
+	#
+	#set(CMAKE_START_TEMP_FILE "")
+	#set(CMAKE_END_TEMP_FILE "")
+	#
+	#SEE https://gitlab.kitware.com/cmake/cmake/issues/17482
+	if(CMAKE_GENERATOR MATCHES "NMake")
+
+		set(BUILD_DESTINATION ./)
+		set(DLL_DESTINATION ${PROJECT_BINARY_DIR})
+		add_custom_command(TARGET ${APPNAME} PRE_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy  ${CMAKE_BINARY_DIR}/compile_commands.json ${CMAKE_SOURCE_DIR}
+		)
+
+	ENDIF()
+
+	file(COPY shader DESTINATION ${BUILD_DESTINATION})
+	file(COPY resources/textures DESTINATION ${BUILD_DESTINATION})
+	file(COPY resources/model DESTINATION ${BUILD_DESTINATION})
+	# Copy dlls
+	add_custom_command(TARGET ${APPNAME} PRE_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		-E copy_if_different
+		"${ASSIMP_DLL}/assimp.dll"
+		"${DLL_DESTINATION}/assimp.dll"
+	)
+
+	add_custom_command(TARGET ${APPNAME} PRE_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		-E copy_if_different
+		"${GLFW3_DLL}/glfw3.dll"
+		"${DLL_DESTINATION}/glfw3.dll"
+	)
+
+	add_custom_command(TARGET ${APPNAME} PRE_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		-E copy_if_different
+		"${GLEW_DLL}/glew.dll"
+		"${DLL_DESTINATION}/glew.dll"
+	)
 
 ENDIF()
+

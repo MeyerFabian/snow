@@ -7,7 +7,7 @@ or watch on [youtube!](https://www.youtube.com/watch?v=JlNf7CUW4UY)
 
 Project
 ====
-Ready for Windows: mingw-w64, VS (2013 and 2017 tested)
+Ready for Windows: mingw-w64, VS (2013 and 2017 tested), NMake(compile_commands activated)
 Theoretically portable to unix-systems (no dependency restrictions, some filenames would need to be adjusted)
 
 Dependencies
