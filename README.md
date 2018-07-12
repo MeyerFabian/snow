@@ -1,7 +1,7 @@
 Visuals
 ====
 Click the video folder for a video! :)
-or watch on youtube: https://www.youtube.com/watch?v=JlNf7CUW4UY
+or watch on [youtube!](https://www.youtube.com/watch?v=JlNf7CUW4UY)
 
 <img src="https://github.com/MeyerFabian/snow/blob/master/video_and_thesis/young.jpg" width="350"><img src="https://github.com/MeyerFabian/snow/blob/master/video_and_thesis/coll.jpg" width="350">
 
@@ -9,6 +9,24 @@ Project
 ====
 Ready for Windows: mingw-w64, VS (2013 and 2017 tested)
 Theoretically portable to unix-systems (no dependency restrictions, some filenames would need to be adjusted)
+
+Dependencies
+====
+[GLEW](http://glew.sourceforge.net/) (Tested 2.1.0, build from source)
+
+[GLFW](http://www.glfw.org/) (Tested 3.2.1, build from source)
+
+[ASSIMP](http://www.assimp.org/index.php/downloads) (Tested 4.1.0, build from source)
+
+[GLM](https://glm.g-truc.net/0.9.9/index.html) (Tested GLM 0.9.9.0, Header only)
+
+Compute Shader ready GFX introduced with OpenGL 4.3
+
+Included Dependencies
+====
+[stb_image](https://github.com/nothings/stb/blob/master/stb_image.h)
+
+[voxelizer](https://github.com/takagi/cl-voxelize/) (A precomputed voxelization of the Stanford-Bunny is already included in resources/model/)
 
 Usage
 ====
