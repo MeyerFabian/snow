@@ -230,7 +230,7 @@ void scene5(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> co
 }
 void scene6(shared_ptr<ParticleSystem> const pPs,shared_ptr<CollisionObjects> const pCO,shared_ptr<std::vector<shared_ptr<Mesh> > > const  meshes){
     int x = 0;
-    Vector3f pos(5.0f,0.5125f,5.0f);
+    Vector3f pos(5.0f,0.0,5.0f);
     Vector3f scale(12.5f*1.259f,12.5f*1.259f,12.5f*1.259f);
     float xpos=GRID_POS_X+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,
             ypos=GRID_POS_Y+GRID_COLLISION_PLANE_OFFSET*GRID_SPACING,

@@ -100,6 +100,7 @@ void ExplicitTimeUpdate::init(){
     cMass.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     cMass.setGridDim(grid->dimx, grid->dimy, grid->dimz);
     cMass.setGridSpacing(grid->h);
+	cMass.setIndexSize(particlesystem->particles->size());
     glDispatchCompute((particlesystem->particles->size())/NUM_OF_GPGPU_THREADS_X+1,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
@@ -107,6 +108,8 @@ void ExplicitTimeUpdate::init(){
     cVolume.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     cVolume.setGridDim(grid->dimx, grid->dimy, grid->dimz);
     cVolume.setGridSpacing(grid->h);
+
+	cVolume.setIndexSize(particlesystem->particles->size());
     glDispatchCompute((particlesystem->particles->size())/NUM_OF_GPGPU_THREADS_X+1,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
     //particlesystem->debug();
@@ -137,6 +140,8 @@ void ExplicitTimeUpdate::update(double dt){
     pc.setHardening();
     pc.setCritComp();
     pc.setCritStretch();
+
+	pc.setIndexSize(particlesystem->particles->size());
     glDispatchCompute((particlesystem->particles->size())/NUM_OF_GPGPU_THREADS_X+1,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
@@ -156,6 +161,8 @@ void ExplicitTimeUpdate::update(double dt){
     pVU.setGridPos(grid->x_off, grid->y_off, grid->z_off);
     pVU.setGridDim(grid->dimx, grid->dimy, grid->dimz);
     pVU.setGridSpacing(grid->h);
+
+	pVU.setIndexSize(particlesystem->particles->size());
     glDispatchCompute((particlesystem->particles->size())/NUM_OF_GPGPU_THREADS_X+1,PARTICLE_TO_GRID_SIZE,1);
     glMemoryBarrier ( GL_SHADER_STORAGE_BARRIER_BIT );
 
@@ -173,7 +180,7 @@ void ExplicitTimeUpdate::update(double dt){
     pU.setCritStretch();
     pU.setGridDim(grid->dimx, grid->dimy, grid->dimz);
     pU.setCollisionOffset();
-
+	pU.setIndexSize(particlesystem->particles->size());
     pU.setnumColliders(collisionObjects->colliders->size());
     glDispatchCompute((particlesystem->particles->size())/NUM_OF_GPGPU_THREADS_X+1,1,1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);

@@ -16,6 +16,7 @@ bool ParticleCompute::init(string cs){
     hardening =glGetUniformLocation(this->ShaderProgram, "hardening");
     critComp =glGetUniformLocation(this->ShaderProgram, "critComp");
     critStretch =glGetUniformLocation(this->ShaderProgram, "critStretch");
+	indexSize = glGetUniformLocation(this->ShaderProgram, "indexSize");
     if (gGridPos == INVALID_UNIFORM_LOCATION ||
         gGridDim == INVALID_UNIFORM_LOCATION ||
             young == INVALID_UNIFORM_LOCATION ||
@@ -23,7 +24,8 @@ bool ParticleCompute::init(string cs){
             hardening == INVALID_UNIFORM_LOCATION ||
             critComp == INVALID_UNIFORM_LOCATION ||
             critStretch == INVALID_UNIFORM_LOCATION ||
-        h == INVALID_UNIFORM_LOCATION){
+        h == INVALID_UNIFORM_LOCATION ||
+		indexSize ==INVALID_UNIFORM_LOCATION){
         return false;
     }
     return true;
@@ -56,4 +58,7 @@ glUniform1f(critComp,CRIT_COMPRESSION);
 
 void ParticleCompute::setCritStretch(){
 glUniform1f(critStretch,CRIT_STRETCH);
+}
+void ParticleCompute::setIndexSize(const int size) {
+	glUniform1i(indexSize, size);
 }

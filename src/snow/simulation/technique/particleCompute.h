@@ -17,6 +17,7 @@ public:
     void setHardening();
     void setCritComp();
     void setCritStretch();
+	void setIndexSize(const int size);
 
 private:
     GLuint gGridPos;
@@ -28,5 +29,6 @@ private:
     GLuint hardening;
     GLuint critComp;
     GLuint critStretch;
+	GLuint indexSize;
 };
 #endif // particleCompute_H

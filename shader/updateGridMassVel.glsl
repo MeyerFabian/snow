@@ -8,6 +8,7 @@ uniform float hardening;
 uniform float critComp;
 uniform float critStretch;
 
+uniform int indexSize;
 
 
 layout(local_size_x =1024, local_size_y =1,local_size_z =1)in;
@@ -523,6 +524,10 @@ void main(void){
 
     uint pIndex= gl_GlobalInvocationID.x;
     uint globalInvocY = gl_GlobalInvocationID.y;
+	
+	if (pIndex >= indexSize)
+		return;
+
 
     //pxm[pIndex].x +=0.00005;
 
@@ -535,6 +540,9 @@ void main(void){
 
     vec3 xp= particle.xyz; //particle position
     float mp = particle.w; // particle mass
+	if (abs(mp) > 100.0) {
+		return;
+	}
     vec3 vp = vec3(particleVelocity.xyz)*1e-8f; //particle velocity
     float pp0 = float(particleVelocity.w)*1e-6f; //particle density
 

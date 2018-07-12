@@ -89,8 +89,8 @@ IF(MSVC)
   add_custom_command(TARGET ${APPNAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     -E copy_if_different
-    "${GLEW_DLL}/glew32.dll"
-    "${PROJECT_BINARY_DIR}/$<CONFIGURATION>/glew32.dll"
+    "${GLEW_DLL}/glew.dll"
+    "${PROJECT_BINARY_DIR}/$<CONFIGURATION>/glew.dll"
   )
 
 ENDIF()

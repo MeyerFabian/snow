@@ -11,13 +11,13 @@
 #define GRID_POS_X 0.5125
 #define GRID_POS_Y 0.5125
 #define GRID_POS_Z 1.5125
-#define GRID_DIM_X 150
-#define GRID_DIM_Y 60
-#define GRID_DIM_Z 100
+#define GRID_DIM_X 201
+#define GRID_DIM_Y 201
+#define GRID_DIM_Z 201
 #define GRID_SPACING 0.05
 #define PARTICLE_TO_GRID_SIZE 64
 #define GRID_COLLISION_PLANE_OFFSET 4
-#define PHYSIC_DT 1e-3
+#define PHYSIC_DT 1e-4
 #define STEP_DT 0.0333
 
 #define NUMOFPARTICLES 32*64*64

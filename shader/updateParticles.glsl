@@ -8,6 +8,8 @@ uniform float critStretch;
 uniform int collisionOffset;
 uniform ivec3 gGridDim;
 uniform int gNumColliders;
+uniform int indexSize;
+
 layout(local_size_x =1024, local_size_y =1,local_size_z =1)in;
 
 layout(std140, binding = 0) buffer pPosMass {
@@ -475,6 +477,9 @@ bool collides(const vec3 pPos,const int i, inout vec3 n){
 
 void main(void){
     uint pI = gl_GlobalInvocationID.x;
+
+	if (pI >= indexSize)
+		return;
 
     // UPDATE DEFORMATION GRADIENT
     mat4 FEp4 = mat4(pFE[pI]);

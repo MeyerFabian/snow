@@ -37,7 +37,7 @@ IF (WIN32)
 
 	FIND_LIBRARY( GLEW_LIBRARY
 		NAMES
-				glew32s.lib
+				glew.lib
 		PATHS
 				${GLEW_SEARCH_PATHS}
 		PATH_SUFFIXES
@@ -57,7 +57,7 @@ IF (WIN32)
         IF(MSVC)
           FIND_PATH( GLEW_DLL
         		NAMES
-        				glew32.dll
+        				glew.dll
         		PATHS
         				${GLEW_SEARCH_PATHS}
         		PATH_SUFFIXES

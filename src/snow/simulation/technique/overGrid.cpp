@@ -11,10 +11,11 @@ bool OverGrid::init(string cs){
     dt =glGetUniformLocation(this->ShaderProgram, "dt");
     critComp =glGetUniformLocation(this->ShaderProgram, "critComp");
     critStretch =glGetUniformLocation(this->ShaderProgram, "critStretch");
-
+	indexSize = glGetUniformLocation(this->ShaderProgram, "indexSize");
     collisionOffset=glGetUniformLocation(this->ShaderProgram, "collisionOffset");
     gGridDimension =glGetUniformLocation(this->ShaderProgram, "gGridDimension");
     gNumColliders =glGetUniformLocation(this->ShaderProgram, "gNumColliders");
+
     return true;
 }
 void OverGrid::setDt(const float deltat){
@@ -35,4 +36,7 @@ glUniform3i(gGridDimension, gridDimx, gridDimy, gridDimz);
 }
 void OverGrid::setnumColliders(const int numColliders){
 glUniform1i(gNumColliders, numColliders);
+}
+void OverGrid::setIndexSize(const int size) {
+	glUniform1i(indexSize, size);
 }

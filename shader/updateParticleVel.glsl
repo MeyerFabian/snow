@@ -8,7 +8,7 @@ uniform float poisson;
 uniform float hardening;
 uniform float critComp;
 uniform float critStretch;
-
+uniform int indexSize;
 
 
 layout(local_size_x =1024, local_size_y =1,local_size_z =1)in;
@@ -115,6 +115,9 @@ void main(void){
 
     uint pIndex= gl_GlobalInvocationID.x;
     uint globalInvocY = gl_GlobalInvocationID.y;
+	if (pIndex >= indexSize)
+		return;
+
 
     vec4 particle = pxm[pIndex];
     vec4 particleVelocity = vec4(pv[pIndex]);

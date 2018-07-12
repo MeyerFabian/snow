@@ -68,7 +68,7 @@ ELSEIF (MSVC)
     PATHS
         ${GLFW3_SEARCH_PATHS}
     PATH_SUFFIXES
-        lib-vc2013
+        lib-vc2017
     DOC
         "The directory where GLFW/glfw3.h resides"
 	)
@@ -78,7 +78,7 @@ ELSEIF (MSVC)
 	    PATHS
 	        ${GLFW3_SEARCH_PATHS}
 			PATH_SUFFIXES
-	        lib-vc2013
+	        lib-vc2017
 			DOC
 					"The glfw3dll.a library."
 	)
