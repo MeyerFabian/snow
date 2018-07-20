@@ -1,9 +1,5 @@
 #include "semiimplicittimeupdate.hpp"
 
-void SemiImplicitTimeUpdate::init(){
+void SemiImplicitTimeUpdate::init() {}
 
-}
-
-void SemiImplicitTimeUpdate::update(double dt){
-
-}
+void SemiImplicitTimeUpdate::update(double dt) {}
