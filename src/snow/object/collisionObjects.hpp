@@ -3,43 +3,40 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
-#include "collider.hpp"
 #include <memory>
 #include <vector>
+#include "collider.hpp"
 #include "math3d.hpp"
 
 #include "../defines/defines.hpp"
-class CollisionObjects{
-public:
+class CollisionObjects {
+ public:
+  CollisionObjects() = default;
+  ~CollisionObjects() {
+    delete cPositions;
+    delete cVelocities;
+    delete cType;
+    delete cFriction;
+    delete cNormals;
+  }
 
-    CollisionObjects() = default;
-    ~CollisionObjects(){
-        delete cPositions;
-        delete cVelocities;
-        delete cType;
-        delete cFriction;
-        delete cNormals;
-    }
+  std::shared_ptr<std::vector<Collider> > const colliders =
+      std::make_shared<std::vector<Collider> >();
 
-    std::shared_ptr<std::vector<Collider> > const colliders = std::make_shared<std::vector<Collider> >();
+  void initSSBO();
+  void updateRenderBuffer(float dt);
+  void debug();
+  Vector4f* cPositions = nullptr;
+  Vector4f* cVelocities = nullptr;
+  GLint* cType = nullptr;
+  float* cFriction = nullptr;
+  Vector4f* cNormals = nullptr;
 
-
-    void initSSBO();
-    void updateRenderBuffer(float dt);
-    void debug();
-    Vector4f* cPositions= nullptr ;
-    Vector4f* cVelocities= nullptr ;
-    GLint* cType= nullptr ;
-    float* cFriction= nullptr ;
-    Vector4f* cNormals= nullptr;
-private:
-
-
-
-    GLuint posB;
-    GLuint velB;
-    GLuint norB;
-    GLuint typeB;
-    GLuint fricB;
+ private:
+  GLuint posB;
+  GLuint velB;
+  GLuint norB;
+  GLuint typeB;
+  GLuint fricB;
 };
-#endif // COLLISIONOBJECTS_H
+#endif  // COLLISIONOBJECTS_H

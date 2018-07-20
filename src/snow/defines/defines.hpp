@@ -20,7 +20,7 @@
 #define PHYSIC_DT 1e-4
 #define STEP_DT 0.0333
 
-#define NUMOFPARTICLES 32*64*64
+#define NUMOFPARTICLES 32 * 64 * 64
 
 #define NUM_OF_GPGPU_THREADS_X 1024
 
@@ -49,7 +49,7 @@
 #define HARDENING 30.0
 #define CRIT_COMPRESSION 1.0e-2
 #define CRIT_STRETCH 1e-3
-#endif // DEFINES_H
+#endif  // DEFINES_H
 //
 // 300x100x300 105 Fps
 // 200x100x200 155 Fps
@@ -57,4 +57,3 @@
 // 63 x63 x63  180 Fps
 // 64 x64 x64  145 Fps
 // 50 x50 x50  285 Fps
-

@@ -4,21 +4,21 @@
 
 #define GLEW_STATIC
 #include <GL/glew.h>
-#include <string>
 #include <iostream>
+#include <string>
 using namespace std;
-class Texture
-{
-public:
-    Texture(string filename);
-    bool Load(GLenum textureType);
-    void bind(GLenum texture);
+class Texture {
+ public:
+  Texture(string filename);
+  bool Load(GLenum textureType);
+  void bind(GLenum texture);
 
-    string filename;
-private:
-    GLuint id;
-    GLenum texture;
-    GLenum textureType;
+  string filename;
+
+ private:
+  GLuint id;
+  GLenum texture;
+  GLenum textureType;
 };
 
-#endif // TEXTURE_H
+#endif  // TEXTURE_H

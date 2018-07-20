@@ -4,17 +4,15 @@
 #include <vector>
 #include "timeUpdate.hpp"
 
-class physicEngine{
-    public :
-    physicEngine( std::shared_ptr<TimeUpdate> const update):  integration(update){
+class physicEngine {
+ public:
+  physicEngine(std::shared_ptr<TimeUpdate> const update)
+      : integration(update) {}
 
-    }
+  virtual bool init() = 0;
+  virtual void update(double dt) = 0;
 
-    virtual bool init() = 0;
-    virtual void update(double dt) = 0;
-
-
-    std::shared_ptr<TimeUpdate> const integration;
+  std::shared_ptr<TimeUpdate> const integration;
 };
 
-#endif // PHYSICENGINE_H
+#endif  // PHYSICENGINE_H
