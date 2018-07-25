@@ -1,7 +1,3 @@
-
-
-list(REMOVE_ITEM SOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
-
 assign_source_group(${SOURCE_FILES})
 add_library(SNOWGL_LIBRARY ${CMAKE_SOURCE_DIR} ${SOURCE_FILES} )
 

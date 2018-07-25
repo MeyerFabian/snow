@@ -17,7 +17,7 @@
 #define GRID_SPACING 0.05
 #define PARTICLE_TO_GRID_SIZE 64
 #define GRID_COLLISION_PLANE_OFFSET 4
-#define PHYSIC_DT 1e-4
+#define PHYSIC_DT 1e-3
 #define STEP_DT 0.0333
 
 #define NUMOFPARTICLES 32 * 64 * 64
@@ -57,3 +57,4 @@
 // 63 x63 x63  180 Fps
 // 64 x64 x64  145 Fps
 // 50 x50 x50  285 Fps
+
