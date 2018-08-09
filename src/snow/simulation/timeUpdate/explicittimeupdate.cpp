@@ -5,68 +5,18 @@ void ExplicitTimeUpdate::init() {
   grid->initSSBO();
   collisionObjects->initSSBO();
 
-  const char* pComputeVolumeFileName = "shader/computeParticleVolume.glsl";
-  const char* pMassFileName = "shader/computeMass.glsl";
-  const char* pPCFileName = "shader/updateGridMassVel.glsl";
-  const char* pResetGridFileName = "shader/resetGrid.glsl";
-  const char* pUpdateGridVelocity = "shader/updateGridVelCollision.glsl";
-  const char* pUpdateParticleVelocity = "shader/updateParticleVel.glsl";
-  const char* pUpdateParticles = "shader/updateParticles.glsl";
-  const char* pRigidFileName = "shader/updateRigids.glsl";
   string cs;
 
-  if (!ReadFile(pPCFileName, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  pc = ParticleCompute();
-
-  pc.init(cs);
-
-  cs.clear();
+  const char* pResetGridFileName = "shader/resetGrid.glsl";
   if (!ReadFile(pResetGridFileName, cs)) {
     fprintf(stderr, "Error: vs\n");
     exit(1);
   };
-
   rg = OverGrid();
   rg.init(cs);
 
   cs.clear();
-
-  if (!ReadFile(pRigidFileName, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-
-  rigidSim = OverGrid();
-  rigidSim.init(cs);
-
-  cs.clear();
-  if (!ReadFile(pUpdateGridVelocity, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  vUp = OverGrid();
-  vUp.init(cs);
-
-  cs.clear();
-  if (!ReadFile(pUpdateParticleVelocity, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  pVU = ParticleCompute();
-  pVU.init(cs);
-
-  cs.clear();
-  if (!ReadFile(pUpdateParticles, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  pU = OverGrid();
-  pU.init(cs);
-
-  cs.clear();
+  const char* pMassFileName = "shader/computeMass.glsl";
   if (!ReadFile(pMassFileName, cs)) {
     fprintf(stderr, "Error: vs\n");
     exit(1);
@@ -75,21 +25,59 @@ void ExplicitTimeUpdate::init() {
   cMass.init(cs);
 
   cs.clear();
+  const char* pComputeVolumeFileName = "shader/computeParticleVolume.glsl";
   if (!ReadFile(pComputeVolumeFileName, cs)) {
     fprintf(stderr, "Error: vs\n");
     exit(1);
   };
   cVolume = ParticleCompute();
   cVolume.init(cs);
-  /*
-      cs.clear();
-      if(!ReadFile(pDivideByMass,cs)){
-        fprintf(stderr, "Error: vs\n");
-         exit(1);
-      };
-      divVelMass = OverGrid();
-      divVelMass.init(cs);
-  */
+
+  cs.clear();
+  const char* pRigidFileName = "shader/updateRigids.glsl";
+  if (!ReadFile(pRigidFileName, cs)) {
+    fprintf(stderr, "Error: vs\n");
+    exit(1);
+  };
+  rigidSim = OverGrid();
+  rigidSim.init(cs);
+
+  cs.clear();
+  const char* pPCFileName = "shader/updateGridMassVel.glsl";
+  if (!ReadFile(pPCFileName, cs)) {
+    fprintf(stderr, "Error: vs\n");
+    exit(1);
+  };
+  pc = ParticleCompute();
+  pc.init(cs);
+
+  cs.clear();
+  const char* pUpdateGridVelocity = "shader/updateGridVelCollision.glsl";
+  if (!ReadFile(pUpdateGridVelocity, cs)) {
+    fprintf(stderr, "Error: vs\n");
+    exit(1);
+  };
+  vUp = OverGrid();
+  vUp.init(cs);
+
+  cs.clear();
+  const char* pUpdateParticleVelocity = "shader/updateParticleVel.glsl";
+  if (!ReadFile(pUpdateParticleVelocity, cs)) {
+    fprintf(stderr, "Error: vs\n");
+    exit(1);
+  };
+  pVU = ParticleCompute();
+  pVU.init(cs);
+
+  cs.clear();
+  const char* pUpdateParticles = "shader/updateParticles.glsl";
+  if (!ReadFile(pUpdateParticles, cs)) {
+    fprintf(stderr, "Error: vs\n");
+    exit(1);
+  };
+  pU = OverGrid();
+  pU.init(cs);
+
   rg.plugTechnique();
   glDispatchCompute(
       GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
@@ -115,7 +103,7 @@ void ExplicitTimeUpdate::init() {
       (particlesystem->particles->size()) / NUM_OF_GPGPU_THREADS_X + 1,
       PARTICLE_TO_GRID_SIZE, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-  // particlesystem->debug();
+  //particlesystem->debug();
   // grid->debug();
 }
 
@@ -199,3 +187,4 @@ void ExplicitTimeUpdate::update(double dt) {
       glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
   */
 }
+

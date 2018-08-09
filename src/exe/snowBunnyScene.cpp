@@ -14,10 +14,9 @@ void scene(shared_ptr<ParticleSystem> const pPs,
   // 2. Test 190000 Particles 900kg/m Density 6.25 Mass SAME RESULT
   // 3. Test 91897 Particles 600kg/m Density 9.5Mass SAME RESULT
 }
-class Scene : public IScene {
+class SnowBunnyScene : public Scene {
  public:
-  Scene() = default;
-  ~Scene() = default;
+  SnowBunnyScene() = default;
   virtual void init(shared_ptr<ParticleSystem> const pPs,
                     shared_ptr<CollisionObjects> const pCO,
                     shared_ptr<std::vector<shared_ptr<Mesh>>> const meshes) {
@@ -26,7 +25,7 @@ class Scene : public IScene {
 };
 
 int main() {
-  Scene scene = Scene();
+  SnowBunnyScene scene;
   if (!launchSnow(scene)) {
     return 1;
   }

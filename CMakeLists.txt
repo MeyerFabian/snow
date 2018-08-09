@@ -23,7 +23,6 @@ find_package(GLEW REQUIRED)
 find_package(ASSIMP REQUIRED)
 find_package(GLFW3 REQUIRED)
 find_package(GLM REQUIRED)
-find_package(Vulkan REQUIRED)
 #if(GLEW_FOUND)
 #	include_directories()
 #endif()
@@ -35,7 +34,6 @@ include_directories(
 	${GLM_INCLUDE_PATH}
 	include/stb_image
 	include/math3d
-	include/vulkanhpp
 	)
 
 
@@ -74,7 +72,6 @@ endforeach(EXEC)
 
 add_subdirectory(include/math3d)
 add_subdirectory(include/stb_image)
-#add_subdirectory(include/vulkanhpp)
 add_subdirectory(src/snow)
 IF(MSVC)
 	if(CMAKE_GENERATOR MATCHES "NMake")

@@ -48,10 +48,8 @@ void scene(shared_ptr<ParticleSystem> const pPs,
     }
   }
 }
-class Scene : public IScene {
+class SnowBallsCrashScene : public Scene {
  public:
-  Scene() = default;
-  ~Scene() = default;
   virtual void init(shared_ptr<ParticleSystem> const pPs,
                     shared_ptr<CollisionObjects> const pCO,
                     shared_ptr<std::vector<shared_ptr<Mesh>>> const meshes) {
@@ -60,7 +58,7 @@ class Scene : public IScene {
 };
 
 int main() {
-  Scene scene = Scene();
+  SnowBallsCrashScene scene;
   if (!launchSnow(scene)) {
     return 1;
   }

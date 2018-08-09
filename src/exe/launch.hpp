@@ -10,11 +10,11 @@
 #include "../snow/object/mesh.hpp"
 #include "../snow/object/particlesystem.hpp"
 #include "../snow/rendering/myRenderingEngine.hpp"
-#include "../snow/scene/IScene.hpp"
+#include "../snow/scene/Scene.hpp"
 #include "../snow/simulation/myPhysicEngine.hpp"
 #include "../snow/simulation/timeUpdate.hpp"
 #include "GLFW/glfw3.h"
-int launchSnow(IScene& scene) {
+int launchSnow(Scene& scene) {
   shared_ptr<ParticleSystem> const pPs = make_shared<ParticleSystem>();
 
   shared_ptr<CollisionObjects> const pCO = make_shared<CollisionObjects>();

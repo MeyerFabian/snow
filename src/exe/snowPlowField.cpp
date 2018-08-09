@@ -5,24 +5,20 @@ void scene(shared_ptr<ParticleSystem> const pPs,
            shared_ptr<CollisionObjects> const pCO,
            shared_ptr<std::vector<shared_ptr<Mesh>>> const meshes) {
   int x = 0;
-  float xpos = GRID_POS_X + GRID_COLLISION_PLANE_OFFSET * GRID_SPACING,
+ float xpos = 0.8125,
         ypos = GRID_POS_Y + GRID_COLLISION_PLANE_OFFSET * GRID_SPACING,
-        zpos = GRID_POS_Z + GRID_COLLISION_PLANE_OFFSET * GRID_SPACING;
-
-  while (x < NUMOFPARTICLES) {
-    float height = 0.5;
-    float width =
-        ((GRID_DIM_X - 2.0f * GRID_COLLISION_PLANE_OFFSET) * GRID_SPACING);
-    // float radius = width/2.0f;
+        zpos = 2.4;
+  while (x < 2) {
+    float height = GRID_DIM_Z* GRID_SPACING * 0.1;
+    float width = GRID_DIM_X* GRID_SPACING *0.2;
+    float length = GRID_DIM_Y* GRID_SPACING*0.2;
     float rand1 = (float(rand()) / 32727.0f) * width;
     float rand2 = (float(rand()) / 32727.0f) * height;
-    float rand3 = (float(rand()) / 32727.0f) * width;
-    // if(((rand1 -radius)*(rand1 -radius)+(rand2 -radius)*(rand2
-    // -radius)+(rand3 -radius)*(rand3 -radius)) < (radius*radius)){
+    float rand3 = (float(rand()) / 32727.0f) * length;
+
     pPs->particles->push_back(
         Particle(Vector3f(xpos + rand1, ypos + rand2, zpos + rand3)));
     x += 1;
-    // }
   }
 
   shared_ptr<Mesh> sphere2 = make_shared<Mesh>();
@@ -58,10 +54,9 @@ void scene(shared_ptr<ParticleSystem> const pPs,
                                      Vector3f(0.0f, 0.0f, 10.0f),
                                      Vector3f(0.0f, 0.0f, 0.0f)));
 }
-class Scene : public IScene {
+class SnowPlowFieldScene : public Scene {
  public:
-  Scene() = default;
-  ~Scene() = default;
+  SnowPlowFieldScene() = default;
   virtual void init(shared_ptr<ParticleSystem> const pPs,
                     shared_ptr<CollisionObjects> const pCO,
                     shared_ptr<std::vector<shared_ptr<Mesh>>> const meshes) {
@@ -70,7 +65,7 @@ class Scene : public IScene {
 };
 
 int main() {
-  Scene scene = Scene();
+  SnowPlowFieldScene scene;
   if (!launchSnow(scene)) {
     return 1;
   }
