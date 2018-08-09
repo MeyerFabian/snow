@@ -161,7 +161,7 @@ void scene4(shared_ptr<ParticleSystem> const pPs,
         ypos = GRID_POS_Y + GRID_COLLISION_PLANE_OFFSET * GRID_SPACING,
         zpos = GRID_POS_Z + GRID_COLLISION_PLANE_OFFSET * GRID_SPACING;
 
-  while (x < NUMOFPARTICLES) {
+  while (x < 1) {
     float height = 0.5;
     float width =
         ((GRID_DIM_X - 2.0f * GRID_COLLISION_PLANE_OFFSET) * GRID_SPACING);
@@ -294,7 +294,7 @@ int launchSnow() {
   shared_ptr<std::vector<shared_ptr<Mesh>>> const meshes =
       make_shared<std::vector<shared_ptr<Mesh>>>();
 
-  scene6(pPs, pCO, meshes);
+  scene4(pPs, pCO, meshes);
 
   shared_ptr<Mesh> halfplane = make_shared<Mesh>();
   halfplane->setPosition(
