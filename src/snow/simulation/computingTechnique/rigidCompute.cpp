@@ -10,6 +10,7 @@ bool RigidCompute::init(std::string filename) {
     shaderObject->loadFromFile();
     shaderObject->compile();
   }
+
   finalize();
 
   dt = glGetUniformLocation(this->shaderProgram, "dt");

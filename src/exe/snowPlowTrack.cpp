@@ -30,8 +30,8 @@ void scene(shared_ptr<ParticleSystem> const pPs,
   sphere->setRotation(0, 0, 0);
 
   meshes->push_back(sphere);
-  // pCO->colliders->push_back(Collider(sphere, 0.3f, 1, Vector3f(5.0f, 0.0f,
-  // 0.0f), Vector3f(0.0f, 0.0f, 0.0f)));
+  pCO->colliders->push_back(Collider(
+      sphere, 0.3f, 1, Vector3f(5.0f, 0.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f)));
 }
 class SnowPlowTrackScene : public Scene {
  public:

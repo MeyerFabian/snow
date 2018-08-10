@@ -11,6 +11,8 @@ bool ParticleCompute::init(std::string filename) {
     shaderObject->compile();
   }
 
+  finalize();
+
   dt = glGetUniformLocation(this->shaderProgram, "dt");
   critComp = glGetUniformLocation(this->shaderProgram, "critComp");
   critStretch = glGetUniformLocation(this->shaderProgram, "critStretch");
