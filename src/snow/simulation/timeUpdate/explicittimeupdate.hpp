@@ -3,8 +3,14 @@
 #include "../../defines/defines.hpp"
 #include "../../object/collisionObjects.hpp"
 #include "../../object/grid.hpp"
-#include "../technique/overGrid.hpp"
+#include "../technique/g2pCompute.hpp"
+#include "../technique/massCompute.hpp"
+#include "../technique/p2gCompute.hpp"
 #include "../technique/particleCompute.hpp"
+#include "../technique/resetGridCompute.hpp"
+#include "../technique/rigidCompute.hpp"
+#include "../technique/velGridCompute.hpp"
+#include "../technique/volumeCompute.hpp"
 #include "../timeUpdate.hpp"
 class ExplicitTimeUpdate : public TimeUpdate {
  public:
@@ -15,15 +21,15 @@ class ExplicitTimeUpdate : public TimeUpdate {
       : TimeUpdate(collisonsToSimulate, particlesToSimulate, grid) {}
   void init();
   void update(double dt);
-  ParticleCompute cVolume;
-  ParticleCompute pc;
-  ParticleCompute pVU;
-  ParticleCompute cMass;
-  OverGrid rg;
-  OverGrid vUp;
-  OverGrid pU;
-  OverGrid rigidSim;
-  // OverGrid divVelMass;
+  VolumeCompute cVolume;
+  P2GCompute p2g;
+  G2PCompute g2p;
+  MassCompute cMass;
+  ResetGridCompute rg;
+  VelGridCompute g2g;
+  ParticleCompute pU;
+  RigidCompute rigidSim;
 };
 
 #endif  // EXPLICITTIMEUPDATE_H
+

@@ -1,8 +1,8 @@
-#include "overGrid.hpp"
+#include "resetGridCompute.hpp"
 #include <iostream>
-bool OverGrid::init(string cs) {
+ResetGridCompute::ResetGridCompute() {}
+bool ResetGridCompute::init(string cs) {
   Technique::init();
-
   addShader(cs.c_str(), GL_COMPUTE_SHADER);
 
   finalize();
@@ -18,18 +18,25 @@ bool OverGrid::init(string cs) {
 
   return true;
 }
-void OverGrid::setDt(const float deltat) { glUniform1f(dt, deltat); }
-void OverGrid::setCritComp() { glUniform1f(critComp, CRIT_COMPRESSION); }
+void ResetGridCompute::setDt(const float deltat) { glUniform1f(dt, deltat); }
+void ResetGridCompute::setCritComp() {
+  glUniform1f(critComp, CRIT_COMPRESSION);
+}
 
-void OverGrid::setCritStretch() { glUniform1f(critStretch, CRIT_STRETCH); }
-void OverGrid::setCollisionOffset() {
+void ResetGridCompute::setCritStretch() {
+  glUniform1f(critStretch, CRIT_STRETCH);
+}
+void ResetGridCompute::setCollisionOffset() {
   glUniform1i(collisionOffset, GRID_COLLISION_PLANE_OFFSET);
 }
-void OverGrid::setGridDim(const int gridDimx, const int gridDimy,
-                          const int gridDimz) {
+void ResetGridCompute::setGridDim(const int gridDimx, const int gridDimy,
+                                  const int gridDimz) {
   glUniform3i(gGridDimension, gridDimx, gridDimy, gridDimz);
 }
-void OverGrid::setnumColliders(const int numColliders) {
+void ResetGridCompute::setnumColliders(const int numColliders) {
   glUniform1i(gNumColliders, numColliders);
 }
-void OverGrid::setIndexSize(const int size) { glUniform1i(indexSize, size); }
+void ResetGridCompute::setIndexSize(const int size) {
+  glUniform1i(indexSize, size);
+}
+

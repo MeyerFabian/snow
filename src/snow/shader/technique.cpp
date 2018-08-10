@@ -21,26 +21,27 @@ void Technique::plugTechnique() { glUseProgram(ShaderProgram); }
 
 void Technique::addShader(const char* pShaderText, GLenum ShaderType) {
   GLuint ShaderObj = glCreateShader(ShaderType);
-  const GLchar* p[1];
-  p[0] = pShaderText;
+  const char* p = pShaderText;
   GLint Lengths[1];
   Lengths[0] = strlen(pShaderText);
-  glShaderSource(ShaderObj, 1, p, Lengths);
+  glShaderSource(ShaderObj, 1, &p, nullptr);
 
   glCompileShader(ShaderObj);
   GLint success;
   glGetShaderiv(ShaderObj, GL_COMPILE_STATUS, &success);
   if (!success) {
     GLchar InfoLog[1024];
-    glGetShaderInfoLog(ShaderObj, 1024, NULL, InfoLog);
+    glGetShaderInfoLog(ShaderObj, 1024, nullptr, InfoLog);
     fprintf(stderr, "Error compiling shader type %d: '%s'\n", ShaderType,
             InfoLog);
   }
   ShaderObjects.push_back(ShaderObj);
-  glAttachShader(this->ShaderProgram, ShaderObj);
 }
 
 void Technique::finalize() {
+  for (const auto& ShaderObject : ShaderObjects) {
+    glAttachShader(this->ShaderProgram, ShaderObject);
+  }
   GLint Success = 0;
   GLchar ErrorLog[1024] = {0};
   glLinkProgram(ShaderProgram);
@@ -56,9 +57,8 @@ void Technique::finalize() {
     glGetProgramInfoLog(ShaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
     fprintf(stderr, "Invalid shader program: '%s'\n", ErrorLog);
   }
-  for (vector<GLuint>::iterator it = ShaderObjects.begin();
-       it < ShaderObjects.end(); it++) {
-    glDeleteShader(*it);
+  for (const auto& ShaderObject : ShaderObjects) {
+    glDeleteShader(ShaderObject);
   }
   ShaderObjects.clear();
 }
@@ -77,3 +77,4 @@ bool ReadFile(const char* pFileName, string& outFile) {
   }
   return ret;
 }
+

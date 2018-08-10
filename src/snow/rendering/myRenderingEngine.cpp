@@ -11,7 +11,6 @@
 #include "../defines/defines.hpp"
 #include "../object/mesh.hpp"
 #include "../object/texture.hpp"
-#include "../simulation/technique/particleCompute.hpp"
 #include "math3d.hpp"
 #include "pipeline/pipeline.hpp"
 #include "stb_image.h"
@@ -97,7 +96,6 @@ void initShader() {
     fprintf(stderr, "Error: fs \n");
     exit(1);
   };
-
   PT = ParticleTechnique();
 
   if (!PT.init(vs, fs)) {
@@ -362,3 +360,4 @@ void myRenderingEngine::stop() {
   glfwTerminate();
   exit(EXIT_SUCCESS);
 }
+

@@ -2,8 +2,6 @@
 
 LightingTechnique::LightingTechnique() {}
 void LightingTechnique::init(string vs, string fs) {
-  Technique::init();
-
   addShader(vs.c_str(), GL_VERTEX_SHADER);
   addShader(fs.c_str(), GL_FRAGMENT_SHADER);
 
@@ -67,3 +65,4 @@ void LightingTechnique::setLight(Vector3f LightPosition, float ambient,
   glUniform3f(gColor, Color.x, Color.y, Color.z);
   glUniform1f(gDiffuse, diffuse);
 }
+

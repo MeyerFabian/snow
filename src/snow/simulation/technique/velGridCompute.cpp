@@ -1,7 +1,7 @@
-#include "particleCompute.hpp"
+#include "velGridCompute.hpp"
 #include <iostream>
-ParticleCompute::ParticleCompute() {}
-bool ParticleCompute::init(string cs) {
+VelGridCompute::VelGridCompute() {}
+bool VelGridCompute::init(string cs) {
   Technique::init();
   addShader(cs.c_str(), GL_COMPUTE_SHADER);
 
@@ -18,23 +18,23 @@ bool ParticleCompute::init(string cs) {
 
   return true;
 }
-void ParticleCompute::setDt(const float deltat) { glUniform1f(dt, deltat); }
-void ParticleCompute::setCritComp() { glUniform1f(critComp, CRIT_COMPRESSION); }
+void VelGridCompute::setDt(const float deltat) { glUniform1f(dt, deltat); }
+void VelGridCompute::setCritComp() { glUniform1f(critComp, CRIT_COMPRESSION); }
 
-void ParticleCompute::setCritStretch() {
+void VelGridCompute::setCritStretch() {
   glUniform1f(critStretch, CRIT_STRETCH);
 }
-void ParticleCompute::setCollisionOffset() {
+void VelGridCompute::setCollisionOffset() {
   glUniform1i(collisionOffset, GRID_COLLISION_PLANE_OFFSET);
 }
-void ParticleCompute::setGridDim(const int gridDimx, const int gridDimy,
-                                 const int gridDimz) {
+void VelGridCompute::setGridDim(const int gridDimx, const int gridDimy,
+                                const int gridDimz) {
   glUniform3i(gGridDimension, gridDimx, gridDimy, gridDimz);
 }
-void ParticleCompute::setnumColliders(const int numColliders) {
+void VelGridCompute::setnumColliders(const int numColliders) {
   glUniform1i(gNumColliders, numColliders);
 }
-void ParticleCompute::setIndexSize(const int size) {
+void VelGridCompute::setIndexSize(const int size) {
   glUniform1i(indexSize, size);
 }
 

@@ -1,10 +1,10 @@
-#ifndef overGrid_H
-#define overGrid_H
+#ifndef RIGIDCOMPUTE_H
+#define RIGIDCOMPUTE_H
 #include "../../defines/defines.hpp"
 #include "../../shader/technique.hpp"
-class OverGrid : public Technique {
+class RigidCompute : public Technique {
  public:
-  OverGrid() = default;
+  RigidCompute();
   bool init(string cs);
   void setDt(const float dt);
   void setCritComp();
@@ -24,4 +24,5 @@ class OverGrid : public Technique {
   GLuint indexSize;
 };
 
-#endif  // resetGrid_H
+#endif  // RIGITCOMPUTE_H
+

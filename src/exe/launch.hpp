@@ -112,6 +112,9 @@ int launchSnow(Scene& scene) {
       make_shared<ExplicitTimeUpdate>(pCO, pPs, grid);
 
   shared_ptr<physicEngine> const pE = make_shared<myPhysicEngine>(update);
+
+  cout << "init renderingEngine" << endl;
+  std::cout << std::flush;
   bool re_err = rE->init();
 
   if (re_err) {

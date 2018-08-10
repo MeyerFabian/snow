@@ -12,7 +12,6 @@ void ExplicitTimeUpdate::init() {
     fprintf(stderr, "Error: vs\n");
     exit(1);
   };
-  rg = OverGrid();
   rg.init(cs);
 
   cs.clear();
@@ -21,7 +20,6 @@ void ExplicitTimeUpdate::init() {
     fprintf(stderr, "Error: vs\n");
     exit(1);
   };
-  cMass = ParticleCompute();
   cMass.init(cs);
 
   cs.clear();
@@ -30,7 +28,6 @@ void ExplicitTimeUpdate::init() {
     fprintf(stderr, "Error: vs\n");
     exit(1);
   };
-  cVolume = ParticleCompute();
   cVolume.init(cs);
 
   cs.clear();
@@ -39,7 +36,6 @@ void ExplicitTimeUpdate::init() {
     fprintf(stderr, "Error: vs\n");
     exit(1);
   };
-  rigidSim = OverGrid();
   rigidSim.init(cs);
 
   cs.clear();
@@ -48,8 +44,7 @@ void ExplicitTimeUpdate::init() {
     fprintf(stderr, "Error: vs\n");
     exit(1);
   };
-  pc = ParticleCompute();
-  pc.init(cs);
+  p2g.init(cs);
 
   cs.clear();
   const char* pUpdateGridVelocity = "shader/updateGridVelCollision.glsl";
@@ -57,8 +52,7 @@ void ExplicitTimeUpdate::init() {
     fprintf(stderr, "Error: vs\n");
     exit(1);
   };
-  vUp = OverGrid();
-  vUp.init(cs);
+  g2g.init(cs);
 
   cs.clear();
   const char* pUpdateParticleVelocity = "shader/updateParticleVel.glsl";
@@ -66,8 +60,7 @@ void ExplicitTimeUpdate::init() {
     fprintf(stderr, "Error: vs\n");
     exit(1);
   };
-  pVU = ParticleCompute();
-  pVU.init(cs);
+  g2p.init(cs);
 
   cs.clear();
   const char* pUpdateParticles = "shader/updateParticles.glsl";
@@ -75,7 +68,6 @@ void ExplicitTimeUpdate::init() {
     fprintf(stderr, "Error: vs\n");
     exit(1);
   };
-  pU = OverGrid();
   pU.init(cs);
 
   rg.plugTechnique();
@@ -103,7 +95,7 @@ void ExplicitTimeUpdate::init() {
       (particlesystem->particles->size()) / NUM_OF_GPGPU_THREADS_X + 1,
       PARTICLE_TO_GRID_SIZE, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-  //particlesystem->debug();
+  // particlesystem->debug();
   // grid->debug();
 }
 
@@ -120,39 +112,39 @@ void ExplicitTimeUpdate::update(double dt) {
       GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
-  pc.plugTechnique();
-  pc.setGridPos(grid->x_off, grid->y_off, grid->z_off);
-  pc.setGridDim(grid->dimx, grid->dimy, grid->dimz);
-  pc.setGridSpacing(grid->h);
-  pc.setYoung();
-  pc.setPoisson();
-  pc.setHardening();
-  pc.setCritComp();
-  pc.setCritStretch();
+  p2g.plugTechnique();
+  p2g.setGridPos(grid->x_off, grid->y_off, grid->z_off);
+  p2g.setGridDim(grid->dimx, grid->dimy, grid->dimz);
+  p2g.setGridSpacing(grid->h);
+  p2g.setYoung();
+  p2g.setPoisson();
+  p2g.setHardening();
+  p2g.setCritComp();
+  p2g.setCritStretch();
 
-  pc.setIndexSize(particlesystem->particles->size());
+  p2g.setIndexSize(particlesystem->particles->size());
   glDispatchCompute(
       (particlesystem->particles->size()) / NUM_OF_GPGPU_THREADS_X + 1,
       PARTICLE_TO_GRID_SIZE, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
-  vUp.plugTechnique();
-  vUp.setDt(dt);
-  vUp.setGridDim(grid->dimx, grid->dimy, grid->dimz);
-  vUp.setCollisionOffset();
-  vUp.setnumColliders(collisionObjects->colliders->size());
+  g2g.plugTechnique();
+  g2g.setDt(dt);
+  g2g.setGridDim(grid->dimx, grid->dimy, grid->dimz);
+  g2g.setCollisionOffset();
+  g2g.setnumColliders(collisionObjects->colliders->size());
   glDispatchCompute(
       GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
   //
   // grid->debug();
 
-  pVU.plugTechnique();
-  pVU.setGridPos(grid->x_off, grid->y_off, grid->z_off);
-  pVU.setGridDim(grid->dimx, grid->dimy, grid->dimz);
-  pVU.setGridSpacing(grid->h);
+  g2p.plugTechnique();
+  g2p.setGridPos(grid->x_off, grid->y_off, grid->z_off);
+  g2p.setGridDim(grid->dimx, grid->dimy, grid->dimz);
+  g2p.setGridSpacing(grid->h);
 
-  pVU.setIndexSize(particlesystem->particles->size());
+  g2p.setIndexSize(particlesystem->particles->size());
   glDispatchCompute(
       (particlesystem->particles->size()) / NUM_OF_GPGPU_THREADS_X + 1,
       PARTICLE_TO_GRID_SIZE, 1);

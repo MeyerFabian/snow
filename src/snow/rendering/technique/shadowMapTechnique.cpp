@@ -2,8 +2,6 @@
 
 ShadowMapTechnique::ShadowMapTechnique() {}
 bool ShadowMapTechnique::init(string vs, string fs) {
-  Technique::init();
-
   addShader(vs.c_str(), GL_VERTEX_SHADER);
   addShader(fs.c_str(), GL_FRAGMENT_SHADER);
 
@@ -16,6 +14,7 @@ bool ShadowMapTechnique::init(string vs, string fs) {
       gSampler == INVALID_UNIFORM_LOCATION) {
     return false;
   }
+  return true;
 }
 
 void ShadowMapTechnique::setMVP(const Matrix4f* m) {
@@ -24,3 +23,4 @@ void ShadowMapTechnique::setMVP(const Matrix4f* m) {
 void ShadowMapTechnique::setTex(unsigned int texture) {
   glUniform1i(gSampler, texture);
 }
+

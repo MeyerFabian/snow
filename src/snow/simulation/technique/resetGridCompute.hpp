@@ -1,10 +1,10 @@
-#ifndef PARTICLECOMPUTE_H
-#define PARTICLECOMPUTE_H
+#ifndef RESETGRID_H
+#define RESETGRID_H
 #include "../../defines/defines.hpp"
 #include "../../shader/technique.hpp"
-class ParticleCompute : public Technique {
+class ResetGridCompute : public Technique {
  public:
-  ParticleCompute();
+  ResetGridCompute();
   bool init(string cs);
   void setDt(const float dt);
   void setCritComp();
@@ -24,5 +24,5 @@ class ParticleCompute : public Technique {
   GLuint indexSize;
 };
 
-#endif  // PARTICLECOMPUTE_H
+#endif  // RESETGRID_H
 
