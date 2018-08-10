@@ -1,80 +1,58 @@
 #include "technique.hpp"
 
-Technique::Technique() {}
-Technique::~Technique() {
-  for (vector<GLuint>::iterator it = ShaderObjects.begin();
-       it < ShaderObjects.end(); it++) {
-    glDeleteShader(*it);
-  }
-  glDeleteProgram(ShaderProgram);
-}
-void Technique::init() {
-  this->ShaderProgram = glCreateProgram();
-  // glProgramParameteri(this->ShaderProgram , GL_PROGRAM_SEPARABLE, GL_TRUE);
-  if (ShaderProgram == 0) {
+Technique::Technique() : shaderProgram(glCreateProgram()) {
+  if (shaderProgram == 0) {
     fprintf(stderr, "Error creating shader program\n");
   }
 }
-
-GLuint Technique::getShaderProgram() { return this->ShaderProgram; }
-void Technique::plugTechnique() { glUseProgram(ShaderProgram); }
-
-void Technique::addShader(const char* pShaderText, GLenum ShaderType) {
-  GLuint ShaderObj = glCreateShader(ShaderType);
-  const char* p = pShaderText;
-  GLint Lengths[1];
-  Lengths[0] = strlen(pShaderText);
-  glShaderSource(ShaderObj, 1, &p, nullptr);
-
-  glCompileShader(ShaderObj);
-  GLint success;
-  glGetShaderiv(ShaderObj, GL_COMPILE_STATUS, &success);
-  if (!success) {
-    GLchar InfoLog[1024];
-    glGetShaderInfoLog(ShaderObj, 1024, nullptr, InfoLog);
-    fprintf(stderr, "Error compiling shader type %d: '%s'\n", ShaderType,
-            InfoLog);
-  }
-  ShaderObjects.push_back(ShaderObj);
+Technique::~Technique() {
+  glDeleteProgram(shaderProgram);
+  std::cerr << "deleted program\n";
 }
 
+void Technique::use() { glUseProgram(shaderProgram); }
+
+bool Technique::addShader(std::shared_ptr<Shader>&& shader) {
+  auto new_shader_pos = std::find_if(
+      shaderObjects.cbegin(), shaderObjects.cend(),
+      [newtype = shader->getType()](const auto& shaderObject) {
+        auto oldtype = shaderObject->getType();
+        return (oldtype == newtype) || (oldtype == ShaderType::COMPUTE);
+      });
+  bool is_compute_technique =
+      (shader->getType() == ShaderType::COMPUTE && !shaderObjects.empty());
+  bool is_not_new_type = (new_shader_pos != shaderObjects.end());
+  if (is_compute_technique || is_not_new_type) {
+    std::cerr
+        << "ILLEGAL ShaderType:\n You tried to add a type that is "
+           "incompatible with the rest of the Technique.\n Only one ShaderType "
+           "allowed. Except for ShaderType::COMPUTE is always alone:\n"
+        << shader->getFileName() << "!\n";
+    return false;
+  } else {
+    shaderObjects.insert(new_shader_pos, std::move(shader));
+  }
+  return true;
+}
 void Technique::finalize() {
-  for (const auto& ShaderObject : ShaderObjects) {
-    glAttachShader(this->ShaderProgram, ShaderObject);
+  for (const auto& shaderObject : shaderObjects) {
+    std::cout << shaderObject->getID() << "\n";
+    glAttachShader(this->shaderProgram, shaderObject->getID());
   }
   GLint Success = 0;
   GLchar ErrorLog[1024] = {0};
-  glLinkProgram(ShaderProgram);
-  glGetProgramiv(ShaderProgram, GL_LINK_STATUS, &Success);
+  glLinkProgram(shaderProgram);
+  glGetProgramiv(shaderProgram, GL_LINK_STATUS, &Success);
   if (Success == 0) {
-    glGetProgramInfoLog(ShaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
+    glGetProgramInfoLog(shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
     fprintf(stderr, "Error linking shader program: '%s'\n", ErrorLog);
   }
 
-  glValidateProgram(ShaderProgram);
-  glGetProgramiv(ShaderProgram, GL_VALIDATE_STATUS, &Success);
+  glValidateProgram(shaderProgram);
+  glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, &Success);
   if (!Success) {
-    glGetProgramInfoLog(ShaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
+    glGetProgramInfoLog(shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
     fprintf(stderr, "Invalid shader program: '%s'\n", ErrorLog);
   }
-  for (const auto& ShaderObject : ShaderObjects) {
-    glDeleteShader(ShaderObject);
-  }
-  ShaderObjects.clear();
-}
-
-bool ReadFile(const char* pFileName, string& outFile) {
-  ifstream f(pFileName);
-  bool ret = false;
-  if (f.is_open()) {
-    string line;
-    while (getline(f, line)) {
-      outFile.append(line);
-      outFile.append("\n");
-    }
-    f.close();
-    ret = true;
-  }
-  return ret;
 }
 

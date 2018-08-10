@@ -1,17 +1,17 @@
-#include "launch.hpp"
+#include "../snow/launchHelper/explicit.hpp"
 using namespace std;
 
 void scene(shared_ptr<ParticleSystem> const pPs,
            shared_ptr<CollisionObjects> const pCO,
            shared_ptr<std::vector<shared_ptr<Mesh>>> const meshes) {
   int x = 0;
- float xpos = 0.8125,
+  float xpos = 0.8125,
         ypos = GRID_POS_Y + GRID_COLLISION_PLANE_OFFSET * GRID_SPACING,
         zpos = 2.4;
   while (x < 2) {
-    float height = GRID_DIM_Z* GRID_SPACING * 0.1;
-    float width = GRID_DIM_X* GRID_SPACING *0.2;
-    float length = GRID_DIM_Y* GRID_SPACING*0.2;
+    float height = GRID_DIM_Z * GRID_SPACING * 0.1;
+    float width = GRID_DIM_X * GRID_SPACING * 0.2;
+    float length = GRID_DIM_Y * GRID_SPACING * 0.2;
     float rand1 = (float(rand()) / 32727.0f) * width;
     float rand2 = (float(rand()) / 32727.0f) * height;
     float rand3 = (float(rand()) / 32727.0f) * length;

@@ -1,4 +1,4 @@
-#include "launch.hpp"
+#include "../snow/launchHelper/explicit.hpp"
 using namespace std;
 
 void scene(shared_ptr<ParticleSystem> const pPs,
@@ -26,6 +26,7 @@ class SnowBunnyScene : public Scene {
 
 int main() {
   SnowBunnyScene scene;
+
   if (!launchSnow(scene)) {
     return 1;
   }

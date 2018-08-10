@@ -1,48 +1,7 @@
-#include "myRenderingEngine.hpp"
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <glm.hpp>
-#include <iostream>
-#include <memory>
-#include "../defines/defines.hpp"
-#include "../object/mesh.hpp"
-#include "../object/texture.hpp"
-#include "math3d.hpp"
-#include "pipeline/pipeline.hpp"
-#include "stb_image.h"
-#include "technique/lightingtechnique.hpp"
-#include "technique/particletechnique.hpp"
-#include "technique/shadowMapTechnique.hpp"
-#include "technique/shadowmapbufferobject.hpp"
+#include "particleRenderer.hpp"
+
 using namespace std;
 
-GLFWwindow* window;
-
-GLuint VBO;
-GLuint IBO;
-
-const char* pVSFileName = "shader/shader.vert";
-const char* pFSFileName = "shader/shader.frag";
-LightingTechnique lighting;
-
-const char* pVShadowMapFileName = "shader/m_shadow.vert";
-const char* pFShadowMapFileName = "shader/m_shadow.frag";
-ShadowMapTechnique SMT;
-ShadowMapBufferObject SMFBO;
-
-const char* pVSParticleFileName = "shader/particleShader.vert";
-const char* pFSParticleFileName = "shader/particleShader.frag";
-ParticleTechnique PT;
-
-const char* pVSBorderFileName = "shader/borderShader.vert";
-const char* pFSBorderFileName = "shader/borderShader.frag";
-ParticleTechnique PTB;
-
-pipeline world;
 GLuint textureID;
 shared_ptr<Texture> helitex;
 
@@ -53,7 +12,7 @@ static float rotation = 0.0f;
 Vector3f lightpos;
 static float lighty = 0.0f;
 bool debug;
-void myRenderingEngine::fillBufferFromMeshes() {
+void ParticleRenderer::fillBufferFromMeshes() {
   for (int i = 0; i < meshes->size(); i++) {
     (*meshes)[i]->initVBO();
   }
@@ -61,7 +20,7 @@ void myRenderingEngine::fillBufferFromMeshes() {
   // grid->initVBO();
 }
 
-void myRenderingEngine::initVBO() {
+void ParticleRenderer::initVBO() {
   // VBO-Buffer Initialization
   glCullFace(GL_BACK);
   glEnable(GL_TEXTURE_2D);
@@ -82,83 +41,48 @@ void myRenderingEngine::initVBO() {
   world.setCamera(3.0, 3.5f, 14.0f, 2.5125f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 }
 
-void initShader() {
+void ParticleRenderer::initShader() {
   string vs, fs, gs;
   vs.clear();
   fs.clear();
   gs.clear();
-  if (!ReadFile(pVSParticleFileName, vs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
 
-  if (!ReadFile(pFSParticleFileName, fs)) {
-    fprintf(stderr, "Error: fs \n");
-    exit(1);
-  };
-  PT = ParticleTechnique();
-
-  if (!PT.init(vs, fs)) {
+  const char* pVSFileName = "shader/shader.vert";
+  const char* pFSFileName = "shader/shader.frag";
+  if (!PT.init("shader/particleShader.vert", "shader/particleShader.frag")) {
     printf("PT init failed");
   }
 
-  vs.clear();
-  fs.clear();
-  if (!ReadFile(pVSBorderFileName, vs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-
-  if (!ReadFile(pFSBorderFileName, fs)) {
-    fprintf(stderr, "Error: fs \n");
-    exit(1);
-  };
-
-  PTB = ParticleTechnique();
-
-  if (!PTB.init(vs, fs)) {
-    printf("PT init failed");
+  if (!PTB.init("shader/borderShader.vert", "shader/borderShader.frag")) {
+    printf("PTB init failed");
   }
 
-  vs.clear();
-  fs.clear();
-  if (!ReadFile(pVSFileName, vs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-
-  if (!ReadFile(pFSFileName, fs)) {
-    fprintf(stderr, "Error: fs \n");
-    exit(1);
-  };
-
-  lighting = LightingTechnique();
-  lighting.init(vs, fs);
-
+  lighting.init("shader/shader.vert", "shader/shader.frag");
   /*
+    const char* pVShadowMapFileName = "shader/m_shadow.vert";
+    const char* pFShadowMapFileName = "shader/m_shadow.frag";
 
-         vs.clear();
-         fs.clear();
+    vs.clear();
+    fs.clear();
 
-         if(!ReadFile(pVShadowMapFileName,vs)){
-           fprintf(stderr, "Error: vs\n");
-            exit(1);
-         };
+    if (!ReadFile(pVShadowMapFileName, vs)) {
+      fprintf(stderr, "Error: vs\n");
+      exit(1);
+    };
 
-         if(!ReadFile(pFShadowMapFileName,fs)){
-
-          fprintf(stderr, "Error: fs \n");
-          exit(1);
-         };
-         SMFBO = ShadowMapBufferObject();
-         SMFBO.Init(WINDOW_WIDTH,WINDOW_HEIGHT);
-         SMT=ShadowMapTechnique();
-         if(!SMT.init(vs,fs)){
-             printf("SMT init failed");
-         }
-  */
+    if (!ReadFile(pFShadowMapFileName, fs)) {
+      fprintf(stderr, "Error: fs \n");
+      exit(1);
+    };
+    SMFBO = ShadowMapBufferObject();
+    SMFBO.Init(WINDOW_WIDTH, WINDOW_HEIGHT);
+    SMT = ShadowMapTechnique();
+    if (!SMT.init(vs, fs)) {
+      printf("SMT init failed");
+    }
+    */
 }
-void myRenderingEngine::shadowMapPass() {
+void ParticleRenderer::shadowMapPass() {
   /*
       SMFBO.BindForWriting();
       glClear(GL_DEPTH_BUFFER_BIT);
@@ -180,7 +104,7 @@ void myRenderingEngine::shadowMapPass() {
 
   */
 }
-void myRenderingEngine::renderPass() {
+void ParticleRenderer::renderPass() {
   if (debug == true) {
     particlesystem->debug();
     grid->debug();
@@ -275,7 +199,7 @@ void myRenderingEngine::renderPass() {
   // grid."<<std::endl;
 }
 
-void myRenderingEngine::renderQueue() {
+void ParticleRenderer::renderQueue() {
   // shadowMapPass();
 
   renderPass();
@@ -319,7 +243,7 @@ static void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
   world.update(mouse_x, mouse_y);
   glfwSetCursorPos(window, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 }
-bool myRenderingEngine::init() {
+bool ParticleRenderer::init() {
   // GLFW INIT: ORDER IS IMPORTANT
   glfwSetErrorCallback(error_callback);
   if (!glfwInit()) exit(EXIT_FAILURE);
@@ -352,10 +276,10 @@ bool myRenderingEngine::init() {
   return 0;
 }
 
-void myRenderingEngine::render() { renderQueue(); }
-bool myRenderingEngine::shouldClose() { return !glfwWindowShouldClose(window); }
+void ParticleRenderer::render() { renderQueue(); }
+bool ParticleRenderer::shouldClose() { return !glfwWindowShouldClose(window); }
 
-void myRenderingEngine::stop() {
+void ParticleRenderer::stop() {
   glfwDestroyWindow(window);
   glfwTerminate();
   exit(EXIT_SUCCESS);

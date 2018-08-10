@@ -5,7 +5,7 @@
 class ParticleTechnique : public Technique {
  public:
   ParticleTechnique();
-  bool init(string vs, string fs);
+  bool init(std::string vs, std::string fs);
   void setWVP(const Matrix4f*);
 
  private:
@@ -13,3 +13,4 @@ class ParticleTechnique : public Technique {
 };
 
 #endif  // PARTICLETECHNIQUE_H
+

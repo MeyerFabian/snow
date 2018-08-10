@@ -1,4 +1,4 @@
-#include "launch.hpp"
+#include "../snow/launchHelper/explicit.hpp"
 using namespace std;
 void scene(shared_ptr<ParticleSystem> const pPs,
            shared_ptr<CollisionObjects> const pCO,
@@ -7,7 +7,7 @@ void scene(shared_ptr<ParticleSystem> const pPs,
   float xpos = 0.8125,
         ypos = GRID_POS_Y + GRID_COLLISION_PLANE_OFFSET * GRID_SPACING,
         zpos = 2.4;
-  while (x < 32*32*64) {
+  while (x < 32 * 32 * 64) {
     float height = 0.5;
     float width = 2.0;
     float length = 0.8;
@@ -30,7 +30,8 @@ void scene(shared_ptr<ParticleSystem> const pPs,
   sphere->setRotation(0, 0, 0);
 
   meshes->push_back(sphere);
-  //pCO->colliders->push_back(Collider(sphere, 0.3f, 1, Vector3f(5.0f, 0.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f)));
+  // pCO->colliders->push_back(Collider(sphere, 0.3f, 1, Vector3f(5.0f, 0.0f,
+  // 0.0f), Vector3f(0.0f, 0.0f, 0.0f)));
 }
 class SnowPlowTrackScene : public Scene {
  public:

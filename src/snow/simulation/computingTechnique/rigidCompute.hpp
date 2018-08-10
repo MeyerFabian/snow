@@ -5,7 +5,7 @@
 class RigidCompute : public Technique {
  public:
   RigidCompute();
-  bool init(string cs);
+  bool init(std::string cs);
   void setDt(const float dt);
   void setCritComp();
   void setCritStretch();

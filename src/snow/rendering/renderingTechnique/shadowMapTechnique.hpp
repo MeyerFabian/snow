@@ -5,7 +5,7 @@
 class ShadowMapTechnique : public Technique {
  public:
   ShadowMapTechnique();
-  bool init(string vs, string fs);
+  bool init(std::string vs, std::string fs);
   void setMVP(const Matrix4f* m);
   void setTex(unsigned int texture);
 
@@ -15,3 +15,4 @@ class ShadowMapTechnique : public Technique {
 };
 
 #endif  // SHADOW_MAP_TECHNIQUE_H
+

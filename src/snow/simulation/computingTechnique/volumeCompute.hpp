@@ -1,11 +1,11 @@
-#ifndef MASSCOMPUTE_H
-#define MASSCOMPUTE_H
+#ifndef VOLUMECOMPUTE_H
+#define VOLUMECOMPUTE_H
 #include "../../defines/defines.hpp"
 #include "../../shader/technique.hpp"
 #include "math3d.hpp"
-class MassCompute : public Technique {
+class VolumeCompute : public Technique {
  public:
-  bool init(string cs);
+  bool init(std::string cs);
   void setGridPos(const float gridPosx, const float gridPosy,
                   const float gridPosz);
   void setGridDim(const int gridDimx, const int gridDimy, const int gridDimz);
@@ -30,5 +30,5 @@ class MassCompute : public Technique {
   GLuint critStretch;
   GLuint indexSize;
 };
-#endif  // MASSCOMPUTE_H
+#endif  // VOLUMECOMPUTE
 

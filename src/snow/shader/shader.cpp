@@ -4,7 +4,8 @@
 #include <iostream>
 #include <sstream>
 
-Shader::Shader(const ShaderType &t) : type(t) {
+Shader::Shader(const ShaderType &t, const std::string &filename)
+    : type(t), filename(filename) {
   // Get the type of the shader
   GLuint gl_type;
   switch (type) {
@@ -24,7 +25,7 @@ Shader::Shader(const ShaderType &t) : type(t) {
       gl_type = GL_FRAGMENT_SHADER;
       break;
     case ShaderType::COMPUTE:
-      gl_type = GL_TESS_CONTROL_SHADER;
+      gl_type = GL_COMPUTE_SHADER;
       break;
   }
 
@@ -34,20 +35,9 @@ Shader::Shader(const ShaderType &t) : type(t) {
   id = glCreateShader(gl_type);
 }
 
-Shader::~Shader() {}
+Shader::~Shader() { glDeleteShader(id); }
 
-void Shader::loadFromString(const std::string &sourceString) {
-  // Keep hold of a copy of the source
-  source = sourceString;
-
-  // Get the source as a pointer to an array of characters
-  const char *sourceChars = source.c_str();
-
-  // Associate the source with the shader id
-  glShaderSource(id, 1, &sourceChars, NULL);
-}
-
-void Shader::loadFromFile(const std::string &filename) {
+void Shader::loadFromFile() {
   std::ifstream file;
 
   file.open(filename.c_str());
@@ -57,7 +47,6 @@ void Shader::loadFromFile(const std::string &filename) {
     exit(-1);
   }
 
-  // Create a string stream
   std::stringstream stream;
 
   // Dump the contents of the file into it
@@ -68,15 +57,14 @@ void Shader::loadFromFile(const std::string &filename) {
 
   // Convert the StringStream into a string
   source = stream.str();
-
-  // Get the source string as a pointer to an array of characters
-  const char *sourceChars = source.c_str();
-
-  // Associate the source with the shader id
-  glShaderSource(id, 1, &sourceChars, NULL);
 }
 
 void Shader::compile() {
+  auto sourceChars = source.c_str();
+
+  // Associate the source with the shader id
+  glShaderSource(id, 1, &sourceChars, NULL);
+
   // Compile the shader
   glCompileShader(id);
 

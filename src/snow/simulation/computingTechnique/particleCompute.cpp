@@ -1,20 +1,24 @@
 #include "particleCompute.hpp"
 #include <iostream>
 ParticleCompute::ParticleCompute() {}
-bool ParticleCompute::init(string cs) {
-  Technique::init();
-  addShader(cs.c_str(), GL_COMPUTE_SHADER);
+bool ParticleCompute::init(std::string filename) {
+  if (!addShader(std::make_shared<Shader>(ShaderType::COMPUTE, filename))) {
+    return false;
+  }
 
-  finalize();
+  for (auto& shaderObject : shaderObjects) {
+    shaderObject->loadFromFile();
+    shaderObject->compile();
+  }
 
-  dt = glGetUniformLocation(this->ShaderProgram, "dt");
-  critComp = glGetUniformLocation(this->ShaderProgram, "critComp");
-  critStretch = glGetUniformLocation(this->ShaderProgram, "critStretch");
-  indexSize = glGetUniformLocation(this->ShaderProgram, "indexSize");
+  dt = glGetUniformLocation(this->shaderProgram, "dt");
+  critComp = glGetUniformLocation(this->shaderProgram, "critComp");
+  critStretch = glGetUniformLocation(this->shaderProgram, "critStretch");
+  indexSize = glGetUniformLocation(this->shaderProgram, "indexSize");
   collisionOffset =
-      glGetUniformLocation(this->ShaderProgram, "collisionOffset");
-  gGridDimension = glGetUniformLocation(this->ShaderProgram, "gGridDimension");
-  gNumColliders = glGetUniformLocation(this->ShaderProgram, "gNumColliders");
+      glGetUniformLocation(this->shaderProgram, "collisionOffset");
+  gGridDimension = glGetUniformLocation(this->shaderProgram, "gGridDimension");
+  gNumColliders = glGetUniformLocation(this->shaderProgram, "gNumColliders");
 
   return true;
 }

@@ -1,25 +1,33 @@
 #include "lightingtechnique.hpp"
 
 LightingTechnique::LightingTechnique() {}
-void LightingTechnique::init(string vs, string fs) {
-  addShader(vs.c_str(), GL_VERTEX_SHADER);
-  addShader(fs.c_str(), GL_FRAGMENT_SHADER);
-
+bool LightingTechnique::init(string vs, string fs) {
+  if (!addShader(std::make_shared<Shader>(ShaderType::VERTEX, vs))) {
+    return false;
+  }
+  if (!addShader(std::make_shared<Shader>(ShaderType::FRAGMENT, fs))) {
+    return false;
+  }
+  for (auto& shaderObject : shaderObjects) {
+    shaderObject->loadFromFile();
+    shaderObject->compile();
+  }
   finalize();
 
-  gWorldLocation = glGetUniformLocation(this->ShaderProgram, "gModel");
-  gSampler = glGetUniformLocation(this->ShaderProgram, "gSampler");
-  gLightLocation = glGetUniformLocation(this->ShaderProgram, "gLightPosition");
-  gAmbient = glGetUniformLocation(this->ShaderProgram, "gAmbient");
-  gColor = glGetUniformLocation(this->ShaderProgram, "gColor");
-  gDiffuse = glGetUniformLocation(this->ShaderProgram, "gDiffuse");
-  gMVPLocation = glGetUniformLocation(this->ShaderProgram, "gMVP");
-  gInverse = glGetUniformLocation(this->ShaderProgram, "inverse");
-  gSpecInt = glGetUniformLocation(this->ShaderProgram, "gSpecInt");
-  gSpecPower = glGetUniformLocation(this->ShaderProgram, "gSpecPower");
-  gCameraPos = glGetUniformLocation(this->ShaderProgram, "gCameraPos");
-  gShadowMap = glGetUniformLocation(this->ShaderProgram, "gShadowMap");
-  gLightMVP = glGetUniformLocation(this->ShaderProgram, "gLightMVP");
+  gWorldLocation = glGetUniformLocation(this->shaderProgram, "gModel");
+  gSampler = glGetUniformLocation(this->shaderProgram, "gSampler");
+  gLightLocation = glGetUniformLocation(this->shaderProgram, "gLightPosition");
+  gAmbient = glGetUniformLocation(this->shaderProgram, "gAmbient");
+  gColor = glGetUniformLocation(this->shaderProgram, "gColor");
+  gDiffuse = glGetUniformLocation(this->shaderProgram, "gDiffuse");
+  gMVPLocation = glGetUniformLocation(this->shaderProgram, "gMVP");
+  gInverse = glGetUniformLocation(this->shaderProgram, "inverse");
+  gSpecInt = glGetUniformLocation(this->shaderProgram, "gSpecInt");
+  gSpecPower = glGetUniformLocation(this->shaderProgram, "gSpecPower");
+  gCameraPos = glGetUniformLocation(this->shaderProgram, "gCameraPos");
+  gShadowMap = glGetUniformLocation(this->shaderProgram, "gShadowMap");
+  gLightMVP = glGetUniformLocation(this->shaderProgram, "gLightMVP");
+  return true;
 }
 
 void LightingTechnique::setShadowMapTexture(unsigned int texture) {

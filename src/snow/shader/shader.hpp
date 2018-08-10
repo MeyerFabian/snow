@@ -15,22 +15,22 @@ enum class ShaderType {
 
 class Shader {
  public:
-  Shader(const ShaderType &type);
+  Shader(const ShaderType &type, const std::string &filename);
   ~Shader();
-
-  void loadFromString(const std::string &sourceString);
-  void loadFromFile(const std::string &filename);
-
+  void loadFromFile();
   void compile();
+  void destroy();
 
-  GLuint getId() { return id; }
-  std::string getSource() { return source; }
-  ShaderType getType() { return type; }
+  std::string getSource() const { return source; }
+  std::string getFileName() const { return filename; }
+  ShaderType getType() const { return type; }
+  const GLuint getID() const { return id; }
 
  private:
   GLuint id;
   ShaderType type;
   std::string source;
+  std::string filename;
 };
 
 #endif  // SHADER_H

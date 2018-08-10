@@ -1,4 +1,4 @@
-#include "launch.hpp"
+#include "../snow/launchHelper/explicit.hpp"
 using namespace std;
 void scene(shared_ptr<ParticleSystem> const pPs,
            shared_ptr<CollisionObjects> const pCO,
@@ -28,7 +28,7 @@ void scene(shared_ptr<ParticleSystem> const pPs,
 
 class SnowSquareScene : public Scene {
  public:
-  SnowSquareScene () = default;
+  SnowSquareScene() = default;
   virtual void init(shared_ptr<ParticleSystem> const pPs,
                     shared_ptr<CollisionObjects> const pCO,
                     shared_ptr<std::vector<shared_ptr<Mesh>>> const meshes) {

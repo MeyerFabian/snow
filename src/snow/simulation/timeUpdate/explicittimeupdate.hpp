@@ -3,14 +3,14 @@
 #include "../../defines/defines.hpp"
 #include "../../object/collisionObjects.hpp"
 #include "../../object/grid.hpp"
-#include "../technique/g2pCompute.hpp"
-#include "../technique/massCompute.hpp"
-#include "../technique/p2gCompute.hpp"
-#include "../technique/particleCompute.hpp"
-#include "../technique/resetGridCompute.hpp"
-#include "../technique/rigidCompute.hpp"
-#include "../technique/velGridCompute.hpp"
-#include "../technique/volumeCompute.hpp"
+#include "../computingTechnique/g2pCompute.hpp"
+#include "../computingTechnique/massCompute.hpp"
+#include "../computingTechnique/p2gCompute.hpp"
+#include "../computingTechnique/particleCompute.hpp"
+#include "../computingTechnique/resetGridCompute.hpp"
+#include "../computingTechnique/rigidCompute.hpp"
+#include "../computingTechnique/velGridCompute.hpp"
+#include "../computingTechnique/volumeCompute.hpp"
 #include "../timeUpdate.hpp"
 class ExplicitTimeUpdate : public TimeUpdate {
  public:
@@ -18,7 +18,15 @@ class ExplicitTimeUpdate : public TimeUpdate {
       std::shared_ptr<CollisionObjects> const collisonsToSimulate,
       shared_ptr<ParticleSystem> const particlesToSimulate,
       std::shared_ptr<Grid> const grid)
-      : TimeUpdate(collisonsToSimulate, particlesToSimulate, grid) {}
+      : TimeUpdate(collisonsToSimulate, particlesToSimulate, grid),
+        cVolume(VolumeCompute()),
+        p2g(P2GCompute()),
+        g2p(G2PCompute()),
+        cMass(MassCompute()),
+        rg(ResetGridCompute()),
+        g2g(VelGridCompute()),
+        pU(ParticleCompute()),
+        rigidSim(RigidCompute()) {}
   void init();
   void update(double dt);
   VolumeCompute cVolume;

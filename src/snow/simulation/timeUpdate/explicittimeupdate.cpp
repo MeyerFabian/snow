@@ -5,77 +5,23 @@ void ExplicitTimeUpdate::init() {
   grid->initSSBO();
   collisionObjects->initSSBO();
 
-  string cs;
+  rg.init("shader/resetGrid.glsl");
+  cMass.init("shader/computeMass.glsl");
+  cVolume.init("shader/computeParticleVolume.glsl");
+  rigidSim.init("shader/updateRigids.glsl");
+  p2g.init("shader/updateGridMassVel.glsl");
+  g2g.init("shader/updateGridVelCollision.glsl");
+  g2p.init("shader/updateParticleVel.glsl");
+  pU.init("shader/updateParticles.glsl");
 
-  const char* pResetGridFileName = "shader/resetGrid.glsl";
-  if (!ReadFile(pResetGridFileName, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  rg.init(cs);
-
-  cs.clear();
-  const char* pMassFileName = "shader/computeMass.glsl";
-  if (!ReadFile(pMassFileName, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  cMass.init(cs);
-
-  cs.clear();
-  const char* pComputeVolumeFileName = "shader/computeParticleVolume.glsl";
-  if (!ReadFile(pComputeVolumeFileName, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  cVolume.init(cs);
-
-  cs.clear();
-  const char* pRigidFileName = "shader/updateRigids.glsl";
-  if (!ReadFile(pRigidFileName, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  rigidSim.init(cs);
-
-  cs.clear();
-  const char* pPCFileName = "shader/updateGridMassVel.glsl";
-  if (!ReadFile(pPCFileName, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  p2g.init(cs);
-
-  cs.clear();
-  const char* pUpdateGridVelocity = "shader/updateGridVelCollision.glsl";
-  if (!ReadFile(pUpdateGridVelocity, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  g2g.init(cs);
-
-  cs.clear();
-  const char* pUpdateParticleVelocity = "shader/updateParticleVel.glsl";
-  if (!ReadFile(pUpdateParticleVelocity, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  g2p.init(cs);
-
-  cs.clear();
-  const char* pUpdateParticles = "shader/updateParticles.glsl";
-  if (!ReadFile(pUpdateParticles, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  pU.init(cs);
-
-  rg.plugTechnique();
+  rg.use();
   glDispatchCompute(
       GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
-  cMass.plugTechnique();
+  particlesystem->debug();
+
+  cMass.use();
   cMass.setGridPos(grid->x_off, grid->y_off, grid->z_off);
   cMass.setGridDim(grid->dimx, grid->dimy, grid->dimz);
   cMass.setGridSpacing(grid->h);
@@ -85,7 +31,7 @@ void ExplicitTimeUpdate::init() {
       PARTICLE_TO_GRID_SIZE, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
-  cVolume.plugTechnique();
+  cVolume.use();
   cVolume.setGridPos(grid->x_off, grid->y_off, grid->z_off);
   cVolume.setGridDim(grid->dimx, grid->dimy, grid->dimz);
   cVolume.setGridSpacing(grid->h);
@@ -95,24 +41,22 @@ void ExplicitTimeUpdate::init() {
       (particlesystem->particles->size()) / NUM_OF_GPGPU_THREADS_X + 1,
       PARTICLE_TO_GRID_SIZE, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-  // particlesystem->debug();
+  particlesystem->debug();
   // grid->debug();
 }
 
 void ExplicitTimeUpdate::update(double dt) {
-  // std::cout<<"Frame begin:"<<std::endl;
-
-  rigidSim.plugTechnique();
+  rigidSim.use();
   rigidSim.setDt(dt);
   glDispatchCompute(collisionObjects->colliders->size(), 1, 1);
 
   collisionObjects->updateRenderBuffer(dt);
-  rg.plugTechnique();
+  rg.use();
   glDispatchCompute(
       GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
-  p2g.plugTechnique();
+  p2g.use();
   p2g.setGridPos(grid->x_off, grid->y_off, grid->z_off);
   p2g.setGridDim(grid->dimx, grid->dimy, grid->dimz);
   p2g.setGridSpacing(grid->h);
@@ -128,7 +72,7 @@ void ExplicitTimeUpdate::update(double dt) {
       PARTICLE_TO_GRID_SIZE, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
-  g2g.plugTechnique();
+  g2g.use();
   g2g.setDt(dt);
   g2g.setGridDim(grid->dimx, grid->dimy, grid->dimz);
   g2g.setCollisionOffset();
@@ -136,10 +80,8 @@ void ExplicitTimeUpdate::update(double dt) {
   glDispatchCompute(
       GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-  //
-  // grid->debug();
 
-  g2p.plugTechnique();
+  g2p.use();
   g2p.setGridPos(grid->x_off, grid->y_off, grid->z_off);
   g2p.setGridDim(grid->dimx, grid->dimy, grid->dimz);
   g2p.setGridSpacing(grid->h);
@@ -151,13 +93,8 @@ void ExplicitTimeUpdate::update(double dt) {
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
   // particlesystem->debug();
-  // particlesystem->debug();
   // grid->debug();
-  // std::cout<<"Vor FEp Update"<<std::endl;
-
-  // particlesystem->debug();
-  // grid->debug();
-  pU.plugTechnique();
+  pU.use();
   pU.setDt(dt);
   pU.setCritComp();
   pU.setCritStretch();
@@ -168,15 +105,5 @@ void ExplicitTimeUpdate::update(double dt) {
   glDispatchCompute(
       (particlesystem->particles->size()) / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-
-  // std::cout<<"Nach FEp Update"<<std::endl;
-
-  /*
-   * obsolete can be done in previous compute shader
-      divVelMass.plugTechnique();
-      glDispatchCompute(GRID_DIM_X * GRID_DIM_Y *
-   GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
-      glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-  */
 }
 

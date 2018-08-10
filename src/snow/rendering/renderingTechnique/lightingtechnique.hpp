@@ -8,7 +8,7 @@ using namespace std;
 class LightingTechnique : public Technique {
  public:
   LightingTechnique();
-  void init(string vs, string fs);
+  bool init(string vs, string fs);
   void setWVP(const Matrix4f*);
   void setWorldMatrix(const Matrix4f*);
   void setSampler(int sampler);
@@ -38,3 +38,4 @@ class LightingTechnique : public Technique {
 };
 
 #endif  // LIGHTINGTECHNIQUE_H
+

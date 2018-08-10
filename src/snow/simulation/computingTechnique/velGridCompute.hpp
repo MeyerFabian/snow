@@ -1,11 +1,11 @@
-#ifndef PARTICLECOMPUTE_H
-#define PARTICLECOMPUTE_H
+#ifndef VELGRIDCOMPUTE_H
+#define VELGRIDCOMPUTE_H
 #include "../../defines/defines.hpp"
 #include "../../shader/technique.hpp"
-class ParticleCompute : public Technique {
+class VelGridCompute : public Technique {
  public:
-  ParticleCompute();
-  bool init(string cs);
+  VelGridCompute();
+  bool init(std::string cs);
   void setDt(const float dt);
   void setCritComp();
   void setCritStretch();
@@ -24,5 +24,5 @@ class ParticleCompute : public Technique {
   GLuint indexSize;
 };
 
-#endif  // PARTICLECOMPUTE_H
+#endif  // VELGRIDCOMPUTE_H
 

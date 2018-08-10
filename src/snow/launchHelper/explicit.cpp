@@ -1,19 +1,4 @@
-#ifndef LAUNCHER_H
-#define LAUNCHER_H
-#include <time.h>
-#include <iostream>
-#include <memory>
-#include <vector>
-#include "../snow/defines/defines.hpp"
-#include "../snow/object/collisionObjects.hpp"
-#include "../snow/object/grid.hpp"
-#include "../snow/object/mesh.hpp"
-#include "../snow/object/particlesystem.hpp"
-#include "../snow/rendering/myRenderingEngine.hpp"
-#include "../snow/scene/Scene.hpp"
-#include "../snow/simulation/myPhysicEngine.hpp"
-#include "../snow/simulation/timeUpdate.hpp"
-#include "GLFW/glfw3.h"
+#include "explicit.hpp"
 int launchSnow(Scene& scene) {
   shared_ptr<ParticleSystem> const pPs = make_shared<ParticleSystem>();
 
@@ -91,30 +76,27 @@ int launchSnow(Scene& scene) {
                                      Vector3f(0.0, 0.0f, -1.0f)));
 
   /*
-          Mesh halfplane;
-  halfplane.setPosition(0.7125f,0.7125f,0.7125f);
-  pCo->colliders->push_back(Collider(halfplane));
+        Mesh halfplane;
+halfplane.setPosition(0.7125f,0.7125f,0.7125f);
+pCo->colliders->push_back(Collider(halfplane));
 */
 
   /*
-  Mesh quad;
-  quad.LoadMesh("model/box.obj");
-  quad.setPosition(5.0f,-3.0f,5.0f);
-  quad.setScale(10.0f,1.0f,10.0f);
-  quad.setRotation(0,0,0);
-  meshes->push_back(std::move(quad));
+Mesh quad;
+quad.LoadMesh("model/box.obj");
+quad.setPosition(5.0f,-3.0f,5.0f);
+quad.setScale(10.0f,1.0f,10.0f);
+quad.setRotation(0,0,0);
+meshes->push_back(std::move(quad));
 
 */
-  shared_ptr<renderingEngine> const rE =
-      make_shared<myRenderingEngine>(meshes, pPs, grid);
-
+  shared_ptr<Renderer> const rE =
+      make_shared<ParticleRenderer>(meshes, pPs, grid);
   shared_ptr<TimeUpdate> const update =
       make_shared<ExplicitTimeUpdate>(pCO, pPs, grid);
 
   shared_ptr<physicEngine> const pE = make_shared<myPhysicEngine>(update);
 
-  cout << "init renderingEngine" << endl;
-  std::cout << std::flush;
   bool re_err = rE->init();
 
   if (re_err) {
@@ -140,6 +122,4 @@ int launchSnow(Scene& scene) {
   rE->stop();
   return 0;
 }
-
-#endif
 

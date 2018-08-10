@@ -5,30 +5,27 @@
 #include <GL/glew.h>
 
 #include <string.h>
+#include <algorithm>
 #include <fstream>
+#include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
-
+#include "shader.hpp"
 #define INVALID_UNIFORM_LOCATION 0xffffffff
-using namespace std;
 
 class Technique {
  protected:
-  GLuint ShaderProgram;
-
- private:
-  vector<GLuint> ShaderObjects;
-
- public:
-  void init();
   Technique();
   ~Technique();
-  GLuint getShaderProgram();
-  void plugTechnique();
-  void addShader(const char* pShaderText, GLenum ShaderType);
+  GLuint shaderProgram;
   void finalize();
+  bool addShader(std::shared_ptr<Shader>&& ptr);
+  std::vector<std::shared_ptr<Shader>> shaderObjects;
+
+ public:
+  void use();
 };
 
-bool ReadFile(const char* pFileName, string& outFile);
-
 #endif  // TECHNIQUE_H
+

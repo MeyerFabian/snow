@@ -1,20 +1,26 @@
 #include "g2pCompute.hpp"
 #include <iostream>
-bool G2PCompute::init(string cs) {
-  Technique::init();
-  addShader(cs.c_str(), GL_COMPUTE_SHADER);
+bool G2PCompute::init(std::string filename) {
+  if (!addShader(std::make_shared<Shader>(ShaderType::COMPUTE, filename))) {
+    return false;
+  }
+
+  for (auto& shaderObject : shaderObjects) {
+    shaderObject->loadFromFile();
+    shaderObject->compile();
+  }
 
   finalize();
 
-  gGridPos = glGetUniformLocation(this->ShaderProgram, "gGridPos");
-  gGridDim = glGetUniformLocation(this->ShaderProgram, "gGridDim");
-  h = glGetUniformLocation(this->ShaderProgram, "gridSpacing");
-  young = glGetUniformLocation(this->ShaderProgram, "young");
-  poisson = glGetUniformLocation(this->ShaderProgram, "poisson");
-  hardening = glGetUniformLocation(this->ShaderProgram, "hardening");
-  critComp = glGetUniformLocation(this->ShaderProgram, "critComp");
-  critStretch = glGetUniformLocation(this->ShaderProgram, "critStretch");
-  indexSize = glGetUniformLocation(this->ShaderProgram, "indexSize");
+  gGridPos = glGetUniformLocation(this->shaderProgram, "gGridPos");
+  gGridDim = glGetUniformLocation(this->shaderProgram, "gGridDim");
+  h = glGetUniformLocation(this->shaderProgram, "gridSpacing");
+  young = glGetUniformLocation(this->shaderProgram, "young");
+  poisson = glGetUniformLocation(this->shaderProgram, "poisson");
+  hardening = glGetUniformLocation(this->shaderProgram, "hardening");
+  critComp = glGetUniformLocation(this->shaderProgram, "critComp");
+  critStretch = glGetUniformLocation(this->shaderProgram, "critStretch");
+  indexSize = glGetUniformLocation(this->shaderProgram, "indexSize");
   if (gGridPos == INVALID_UNIFORM_LOCATION ||
       gGridDim == INVALID_UNIFORM_LOCATION ||
       young == INVALID_UNIFORM_LOCATION ||

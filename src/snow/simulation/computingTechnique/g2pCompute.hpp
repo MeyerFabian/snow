@@ -1,12 +1,12 @@
-#ifndef P2GCOMPUTE_H
-#define P2GCOMPUTE_H
+#ifndef G2PCOMPUTE_H
+#define G2PCOMPUTE_H
 #include "../../defines/defines.hpp"
 #include "../../shader/technique.hpp"
 #include "math3d.hpp"
-class P2GCompute : public Technique {
+class G2PCompute : public Technique {
  public:
-  P2GCompute() = default;
-  bool init(string cs);
+  G2PCompute() = default;
+  bool init(std::string cs);
   void setGridPos(const float gridPosx, const float gridPosy,
                   const float gridPosz);
   void setGridDim(const int gridDimx, const int gridDimy, const int gridDimz);
@@ -31,5 +31,5 @@ class P2GCompute : public Technique {
   GLuint critStretch;
   GLuint indexSize;
 };
-#endif  // P2GCOMPUTE_H
+#endif  // G2PCOMPUTE_H
 
