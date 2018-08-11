@@ -6,14 +6,9 @@ out float z;
 out float w;
 void main(void)
 {
+	gl_Position = gMVP* vec4(Position.xyz,1.0);
 
-
-
-
-
-    gl_Position = gMVP* vec4(Position.xyz,1.0);
-
-    z = Position.x;
-    w = Position.w;
-    gl_PointSize = 8;
+	z = Position.x;
+	w = Position.w;
+	gl_PointSize = 8;
 }

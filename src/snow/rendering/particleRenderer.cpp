@@ -14,14 +14,12 @@ ParticleRenderer::ParticleRenderer(
     : Window_Context(),
       Renderer(meshes, particles, grid),
       lighting(LightingTechnique()),
-      PT(ParticleTechnique()),
-      PTB(ParticleTechnique()) {}
+      particleImposter(ParticleTechnique()),
+      gridBorderLines(ParticleTechnique()) {}
 void ParticleRenderer::fillBufferFromMeshes() {
   for (int i = 0; i < meshes->size(); i++) {
     (*meshes)[i]->initVBO();
   }
-  // particlesystem->initVBO();
-  // grid->initVBO();
 }
 
 void ParticleRenderer::initVBO() {
@@ -46,38 +44,12 @@ void ParticleRenderer::initVBO() {
 }
 
 void ParticleRenderer::initShader() {
-  if (!PT.init("shader/particleShader.vert", "shader/particleShader.frag")) {
-    printf("PT init failed");
-  }
-
-  if (!PTB.init("shader/borderShader.vert", "shader/borderShader.frag")) {
-    printf("PTB init failed");
-  }
-
+  particleImposter.init("shader/particleShader.vert",
+                        "shader/particleShader.frag");
+  gridBorderLines.init("shader/borderShader.vert", "shader/borderShader.frag");
   lighting.init("shader/shader.vert", "shader/shader.frag");
-  /*
-    const char* pVShadowMapFileName = "shader/m_shadow.vert";
-    const char* pFShadowMapFileName = "shader/m_shadow.frag";
 
-    vs.clear();
-    fs.clear();
-
-    if (!ReadFile(pVShadowMapFileName, vs)) {
-      fprintf(stderr, "Error: vs\n");
-      exit(1);
-    };
-
-    if (!ReadFile(pFShadowMapFileName, fs)) {
-      fprintf(stderr, "Error: fs \n");
-      exit(1);
-    };
-    SMFBO = ShadowMapBufferObject();
-    SMFBO.Init(WINDOW_WIDTH, WINDOW_HEIGHT);
-    SMT = ShadowMapTechnique();
-    if (!SMT.init(vs, fs)) {
-      printf("SMT init failed");
-    }
-    */
+  //  SMT.init("shader/m_shadow.vert", "shader/m_shadow.frag")
 }
 void ParticleRenderer::shadowMapPass() {
   /*
@@ -85,7 +57,7 @@ void ParticleRenderer::shadowMapPass() {
       glClear(GL_DEPTH_BUFFER_BIT);
 
 
-      SMT.plugTechnique();
+      SMT.use();
 
       pipeline light;
       lightpos = Vector3f(0.0,lighty+ 3.0f,1.0f);
@@ -107,7 +79,7 @@ void ParticleRenderer::renderPass() {
     grid->debug();
   }
   // pipeline light;
-  lightpos = Vector3f(4.0, 5.0f, 4.0f);
+  lightpos = Vector3f(4.0f, 5.0f, 4.0f);
 
   // SMFBO.BindForReading(GL_TEXTURE1);
 
@@ -115,85 +87,39 @@ void ParticleRenderer::renderPass() {
 
   glClearColor(0.5, 0.5, 0.5, 0);
 
-  //
-  glm::mat4x4 matrix;
-  glm::mat4x4 tmatrix;
-
   lighting.use();
-  lighting.setSampler(0);
-  lighting.setLight(lightpos, 0.1, Vector3f(1.0, 1.0, 1.0), 0.2);
-  Vector3f specIntens(1.0, 1.0, 1.0);
-  lighting.setSpecularIntensity(specIntens);
-  lighting.setSpecularPower(10);
-  lighting.setCameraPos(world.getCameraPos());
+  lighting.updateUniform("gLightPosition", lightpos.x, lightpos.y, lightpos.z);
+  lighting.updateUniform("gAmbient", 0.1f);
+  lighting.updateUniform("gColor", 1.0f, 1.0f, 1.0f);
+  lighting.updateUniform("gDiffuse", 0.2f);
+  lighting.updateUniform("gSpecInt", 1.0f, 1.0f, 1.0f);
+  lighting.updateUniform("gSpecPower", 10);
+  lighting.updateUniform("gCameraPos", world.getCameraPos().x,
+                         world.getCameraPos().y, world.getCameraPos().z);
   for (int i = 0; i < meshes->size(); i++) {
     world.setPosition((*meshes)[i]->getPosition());
     world.setScale((*meshes)[i]->getScale());
     world.setRotation((*meshes)[i]->getRotation());
-    matrix = glm::mat4x4(
-        world.getModelMatrix()->m[0][0], world.getModelMatrix()->m[0][1],
-        world.getModelMatrix()->m[0][2], world.getModelMatrix()->m[0][3],
-        world.getModelMatrix()->m[1][0], world.getModelMatrix()->m[1][1],
-        world.getModelMatrix()->m[1][2], world.getModelMatrix()->m[1][3],
-        world.getModelMatrix()->m[2][0], world.getModelMatrix()->m[2][1],
-        world.getModelMatrix()->m[2][2], world.getModelMatrix()->m[2][3],
-        world.getModelMatrix()->m[3][0], world.getModelMatrix()->m[3][1],
-        world.getModelMatrix()->m[3][2], world.getModelMatrix()->m[3][3]);
-    tmatrix = glm::inverse(matrix);
-    matrix = glm::transpose(tmatrix);
 
-    // lighting.setShadowMapTexture(1);
-    lighting.setWorldMatrix(world.getModelMatrix());
-    lighting.setInverse(&matrix);
-    lighting.setWVP(world.getMVP());
-    lighting.setLightMVP(world.getMVP());  // TODO
+    lighting.updateUniform("gMVP", world.getMVP());
+    lighting.updateUniform("gModel", world.getModelMatrix());
 
     (*meshes)[i]->Render();
-    // world.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
-
-    /*
-    matrix= glm::mat4x4(    world.getModelMatrix()->m[0][0],
-    world.getModelMatrix()->m[0][1], world.getModelMatrix()->m[0][2],
-    world.getModelMatrix()->m[0][3], world.getModelMatrix()->m[1][0],
-    world.getModelMatrix()->m[1][1], world.getModelMatrix()->m[1][2],
-    world.getModelMatrix()->m[1][3], world.getModelMatrix()->m[2][0],
-    world.getModelMatrix()->m[2][1], world.getModelMatrix()->m[2][2],
-    world.getModelMatrix()->m[2][3], world.getModelMatrix()->m[3][0],
-    world.getModelMatrix()->m[3][1], world.getModelMatrix()->m[3][2],
-    world.getModelMatrix()->m[3][3]
-        );
-    tmatrix=glm::inverse(matrix);
-    matrix=glm::transpose(tmatrix);
-
-    lighting.setWorldMatrix(world.getModelMatrix());
-    lighting.setInverse(&matrix);
-    lighting.setWVP(world.getMVP());
-    lighting.setLightMVP(world.getMVP());
-    */
   }
-  // world.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
-  // glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
   world.setPosition(Vector3f(0.0f, 0.0f, 0.0f));
   world.setScale(Vector3f(1.0f, 1.0f, 1.0f));
   world.setRotation(Vector3f(0.0f, 0.0f, 0.0f));
 
-  PTB.use();
-  PTB.setWVP(world.getMVP());
+  gridBorderLines.use();
+  gridBorderLines.updateUniform("gMVP", world.getMVP());
   grid->renderBorders();
-  // particlesystem->updateVBOBuffer();
-  PT.use();
-  PT.setWVP(world.getMVP());
-
+  particleImposter.use();
+  particleImposter.updateUniform("gMVP", world.getMVP());
   particlesystem->render();
 
   glfwSwapBuffers(window);
   glfwPollEvents();
-  // double timeS = glfwGetTime ();
-  // grid->render();
-  // double timeE = glfwGetTime();
-  // std::cout << (timeE - timeS)*1000 << " ms for rendering the
-  // grid."<<std::endl;
 }
 
 void ParticleRenderer::renderQueue() {

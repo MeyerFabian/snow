@@ -28,8 +28,8 @@ class ParticleRenderer : public Window_Context, public Renderer {
   virtual bool shouldClose() override;
   virtual void stop() override;
   LightingTechnique lighting;
-  ParticleTechnique PT;
-  ParticleTechnique PTB;
+  ParticleTechnique particleImposter;
+  ParticleTechnique gridBorderLines;
   GLuint VBO;
   GLuint IBO;
   void fillBufferFromMeshes();
