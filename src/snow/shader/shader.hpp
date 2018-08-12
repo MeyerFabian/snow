@@ -2,6 +2,9 @@
 #define SHADER_H
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 #include <string>
 
 enum class ShaderType {
@@ -17,20 +20,27 @@ class Shader {
  public:
   Shader(const ShaderType &type, const std::string &filename);
   ~Shader();
-  void loadFromFile();
-  void compile();
-  void destroy();
 
-  std::string getSource() const { return source; }
-  std::string getFileName() const { return filename; }
-  ShaderType getType() const { return type; }
-  const GLuint getID() const { return id; }
+  void load_from_file();
+  void upload();
+
+  std::string get_source() const { return source; }
+  std::string get_file_name() const { return filename; }
+  ShaderType get_type() const { return type; }
+  GLuint get_id() const { return id; }
+  bool is_uploaded() const { return uploaded; }
 
  private:
-  GLuint id;
+  void gl_create_id();
+  bool gl_compile();
+  void gl_delete();
+
   ShaderType type;
-  std::string source;
   std::string filename;
+
+  std::string source;
+  GLuint id;
+  bool uploaded = false;
 };
 
 #endif  // SHADER_H

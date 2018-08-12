@@ -88,21 +88,21 @@ void ParticleRenderer::renderPass() {
   glClearColor(0.5, 0.5, 0.5, 0);
 
   lighting.use();
-  lighting.updateUniform("gLightPosition", lightpos.x, lightpos.y, lightpos.z);
-  lighting.updateUniform("gAmbient", 0.1f);
-  lighting.updateUniform("gColor", 1.0f, 1.0f, 1.0f);
-  lighting.updateUniform("gDiffuse", 0.2f);
-  lighting.updateUniform("gSpecInt", 1.0f, 1.0f, 1.0f);
-  lighting.updateUniform("gSpecPower", 10);
-  lighting.updateUniform("gCameraPos", world.getCameraPos().x,
-                         world.getCameraPos().y, world.getCameraPos().z);
+  lighting.uniform_update("gLightPosition", lightpos.x, lightpos.y, lightpos.z);
+  lighting.uniform_update("gAmbient", 0.1f);
+  lighting.uniform_update("gColor", 1.0f, 1.0f, 1.0f);
+  lighting.uniform_update("gDiffuse", 0.2f);
+  lighting.uniform_update("gSpecInt", 1.0f, 1.0f, 1.0f);
+  lighting.uniform_update("gSpecPower", 10);
+  lighting.uniform_update("gCameraPos", world.getCameraPos().x,
+                          world.getCameraPos().y, world.getCameraPos().z);
   for (int i = 0; i < meshes->size(); i++) {
     world.setPosition((*meshes)[i]->getPosition());
     world.setScale((*meshes)[i]->getScale());
     world.setRotation((*meshes)[i]->getRotation());
 
-    lighting.updateUniform("gMVP", world.getMVP());
-    lighting.updateUniform("gModel", world.getModelMatrix());
+    lighting.uniform_update("gMVP", world.getMVP());
+    lighting.uniform_update("gModel", world.getModelMatrix());
 
     (*meshes)[i]->Render();
   }
@@ -112,10 +112,10 @@ void ParticleRenderer::renderPass() {
   world.setRotation(Vector3f(0.0f, 0.0f, 0.0f));
 
   gridBorderLines.use();
-  gridBorderLines.updateUniform("gMVP", world.getMVP());
+  gridBorderLines.uniform_update("gMVP", world.getMVP());
   grid->renderBorders();
   particleImposter.use();
-  particleImposter.updateUniform("gMVP", world.getMVP());
+  particleImposter.uniform_update("gMVP", world.getMVP());
   particlesystem->render();
 
   glfwSwapBuffers(window);

@@ -1,70 +1,98 @@
 #include "technique.hpp"
-
-Technique::Technique() : shaderProgram(glCreateProgram()) {
-  if (shaderProgram == 0) {
-    fprintf(stderr, "Error creating shader program\n");
-  }
-}
-Technique::~Technique() {
-  glDeleteProgram(shaderProgram);
-  std::cerr << "deleted program\n";
-}
-void Technique::compile() {
+void Technique::upload() {
   for (auto& shaderObject : shaderObjects) {
-    shaderObject->loadFromFile();
-    shaderObject->compile();
+    if (!shaderObject->is_uploaded()) {
+      shaderObject->load_from_file();
+      shaderObject->upload();
+    }
   }
-  finalize();
-  readUniforms();
+  attach_and_link();
+  gl_uniforms_read();
 }
-void Technique::use() { glUseProgram(shaderProgram); }
 
-bool Technique::addShader(std::shared_ptr<Shader>&& shader) {
+bool Technique::add_shader(std::shared_ptr<Shader>&& shader) {
   auto new_shader_pos = std::find_if(
       shaderObjects.cbegin(), shaderObjects.cend(),
-      [newtype = shader->getType()](const auto& shaderObject) {
-        auto oldtype = shaderObject->getType();
+      [newtype = shader->get_type()](const auto& shaderObject) {
+        auto oldtype = shaderObject->get_type();
         return (oldtype == newtype) || (oldtype == ShaderType::COMPUTE);
       });
-  bool is_compute_technique =
-      (shader->getType() == ShaderType::COMPUTE && !shaderObjects.empty());
-  bool is_not_new_type = (new_shader_pos != shaderObjects.end());
-  if (is_compute_technique || is_not_new_type) {
+
+  bool isComputeTechnique =
+      (shader->get_type() == ShaderType::COMPUTE && !shaderObjects.empty());
+  bool isNotNewType = (new_shader_pos != shaderObjects.end());
+
+  if (isComputeTechnique || isNotNewType) {
     std::cerr
         << "ILLEGAL ShaderType:\n You tried to add a type that is "
            "incompatible with the rest of the Technique.\n Only one ShaderType "
            "allowed. Except for ShaderType::COMPUTE is always alone:\n"
-        << shader->getFileName() << "!\n";
+        << shader->get_file_name() << "!" << std::endl;
     return false;
   } else {
     shaderObjects.push_back(std::move(shader));
   }
   return true;
 }
-
-void Technique::finalize() {
+void Technique::attach_and_link() const {
+  attach();
+  gl_link();
+}
+void Technique::attach() const {
   std::cerr << "ShaderProgram:" << shaderProgram << std::endl;
   for (const auto& shaderObject : shaderObjects) {
-    std::cerr << "Attach Shader: " << shaderObject->getFileName() << "\n";
-    glAttachShader(this->shaderProgram, shaderObject->getID());
+    std::cerr << "Attach Shader: " << shaderObject->get_file_name() << "\n";
+    gl_attach(shaderObject->get_id());
   }
+}
+unsigned int Technique::uniform_look_up(std::string uniform) const {
+  // Create an iterator to look through our uniform map and try to find the
+  // named uniform
+  auto it = std::find_if(
+      m_uniformMap.cbegin(), m_uniformMap.cend(),
+      [uniform](const auto& mapEntry) { return uniform == mapEntry.first; });
+  // Found it? Great - pass it back! Didn't find it? Alert user and halt.
+  if (it != m_uniformMap.end()) {
+    return m_uniformMap.at(uniform);
+  } else {
+    std::cerr << "Could not find uniform in shader program: " + uniform
+              << std::endl;
+    std::cerr << "Associated shaders with this shader program:" << std::endl;
+    for (const auto& shaderObject : shaderObjects) {
+      std::cerr << shaderObject->get_file_name() << std::endl;
+    }
+    return 0;
+  }
+}
+
+/*
+ * start of glFunction() calls
+ */
+
+void Technique::use() const { glUseProgram(shaderProgram); }
+
+void Technique::gl_attach(GLuint shaderid) const {
+  glAttachShader(shaderProgram, shaderid);
+}
+
+void Technique::gl_link() const {
   GLint Success = 0;
   GLchar ErrorLog[1024] = {0};
   glLinkProgram(shaderProgram);
   glGetProgramiv(shaderProgram, GL_LINK_STATUS, &Success);
   if (Success == 0) {
     glGetProgramInfoLog(shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
-    fprintf(stderr, "Error linking shader program: '%s'\n", ErrorLog);
+    std::cerr << "Error linking shader program: " << ErrorLog << std::endl;
   }
 
   glValidateProgram(shaderProgram);
   glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, &Success);
   if (!Success) {
     glGetProgramInfoLog(shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
-    fprintf(stderr, "Invalid shader program: '%s'\n", ErrorLog);
+    std::cerr << "Invalid shader program: " << ErrorLog << std::endl;
   }
 }
-void Technique::readUniforms() {
+void Technique::gl_uniforms_read() {
   GLint numUniforms = -1;
   glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORMS, &numUniforms);
 
@@ -87,59 +115,50 @@ void Technique::readUniforms() {
               << std::endl;
   }
 }
-GLuint Technique::uniformLookUp(const std::string& uniform) {
-  // Create an iterator to look through our uniform map and try to find the
-  // named uniform
-  auto it = std::find_if(
-      m_uniformMap.cbegin(), m_uniformMap.cend(),
-      [uniform](const auto& mapEntry) { return uniform == mapEntry.first; });
-  // Found it? Great - pass it back! Didn't find it? Alert user and halt.
-  if (it != m_uniformMap.end()) {
-    return m_uniformMap[uniform];
-  } else {
-    std::cerr << "Could not find uniform in shader program: " + uniform
-              << std::endl;
-    std::cerr << "Associated shaders with this shader program:" << std::endl;
-    for (const auto& shaderObject : shaderObjects) {
-      std::cerr << shaderObject->getFileName() << std::endl;
-    }
-    return 0;
+Technique::Technique() : shaderProgram(glCreateProgram()) {
+  if (shaderProgram == 0) {
+    std::cerr << "Error creating shader program" << std::endl;
   }
 }
-
-void Technique::updateUniform(std::string name, bool value) {
-  use();
-  glUniform1i(uniformLookUp(name), value);
+Technique::~Technique() {
+  glDeleteProgram(shaderProgram);
+  std::cerr << "deleted program" << std::endl;
 }
 
-void Technique::updateUniform(std::string name, int value) {
+void Technique::uniform_update(std::string name, bool value) const {
   use();
-  glUniform1i(uniformLookUp(name), value);
+  glUniform1i(uniform_look_up(name), value);
 }
 
-void Technique::updateUniform(std::string name, float value) {
+void Technique::uniform_update(std::string name, int value) const {
   use();
-  glUniform1f(uniformLookUp(name), value);
+  glUniform1i(uniform_look_up(name), value);
 }
 
-void Technique::updateUniform(std::string name, double value) {
+void Technique::uniform_update(std::string name, float value) const {
   use();
-  glUniform1f(uniformLookUp(name), value);
+  glUniform1f(uniform_look_up(name), value);
 }
-void Technique::updateUniform(std::string name, float x, float y, float z) {
+
+void Technique::uniform_update(std::string name, double value) const {
   use();
-  glUniform3f(uniformLookUp(name), x, y, z);
+  glUniform1f(uniform_look_up(name), value);
 }
-void Technique::updateUniform(std::string name, int x, int y, int z) {
+void Technique::uniform_update(std::string name, float x, float y,
+                               float z) const {
   use();
-  glUniform3i(uniformLookUp(name), x, y, z);
+  glUniform3f(uniform_look_up(name), x, y, z);
 }
-void Technique::updateUniform(std::string name, const Matrix4f* mat4) {
+void Technique::uniform_update(std::string name, int x, int y, int z) const {
   use();
-  glUniformMatrix4fv(uniformLookUp(name), 1, GL_TRUE, (const GLfloat*)mat4);
+  glUniform3i(uniform_look_up(name), x, y, z);
 }
-void Technique::updateUniform(std::string name, const size_t size) {
+void Technique::uniform_update(std::string name, const Matrix4f* mat4) const {
   use();
-  glUniform1ui(uniformLookUp(name), size);
+  glUniformMatrix4fv(uniform_look_up(name), 1, GL_TRUE, (const GLfloat*)mat4);
+}
+void Technique::uniform_update(std::string name, const size_t size) const {
+  use();
+  glUniform1ui(uniform_look_up(name), size);
 }
 

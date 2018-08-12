@@ -1,12 +1,43 @@
 #include "shader.hpp"
-
-#include <fstream>
-#include <iostream>
-#include <sstream>
-
 Shader::Shader(const ShaderType &t, const std::string &filename)
-    : type(t), filename(filename) {
-  // Get the type of the shader
+    : type(t), filename(filename) {}
+
+void Shader::load_from_file() {
+  std::ifstream file;
+
+  file.open(filename.c_str());
+  if (!file.good()) {
+    std::cerr << "could not open shader: " << filename.c_str() << std::endl;
+    exit(-1);
+  }
+
+  std::stringstream stream;
+  stream << file.rdbuf();
+  file.close();
+  source = stream.str();
+}
+
+void Shader::upload() {
+  gl_create_id();
+  if (!gl_compile()) {  // if shader could'nt get compiled
+    gl_delete();        // delete shader handle
+  };
+}
+
+/*
+ * start of glFunction() calls
+ */
+
+Shader::~Shader() {}
+void Shader::gl_delete() {
+  if (uploaded) {
+    glDeleteShader(id);
+    uploaded = false;
+  }
+}
+
+void Shader::gl_create_id() {
+  // We handle the GLuint type by scoped enums of C++14 which should be safer
   GLuint gl_type;
   switch (type) {
     case ShaderType::VERTEX:
@@ -29,51 +60,24 @@ Shader::Shader(const ShaderType &t, const std::string &filename)
       break;
   }
 
-  // Create the vertex shader id / handle
   // Note: If you segfault here you probably don't have a valid rendering
-  // context.
+  // context and uploaded is not gonna get set.
   id = glCreateShader(gl_type);
+  uploaded = true;
 }
-
-Shader::~Shader() { glDeleteShader(id); }
-
-void Shader::loadFromFile() {
-  std::ifstream file;
-
-  file.open(filename.c_str());
-
-  if (!file.good()) {
-    std::cerr << "could not open shader: " << filename.c_str() << std::endl;
-    exit(-1);
-  }
-
-  std::stringstream stream;
-
-  // Dump the contents of the file into it
-  stream << file.rdbuf();
-
-  // Close the file
-  file.close();
-
-  // Convert the StringStream into a string
-  source = stream.str();
-}
-
-void Shader::compile() {
+bool Shader::gl_compile() {
   auto sourceChars = source.c_str();
 
-  // Associate the source with the shader id
   glShaderSource(id, 1, &sourceChars, NULL);
 
-  // Compile the shader
   glCompileShader(id);
 
-  // Check the compilation status and report any errors
   GLint shaderStatus;
   glGetShaderiv(id, GL_COMPILE_STATUS, &shaderStatus);
 
   // If the shader failed to compile, display the info log and quit out
-  if (shaderStatus == GL_FALSE) {
+  bool compiled = (shaderStatus == GL_TRUE);
+  if (!compiled) {
     GLint infoLogLength;
     glGetShaderiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
 
@@ -83,5 +87,6 @@ void Shader::compile() {
     std::cerr << "shader compilation failed: " << strInfoLog << std::endl;
     delete[] strInfoLog;
   }
+  return compiled;
 }
 
