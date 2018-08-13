@@ -1,4 +1,5 @@
 #include "explicit.hpp"
+#include "../benchmarker.hpp"
 int launchSnow(Scene& scene) {
   shared_ptr<ParticleSystem> const pPs = make_shared<ParticleSystem>();
 
@@ -90,14 +91,14 @@ quad.setRotation(0,0,0);
 meshes->push_back(std::move(quad));
 
 */
+  Benchmarker bench;
   shared_ptr<Renderer> const rE =
       make_shared<ParticleRenderer>(meshes, pPs, grid);
   shared_ptr<TimeUpdate> const update =
       make_shared<ExplicitTimeUpdate>(pCO, pPs, grid);
 
   shared_ptr<physicEngine> const pE = make_shared<myPhysicEngine>(update);
-
-  bool re_err = rE->init();
+  bool re_err = bench.benchmark_CPU("test", [&rE]() { return rE->init(); });
 
   if (re_err) {
     return 1;
@@ -119,6 +120,7 @@ meshes->push_back(std::move(quad));
 
     rE->render();
   }
+  bench.printStats();
   rE->stop();
   return 0;
 }

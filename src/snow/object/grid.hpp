@@ -6,7 +6,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include "../defines/defines.hpp"
+#include "../utils/defines.hpp"
 #include "gridPoint.hpp"
 #include "math3d.hpp"
 class Grid {
@@ -106,3 +106,4 @@ class Grid {
 };
 
 #endif  // GRID_H
+

@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <iostream>
-#include "../defines/defines.hpp"
+#include "../utils/defines.hpp"
 #include "pipeline/pipeline.hpp"
 
 static GLFWwindow* window;

@@ -8,7 +8,7 @@
 #include "collider.hpp"
 #include "math3d.hpp"
 
-#include "../defines/defines.hpp"
+#include "../utils/defines.hpp"
 class CollisionObjects {
  public:
   CollisionObjects() = default;
@@ -40,3 +40,4 @@ class CollisionObjects {
   GLuint fricB;
 };
 #endif  // COLLISIONOBJECTS_H
+

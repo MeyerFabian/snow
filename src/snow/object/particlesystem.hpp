@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "../defines/defines.hpp"
+#include "../utils/defines.hpp"
 #include "math3d.hpp"
 #include "particle.hpp"
 class ParticleSystem {
@@ -63,3 +63,4 @@ class ParticleSystem {
   GLuint FPpB;
 };
 #endif  // PARTICLESYSTEM_H
+

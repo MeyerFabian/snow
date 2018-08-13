@@ -1,8 +1,8 @@
 #ifndef EXPLICITTIMEUPDATE_H
 #define EXPLICITTIMEUPDATE_H
-#include "../../defines/defines.hpp"
 #include "../../object/collisionObjects.hpp"
 #include "../../object/grid.hpp"
+#include "../../utils/defines.hpp"
 #include "../computingTechnique/g2pCompute.hpp"
 #include "../computingTechnique/massCompute.hpp"
 #include "../computingTechnique/p2gCompute.hpp"
