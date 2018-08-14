@@ -6,20 +6,16 @@
 #include "../object/grid.hpp"
 #include "../object/mesh.hpp"
 #include "../object/particlesystem.hpp"
+#include "../scene/Scene.hpp"
 class TimeUpdate {
  public:
-  TimeUpdate(std::shared_ptr<CollisionObjects> const collisionToSimulate,
-             shared_ptr<ParticleSystem> const particlesToSimulate,
-             shared_ptr<Grid> const gridToSimulate)
-      : collisionObjects(collisionToSimulate),
-        particlesystem(particlesToSimulate),
-        grid(gridToSimulate) {}
+  TimeUpdate(PhysicalScene&& sceneToSimulate)
+      : scene(std::move(sceneToSimulate)) {}
   virtual void init() = 0;
   virtual void update(double dt) = 0;
 
-  std::shared_ptr<CollisionObjects> const collisionObjects;
-  std::shared_ptr<ParticleSystem> const particlesystem;
-  std::shared_ptr<Grid> const grid;
+  PhysicalScene scene;
 };
 
 #endif  // TIMEUPDATE_H
+

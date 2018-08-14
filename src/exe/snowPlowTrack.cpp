@@ -1,8 +1,7 @@
 #include "../snow/utils/launchHelper/explicit.hpp"
-using namespace std;
-void scene(shared_ptr<ParticleSystem> const pPs,
-           shared_ptr<CollisionObjects> const pCO,
-           shared_ptr<std::vector<shared_ptr<Mesh>>> const meshes) {
+
+int main() {
+  Scene scene;
   int x = 0;
   float xpos = 0.8125,
         ypos = GRID_POS_Y + GRID_COLLISION_PLANE_OFFSET * GRID_SPACING,
@@ -17,7 +16,7 @@ void scene(shared_ptr<ParticleSystem> const pPs,
     float rand3 = (float(rand()) / 32727.0f) * length;
     // if(((rand1 -radius)*(rand1 -radius)+(rand2 -radius)*(rand2
     // -radius)+(rand3 -radius)*(rand3 -radius)) < (radius*radius)){
-    pPs->particles->push_back(
+    scene.particleSys->particles.push_back(
         Particle(Vector3f(xpos + rand1, ypos + rand2, zpos + rand3)));
     x += 1;
     // }
@@ -29,22 +28,10 @@ void scene(shared_ptr<ParticleSystem> const pPs,
   sphere->setScale(0.3f, 0.3f, 0.3f);
   sphere->setRotation(0, 0, 0);
 
-  meshes->push_back(sphere);
-  pCO->colliders->push_back(Collider(
+  scene.colliderSys->colliders.push_back(Collider(
       sphere, 0.3f, 1, Vector3f(5.0f, 0.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f)));
-}
-class SnowPlowTrackScene : public Scene {
- public:
-  SnowPlowTrackScene() = default;
-  virtual void init(shared_ptr<ParticleSystem> const pPs,
-                    shared_ptr<CollisionObjects> const pCO,
-                    shared_ptr<std::vector<shared_ptr<Mesh>>> const meshes) {
-    scene(pPs, pCO, meshes);
-  }
-};
 
-int main() {
-  SnowPlowTrackScene scene;
+  scene.meshSys->push_back(std::move(sphere));
   if (!launchSnow(scene)) {
     return 1;
   }

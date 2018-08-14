@@ -14,9 +14,7 @@ class Grid {
   Grid() = default;
   ~Grid() { delete pPositions; }
 
-  std::shared_ptr<std::vector<GridPoint>> const gridPoints =
-      std::make_shared<std::vector<GridPoint>>();
-
+  std::vector<GridPoint> gridPoints;
   std::vector<Vector4f> gridBorders;
   std::vector<unsigned int> iGridBorders;
   Grid(int x, int y, int z, float spacing, float pos_x, float pos_y,
@@ -29,7 +27,7 @@ class Grid {
         y_off(pos_y),
         z_off(pos_z) {
     for (int i = 0; i < dimx * dimy * dimz; i++) {
-      gridPoints->push_back(GridPoint());
+      gridPoints.push_back(GridPoint());
     }
     float above =
         spacing * ((float)y) - (float(GRID_COLLISION_PLANE_OFFSET)) * spacing;

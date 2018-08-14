@@ -11,7 +11,6 @@
 #include "../utils/defines.hpp"
 class CollisionObjects {
  public:
-  CollisionObjects() = default;
   ~CollisionObjects() {
     delete cPositions;
     delete cVelocities;
@@ -20,8 +19,7 @@ class CollisionObjects {
     delete cNormals;
   }
 
-  std::shared_ptr<std::vector<Collider> > const colliders =
-      std::make_shared<std::vector<Collider> >();
+  std::vector<Collider> colliders;
 
   void initSSBO();
   void updateRenderBuffer(float dt);

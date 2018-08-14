@@ -19,10 +19,7 @@
 
 class ParticleRenderer : public Window_Context, public Renderer {
  public:
-  ParticleRenderer(
-      std::shared_ptr<std::vector<shared_ptr<Mesh> > > const meshes,
-      std::shared_ptr<ParticleSystem> const particles,
-      std::shared_ptr<Grid> const grid);
+  ParticleRenderer(RenderableScene&&);
   virtual bool init() override;
   virtual void render() override;
   virtual bool shouldClose() override;
