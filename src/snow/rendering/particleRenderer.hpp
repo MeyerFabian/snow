@@ -1,7 +1,6 @@
 #ifndef PARTICLERENDERER_H
 #define PARTICLERENDERER_H
 #include "../rendering/renderer.hpp"
-#define GLEW_STATIC
 #include <stdlib.h>
 #include <string.h>
 #include <glm.hpp>
@@ -9,7 +8,7 @@
 #include <memory>
 #include "../object/mesh.hpp"
 #include "../object/texture.hpp"
-#include "GLFWContext.h"
+#include "GLFWContext.hpp"
 #include "math3d.hpp"
 #include "renderingTechnique/lightingtechnique.hpp"
 #include "renderingTechnique/particletechnique.hpp"

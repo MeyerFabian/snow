@@ -13,7 +13,7 @@ int launchSnow(Scene& scene) {
       GRID_POS_Y + GRID_COLLISION_PLANE_OFFSET * GRID_SPACING,
       GRID_POS_Z + GRID_COLLISION_PLANE_OFFSET * GRID_SPACING);
 
-  scene.colliderSys->colliders.push_back(Collider(std::move(halfplane), 0.0f, 0,
+  scene.colliderSys->colliders.push_back(Collider(halfplane, 0.0f, 0,
                                                   Vector3f(0.0f, 0.0f, 0.0f),
                                                   Vector3f(1.0f, 0.0f, 0.0f)));
 
@@ -23,8 +23,8 @@ int launchSnow(Scene& scene) {
       GRID_POS_Y + GRID_COLLISION_PLANE_OFFSET * GRID_SPACING,
       GRID_POS_Z + GRID_COLLISION_PLANE_OFFSET * GRID_SPACING);
 
-  scene.colliderSys->colliders.push_back(Collider(std::move(halfplane2), 0.0f,
-                                                  0, Vector3f(0.0f, 0.0f, 0.0f),
+  scene.colliderSys->colliders.push_back(Collider(halfplane2, 0.0f, 0,
+                                                  Vector3f(0.0f, 0.0f, 0.0f),
                                                   Vector3f(0.0f, 1.0f, 0.0f)));
 
   shared_ptr<Mesh> halfplane3 = make_shared<Mesh>();
@@ -33,8 +33,8 @@ int launchSnow(Scene& scene) {
       GRID_POS_Y + GRID_COLLISION_PLANE_OFFSET * GRID_SPACING,
       GRID_POS_Z + GRID_COLLISION_PLANE_OFFSET * GRID_SPACING);
 
-  scene.colliderSys->colliders.push_back(Collider(std::move(halfplane3), 0.0f,
-                                                  0, Vector3f(0.0f, 0.0f, 0.0f),
+  scene.colliderSys->colliders.push_back(Collider(halfplane3, 0.0f, 0,
+                                                  Vector3f(0.0f, 0.0f, 0.0f),
                                                   Vector3f(0.0f, 0.0f, 1.0f)));
 
   shared_ptr<Mesh> halfplane4 = make_shared<Mesh>();
@@ -89,13 +89,15 @@ meshes->push_back(std::move(quad));
       make_shared<ExplicitTimeUpdate>(scene.get_physical_scene());
 
   shared_ptr<physicEngine> const pE = make_shared<myPhysicEngine>(update);
-  bool re_err = bench.benchmark_CPU("test", [&rE]() { return rE->init(); });
+  bool re_err =
+      bench.benchmark_CPU("Renderderer init()", [&rE]() { return rE->init(); });
+
+  bench.benchmark_CPU("Simulation init()", [&pE]() { return pE->init(); });
 
   if (re_err) {
     return 1;
   }
 
-  pE->init();
   double currentTime = glfwGetTime();  // gafferongames.com
   double accumulator = 0.0;
   std::cout << std::flush;
@@ -105,12 +107,13 @@ meshes->push_back(std::move(quad));
     currentTime = newTime;
     accumulator += frameTime;
     while (accumulator >= STEP_DT) {
-      bench.benchmark_CPU("test", [&pE]() { return pE->update(PHYSIC_DT); });
+      bench.benchmark_CPU("Simulation update",
+                          [&pE]() { return pE->update(PHYSIC_DT); });
       // pE->update(PHYSIC_DT);
       accumulator -= STEP_DT;
     }
 
-    rE->render();
+    bench.benchmark_CPU("Renderer update", [&rE] { return rE->render(); });
   }
   bench.printStats();
   rE->stop();
