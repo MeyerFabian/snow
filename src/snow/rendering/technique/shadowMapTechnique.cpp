@@ -1,26 +1,9 @@
 #include "shadowMapTechnique.hpp"
-
-ShadowMapTechnique::ShadowMapTechnique() {}
-bool ShadowMapTechnique::init(string vs, string fs) {
-  addShader(vs.c_str(), GL_VERTEX_SHADER);
-  addShader(fs.c_str(), GL_FRAGMENT_SHADER);
-
-  finalize();
-
-  gMVP = glGetUniformLocation(this->ShaderProgram, "gMVP");
-  gSampler = glGetUniformLocation(this->ShaderProgram, "gSampler");
-
-  if (gMVP == INVALID_UNIFORM_LOCATION ||
-      gSampler == INVALID_UNIFORM_LOCATION) {
-    return false;
-  }
-  return true;
-}
-
-void ShadowMapTechnique::setMVP(const Matrix4f* m) {
-  glUniformMatrix4fv(gMVP, 1, GL_TRUE, (const GLfloat*)m);
-}
-void ShadowMapTechnique::setTex(unsigned int texture) {
-  glUniform1i(gSampler, texture);
+void ShadowMapTechnique::init(std::string vs, std::string fs) {
+  Technique::init();
+  add_shader(std::make_shared<Shader>(ShaderType::VERTEX, vs));
+  add_shader(std::make_shared<Shader>(ShaderType::FRAGMENT, fs));
+  // update uniform mvp, gSampler
+  Technique::upload();
 }
 

@@ -10,12 +10,10 @@ uniform mat4 gLightMVP;
 out vec4 Position0;
 out vec4 Normal0;
 out vec2 Texture0;
-//out vec4 LightSpacePos;
 void main(void)
 {
-    gl_Position = gMVP* vec4(Position.xyz,1.0);
-    Position0 = gModel* vec4(Position.xyz,1.0);
-    //LightSpacePos = gLightMVP * vec4(Position.xyz,1.0);
-    Texture0 = Texture;
-    Normal0 = vec4(Normal, 0.0);
+	gl_Position = gMVP* vec4(Position.xyz,1.0);
+	Position0 = gModel* vec4(Position.xyz,1.0);
+	Texture0 = Texture;
+	Normal0 = vec4(Normal, 0.0);
 }
