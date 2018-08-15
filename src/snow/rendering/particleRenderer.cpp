@@ -8,11 +8,8 @@ Vector3f lightpos;
 static float lighty = 0.0f;
 
 ParticleRenderer::ParticleRenderer(RenderableScene&& scene)
-    : Window_Context(),
-      Renderer(std::move(scene)),
-      lighting(LightingTechnique()),
-      particleImposter(ParticleTechnique()),
-      gridBorderLines(ParticleTechnique()) {}
+    : Window_Context(), Renderer(std::move(scene)) {}
+
 void ParticleRenderer::fillBufferFromMeshes() {
   for (int i = 0; i < scene.meshSys->size(); i++) {
     (*scene.meshSys)[i]->initVBO();
@@ -71,18 +68,14 @@ void ParticleRenderer::shadowMapPass() {
   */
 }
 void ParticleRenderer::renderPass() {
-  if (debug == true) {
-    scene.particleSys->debug();
-    scene.grid->debug();
-  }
   // pipeline light;
+
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClearColor(0.5, 0.5, 0.5, 0);
+
   lightpos = Vector3f(4.0f, 5.0f, 4.0f);
 
   // SMFBO.BindForReading(GL_TEXTURE1);
-
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  glClearColor(0.5, 0.5, 0.5, 0);
 
   lighting.use();
   lighting.uniform_update("gLightPosition", lightpos.x, lightpos.y, lightpos.z);
@@ -124,7 +117,6 @@ void ParticleRenderer::renderQueue() {
 
   renderPass();
 }
-
 bool ParticleRenderer::init() {
   initVBO();
 
