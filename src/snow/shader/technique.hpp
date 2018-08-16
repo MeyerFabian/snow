@@ -23,13 +23,13 @@ class Technique {
   void gl_uniforms_read();
 
  public:
-  void uniform_update(std::string name, bool value);
-  void uniform_update(std::string name, int value);
-  void uniform_update(std::string name, float value);
-  void uniform_update(std::string name, double value);
-  void uniform_update(std::string name, float x, float y, float z);
-  void uniform_update(std::string name, int x, int y, int z);
-  void uniform_update(std::string name, const Matrix4f* mat4);
+  void uniform_update(const std::string&, bool value) const;
+  void uniform_update(const std::string&, int value) const;
+  void uniform_update(const std::string&, float value) const;
+  void uniform_update(const std::string&, double value) const;
+  void uniform_update(const std::string&, float x, float y, float z) const;
+  void uniform_update(const std::string&, int x, int y, int z) const;
+  void uniform_update(const std::string&, const Matrix4f* mat4) const;
   void init();
   Technique();
   ~Technique();

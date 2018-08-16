@@ -93,34 +93,30 @@ void Technique::gl_uniforms_read() {
   }
 }
 
-void Technique::uniform_update(std::string name, bool value) {
-  use();
+void Technique::uniform_update(const std::string& name, bool value) const {
   glUniform1i(m_uniformMap.at(name), value);
 }
 
-void Technique::uniform_update(std::string name, int value) {
-  use();
+void Technique::uniform_update(const std::string& name, int value) const {
   glUniform1i(m_uniformMap.at(name), value);
 }
-void Technique::uniform_update(std::string name, float value) {
-  use();
+void Technique::uniform_update(const std::string& name, float value) const {
   glUniform1f(m_uniformMap.at(name), value);
 }
 
-void Technique::uniform_update(std::string name, double value) {
-  use();
+void Technique::uniform_update(const std::string& name, double value) const {
   glUniform1f(m_uniformMap.at(name), value);
 }
-void Technique::uniform_update(std::string name, float x, float y, float z) {
-  use();
+void Technique::uniform_update(const std::string& name, float x, float y,
+                               float z) const {
   glUniform3f(m_uniformMap.at(name), x, y, z);
 }
-void Technique::uniform_update(std::string name, int x, int y, int z) {
-  use();
+void Technique::uniform_update(const std::string& name, int x, int y,
+                               int z) const {
   glUniform3i(m_uniformMap.at(name), x, y, z);
 }
-void Technique::uniform_update(std::string name, const Matrix4f* mat4) {
-  use();
+void Technique::uniform_update(const std::string& name,
+                               const Matrix4f* mat4) const {
   glUniformMatrix4fv(m_uniformMap.at(name), 1, GL_TRUE, (const GLfloat*)mat4);
 }
 

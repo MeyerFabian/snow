@@ -9,6 +9,7 @@ void ExplicitTimeUpdate::init() {
   rigidSim.init("shader/updateRigids.glsl");
 
   cMass.init("shader/computeMass.glsl");
+  cMass.use();
   cMass.uniform_update("gGridPos", grid->x_off, grid->y_off, grid->z_off);
   cMass.uniform_update("gGridDim", grid->dimx, grid->dimy, grid->dimz);
   cMass.uniform_update("gridSpacing", grid->h);
@@ -16,6 +17,7 @@ void ExplicitTimeUpdate::init() {
                        static_cast<int>(particlesystem->particles->size()));
 
   cVolume.init("shader/computeParticleVolume.glsl");
+  cVolume.use();
   cVolume.uniform_update("gGridPos", grid->x_off, grid->y_off, grid->z_off);
   cVolume.uniform_update("gGridDim", grid->dimx, grid->dimy, grid->dimz);
   cVolume.uniform_update("gridSpacing", grid->h);
@@ -23,6 +25,7 @@ void ExplicitTimeUpdate::init() {
                          static_cast<int>(particlesystem->particles->size()));
 
   p2g.init("shader/updateGridMassVel.glsl");
+  p2g.use();
   p2g.uniform_update("gGridPos", grid->x_off, grid->y_off, grid->z_off);
   p2g.uniform_update("gGridDim", grid->dimx, grid->dimy, grid->dimz);
   p2g.uniform_update("gridSpacing", grid->h);
@@ -33,10 +36,12 @@ void ExplicitTimeUpdate::init() {
                      static_cast<int>(particlesystem->particles->size()));
 
   g2g.init("shader/updateGridVelCollision.glsl");
+  g2g.use();
   g2g.uniform_update("gNumColliders",
                      static_cast<int>(collisionObjects->colliders->size()));
 
   g2p.init("shader/updateParticleVel.glsl");
+  g2p.use();
   g2p.uniform_update("gGridPos", grid->x_off, grid->y_off, grid->z_off);
   g2p.uniform_update("gGridDim", grid->dimx, grid->dimy, grid->dimz);
   g2p.uniform_update("gridSpacing", grid->h);
@@ -44,6 +49,7 @@ void ExplicitTimeUpdate::init() {
                      static_cast<int>(particlesystem->particles->size()));
 
   pU.init("shader/updateParticles.glsl");
+  pU.use();
   pU.uniform_update("critComp", CRIT_COMPRESSION);
   pU.uniform_update("critStretch", CRIT_STRETCH);
   pU.uniform_update("gNumColliders",
@@ -71,17 +77,15 @@ void ExplicitTimeUpdate::init() {
                     PARTICLE_TO_GRID_SIZE, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
-particlesystem->debug();
+  particlesystem->debug();
 }
 
 void ExplicitTimeUpdate::update(double dt) {
   // std::cout<<"Frame begin:"<<std::endl;
-  g2g.uniform_update("dt", dt);
-  rigidSim.uniform_update("dt", dt);
-  pU.uniform_update("dt", dt);
 
   collisionObjects->updateRenderBuffer(dt);
   rigidSim.use();
+  rigidSim.uniform_update("dt", dt);
   glDispatchCompute(static_cast<int>(collisionObjects->colliders->size()), 1,
                     1);
 
@@ -98,6 +102,7 @@ void ExplicitTimeUpdate::update(double dt) {
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
   g2g.use();
+  g2g.uniform_update("dt", dt);
   glDispatchCompute(
       GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
@@ -112,10 +117,11 @@ void ExplicitTimeUpdate::update(double dt) {
   // scene.particleSys->debug();
   // scene.grid->debug();
   pU.use();
+  pU.uniform_update("dt", dt);
   glDispatchCompute((static_cast<int>(particlesystem->particles->size())) /
                             NUM_OF_GPGPU_THREADS_X +
                         1,
                     1, 1);
-glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
 

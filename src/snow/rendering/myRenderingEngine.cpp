@@ -1,9 +1,27 @@
 #include "myRenderingEngine.hpp"
+#define GLEW_STATIC
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <glm.hpp>
+#include <iostream>
+#include <memory>
+#include "../defines/defines.hpp"
+#include "../object/mesh.hpp"
+#include "../object/texture.hpp"
+#include "math3d.hpp"
+#include "pipeline/pipeline.hpp"
+#include "stb_image.h"
 
 GLFWwindow* window;
 
 GLuint VBO;
 GLuint IBO;
+LightingTechnique lighting;
+ParticleTechnique particleImposter;
+ParticleTechnique gridBorderLines;
 
 pipeline world;
 GLuint textureID;
@@ -80,6 +98,8 @@ void myRenderingEngine::renderPass() {
   }
   // pipeline light;
   lightpos = Vector3f(4.0f, 5.0f, 4.0f);
+
+  lighting.use();
   lighting.uniform_update("gLightPosition", lightpos.x, lightpos.y, lightpos.z);
   lighting.uniform_update("gAmbient", 0.1f);
   lighting.uniform_update("gColor", 1.0f, 1.0f, 1.0f);
@@ -95,7 +115,6 @@ void myRenderingEngine::renderPass() {
 
   glClearColor(0.5, 0.5, 0.5, 0);
 
-  lighting.use();
   for (int i = 0; i < meshes->size(); i++) {
     world.setPosition((*meshes)[i]->getPosition());
     world.setScale((*meshes)[i]->getScale());
@@ -111,12 +130,12 @@ void myRenderingEngine::renderPass() {
   world.setScale(Vector3f(1.0f, 1.0f, 1.0f));
   world.setRotation(Vector3f(0.0f, 0.0f, 0.0f));
 
-  gridBorderLines.uniform_update("gMVP", world.getMVP());
-  particleImposter.uniform_update("gMVP", world.getMVP());
-
   gridBorderLines.use();
+  gridBorderLines.uniform_update("gMVP", world.getMVP());
   grid->renderBorders();
+
   particleImposter.use();
+  particleImposter.uniform_update("gMVP", world.getMVP());
   particlesystem->render();
 
   glfwSwapBuffers(window);
