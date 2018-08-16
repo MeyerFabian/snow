@@ -17,7 +17,7 @@
 class Technique {
  protected:
   virtual ~Technique();
-  bool add_shader(std::shared_ptr<Shader>&& ptr);
+  bool add_shader(ShaderType, std::string filename);
   void init();
   GLuint shaderProgram;
 
@@ -28,7 +28,6 @@ class Technique {
   void uniform_update(std::string name, double value) const;
   void uniform_update(std::string name, float x, float y, float z) const;
   void uniform_update(std::string name, int x, int y, int z) const;
-  void uniform_update(std::string name, const size_t size) const;
   void uniform_update(std::string name, const Matrix4f* mat4) const;
   void use() const;
   void upload();
@@ -42,7 +41,7 @@ class Technique {
 
   void gl_uniforms_read();
 
-  std::vector<std::shared_ptr<Shader>> shaderObjects;
+  std::vector<Shader> shaderObjects;
   std::map<std::string, unsigned int> m_uniformMap;
 };
 

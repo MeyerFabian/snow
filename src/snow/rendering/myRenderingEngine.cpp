@@ -77,14 +77,6 @@ void myRenderingEngine::renderPass() {
   }
   // pipeline light;
   lightpos = Vector3f(4.0f, 5.0f, 4.0f);
-
-  // SMFBO.BindForReading(GL_TEXTURE1);
-
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  glClearColor(0.5, 0.5, 0.5, 0);
-
-  lighting.use();
   lighting.uniform_update("gLightPosition", lightpos.x, lightpos.y, lightpos.z);
   lighting.uniform_update("gAmbient", 0.1f);
   lighting.uniform_update("gColor", 1.0f, 1.0f, 1.0f);
@@ -93,6 +85,14 @@ void myRenderingEngine::renderPass() {
   lighting.uniform_update("gSpecPower", 10);
   lighting.uniform_update("gCameraPos", world.getCameraPos().x,
                           world.getCameraPos().y, world.getCameraPos().z);
+
+  // SMFBO.BindForReading(GL_TEXTURE1);
+
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  glClearColor(0.5, 0.5, 0.5, 0);
+
+  lighting.use();
   for (int i = 0; i < meshes->size(); i++) {
     world.setPosition((*meshes)[i]->getPosition());
     world.setScale((*meshes)[i]->getScale());
@@ -108,11 +108,12 @@ void myRenderingEngine::renderPass() {
   world.setScale(Vector3f(1.0f, 1.0f, 1.0f));
   world.setRotation(Vector3f(0.0f, 0.0f, 0.0f));
 
-  gridBorderLines.use();
   gridBorderLines.uniform_update("gMVP", world.getMVP());
+  particleImposter.uniform_update("gMVP", world.getMVP());
+
+  gridBorderLines.use();
   grid->renderBorders();
   particleImposter.use();
-  particleImposter.uniform_update("gMVP", world.getMVP());
   particlesystem->render();
 
   glfwSwapBuffers(window);
