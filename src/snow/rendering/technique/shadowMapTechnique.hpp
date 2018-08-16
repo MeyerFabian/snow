@@ -4,14 +4,8 @@
 #include "math3d.hpp"
 class ShadowMapTechnique : public Technique {
  public:
-  ShadowMapTechnique();
-  bool init(string vs, string fs);
-  void setMVP(const Matrix4f* m);
-  void setTex(unsigned int texture);
-
- private:
-  GLuint gMVP;
-  GLuint gSampler;
+  void init(string vs, string fs);
 };
 
 #endif  // SHADOW_MAP_TECHNIQUE_H
+

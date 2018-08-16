@@ -1,13 +1,7 @@
 #include "technique.hpp"
 
 Technique::Technique() {}
-Technique::~Technique() {
-  for (vector<GLuint>::iterator it = ShaderObjects.begin();
-       it < ShaderObjects.end(); it++) {
-    glDeleteShader(*it);
-  }
-  glDeleteProgram(ShaderProgram);
-}
+Technique::~Technique() { glDeleteProgram(ShaderProgram); }
 void Technique::init() {
   this->ShaderProgram = glCreateProgram();
   // glProgramParameteri(this->ShaderProgram , GL_PROGRAM_SEPARABLE, GL_TRUE);
@@ -17,13 +11,13 @@ void Technique::init() {
 }
 
 GLuint Technique::getShaderProgram() { return this->ShaderProgram; }
-void Technique::plugTechnique() { glUseProgram(ShaderProgram); }
+void Technique::use() { glUseProgram(ShaderProgram); }
 
-void Technique::addShader(const char* pShaderText, GLenum ShaderType) {
+void Technique::addShader(const char* filename, GLenum ShaderType) {
   GLuint ShaderObj = glCreateShader(ShaderType);
-  const char* p = pShaderText;
-  GLint Lengths[1];
-  Lengths[0] = strlen(pShaderText);
+  std::string shaderSource;
+  ReadFile(filename, shaderSource);
+  const char* p = shaderSource.c_str();
   glShaderSource(ShaderObj, 1, &p, nullptr);
 
   glCompileShader(ShaderObj);
@@ -38,7 +32,7 @@ void Technique::addShader(const char* pShaderText, GLenum ShaderType) {
   ShaderObjects.push_back(ShaderObj);
 }
 
-void Technique::finalize() {
+void Technique::upload() {
   for (const auto& ShaderObject : ShaderObjects) {
     glAttachShader(this->ShaderProgram, ShaderObject);
   }
@@ -57,10 +51,7 @@ void Technique::finalize() {
     glGetProgramInfoLog(ShaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
     fprintf(stderr, "Invalid shader program: '%s'\n", ErrorLog);
   }
-  for (const auto& ShaderObject : ShaderObjects) {
-    glDeleteShader(ShaderObject);
-  }
-  ShaderObjects.clear();
+  gl_uniforms_read();
 }
 
 bool ReadFile(const char* pFileName, string& outFile) {
@@ -76,5 +67,60 @@ bool ReadFile(const char* pFileName, string& outFile) {
     ret = true;
   }
   return ret;
+}
+
+void Technique::gl_uniforms_read() {
+  GLint numUniforms = -1;
+  glGetProgramiv(ShaderProgram, GL_ACTIVE_UNIFORMS, &numUniforms);
+
+  std::cerr << "Number of uniforms " + std::to_string(numUniforms) << std::endl;
+
+  for (int i = 0; i < numUniforms; i++) {
+    // passive variables for glGetActiveUniform
+    int nameLength = -1;
+    int uniformSize = -1;
+    GLenum type = GL_ZERO;
+    // string that saves uniformName
+    char uniformName[50];
+    glGetActiveUniform(ShaderProgram, GLint(i), sizeof(uniformName) - 1,
+                       &nameLength, &uniformSize, &type, uniformName);
+    uniformName[nameLength] = 0;
+    // add uniform variable to map
+    m_uniformMap[uniformName] =
+        glGetUniformLocation(ShaderProgram, uniformName);
+    std::cerr << "Uniform added " + std::to_string(i) + " : " + uniformName
+              << std::endl;
+  }
+}
+
+void Technique::uniform_update(std::string name, bool value) {
+  use();
+  glUniform1i(m_uniformMap.at(name), value);
+}
+
+void Technique::uniform_update(std::string name, int value) {
+  use();
+  glUniform1i(m_uniformMap.at(name), value);
+}
+void Technique::uniform_update(std::string name, float value) {
+  use();
+  glUniform1f(m_uniformMap.at(name), value);
+}
+
+void Technique::uniform_update(std::string name, double value) {
+  use();
+  glUniform1f(m_uniformMap.at(name), value);
+}
+void Technique::uniform_update(std::string name, float x, float y, float z) {
+  use();
+  glUniform3f(m_uniformMap.at(name), x, y, z);
+}
+void Technique::uniform_update(std::string name, int x, int y, int z) {
+  use();
+  glUniform3i(m_uniformMap.at(name), x, y, z);
+}
+void Technique::uniform_update(std::string name, const Matrix4f* mat4) {
+  use();
+  glUniformMatrix4fv(m_uniformMap.at(name), 1, GL_TRUE, (const GLfloat*)mat4);
 }
 
