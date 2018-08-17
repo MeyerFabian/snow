@@ -84,9 +84,10 @@ void ExplicitTimeUpdate::init() {
   cMass.uniform_update("gGridPos", grid->x_off, grid->y_off, grid->z_off);
   cMass.uniform_update("gGridDim", grid->dimx, grid->dimy, grid->dimz);
   cMass.uniform_update("gridSpacing", grid->h);
+  // cMass.uniform_update("indexSize", particlesystem->particles->size());
   //*/
-  cMass.setIndexSize(particlesystem->particles->size());
 
+  cMass.setIndexSize(particlesystem->particles->size());
   glDispatchCompute(
       (particlesystem->particles->size()) / NUM_OF_GPGPU_THREADS_X + 1,
       PARTICLE_TO_GRID_SIZE, 1);
@@ -115,7 +116,7 @@ void ExplicitTimeUpdate::update(double dt) {
   // std::cout<<"Frame begin:"<<std::endl;
 
   rigidSim.plugTechnique();
-  /*
+  //*
   rigidSim.setDt(dt);
   /*/
   rigidSim.uniform_update("dt", dt);

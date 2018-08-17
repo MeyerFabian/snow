@@ -113,6 +113,12 @@ void Technique::uniform_update(const std::string& name, int value) const
   glUniform1i(m_uniformMap.at(name), value);
   // std::cerr << name << "calls int" << std::endl;
 }
+
+void Technique::uniform_update(const std::string& name, size_t value) const
+    noexcept {
+  glUniform1i(m_uniformMap.at(name), static_cast<GLint>(value));
+  // std::cerr << name << "calls int" << std::endl;
+}
 void Technique::uniform_update(const std::string& name, double value) const
     noexcept {
   glUniform1f(m_uniformMap.at(name), value);
