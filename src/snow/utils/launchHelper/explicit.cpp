@@ -82,18 +82,22 @@ quad.setRotation(0,0,0);
 meshes->push_back(std::move(quad));
 
 */
-  Benchmarker bench;
   shared_ptr<Renderer> const rE =
       make_shared<ParticleRenderer>(scene.get_renderable_scene());
   shared_ptr<TimeUpdate> const update =
       make_shared<ExplicitTimeUpdate>(scene.get_physical_scene());
 
   shared_ptr<physicEngine> const pE = make_shared<myPhysicEngine>(update);
+#ifdef BENCHMARK
+  Benchmarker bench;
   bool re_err =
       bench.benchmark_CPU("Renderderer init()", [&rE]() { return rE->init(); });
 
   bench.benchmark_CPU("Simulation init()", [&pE]() { return pE->init(); });
-
+#else
+  bool re_err = rE->init();
+  pE->init();
+#endif
   if (re_err) {
     return 1;
   }
@@ -107,15 +111,24 @@ meshes->push_back(std::move(quad));
     currentTime = newTime;
     accumulator += frameTime;
     while (accumulator >= STEP_DT) {
+#ifdef BENCHMARK
       bench.benchmark_CPU("Simulation update",
                           [&pE]() { return pE->update(PHYSIC_DT); });
+#else
+      pE->update(PHYSIC_DT);
+#endif
       // pE->update(PHYSIC_DT);
       accumulator -= STEP_DT;
     }
-
+#ifdef BENCHMARK
     bench.benchmark_CPU("Renderer update", [&rE] { return rE->render(); });
+#else
+    rE->render();
+#endif
   }
+#ifdef BENCHMARK
   bench.printStats();
+#endif
   rE->stop();
   return 0;
 }

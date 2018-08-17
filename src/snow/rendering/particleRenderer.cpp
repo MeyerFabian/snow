@@ -84,8 +84,8 @@ void ParticleRenderer::renderPass() {
   lighting.uniform_update("gDiffuse", 0.2f);
   lighting.uniform_update("gSpecInt", 1.0f, 1.0f, 1.0f);
   lighting.uniform_update("gSpecPower", 10);
-  lighting.uniform_update("gCameraPos", world.getCameraPos().x,
-                          world.getCameraPos().y, world.getCameraPos().z);
+  auto camera = world.getCameraPos();
+  lighting.uniform_update("gCameraPos", camera.x, camera.y, camera.z);
   for (int i = 0; i < scene.meshSys->size(); i++) {
     world.setPosition((*scene.meshSys)[i]->getPosition());
     world.setScale((*scene.meshSys)[i]->getScale());
