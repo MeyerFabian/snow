@@ -82,21 +82,18 @@ quad.setRotation(0,0,0);
 meshes->push_back(std::move(quad));
 
 */
-  shared_ptr<Renderer> const rE =
-      make_shared<ParticleRenderer>(scene.get_renderable_scene());
-  shared_ptr<TimeUpdate> const update =
-      make_shared<ExplicitTimeUpdate>(scene.get_physical_scene());
-
-  shared_ptr<physicEngine> const pE = make_shared<myPhysicEngine>(update);
+  auto rE(ParticleRenderer(scene.get_renderable_scene()));
+  auto update(std::make_unique<ExplicitTimeUpdate>(scene.get_physical_scene()));
+  auto pE(MPMPhysicEngine(std::move(update)));
 #ifdef BENCHMARK
   Benchmarker bench;
   bool re_err =
-      bench.benchmark_CPU("Renderderer init()", [&rE]() { return rE->init(); });
+      bench.benchmark_CPU("Renderderer init()", [&rE]() { return rE.init(); });
 
-  bench.benchmark_CPU("Simulation init()", [&pE]() { return pE->init(); });
+  bench.benchmark_CPU("Simulation init()", [&pE]() { return pE.init(); });
 #else
-  bool re_err = rE->init();
-  pE->init();
+  bool re_err = rE.init();
+  pE.init();
 #endif
   if (re_err) {
     return 1;
@@ -105,7 +102,7 @@ meshes->push_back(std::move(quad));
   double currentTime = glfwGetTime();  // gafferongames.com
   double accumulator = 0.0;
   std::cout << std::flush;
-  while (rE->shouldClose()) {
+  while (rE.shouldClose()) {
     double newTime = glfwGetTime();
     double frameTime = newTime - currentTime;
     currentTime = newTime;
@@ -113,23 +110,23 @@ meshes->push_back(std::move(quad));
     while (accumulator >= STEP_DT) {
 #ifdef BENCHMARK
       bench.benchmark_CPU("Simulation update",
-                          [&pE]() { return pE->update(PHYSIC_DT); });
+                          [&pE]() { return pE.update(PHYSIC_DT); });
 #else
-      pE->update(PHYSIC_DT);
+      pE.update(PHYSIC_DT);
 #endif
       // pE->update(PHYSIC_DT);
       accumulator -= STEP_DT;
     }
 #ifdef BENCHMARK
-    bench.benchmark_CPU("Renderer update", [&rE] { return rE->render(); });
+    bench.benchmark_CPU("Renderer update", [&rE] { return rE.render(); });
 #else
-    rE->render();
+    rE.render();
 #endif
   }
 #ifdef BENCHMARK
   bench.printStats();
 #endif
-  rE->stop();
+  rE.stop();
   return 0;
 }
 
