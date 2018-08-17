@@ -138,9 +138,9 @@ void myRenderingEngine::renderPass() {
     world.setRotation((*meshes)[i]->getRotation());
 
     // lighting.setShadowMapTexture(1);
-    lighting.setWorldMatrix(world.getModelMatrix());
-    lighting.setWVP(world.getMVP());
 
+    lighting.uniform_update("gMVP", world.getMVP());
+    lighting.uniform_update("gModel", world.getModelMatrix());
     (*meshes)[i]->Render();
   }
   world.setPosition(Vector3f(0.0f, 0.0f, 0.0f));
@@ -148,10 +148,10 @@ void myRenderingEngine::renderPass() {
   world.setRotation(Vector3f(0.0f, 0.0f, 0.0f));
 
   PTB.plugTechnique();
-  PTB.setWVP(world.getMVP());
+  PTB.uniform_update("gMVP", world.getMVP());
   grid->renderBorders();
   PT.plugTechnique();
-  PT.setWVP(world.getMVP());
+  PT.uniform_update("gMVP", world.getMVP());
 
   particlesystem->render();
 

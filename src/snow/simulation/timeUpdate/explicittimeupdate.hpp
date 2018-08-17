@@ -33,8 +33,8 @@ class ExplicitTimeUpdate : public TimeUpdate {
   RigidCompute rigidSim;
 
  private:
-  const int numColliders;
-  const int numParticles;
+  const GLuint numColliders;
+  const GLuint numParticles;
 };
 
 #endif  // EXPLICITTIMEUPDATE_H

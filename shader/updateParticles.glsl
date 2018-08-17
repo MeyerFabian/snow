@@ -7,8 +7,8 @@ uniform float critStretch;
 
 uniform int collisionOffset;
 uniform ivec3 gGridDim;
-uniform int gNumColliders;
-uniform int indexSize;
+uniform uint gNumColliders;
+uniform uint indexSize;
 
 layout(local_size_x =1024, local_size_y =1,local_size_z =1)in;
 

@@ -104,23 +104,51 @@ bool ReadFile(const char* pFileName, string& outFile) {
 
 void Technique::uniform_update(const std::string& name, float value) const
     noexcept {
-  glUniform1f(m_uniformMap.at(name), value);
+  glUniform1f(uniform_look_up(name), value);
 }
 
-void Technique::uniform_update(const std::string& name, int value) const
+void Technique::uniform_update(const std::string& name, GLint value) const
     noexcept {
-  glUniform1i(m_uniformMap.at(name), value);
+  glUniform1i(uniform_look_up(name), value);
+}
+void Technique::uniform_update(const std::string& name, GLuint value) const
+    noexcept {
+  glUniform1ui(uniform_look_up(name), value);
 }
 void Technique::uniform_update(const std::string& name, double value) const
     noexcept {
-  glUniform1f(m_uniformMap.at(name), value);
+  glUniform1f(uniform_look_up(name), value);
 }
 void Technique::uniform_update(const std::string& name, float x, float y,
                                float z) const noexcept {
-  glUniform3f(m_uniformMap.at(name), x, y, z);
+  glUniform3f(uniform_look_up(name), x, y, z);
 }
-void Technique::uniform_update(const std::string& name, int x, int y,
-                               int z) const noexcept {
-  glUniform3i(m_uniformMap.at(name), x, y, z);
+void Technique::uniform_update(const std::string& name, GLint x, GLint y,
+                               GLint z) const noexcept {
+  glUniform3i(uniform_look_up(name), x, y, z);
+}
+void Technique::uniform_update(const std::string& name,
+                               const Matrix4f* mat4) const noexcept {
+  glUniformMatrix4fv(uniform_look_up(name), 1, GL_TRUE, (const GLfloat*)mat4);
+}
+
+GLuint Technique::uniform_look_up(std::string uniform) const noexcept {
+  // Create an iterator to look through our uniform map and try to find the
+  // named uniform
+  auto it = std::find_if(
+      m_uniformMap.cbegin(), m_uniformMap.cend(),
+      [uniform](const auto& mapEntry) { return uniform == mapEntry.first; });
+  // auto it =std::find(m_uniformMap.cbegin(),
+  // m_uniformMap.cend(),[uniform](auto mapEntry) { return uniform ==
+  // mapEntry.first; });
+  // Found it? Great - pass it back! Didn't find it? Alert user and halt.
+  if (it != m_uniformMap.end()) {
+    return m_uniformMap.at(uniform);
+  } else {
+    std::cerr << "Could not find uniform in shader program: " + uniform
+              << std::endl;
+    std::cerr << "Associated shaders with this shader program:" << std::endl;
+    return 0;
+  }
 }
 

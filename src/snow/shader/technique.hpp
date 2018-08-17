@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 
 #include <string.h>
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -25,12 +26,13 @@ class Technique {
 
  public:
   void uniform_update(const std::string&, float) const noexcept;
-  void uniform_update(const std::string&, int) const noexcept;
+  void uniform_update(const std::string&, GLint) const noexcept;
+  void uniform_update(const std::string&, GLuint) const noexcept;
   void uniform_update(const std::string&, double) const noexcept;
   void uniform_update(const std::string&, float, float, float) const noexcept;
-
-  void uniform_update(const std::string& name, int, int, int) const noexcept;
-  // void uniform_update(std::string name, const Matrix4f*) const;
+  void uniform_update(const std::string&, const Matrix4f*) const noexcept;
+  void uniform_update(const std::string&, GLint, GLint, GLint) const noexcept;
+  GLuint uniform_look_up(std::string) const noexcept;
   void init();
   Technique();
   ~Technique();
