@@ -45,14 +45,8 @@ void Technique::attach() const {
     gl_attach(shaderObject->get_id());
   }
 }
+Technique::Technique() : shaderProgram(glCreateProgram()) {}
 Technique::~Technique() { glDeleteProgram(shaderProgram); }
-void Technique::init() {
-  this->shaderProgram = glCreateProgram();
-  // glProgramParameteri(this->shaderProgram , GL_PROGRAM_SEPARABLE, GL_TRUE);
-  if (shaderProgram == 0) {
-    fprintf(stderr, "Error creating shader program\n");
-  }
-}
 
 void Technique::plugTechnique() { glUseProgram(shaderProgram); }
 void Technique::gl_attach(GLuint shaderid) const {

@@ -38,8 +38,8 @@ class Technique {
   void uniform_update(const std::string&, const Matrix4f*) const noexcept;
   void uniform_update(const std::string&, GLint, GLint, GLint) const noexcept;
   GLuint uniform_look_up(std::string) const noexcept;
-  void init();
   void upload();
+  Technique();
   ~Technique();
   GLuint getShaderProgram();
   void plugTechnique();

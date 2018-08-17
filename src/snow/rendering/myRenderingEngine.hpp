@@ -1,8 +1,7 @@
 #ifndef MYRENDERINGENGINE_H
 #define MYRENDERINGENGINE_H
-#include "../rendering/renderingEngine.hpp"
-#define GLEW_STATIC
-#include <GL/glew.h>
+#include "GLFWWrapper.hpp"
+
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +12,7 @@
 #include "../defines/defines.hpp"
 #include "../object/mesh.hpp"
 #include "../object/texture.hpp"
+#include "../rendering/renderingEngine.hpp"
 #include "math3d.hpp"
 #include "pipeline/pipeline.hpp"
 #include "stb_image.h"
@@ -26,7 +26,7 @@ class myRenderingEngine : public renderingEngine {
       std::shared_ptr<std::vector<shared_ptr<Mesh> > > const meshes,
       std::shared_ptr<ParticleSystem> const particles,
       std::shared_ptr<Grid> const grid)
-      : renderingEngine(meshes, particles, grid) {}
+      : renderingEngine(meshes, particles, grid), glfwContext(GLFWWrapper()) {}
   virtual bool init();
   virtual void render();
   virtual bool shouldClose();
@@ -42,7 +42,7 @@ class myRenderingEngine : public renderingEngine {
  private:
   GLuint VBO;
   GLuint IBO;
-
+  GLFWWrapper glfwContext;
   LightingTechnique lighting;
   ParticleTechnique particleImposter;
   ParticleTechnique gridBorderLines;
