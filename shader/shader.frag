@@ -10,11 +10,9 @@ uniform float gDiffuse;
 uniform int gSpecPower;
 uniform vec3 gSpecInt;
 
-uniform sampler2D gSampler;
 void main(void)
 {
 
-	vec4 textureColor = texture2D(gSampler,Texture0);
 
 	vec4 ambientColor = vec4(gColor,0.0) * gAmbient;
 
