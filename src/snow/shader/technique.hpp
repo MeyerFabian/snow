@@ -10,7 +10,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-
+#include "math3d.hpp"
 #define INVALID_UNIFORM_LOCATION 0xffffffff
 using namespace std;
 
@@ -24,9 +24,13 @@ class Technique {
   void gl_uniforms_read();
 
  public:
-  void uniform_update(const std::string&, float) const;
-  void uniform_update(const std::string&, int) const;
-  void uniform_update(const std::string&, double) const;
+  void uniform_update(const std::string&, float) const noexcept;
+  void uniform_update(const std::string&, int) const noexcept;
+  void uniform_update(const std::string&, double) const noexcept;
+  void uniform_update(const std::string&, float, float, float) const noexcept;
+
+  void uniform_update(const std::string& name, int, int, int) const noexcept;
+  // void uniform_update(std::string name, const Matrix4f*) const;
   void init();
   Technique();
   ~Technique();

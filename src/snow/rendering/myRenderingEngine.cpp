@@ -100,75 +100,38 @@ void myRenderingEngine::initShader() {
   };
 
   lighting.init(vs, fs);
-
-  /*
-
-         vs.clear();
-         fs.clear();
-
-         if(!ReadFile(pVShadowMapFileName,vs)){
-           fprintf(stderr, "Error: vs\n");
-            exit(1);
-         };
-
-         if(!ReadFile(pFShadowMapFileName,fs)){
-
-          fprintf(stderr, "Error: fs \n");
-          exit(1);
-         };
-         SMFBO = ShadowMapBufferObject();
-         SMFBO.Init(WINDOW_WIDTH,WINDOW_HEIGHT);
-         SMT=ShadowMapTechnique();
-         if(!SMT.init(vs,fs)){
-             printf("SMT init failed");
-         }
-  */
 }
-void myRenderingEngine::shadowMapPass() {
-  /*
-      SMFBO.BindForWriting();
-      glClear(GL_DEPTH_BUFFER_BIT);
-
-
-      SMT.plugTechnique();
-
-      pipeline light;
-      lightpos = Vector3f(0.0,lighty+ 3.0f,1.0f);
-
-      light.setPosition(0.0f,0.0f,0.0f);
-      light.setScale(0.003f,0.003f,0.003f);
-      light.setRotation(0,0,0);
-      light.setPerspective(45,WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 30.0f);
-      light.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
-
-      SMT.setMVP(light.getMVP());
-      (*meshes)[0].Render();
-
-  */
-}
+void myRenderingEngine::shadowMapPass() {}
 void myRenderingEngine::renderPass() {
   if (debug == true) {
     particlesystem->debug();
     grid->debug();
   }
-  // pipeline light;
   lightpos = Vector3f(4.0, 5.0f, 4.0f);
-
-  // SMFBO.BindForReading(GL_TEXTURE1);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glClearColor(0.5, 0.5, 0.5, 0);
 
-  //
   lighting.plugTechnique();
-  lighting.setSampler(0);
+
+  /*
   lighting.setLight(lightpos, 0.1, Vector3f(1.0, 1.0, 1.0), 0.2);
   Vector3f specIntens(1.0, 1.0, 1.0);
   lighting.setSpecularIntensity(specIntens);
-  // lighting.uniform_update("gSpecPower", (int)10);
   lighting.setSpecularPower(10);
   lighting.setCameraPos(world.getCameraPos());
+  /*/
+  // lighting.uniform_update("gSampler", 0);
+  lighting.uniform_update("gLightPosition", lightpos.x, lightpos.y, lightpos.z);
+  lighting.uniform_update("gAmbient", 0.1f);
+  lighting.uniform_update("gColor", 1.0f, 1.0f, 1.0f);
+  lighting.uniform_update("gDiffuse", 0.2f);
+  lighting.uniform_update("gSpecInt", 1.0f, 1.0f, 1.0f);
+  lighting.uniform_update("gSpecPower", 10);
+  lighting.uniform_update("gCameraPos", world.getCameraPos().x,
+                          world.getCameraPos().y, world.getCameraPos().z);
+  //*/
   for (int i = 0; i < meshes->size(); i++) {
     world.setPosition((*meshes)[i]->getPosition());
     world.setScale((*meshes)[i]->getScale());
