@@ -53,9 +53,9 @@ void ExplicitTimeUpdate::init() {
   pU.uniform_update("critComp", CRIT_COMPRESSION);
   pU.uniform_update("critStretch", CRIT_STRETCH);
   pU.uniform_update("gNumColliders",
-                    static_cast<int>(collisionObjects->colliders->size()));
+                    static_cast<GLsizei>(collisionObjects->colliders->size()));
   pU.uniform_update("indexSize",
-                    static_cast<int>(particlesystem->particles->size()));
+                    static_cast<GLsizei>(particlesystem->particles->size()));
   rg.use();
   glDispatchCompute(
       GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
@@ -64,17 +64,15 @@ void ExplicitTimeUpdate::init() {
   particlesystem->debug();
 
   cMass.use();
-  glDispatchCompute((static_cast<int>(particlesystem->particles->size())) /
-                            NUM_OF_GPGPU_THREADS_X +
-                        1,
-                    PARTICLE_TO_GRID_SIZE, 1);
+  glDispatchCompute(
+      particlesystem->particles->size() / NUM_OF_GPGPU_THREADS_X + 1,
+      PARTICLE_TO_GRID_SIZE, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
   cVolume.use();
-  glDispatchCompute((static_cast<int>(particlesystem->particles->size())) /
-                            NUM_OF_GPGPU_THREADS_X +
-                        1,
-                    PARTICLE_TO_GRID_SIZE, 1);
+  glDispatchCompute(
+      particlesystem->particles->size() / NUM_OF_GPGPU_THREADS_X + 1,
+      PARTICLE_TO_GRID_SIZE, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
   particlesystem->debug();
@@ -86,8 +84,7 @@ void ExplicitTimeUpdate::update(double dt) {
   collisionObjects->updateRenderBuffer(dt);
   rigidSim.use();
   rigidSim.uniform_update("dt", dt);
-  glDispatchCompute(static_cast<int>(collisionObjects->colliders->size()), 1,
-                    1);
+  glDispatchCompute(collisionObjects->colliders->size(), 1, 1);
 
   rg.use();
   glDispatchCompute(
@@ -95,10 +92,9 @@ void ExplicitTimeUpdate::update(double dt) {
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
   p2g.use();
-  glDispatchCompute((static_cast<int>(particlesystem->particles->size())) /
-                            NUM_OF_GPGPU_THREADS_X +
-                        1,
-                    PARTICLE_TO_GRID_SIZE, 1);
+  glDispatchCompute(
+      particlesystem->particles->size() / NUM_OF_GPGPU_THREADS_X + 1,
+      PARTICLE_TO_GRID_SIZE, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
   g2g.use();
@@ -108,20 +104,17 @@ void ExplicitTimeUpdate::update(double dt) {
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
   g2p.use();
-  glDispatchCompute((static_cast<int>(particlesystem->particles->size())) /
-                            NUM_OF_GPGPU_THREADS_X +
-                        1,
-                    PARTICLE_TO_GRID_SIZE, 1);
+  glDispatchCompute(
+      particlesystem->particles->size() / NUM_OF_GPGPU_THREADS_X + 1,
+      PARTICLE_TO_GRID_SIZE, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
   // scene.particleSys->debug();
   // scene.grid->debug();
   pU.use();
   pU.uniform_update("dt", dt);
-  glDispatchCompute((static_cast<int>(particlesystem->particles->size())) /
-                            NUM_OF_GPGPU_THREADS_X +
-                        1,
-                    1, 1);
+  glDispatchCompute(
+      particlesystem->particles->size() / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
 

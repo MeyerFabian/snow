@@ -7,9 +7,9 @@
 #include <string.h>
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <math3d.hpp>
 #include <string>
+#include <unordered_map>
 #include <vector>
 using namespace std;
 
@@ -19,17 +19,19 @@ class Technique {
 
  private:
   vector<GLuint> ShaderObjects;
-  std::map<std::string, GLuint> m_uniformMap;
+  std::unordered_map<std::string, GLuint> m_uniformMap;
   void gl_uniforms_read();
 
  public:
-  void uniform_update(const std::string&, bool value) const;
-  void uniform_update(const std::string&, int value) const;
-  void uniform_update(const std::string&, float value) const;
-  void uniform_update(const std::string&, double value) const;
-  void uniform_update(const std::string&, float x, float y, float z) const;
-  void uniform_update(const std::string&, int x, int y, int z) const;
-  void uniform_update(const std::string&, const Matrix4f* mat4) const;
+  void uniform_update(const std::string&, const bool value) const noexcept;
+  void uniform_update(const std::string&, const int value) const noexcept;
+  void uniform_update(const std::string&, const float value) const noexcept;
+  void uniform_update(const std::string&, const double value) const noexcept;
+  void uniform_update(const std::string&, const float x, const float y,
+                      const float z) const noexcept;
+  void uniform_update(const std::string&, const int x, const int y,
+                      const int z) const noexcept;
+  void uniform_update(const std::string&, const Matrix4f* mat4) const noexcept;
   void init();
   Technique();
   ~Technique();
