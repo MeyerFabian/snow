@@ -7,9 +7,9 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include "math3d.hpp"
 #include "shader.hpp"
@@ -27,8 +27,9 @@ class Technique {
   void uniform_update(std::string name, double value) const;
   void uniform_update(std::string name, float x, float y, float z) const;
   void uniform_update(std::string name, int x, int y, int z) const;
-  void uniform_update(std::string name, const size_t size) const;
+  void uniform_update(std::string name, unsigned int size) const;
   void uniform_update(std::string name, const Matrix4f* mat4) const;
+  void uniform_update(std::string name, double x, double y, double z) const;
   void use() const;
   void upload();
 
@@ -44,7 +45,7 @@ class Technique {
 
   GLuint shaderProgram;
   std::vector<std::shared_ptr<Shader>> shaderObjects;
-  std::map<std::string, unsigned int> m_uniformMap;
+  std::unordered_map<std::string, unsigned int> m_uniformMap;
 };
 
 #endif  // TECHNIQUE_H

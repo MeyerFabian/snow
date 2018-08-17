@@ -23,7 +23,9 @@ class ExplicitTimeUpdate : public TimeUpdate {
         rg(ResetGridCompute()),
         g2g(VelGridCompute()),
         pU(ParticleCompute()),
-        rigidSim(RigidCompute()) {}
+        rigidSim(RigidCompute()),
+        numParticles(sceneToSimulate.particleSys->particles.size()),
+        numColliders(sceneToSimulate.colliderSys->colliders.size()) {}
   void init();
   void update(double dt);
   VolumeCompute cVolume;
@@ -34,6 +36,11 @@ class ExplicitTimeUpdate : public TimeUpdate {
   VelGridCompute g2g;
   ParticleCompute pU;
   RigidCompute rigidSim;
+
+ private:
+  // cached values
+  const unsigned int numParticles;
+  const unsigned int numColliders;
 };
 
 #endif  // EXPLICITTIMEUPDATE_H

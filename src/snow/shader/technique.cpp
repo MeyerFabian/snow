@@ -126,39 +126,35 @@ Technique::~Technique() {
 }
 
 void Technique::uniform_update(std::string name, bool value) const {
-  use();
   glUniform1i(uniform_look_up(name), value);
 }
 
 void Technique::uniform_update(std::string name, int value) const {
-  use();
   glUniform1i(uniform_look_up(name), value);
 }
 
 void Technique::uniform_update(std::string name, float value) const {
-  use();
   glUniform1f(uniform_look_up(name), value);
 }
 
 void Technique::uniform_update(std::string name, double value) const {
-  use();
   glUniform1f(uniform_look_up(name), value);
 }
 void Technique::uniform_update(std::string name, float x, float y,
                                float z) const {
-  use();
+  glUniform3f(uniform_look_up(name), x, y, z);
+}
+void Technique::uniform_update(std::string name, double x, double y,
+                               double z) const {
   glUniform3f(uniform_look_up(name), x, y, z);
 }
 void Technique::uniform_update(std::string name, int x, int y, int z) const {
-  use();
   glUniform3i(uniform_look_up(name), x, y, z);
 }
 void Technique::uniform_update(std::string name, const Matrix4f* mat4) const {
-  use();
   glUniformMatrix4fv(uniform_look_up(name), 1, GL_TRUE, (const GLfloat*)mat4);
 }
-void Technique::uniform_update(std::string name, const size_t size) const {
-  use();
+void Technique::uniform_update(std::string name, unsigned int size) const {
   glUniform1ui(uniform_look_up(name), size);
 }
 
