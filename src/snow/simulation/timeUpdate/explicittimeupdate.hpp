@@ -39,8 +39,8 @@ class ExplicitTimeUpdate : public TimeUpdate {
 
  private:
   // cached values
-  const unsigned int numParticles;
-  const unsigned int numColliders;
+  const GLuint numParticles;
+  const GLuint numColliders;
 };
 
 #endif  // EXPLICITTIMEUPDATE_H

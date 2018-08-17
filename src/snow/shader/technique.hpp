@@ -21,20 +21,20 @@ class Technique {
   bool add_shader(std::shared_ptr<Shader>&& ptr);
 
  public:
-  void uniform_update(std::string name, bool value) const;
-  void uniform_update(std::string name, int value) const;
-  void uniform_update(std::string name, float value) const;
-  void uniform_update(std::string name, double value) const;
-  void uniform_update(std::string name, float x, float y, float z) const;
-  void uniform_update(std::string name, int x, int y, int z) const;
-  void uniform_update(std::string name, unsigned int size) const;
-  void uniform_update(std::string name, const Matrix4f* mat4) const;
-  void uniform_update(std::string name, double x, double y, double z) const;
+  void uniform_update(const std::string&, float) const noexcept;
+  void uniform_update(const std::string&, GLint) const noexcept;
+  void uniform_update(const std::string&, GLuint) const noexcept;
+  void uniform_update(const std::string&, double) const noexcept;
+  void uniform_update(const std::string&, float, float, float) const noexcept;
+  void uniform_update(const std::string&, const Matrix4f*) const noexcept;
+  void uniform_update(const std::string&, GLint, GLint, GLint) const noexcept;
+  void uniform_update(const std::string& name, double x, double y,
+                      double z) const noexcept;
   void use() const;
   void upload();
 
  private:
-  unsigned int uniform_look_up(std::string) const;
+  GLuint uniform_look_up(std::string) const noexcept;
 
   void attach_and_link() const;
   void attach() const;
@@ -45,7 +45,7 @@ class Technique {
 
   GLuint shaderProgram;
   std::vector<std::shared_ptr<Shader>> shaderObjects;
-  std::unordered_map<std::string, unsigned int> m_uniformMap;
+  std::unordered_map<std::string, GLuint> m_uniformMap;
 };
 
 #endif  // TECHNIQUE_H
