@@ -1,46 +1,16 @@
 #include "myRenderingEngine.hpp"
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <glm.hpp>
-#include <iostream>
-#include <memory>
-#include "../defines/defines.hpp"
-#include "../object/mesh.hpp"
-#include "../object/texture.hpp"
-#include "math3d.hpp"
-#include "pipeline/pipeline.hpp"
-#include "stb_image.h"
-#include "technique/lightingtechnique.hpp"
-#include "technique/particletechnique.hpp"
-#include "technique/shadowMapTechnique.hpp"
-#include "technique/shadowmapbufferobject.hpp"
+
 using namespace std;
 
 GLFWwindow* window;
-
-GLuint VBO;
-GLuint IBO;
-
 const char* pVSFileName = "shader/shader.vert";
 const char* pFSFileName = "shader/shader.frag";
-LightingTechnique lighting;
-
-const char* pVShadowMapFileName = "shader/m_shadow.vert";
-const char* pFShadowMapFileName = "shader/m_shadow.frag";
-ShadowMapTechnique SMT;
-ShadowMapBufferObject SMFBO;
 
 const char* pVSParticleFileName = "shader/particleShader.vert";
 const char* pFSParticleFileName = "shader/particleShader.frag";
-ParticleTechnique PT;
 
 const char* pVSBorderFileName = "shader/borderShader.vert";
 const char* pFSBorderFileName = "shader/borderShader.frag";
-ParticleTechnique PTB;
 
 pipeline world;
 GLuint textureID;
@@ -82,7 +52,7 @@ void myRenderingEngine::initVBO() {
   world.setCamera(3.0, 3.5f, 14.0f, 2.5125f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 }
 
-void initShader() {
+void myRenderingEngine::initShader() {
   string vs, fs, gs;
   vs.clear();
   fs.clear();
@@ -96,7 +66,6 @@ void initShader() {
     fprintf(stderr, "Error: fs \n");
     exit(1);
   };
-  PT = ParticleTechnique();
 
   if (!PT.init(vs, fs)) {
     printf("PT init failed");
@@ -114,8 +83,6 @@ void initShader() {
     exit(1);
   };
 
-  PTB = ParticleTechnique();
-
   if (!PTB.init(vs, fs)) {
     printf("PT init failed");
   }
@@ -132,7 +99,6 @@ void initShader() {
     exit(1);
   };
 
-  lighting = LightingTechnique();
   lighting.init(vs, fs);
 
   /*
@@ -195,64 +161,25 @@ void myRenderingEngine::renderPass() {
   glClearColor(0.5, 0.5, 0.5, 0);
 
   //
-  glm::mat4x4 matrix;
-  glm::mat4x4 tmatrix;
-
   lighting.plugTechnique();
   lighting.setSampler(0);
   lighting.setLight(lightpos, 0.1, Vector3f(1.0, 1.0, 1.0), 0.2);
   Vector3f specIntens(1.0, 1.0, 1.0);
   lighting.setSpecularIntensity(specIntens);
+  // lighting.uniform_update("gSpecPower", (int)10);
   lighting.setSpecularPower(10);
   lighting.setCameraPos(world.getCameraPos());
   for (int i = 0; i < meshes->size(); i++) {
     world.setPosition((*meshes)[i]->getPosition());
     world.setScale((*meshes)[i]->getScale());
     world.setRotation((*meshes)[i]->getRotation());
-    matrix = glm::mat4x4(
-        world.getModelMatrix()->m[0][0], world.getModelMatrix()->m[0][1],
-        world.getModelMatrix()->m[0][2], world.getModelMatrix()->m[0][3],
-        world.getModelMatrix()->m[1][0], world.getModelMatrix()->m[1][1],
-        world.getModelMatrix()->m[1][2], world.getModelMatrix()->m[1][3],
-        world.getModelMatrix()->m[2][0], world.getModelMatrix()->m[2][1],
-        world.getModelMatrix()->m[2][2], world.getModelMatrix()->m[2][3],
-        world.getModelMatrix()->m[3][0], world.getModelMatrix()->m[3][1],
-        world.getModelMatrix()->m[3][2], world.getModelMatrix()->m[3][3]);
-    tmatrix = glm::inverse(matrix);
-    matrix = glm::transpose(tmatrix);
 
     // lighting.setShadowMapTexture(1);
     lighting.setWorldMatrix(world.getModelMatrix());
-    lighting.setInverse(&matrix);
     lighting.setWVP(world.getMVP());
-    lighting.setLightMVP(world.getMVP());  // TODO
 
     (*meshes)[i]->Render();
-    // world.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
-
-    /*
-    matrix= glm::mat4x4(    world.getModelMatrix()->m[0][0],
-    world.getModelMatrix()->m[0][1], world.getModelMatrix()->m[0][2],
-    world.getModelMatrix()->m[0][3], world.getModelMatrix()->m[1][0],
-    world.getModelMatrix()->m[1][1], world.getModelMatrix()->m[1][2],
-    world.getModelMatrix()->m[1][3], world.getModelMatrix()->m[2][0],
-    world.getModelMatrix()->m[2][1], world.getModelMatrix()->m[2][2],
-    world.getModelMatrix()->m[2][3], world.getModelMatrix()->m[3][0],
-    world.getModelMatrix()->m[3][1], world.getModelMatrix()->m[3][2],
-    world.getModelMatrix()->m[3][3]
-        );
-    tmatrix=glm::inverse(matrix);
-    matrix=glm::transpose(tmatrix);
-
-    lighting.setWorldMatrix(world.getModelMatrix());
-    lighting.setInverse(&matrix);
-    lighting.setWVP(world.getMVP());
-    lighting.setLightMVP(world.getMVP());
-    */
   }
-  // world.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
-
-  // glMemoryBarrier(GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT);
   world.setPosition(Vector3f(0.0f, 0.0f, 0.0f));
   world.setScale(Vector3f(1.0f, 1.0f, 1.0f));
   world.setRotation(Vector3f(0.0f, 0.0f, 0.0f));
@@ -260,7 +187,6 @@ void myRenderingEngine::renderPass() {
   PTB.plugTechnique();
   PTB.setWVP(world.getMVP());
   grid->renderBorders();
-  // particlesystem->updateVBOBuffer();
   PT.plugTechnique();
   PT.setWVP(world.getMVP());
 
@@ -268,11 +194,6 @@ void myRenderingEngine::renderPass() {
 
   glfwSwapBuffers(window);
   glfwPollEvents();
-  // double timeS = glfwGetTime ();
-  // grid->render();
-  // double timeE = glfwGetTime();
-  // std::cout << (timeE - timeS)*1000 << " ms for rendering the
-  // grid."<<std::endl;
 }
 
 void myRenderingEngine::renderQueue() {

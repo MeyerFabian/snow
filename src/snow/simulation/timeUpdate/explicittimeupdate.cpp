@@ -78,7 +78,7 @@ void ExplicitTimeUpdate::init() {
   cMass.plugTechnique();
   cMass.setGridPos(grid->x_off, grid->y_off, grid->z_off);
   cMass.setGridDim(grid->dimx, grid->dimy, grid->dimz);
-  cMass.setGridSpacing(grid->h);
+  cMass.uniform_update("gridSpacing", grid->h);
   cMass.setIndexSize(particlesystem->particles->size());
   glDispatchCompute(
       (particlesystem->particles->size()) / NUM_OF_GPGPU_THREADS_X + 1,
@@ -103,7 +103,7 @@ void ExplicitTimeUpdate::update(double dt) {
   // std::cout<<"Frame begin:"<<std::endl;
 
   rigidSim.plugTechnique();
-  rigidSim.setDt(dt);
+  rigidSim.uniform_update("dt", dt);
   glDispatchCompute(collisionObjects->colliders->size(), 1, 1);
 
   collisionObjects->updateRenderBuffer(dt);
@@ -115,12 +115,10 @@ void ExplicitTimeUpdate::update(double dt) {
   p2g.plugTechnique();
   p2g.setGridPos(grid->x_off, grid->y_off, grid->z_off);
   p2g.setGridDim(grid->dimx, grid->dimy, grid->dimz);
-  p2g.setGridSpacing(grid->h);
-  p2g.setYoung();
-  p2g.setPoisson();
-  p2g.setHardening();
-  p2g.setCritComp();
-  p2g.setCritStretch();
+  p2g.uniform_update("gridSpacing", grid->h);
+  p2g.uniform_update("young", YOUNG_MODULUS);
+  p2g.uniform_update("poisson", POISSON);
+  p2g.uniform_update("hardening", HARDENING);
 
   p2g.setIndexSize(particlesystem->particles->size());
   glDispatchCompute(
@@ -129,20 +127,18 @@ void ExplicitTimeUpdate::update(double dt) {
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
   g2g.plugTechnique();
-  g2g.setDt(dt);
+  g2g.uniform_update("dt", dt);
   g2g.setGridDim(grid->dimx, grid->dimy, grid->dimz);
   g2g.setCollisionOffset();
   g2g.setnumColliders(collisionObjects->colliders->size());
   glDispatchCompute(
       GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-  //
-  // grid->debug();
 
   g2p.plugTechnique();
   g2p.setGridPos(grid->x_off, grid->y_off, grid->z_off);
   g2p.setGridDim(grid->dimx, grid->dimy, grid->dimz);
-  g2p.setGridSpacing(grid->h);
+  g2p.uniform_update("gridSpacing", grid->h);
 
   g2p.setIndexSize(particlesystem->particles->size());
   glDispatchCompute(
@@ -150,33 +146,15 @@ void ExplicitTimeUpdate::update(double dt) {
       PARTICLE_TO_GRID_SIZE, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
-  // particlesystem->debug();
-  // particlesystem->debug();
-  // grid->debug();
-  // std::cout<<"Vor FEp Update"<<std::endl;
-
-  // particlesystem->debug();
-  // grid->debug();
   pU.plugTechnique();
-  pU.setDt(dt);
-  pU.setCritComp();
-  pU.setCritStretch();
+  pU.uniform_update("dt", dt);
+  pU.uniform_update("critComp", CRIT_COMPRESSION);
+  pU.uniform_update("critStretch", CRIT_STRETCH);
   pU.setGridDim(grid->dimx, grid->dimy, grid->dimz);
-  pU.setCollisionOffset();
   pU.setIndexSize(particlesystem->particles->size());
   pU.setnumColliders(collisionObjects->colliders->size());
   glDispatchCompute(
       (particlesystem->particles->size()) / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-
-  // std::cout<<"Nach FEp Update"<<std::endl;
-
-  /*
-   * obsolete can be done in previous compute shader
-      divVelMass.plugTechnique();
-      glDispatchCompute(GRID_DIM_X * GRID_DIM_Y *
-   GRID_DIM_Z/NUM_OF_GPGPU_THREADS_X,1,1,NUM_OF_GPGPU_THREADS_X,1,1);
-      glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-  */
 }
 

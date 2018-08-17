@@ -1,6 +1,25 @@
 #ifndef MYRENDERINGENGINE_H
 #define MYRENDERINGENGINE_H
 #include "../rendering/renderingEngine.hpp"
+#define GLEW_STATIC
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <glm.hpp>
+#include <iostream>
+#include <memory>
+#include "../defines/defines.hpp"
+#include "../object/mesh.hpp"
+#include "../object/texture.hpp"
+#include "math3d.hpp"
+#include "pipeline/pipeline.hpp"
+#include "stb_image.h"
+#include "technique/lightingtechnique.hpp"
+#include "technique/particletechnique.hpp"
+#include "technique/shadowMapTechnique.hpp"
+#include "technique/shadowmapbufferobject.hpp"
 class myRenderingEngine : public renderingEngine {
  public:
   myRenderingEngine(
@@ -15,8 +34,20 @@ class myRenderingEngine : public renderingEngine {
 
   void fillBufferFromMeshes();
   void initVBO();
+  void initShader();
   void shadowMapPass();
   void renderPass();
   void renderQueue();
+
+ private:
+  GLuint VBO;
+  GLuint IBO;
+
+  ParticleTechnique PT;
+  ParticleTechnique PTB;
+  ShadowMapTechnique SMT;
+  ShadowMapBufferObject SMFBO;
+  LightingTechnique lighting;
 };
 #endif  // MYRENDERINGENGINE_H
+

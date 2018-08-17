@@ -6,7 +6,9 @@
 
 #include <string.h>
 #include <fstream>
+#include <iostream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #define INVALID_UNIFORM_LOCATION 0xffffffff
@@ -18,8 +20,13 @@ class Technique {
 
  private:
   vector<GLuint> ShaderObjects;
+  std::unordered_map<std::string, GLuint> m_uniformMap;
+  void gl_uniforms_read();
 
  public:
+  void uniform_update(const std::string&, float) const;
+  void uniform_update(const std::string&, int) const;
+  void uniform_update(const std::string&, double) const;
   void init();
   Technique();
   ~Technique();
@@ -32,3 +39,4 @@ class Technique {
 bool ReadFile(const char* pFileName, string& outFile);
 
 #endif  // TECHNIQUE_H
+

@@ -24,14 +24,14 @@ void Technique::addShader(const char* pShaderText, GLenum ShaderType) {
   const char* p = pShaderText;
   GLint Lengths[1];
   Lengths[0] = strlen(pShaderText);
-  glShaderSource(ShaderObj, 1, &p, nullptr);
+  glShaderSource(ShaderObj, 1, &p, NULL);
 
   glCompileShader(ShaderObj);
   GLint success;
   glGetShaderiv(ShaderObj, GL_COMPILE_STATUS, &success);
   if (!success) {
     GLchar InfoLog[1024];
-    glGetShaderInfoLog(ShaderObj, 1024, nullptr, InfoLog);
+    glGetShaderInfoLog(ShaderObj, 1024, NULL, InfoLog);
     fprintf(stderr, "Error compiling shader type %d: '%s'\n", ShaderType,
             InfoLog);
   }
@@ -57,12 +57,36 @@ void Technique::finalize() {
     glGetProgramInfoLog(ShaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
     fprintf(stderr, "Invalid shader program: '%s'\n", ErrorLog);
   }
+  gl_uniforms_read();
   for (const auto& ShaderObject : ShaderObjects) {
     glDeleteShader(ShaderObject);
   }
   ShaderObjects.clear();
 }
 
+void Technique::gl_uniforms_read() {
+  GLint numUniforms = -1;
+  glGetProgramiv(ShaderProgram, GL_ACTIVE_UNIFORMS, &numUniforms);
+
+  std::cerr << "Number of uniforms " + std::to_string(numUniforms) << std::endl;
+
+  for (int i = 0; i < numUniforms; i++) {
+    // passive variables for glGetActiveUniform
+    int nameLength = -1;
+    int uniformSize = -1;
+    GLenum type = GL_ZERO;
+    // string that saves uniformName
+    char uniformName[50];
+    glGetActiveUniform(ShaderProgram, GLint(i), sizeof(uniformName) - 1,
+                       &nameLength, &uniformSize, &type, uniformName);
+    uniformName[nameLength] = 0;
+    // add uniform variable to map
+    m_uniformMap[uniformName] =
+        glGetUniformLocation(ShaderProgram, uniformName);
+    std::cerr << "Uniform added " + std::to_string(i) + " : " + uniformName
+              << std::endl;
+  }
+}
 bool ReadFile(const char* pFileName, string& outFile) {
   ifstream f(pFileName);
   bool ret = false;
@@ -76,5 +100,18 @@ bool ReadFile(const char* pFileName, string& outFile) {
     ret = true;
   }
   return ret;
+}
+void Technique::uniform_update(const std::string& name, float value) const {
+  glUniform1f(m_uniformMap.at(name), value);
+  std::cerr << name << "calls float" << std::endl;
+}
+
+void Technique::uniform_update(const std::string& name, int value) const {
+  glUniform1i(m_uniformMap.at(name), value);
+  std::cerr << name << "calls int" << std::endl;
+}
+void Technique::uniform_update(const std::string& name, double value) const {
+  glUniform1f(m_uniformMap.at(name), value);
+  std::cerr << name << "calls double" << std::endl;
 }
 

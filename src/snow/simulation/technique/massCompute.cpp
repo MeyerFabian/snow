@@ -8,7 +8,6 @@ bool MassCompute::init(string cs) {
 
   gGridPos = glGetUniformLocation(this->ShaderProgram, "gGridPos");
   gGridDim = glGetUniformLocation(this->ShaderProgram, "gGridDim");
-  h = glGetUniformLocation(this->ShaderProgram, "gridSpacing");
   young = glGetUniformLocation(this->ShaderProgram, "young");
   poisson = glGetUniformLocation(this->ShaderProgram, "poisson");
   hardening = glGetUniformLocation(this->ShaderProgram, "hardening");
