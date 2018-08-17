@@ -105,33 +105,27 @@ bool ReadFile(const char* pFileName, string& outFile) {
 void Technique::uniform_update(const std::string& name, float value) const
     noexcept {
   glUniform1f(m_uniformMap.at(name), value);
-  // std::cerr << name << "calls float" << std::endl;
+  std::cerr << name << "calls float" << std::endl;
 }
 
 void Technique::uniform_update(const std::string& name, int value) const
     noexcept {
   glUniform1i(m_uniformMap.at(name), value);
-  // std::cerr << name << "calls int" << std::endl;
-}
-
-void Technique::uniform_update(const std::string& name, size_t value) const
-    noexcept {
-  glUniform1i(m_uniformMap.at(name), static_cast<GLint>(value));
-  // std::cerr << name << "calls int" << std::endl;
+  std::cerr << name << "calls int" << std::endl;
 }
 void Technique::uniform_update(const std::string& name, double value) const
     noexcept {
   glUniform1f(m_uniformMap.at(name), value);
-  // std::cerr << name << "calls double" << std::endl;
+  std::cerr << name << "calls double" << std::endl;
 }
 void Technique::uniform_update(const std::string& name, float x, float y,
                                float z) const noexcept {
   glUniform3f(m_uniformMap.at(name), x, y, z);
-  // std::cerr << name << "calls 3f" << std::endl;
+  std::cerr << name << "calls 3f" << std::endl;
 }
 void Technique::uniform_update(const std::string& name, int x, int y,
                                int z) const noexcept {
   glUniform3i(m_uniformMap.at(name), x, y, z);
-  // std::cerr << name << "calls 3i" << std::endl;
+  std::cerr << name << "calls 3i" << std::endl;
 }
 

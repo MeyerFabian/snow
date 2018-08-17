@@ -18,7 +18,9 @@ class ExplicitTimeUpdate : public TimeUpdate {
       std::shared_ptr<CollisionObjects> const collisonsToSimulate,
       shared_ptr<ParticleSystem> const particlesToSimulate,
       std::shared_ptr<Grid> const grid)
-      : TimeUpdate(collisonsToSimulate, particlesToSimulate, grid) {}
+      : TimeUpdate(collisonsToSimulate, particlesToSimulate, grid),
+        numColliders(collisonsToSimulate->colliders->size()),
+        numParticles(particlesToSimulate->particles->size()) {}
   void init();
   void update(double dt);
   VolumeCompute cVolume;
@@ -29,6 +31,10 @@ class ExplicitTimeUpdate : public TimeUpdate {
   VelGridCompute g2g;
   ParticleCompute pU;
   RigidCompute rigidSim;
+
+ private:
+  const int numColliders;
+  const int numParticles;
 };
 
 #endif  // EXPLICITTIMEUPDATE_H

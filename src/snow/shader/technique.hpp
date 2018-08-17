@@ -26,7 +26,6 @@ class Technique {
  public:
   void uniform_update(const std::string&, float) const noexcept;
   void uniform_update(const std::string&, int) const noexcept;
-  void uniform_update(const std::string&, size_t) const noexcept;
   void uniform_update(const std::string&, double) const noexcept;
   void uniform_update(const std::string&, float, float, float) const noexcept;
 
