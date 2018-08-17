@@ -1,72 +1,84 @@
 #include "technique.hpp"
-
-Technique::Technique() {}
-Technique::~Technique() {
-  for (vector<GLuint>::iterator it = ShaderObjects.begin();
-       it < ShaderObjects.end(); it++) {
-    glDeleteShader(*it);
+void Technique::upload() {
+  for (auto& shaderObject : shaderObjects) {
+    if (!shaderObject->is_uploaded()) {
+      shaderObject->load_from_file();
+      shaderObject->upload();
+    }
   }
-  glDeleteProgram(ShaderProgram);
+  attach_and_link();
+  gl_uniforms_read();
 }
+
+bool Technique::add_shader(std::shared_ptr<Shader>&& shader) {
+  auto new_shader_pos = std::find_if(
+      shaderObjects.cbegin(), shaderObjects.cend(),
+      [newtype = shader->get_type()](const auto& shaderObject) {
+        auto oldtype = shaderObject->get_type();
+        return (oldtype == newtype) || (oldtype == ShaderType::COMPUTE);
+      });
+
+  bool isComputeTechnique =
+      (shader->get_type() == ShaderType::COMPUTE && !shaderObjects.empty());
+  bool isNotNewType = (new_shader_pos != shaderObjects.end());
+
+  if (isComputeTechnique || isNotNewType) {
+    std::cerr
+        << "ILLEGAL ShaderType:\n You tried to add a type that is "
+           "incompatible with the rest of the Technique.\n Only one ShaderType "
+           "allowed. Except for ShaderType::COMPUTE is always alone:\n"
+        << shader->get_file_name() << "!" << std::endl;
+    return false;
+  } else {
+    shaderObjects.push_back(std::move(shader));
+  }
+  return true;
+}
+void Technique::attach_and_link() const {
+  attach();
+  gl_link();
+}
+void Technique::attach() const {
+  std::cerr << "shaderProgram:" << shaderProgram << std::endl;
+  for (const auto& shaderObject : shaderObjects) {
+    std::cerr << "Attach Shader: " << shaderObject->get_file_name() << "\n";
+    gl_attach(shaderObject->get_id());
+  }
+}
+Technique::~Technique() { glDeleteProgram(shaderProgram); }
 void Technique::init() {
-  this->ShaderProgram = glCreateProgram();
-  // glProgramParameteri(this->ShaderProgram , GL_PROGRAM_SEPARABLE, GL_TRUE);
-  if (ShaderProgram == 0) {
+  this->shaderProgram = glCreateProgram();
+  // glProgramParameteri(this->shaderProgram , GL_PROGRAM_SEPARABLE, GL_TRUE);
+  if (shaderProgram == 0) {
     fprintf(stderr, "Error creating shader program\n");
   }
 }
 
-GLuint Technique::getShaderProgram() { return this->ShaderProgram; }
-void Technique::plugTechnique() { glUseProgram(ShaderProgram); }
-
-void Technique::addShader(const char* pShaderText, GLenum ShaderType) {
-  GLuint ShaderObj = glCreateShader(ShaderType);
-  const char* p = pShaderText;
-  GLint Lengths[1];
-  Lengths[0] = strlen(pShaderText);
-  glShaderSource(ShaderObj, 1, &p, NULL);
-
-  glCompileShader(ShaderObj);
-  GLint success;
-  glGetShaderiv(ShaderObj, GL_COMPILE_STATUS, &success);
-  if (!success) {
-    GLchar InfoLog[1024];
-    glGetShaderInfoLog(ShaderObj, 1024, NULL, InfoLog);
-    fprintf(stderr, "Error compiling shader type %d: '%s'\n", ShaderType,
-            InfoLog);
-  }
-  ShaderObjects.push_back(ShaderObj);
+void Technique::plugTechnique() { glUseProgram(shaderProgram); }
+void Technique::gl_attach(GLuint shaderid) const {
+  glAttachShader(shaderProgram, shaderid);
 }
 
-void Technique::finalize() {
-  for (const auto& ShaderObject : ShaderObjects) {
-    glAttachShader(this->ShaderProgram, ShaderObject);
-  }
+void Technique::gl_link() const {
   GLint Success = 0;
   GLchar ErrorLog[1024] = {0};
-  glLinkProgram(ShaderProgram);
-  glGetProgramiv(ShaderProgram, GL_LINK_STATUS, &Success);
+  glLinkProgram(shaderProgram);
+  glGetProgramiv(shaderProgram, GL_LINK_STATUS, &Success);
   if (Success == 0) {
-    glGetProgramInfoLog(ShaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
-    fprintf(stderr, "Error linking shader program: '%s'\n", ErrorLog);
+    glGetProgramInfoLog(shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
+    std::cerr << "Error linking shader program: " << ErrorLog << std::endl;
   }
 
-  glValidateProgram(ShaderProgram);
-  glGetProgramiv(ShaderProgram, GL_VALIDATE_STATUS, &Success);
+  glValidateProgram(shaderProgram);
+  glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, &Success);
   if (!Success) {
-    glGetProgramInfoLog(ShaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
-    fprintf(stderr, "Invalid shader program: '%s'\n", ErrorLog);
+    glGetProgramInfoLog(shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
+    std::cerr << "Invalid shader program: " << ErrorLog << std::endl;
   }
-  gl_uniforms_read();
-  for (const auto& ShaderObject : ShaderObjects) {
-    glDeleteShader(ShaderObject);
-  }
-  ShaderObjects.clear();
 }
-
 void Technique::gl_uniforms_read() {
   GLint numUniforms = -1;
-  glGetProgramiv(ShaderProgram, GL_ACTIVE_UNIFORMS, &numUniforms);
+  glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORMS, &numUniforms);
 
   std::cerr << "Number of uniforms " + std::to_string(numUniforms) << std::endl;
 
@@ -77,29 +89,15 @@ void Technique::gl_uniforms_read() {
     GLenum type = GL_ZERO;
     // string that saves uniformName
     char uniformName[50];
-    glGetActiveUniform(ShaderProgram, GLint(i), sizeof(uniformName) - 1,
+    glGetActiveUniform(shaderProgram, GLint(i), sizeof(uniformName) - 1,
                        &nameLength, &uniformSize, &type, uniformName);
     uniformName[nameLength] = 0;
     // add uniform variable to map
     m_uniformMap[uniformName] =
-        glGetUniformLocation(ShaderProgram, uniformName);
+        glGetUniformLocation(shaderProgram, uniformName);
     std::cerr << "Uniform added " + std::to_string(i) + " : " + uniformName
               << std::endl;
   }
-}
-bool ReadFile(const char* pFileName, string& outFile) {
-  ifstream f(pFileName);
-  bool ret = false;
-  if (f.is_open()) {
-    string line;
-    while (getline(f, line)) {
-      outFile.append(line);
-      outFile.append("\n");
-    }
-    f.close();
-    ret = true;
-  }
-  return ret;
 }
 
 void Technique::uniform_update(const std::string& name, float value) const

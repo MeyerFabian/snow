@@ -3,14 +3,7 @@
 using namespace std;
 
 GLFWwindow* window;
-const char* pVSFileName = "shader/shader.vert";
-const char* pFSFileName = "shader/shader.frag";
 
-const char* pVSParticleFileName = "shader/particleShader.vert";
-const char* pFSParticleFileName = "shader/particleShader.frag";
-
-const char* pVSBorderFileName = "shader/borderShader.vert";
-const char* pFSBorderFileName = "shader/borderShader.frag";
 
 pipeline world;
 GLuint textureID;
@@ -53,53 +46,10 @@ void myRenderingEngine::initVBO() {
 }
 
 void myRenderingEngine::initShader() {
-  string vs, fs, gs;
-  vs.clear();
-  fs.clear();
-  gs.clear();
-  if (!ReadFile(pVSParticleFileName, vs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-
-  if (!ReadFile(pFSParticleFileName, fs)) {
-    fprintf(stderr, "Error: fs \n");
-    exit(1);
-  };
-
-  if (!PT.init(vs, fs)) {
-    printf("PT init failed");
-  }
-
-  vs.clear();
-  fs.clear();
-  if (!ReadFile(pVSBorderFileName, vs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-
-  if (!ReadFile(pFSBorderFileName, fs)) {
-    fprintf(stderr, "Error: fs \n");
-    exit(1);
-  };
-
-  if (!PTB.init(vs, fs)) {
-    printf("PT init failed");
-  }
-
-  vs.clear();
-  fs.clear();
-  if (!ReadFile(pVSFileName, vs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-
-  if (!ReadFile(pFSFileName, fs)) {
-    fprintf(stderr, "Error: fs \n");
-    exit(1);
-  };
-
-  lighting.init(vs, fs);
+  particleImposter.init("shader/particleShader.vert",
+                        "shader/particleShader.frag");
+  gridBorderLines.init("shader/borderShader.vert", "shader/borderShader.frag");
+  lighting.init("shader/shader.vert", "shader/shader.frag");
 }
 void myRenderingEngine::shadowMapPass() {}
 void myRenderingEngine::renderPass() {
@@ -147,11 +97,11 @@ void myRenderingEngine::renderPass() {
   world.setScale(Vector3f(1.0f, 1.0f, 1.0f));
   world.setRotation(Vector3f(0.0f, 0.0f, 0.0f));
 
-  PTB.plugTechnique();
-  PTB.uniform_update("gMVP", world.getMVP());
+  gridBorderLines.plugTechnique();
+  gridBorderLines.uniform_update("gMVP", world.getMVP());
   grid->renderBorders();
-  PT.plugTechnique();
-  PT.uniform_update("gMVP", world.getMVP());
+  particleImposter.plugTechnique();
+  particleImposter.uniform_update("gMVP", world.getMVP());
 
   particlesystem->render();
 

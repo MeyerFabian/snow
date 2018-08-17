@@ -5,70 +5,21 @@ void ExplicitTimeUpdate::init() {
   grid->initSSBO();
   collisionObjects->initSSBO();
 
-  string cs;
+  rg.init("shader/resetGrid.glsl");
 
-  const char* pResetGridFileName = "shader/resetGrid.glsl";
-  if (!ReadFile(pResetGridFileName, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  rg.init(cs);
+  rigidSim.init("shader/updateRigids.glsl");
 
-  cs.clear();
-  const char* pMassFileName = "shader/computeMass.glsl";
-  if (!ReadFile(pMassFileName, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  cMass.init(cs);
+  cMass.init("shader/computeMass.glsl");
 
-  cs.clear();
-  const char* pComputeVolumeFileName = "shader/computeParticleVolume.glsl";
-  if (!ReadFile(pComputeVolumeFileName, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  cVolume.init(cs);
+  cVolume.init("shader/computeParticleVolume.glsl");
 
-  cs.clear();
-  const char* pRigidFileName = "shader/updateRigids.glsl";
-  if (!ReadFile(pRigidFileName, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  rigidSim.init(cs);
+  p2g.init("shader/updateGridMassVel.glsl");
 
-  cs.clear();
-  const char* pPCFileName = "shader/updateGridMassVel.glsl";
-  if (!ReadFile(pPCFileName, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  p2g.init(cs);
+  g2g.init("shader/updateGridVelCollision.glsl");
 
-  cs.clear();
-  const char* pUpdateGridVelocity = "shader/updateGridVelCollision.glsl";
-  if (!ReadFile(pUpdateGridVelocity, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  g2g.init(cs);
+  g2p.init("shader/updateParticleVel.glsl");
 
-  cs.clear();
-  const char* pUpdateParticleVelocity = "shader/updateParticleVel.glsl";
-  if (!ReadFile(pUpdateParticleVelocity, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  g2p.init(cs);
-
-  cs.clear();
-  const char* pUpdateParticles = "shader/updateParticles.glsl";
-  if (!ReadFile(pUpdateParticles, cs)) {
-    fprintf(stderr, "Error: vs\n");
-    exit(1);
-  };
-  pU.init(cs);
+  pU.init("shader/updateParticles.glsl");
 
   rg.plugTechnique();
   glDispatchCompute(

@@ -43,11 +43,9 @@ class myRenderingEngine : public renderingEngine {
   GLuint VBO;
   GLuint IBO;
 
-  ParticleTechnique PT;
-  ParticleTechnique PTB;
-  ShadowMapTechnique SMT;
-  ShadowMapBufferObject SMFBO;
   LightingTechnique lighting;
+  ParticleTechnique particleImposter;
+  ParticleTechnique gridBorderLines;
 };
 #endif  // MYRENDERINGENGINE_H
 
