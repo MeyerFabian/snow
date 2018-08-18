@@ -41,7 +41,7 @@ bool Mesh::LoadMesh(const std::string& Filename) {
   return Ret;
 }
 
-void Mesh::Render() {
+void Mesh::Render() const {
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);

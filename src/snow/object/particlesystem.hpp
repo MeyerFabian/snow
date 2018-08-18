@@ -33,12 +33,12 @@ class ParticleSystem {
 
   std::vector<Particle> particles;
 
-  void render();
+  void render() const;
   void initParticlesFromFile(const std::string& filename, const Vector3f& pos,
                              const Vector3f& scale);
   void initSSBO();
   void updateSSBOBuffer();
-  void debug();
+  void debug() const;
   Vector4f* pPositions = nullptr;
   Vector4i* pVelocities = nullptr;
   Matrix4f* pForcesE = nullptr;

@@ -15,7 +15,7 @@ class Renderer {
   virtual bool shouldClose() = 0;
   virtual void stop() = 0;
 
-  RenderableScene scene;
+  const RenderableScene scene;
 };
 
 #endif  // RENDERER_H

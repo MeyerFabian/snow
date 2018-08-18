@@ -1,5 +1,5 @@
 #include "grid.hpp"
-void Grid::initVBO() {
+void Grid::initVBO() const {
   /*
   glGenBuffers(1,&VB);
   glBindBuffer(GL_ARRAY_BUFFER, posB);
@@ -8,7 +8,7 @@ void Grid::initVBO() {
 */
 }
 
-void Grid::render() {
+void Grid::render() const {
   glEnableVertexAttribArray(0);
 
   glBindBuffer(GL_ARRAY_BUFFER, posB);
@@ -18,7 +18,7 @@ void Grid::render() {
   glDisableVertexAttribArray(0);
 }
 
-void Grid::renderBorders() {
+void Grid::renderBorders() const {
   glEnableVertexAttribArray(0);
 
   glBindBuffer(GL_ARRAY_BUFFER, borderVB);
@@ -36,7 +36,7 @@ void Grid::resetSSBOBuffer() {
   // glBufferSubData(GL_SHADER_STORAGE_BUFFER, 12, sizeof(Vector4f) *
   // gridPoints.size(),0);
 }
-void Grid::debug() {
+void Grid::debug() const {
   std::cout << "Grid" << std::endl;
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
   Vector4f* p = (Vector4f*)(glMapBufferRange(

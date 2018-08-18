@@ -93,11 +93,11 @@ class Grid {
 
   Vector4f* pPositions;
 
-  void initVBO();
+  void initVBO() const;
   void resetSSBOBuffer();
-  void render();
-  void renderBorders();
-  void debug();
+  void render() const;
+  void renderBorders() const;
+  void debug() const;
   void initSSBO();
 
  private:

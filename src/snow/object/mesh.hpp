@@ -32,7 +32,7 @@ class Mesh {
   ~Mesh();
 
   bool LoadMesh(const std::string& Filename);
-  void Render();
+  void Render() const;
   void initVBO();
   void InitParticlesFromMesh(shared_ptr<ParticleSystem> const pPs);
   void setScale(const float x, const float y, const float z) {
@@ -86,3 +86,4 @@ class Mesh {
 };
 
 #endif  // MESH_H
+

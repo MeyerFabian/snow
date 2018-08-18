@@ -14,7 +14,7 @@ class TimeUpdate {
   virtual void init() = 0;
   virtual void update(double dt) = 0;
 
-  PhysicalScene scene;
+  const PhysicalScene scene;
 };
 
 #endif  // TIMEUPDATE_H

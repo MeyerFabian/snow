@@ -1,7 +1,7 @@
 #include "particlesystem.hpp"
 #include <iostream>
 
-void ParticleSystem::render() {
+void ParticleSystem::render() const {
   glEnableVertexAttribArray(0);
 
   glBindBuffer(GL_ARRAY_BUFFER, posB);
@@ -37,7 +37,7 @@ void ParticleSystem::initParticlesFromFile(const std::string& filename,
   }
 }
 
-void ParticleSystem::debug() {
+void ParticleSystem::debug() const {
   std::cout << "Particle" << std::endl;
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
   Vector4f* p = (Vector4f*)(glMapBufferRange(
