@@ -1,7 +1,5 @@
 #ifndef PARTICLERENDERER_H
 #define PARTICLERENDERER_H
-#include "../rendering/renderer.hpp"
-#define GLEW_STATIC
 #include <stdlib.h>
 #include <string.h>
 #include <glm.hpp>
@@ -9,7 +7,8 @@
 #include <memory>
 #include "../object/mesh.hpp"
 #include "../object/texture.hpp"
-#include "GLFWContext.h"
+#include "../rendering/renderer.hpp"
+#include "GLFWContext.hpp"
 #include "math3d.hpp"
 #include "renderingTechnique/lightingtechnique.hpp"
 #include "renderingTechnique/particletechnique.hpp"
@@ -19,10 +18,7 @@
 
 class ParticleRenderer : public Window_Context, public Renderer {
  public:
-  ParticleRenderer(
-      std::shared_ptr<std::vector<shared_ptr<Mesh> > > const meshes,
-      std::shared_ptr<ParticleSystem> const particles,
-      std::shared_ptr<Grid> const grid);
+  ParticleRenderer(RenderableScene&&);
   virtual bool init() override;
   virtual void render() override;
   virtual bool shouldClose() override;

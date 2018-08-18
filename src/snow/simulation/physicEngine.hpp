@@ -6,13 +6,14 @@
 
 class physicEngine {
  public:
-  physicEngine(std::shared_ptr<TimeUpdate> const update)
-      : integration(update) {}
+  physicEngine(std::unique_ptr<TimeUpdate> update)
+      : integration(std::move(update)) {}
 
   virtual bool init() = 0;
   virtual void update(double dt) = 0;
 
-  std::shared_ptr<TimeUpdate> const integration;
+  std::unique_ptr<TimeUpdate> integration;
 };
 
 #endif  // PHYSICENGINE_H
+

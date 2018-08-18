@@ -45,25 +45,6 @@ void Technique::attach() const {
     gl_attach(shaderObject->get_id());
   }
 }
-unsigned int Technique::uniform_look_up(std::string uniform) const {
-  // Create an iterator to look through our uniform map and try to find the
-  // named uniform
-  auto it = std::find_if(
-      m_uniformMap.cbegin(), m_uniformMap.cend(),
-      [uniform](const auto& mapEntry) { return uniform == mapEntry.first; });
-  // Found it? Great - pass it back! Didn't find it? Alert user and halt.
-  if (it != m_uniformMap.end()) {
-    return m_uniformMap.at(uniform);
-  } else {
-    std::cerr << "Could not find uniform in shader program: " + uniform
-              << std::endl;
-    std::cerr << "Associated shaders with this shader program:" << std::endl;
-    for (const auto& shaderObject : shaderObjects) {
-      std::cerr << shaderObject->get_file_name() << std::endl;
-    }
-    return 0;
-  }
-}
 
 /*
  * start of glFunction() calls
@@ -125,40 +106,56 @@ Technique::~Technique() {
   std::cerr << "deleted program" << std::endl;
 }
 
-void Technique::uniform_update(std::string name, bool value) const {
-  use();
-  glUniform1i(uniform_look_up(name), value);
-}
-
-void Technique::uniform_update(std::string name, int value) const {
-  use();
-  glUniform1i(uniform_look_up(name), value);
-}
-
-void Technique::uniform_update(std::string name, float value) const {
-  use();
+void Technique::uniform_update(const std::string& name, float value) const
+    noexcept {
   glUniform1f(uniform_look_up(name), value);
 }
 
-void Technique::uniform_update(std::string name, double value) const {
-  use();
+void Technique::uniform_update(const std::string& name, GLint value) const
+    noexcept {
+  glUniform1i(uniform_look_up(name), value);
+}
+void Technique::uniform_update(const std::string& name, GLuint value) const
+    noexcept {
+  glUniform1ui(uniform_look_up(name), value);
+}
+void Technique::uniform_update(const std::string& name, double value) const
+    noexcept {
   glUniform1f(uniform_look_up(name), value);
 }
-void Technique::uniform_update(std::string name, float x, float y,
-                               float z) const {
-  use();
+void Technique::uniform_update(const std::string& name, float x, float y,
+                               float z) const noexcept {
   glUniform3f(uniform_look_up(name), x, y, z);
 }
-void Technique::uniform_update(std::string name, int x, int y, int z) const {
-  use();
+void Technique::uniform_update(const std::string& name, GLint x, GLint y,
+                               GLint z) const noexcept {
   glUniform3i(uniform_look_up(name), x, y, z);
 }
-void Technique::uniform_update(std::string name, const Matrix4f* mat4) const {
-  use();
+void Technique::uniform_update(const std::string& name,
+                               const Matrix4f* mat4) const noexcept {
   glUniformMatrix4fv(uniform_look_up(name), 1, GL_TRUE, (const GLfloat*)mat4);
 }
-void Technique::uniform_update(std::string name, const size_t size) const {
-  use();
-  glUniform1ui(uniform_look_up(name), size);
+void Technique::uniform_update(const std::string& name, double x, double y,
+                               double z) const noexcept {
+  glUniform3f(uniform_look_up(name), x, y, z);
+}
+GLuint Technique::uniform_look_up(std::string uniform) const noexcept {
+  // Create an iterator to look through our uniform map and try to find the
+  // named uniform
+  auto it = std::find_if(
+      m_uniformMap.cbegin(), m_uniformMap.cend(),
+      [uniform](const auto& mapEntry) { return uniform == mapEntry.first; });
+  // auto it =std::find(m_uniformMap.cbegin(),
+  // m_uniformMap.cend(),[uniform](auto mapEntry) { return uniform ==
+  // mapEntry.first; });
+  // Found it? Great - pass it back! Didn't find it? Alert user and halt.
+  if (it != m_uniformMap.end()) {
+    return m_uniformMap.at(uniform);
+  } else {
+    std::cerr << "Could not find uniform in shader program: " + uniform
+              << std::endl;
+    std::cerr << "Associated shaders with this shader program:" << std::endl;
+    return 0;
+  }
 }
 

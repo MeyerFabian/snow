@@ -41,7 +41,7 @@ bool Mesh::LoadMesh(const std::string& Filename) {
   return Ret;
 }
 
-void Mesh::Render() {
+void Mesh::Render() const {
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
@@ -81,7 +81,7 @@ void Mesh::InitParticlesFromMesh(shared_ptr<ParticleSystem> const pPs) {
   for (unsigned int i = 0; i < m_Entries.size(); i++) {
     for (unsigned int j = 0; j < m_Entries[i].Vertices.size(); j++) {
       Vertex v = m_Entries[i].Vertices[j];
-      pPs->particles->push_back(Particle(
+      pPs->particles.push_back(Particle(
           v.pos.x * 2.0f + 2.0f, m_Entries[i].Vertices[j].pos.y * 2.0f + 1.5f,
           m_Entries[i].Vertices[j].pos.z * 2.0f + 1.5f));
     }
@@ -176,3 +176,4 @@ void Mesh::MeshEntry::Init() {
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * NumIndices,
                &Indices[0], GL_STATIC_DRAW);
 }
+

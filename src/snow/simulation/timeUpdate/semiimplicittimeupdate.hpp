@@ -5,13 +5,11 @@
 #include "../timeUpdate.hpp"
 class SemiImplicitTimeUpdate : public TimeUpdate {
  public:
-  SemiImplicitTimeUpdate(
-      std::shared_ptr<CollisionObjects> const collisonsToSimulate,
-      shared_ptr<ParticleSystem> const particlesToSimulate,
-      std::shared_ptr<Grid> const grid)
-      : TimeUpdate(collisonsToSimulate, particlesToSimulate, grid) {}
+  SemiImplicitTimeUpdate(PhysicalScene&& scene)
+      : TimeUpdate(std::move(scene)) {}
   void init();
   void update(double dt);
 };
 
 #endif  // SEMIIMPLICITTIMEUPDATE_H
+

@@ -5,13 +5,14 @@
 #include "timeUpdate.hpp"
 #include "timeUpdate/explicittimeupdate.hpp"
 
-class myPhysicEngine : public physicEngine {
+class MPMPhysicEngine : public physicEngine {
  public:
-  myPhysicEngine(std::shared_ptr<TimeUpdate> const update)
-      : physicEngine(update) {}
+  MPMPhysicEngine(std::unique_ptr<TimeUpdate> update)
+      : physicEngine(std::move(update)) {}
 
-  virtual bool init();
-  virtual void update(double dt);
+  virtual bool init() override;
+  virtual void update(double dt) override;
 };
 
 #endif  // MYPHYSICENGINE_H
+

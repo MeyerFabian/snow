@@ -7,18 +7,12 @@ Vector3f lightpos;
 
 static float lighty = 0.0f;
 
-ParticleRenderer::ParticleRenderer(
-    std::shared_ptr<std::vector<shared_ptr<Mesh> > > const meshes,
-    std::shared_ptr<ParticleSystem> const particles,
-    std::shared_ptr<Grid> const grid)
-    : Window_Context(),
-      Renderer(meshes, particles, grid),
-      lighting(LightingTechnique()),
-      particleImposter(ParticleTechnique()),
-      gridBorderLines(ParticleTechnique()) {}
+ParticleRenderer::ParticleRenderer(RenderableScene&& scene)
+    : Window_Context(), Renderer(std::move(scene)) {}
+
 void ParticleRenderer::fillBufferFromMeshes() {
-  for (int i = 0; i < meshes->size(); i++) {
-    (*meshes)[i]->initVBO();
+  for (int i = 0; i < scene.meshSys->size(); i++) {
+    (*scene.meshSys)[i]->initVBO();
   }
 }
 
@@ -69,23 +63,19 @@ void ParticleRenderer::shadowMapPass() {
       light.setCamera(lightpos.x,lightpos.y,lightpos.z,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
       SMT.setMVP(light.getMVP());
-      (*meshes)[0].Render();
+      (*scene.meshSys)[0].Render();
 
   */
 }
 void ParticleRenderer::renderPass() {
-  if (debug == true) {
-    particlesystem->debug();
-    grid->debug();
-  }
   // pipeline light;
+
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClearColor(0.5, 0.5, 0.5, 0);
+
   lightpos = Vector3f(4.0f, 5.0f, 4.0f);
 
   // SMFBO.BindForReading(GL_TEXTURE1);
-
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  glClearColor(0.5, 0.5, 0.5, 0);
 
   lighting.use();
   lighting.uniform_update("gLightPosition", lightpos.x, lightpos.y, lightpos.z);
@@ -94,17 +84,17 @@ void ParticleRenderer::renderPass() {
   lighting.uniform_update("gDiffuse", 0.2f);
   lighting.uniform_update("gSpecInt", 1.0f, 1.0f, 1.0f);
   lighting.uniform_update("gSpecPower", 10);
-  lighting.uniform_update("gCameraPos", world.getCameraPos().x,
-                          world.getCameraPos().y, world.getCameraPos().z);
-  for (int i = 0; i < meshes->size(); i++) {
-    world.setPosition((*meshes)[i]->getPosition());
-    world.setScale((*meshes)[i]->getScale());
-    world.setRotation((*meshes)[i]->getRotation());
+  auto camera = world.getCameraPos();
+  lighting.uniform_update("gCameraPos", camera.x, camera.y, camera.z);
+  for (int i = 0; i < scene.meshSys->size(); i++) {
+    world.setPosition((*scene.meshSys)[i]->getPosition());
+    world.setScale((*scene.meshSys)[i]->getScale());
+    world.setRotation((*scene.meshSys)[i]->getRotation());
 
     lighting.uniform_update("gMVP", world.getMVP());
     lighting.uniform_update("gModel", world.getModelMatrix());
 
-    (*meshes)[i]->Render();
+    (*scene.meshSys)[i]->Render();
   }
 
   world.setPosition(Vector3f(0.0f, 0.0f, 0.0f));
@@ -113,10 +103,10 @@ void ParticleRenderer::renderPass() {
 
   gridBorderLines.use();
   gridBorderLines.uniform_update("gMVP", world.getMVP());
-  grid->renderBorders();
+  scene.grid->renderBorders();
   particleImposter.use();
   particleImposter.uniform_update("gMVP", world.getMVP());
-  particlesystem->render();
+  scene.particleSys->render();
 
   glfwSwapBuffers(window);
   glfwPollEvents();
@@ -127,7 +117,6 @@ void ParticleRenderer::renderQueue() {
 
   renderPass();
 }
-
 bool ParticleRenderer::init() {
   initVBO();
 

@@ -10,7 +10,7 @@
 #include "../../object/particlesystem.hpp"
 #include "../../rendering/particleRenderer.hpp"
 #include "../../scene/Scene.hpp"
-#include "../../simulation/myPhysicEngine.hpp"
+#include "../../simulation/MPMPhysicEngine.hpp"
 #include "../../simulation/timeUpdate.hpp"
 #include "../defines.hpp"
 #include "GLFW/glfw3.h"
