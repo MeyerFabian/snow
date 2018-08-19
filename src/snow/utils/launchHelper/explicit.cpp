@@ -1,5 +1,4 @@
 #include "explicit.hpp"
-#include "../benchmarker.hpp"
 int launchSnow(Scene& scene) {
   std::cerr << "Custom Scene created!" << std::endl;
   srand(time(NULL));
@@ -82,18 +81,22 @@ quad.setRotation(0,0,0);
 meshes->push_back(std::move(quad));
 
 */
-  auto rE(ParticleRenderer(scene.get_renderable_scene()));
-  auto update(std::make_unique<ExplicitTimeUpdate>(scene.get_physical_scene()));
-  auto pE(MPMPhysicEngine(std::move(update)));
+  GLFWWindow();
+
+  auto renderer = ParticleRenderer(scene.get_renderable_scene());
+  auto simulationMethod =
+      std::make_unique<ExplicitTimeUpdate>(scene.get_physical_scene());
+  auto simulation = MPMPhysicEngine(std::move(simulationMethod));
 #ifdef BENCHMARK
   Benchmarker bench;
-  bool re_err =
-      bench.benchmark_CPU("Renderderer init()", [&rE]() { return rE.init(); });
+  bool re_err = bench.benchmark_CPU("Renderderer init()",
+                                    [&renderer]() { return renderer.init(); });
 
-  bench.benchmark_CPU("Simulation init()", [&pE]() { return pE.init(); });
+  bench.benchmark_CPU("Simulation init()",
+                      [&simulation]() { return simulation.init(); });
 #else
-  bool re_err = rE.init();
-  pE.init();
+  bool re_err = renderer.init();
+  simulation.init();
 #endif
   if (re_err) {
     return 1;
@@ -102,31 +105,35 @@ meshes->push_back(std::move(quad));
   double currentTime = glfwGetTime();  // gafferongames.com
   double accumulator = 0.0;
   std::cout << std::flush;
-  while (rE.shouldClose()) {
+  while (GLFWWindow::shouldClose()) {
     double newTime = glfwGetTime();
     double frameTime = newTime - currentTime;
     currentTime = newTime;
     accumulator += frameTime;
     while (accumulator >= STEP_DT) {
 #ifdef BENCHMARK
-      bench.benchmark_CPU("Simulation update",
-                          [&pE]() { return pE.update(PHYSIC_DT); });
+      bench.benchmark_CPU("Simulation update()", [&simulation]() {
+        return simulation.update(PHYSIC_DT);
+      });
 #else
-      pE.update(PHYSIC_DT);
+      simulation.update(PHYSIC_DT);
 #endif
-      // pE->update(PHYSIC_DT);
+      // simulation->update(PHYSIC_DT);
       accumulator -= STEP_DT;
     }
+    GLFWWindow::clear();
 #ifdef BENCHMARK
-    bench.benchmark_CPU("Renderer update", [&rE] { return rE.render(); });
+    bench.benchmark_CPU("Renderer update()",
+                        [&renderer] { return renderer.render(); });
 #else
-    rE.render();
+    renderer.render();
 #endif
+    GLFWWindow::swapBuffers();
   }
 #ifdef BENCHMARK
   bench.printStats();
 #endif
-  rE.stop();
+  GLFWWindow::stop();
   return 0;
 }
 

@@ -38,6 +38,7 @@ void ParticleSystem::initParticlesFromFile(const std::string& filename,
 }
 
 void ParticleSystem::debug() const {
+  glMemoryBarrier(GL_CLIENT_MAPPED_BUFFER_BARRIER_BIT);
   std::cout << "Particle" << std::endl;
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
   Vector4f* p = (Vector4f*)(glMapBufferRange(

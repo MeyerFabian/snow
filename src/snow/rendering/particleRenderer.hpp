@@ -8,21 +8,21 @@
 #include "../object/mesh.hpp"
 #include "../object/texture.hpp"
 #include "../rendering/renderer.hpp"
-#include "GLFWContext.hpp"
 #include "math3d.hpp"
+#include "pipeline/pipeline.hpp"
 #include "renderingTechnique/lightingtechnique.hpp"
 #include "renderingTechnique/particletechnique.hpp"
 #include "renderingTechnique/shadowMapTechnique.hpp"
 #include "renderingTechnique/shadowmapbufferobject.hpp"
 #include "stb_image.h"
 
-class ParticleRenderer : public Window_Context, public Renderer {
+class ParticleRenderer : public Renderer {
  public:
   ParticleRenderer(RenderableScene&&);
+
+  static pipeline world;
   virtual bool init() override;
   virtual void render() override;
-  virtual bool shouldClose() override;
-  virtual void stop() override;
   LightingTechnique lighting;
   ParticleTechnique particleImposter;
   ParticleTechnique gridBorderLines;
@@ -33,7 +33,6 @@ class ParticleRenderer : public Window_Context, public Renderer {
   void shadowMapPass();
   void initShader();
   void renderPass();
-  void renderQueue();
 };
 #endif  // PARTICLERENDERER_H
 

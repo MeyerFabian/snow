@@ -1,5 +1,7 @@
 #ifndef LAUNCHER_H
 #define LAUNCHER_H
+#include "../../rendering/GLFWWindow.hpp"
+
 #include <time.h>
 #include <iostream>
 #include <memory>
@@ -12,8 +14,8 @@
 #include "../../scene/Scene.hpp"
 #include "../../simulation/MPMPhysicEngine.hpp"
 #include "../../simulation/timeUpdate.hpp"
+#include "../benchmarker.hpp"
 #include "../defines.hpp"
-#include "GLFW/glfw3.h"
 
 int launchSnow(Scene& scene);
 #endif

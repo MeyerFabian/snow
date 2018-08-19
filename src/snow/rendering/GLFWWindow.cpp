@@ -1,5 +1,5 @@
-#include "GLFWContext.hpp"
-Window_Context::Window_Context() {
+#include "GLFWWindow.hpp"
+GLFWWindow::GLFWWindow() {
   // GLFW INIT: ORDER IS IMPORTANT
   glfwSetErrorCallback(error_callback);
   if (!glfwInit()) exit(EXIT_FAILURE);
@@ -24,11 +24,29 @@ Window_Context::Window_Context() {
   }
 }
 
-float Window_Context::anglesize = 0.001f;
-float Window_Context::rotation = 0.0f;
-float Window_Context::stepsize = 0.05f;
-GLFWwindow* Window_Context::window;
-pipeline Window_Context::world;
+float GLFWWindow::anglesize = 0.001f;
+float GLFWWindow::rotation = 0.0f;
+float GLFWWindow::stepsize = 0.05f;
+GLFWwindow* GLFWWindow::window;
+
+bool GLFWWindow::shouldClose() {
+  return !glfwWindowShouldClose(GLFWWindow::window);
+}
+
+void GLFWWindow::stop() {
+  glfwDestroyWindow(GLFWWindow::window);
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
+}
+
+void GLFWWindow::clear() {
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClearColor(0.5, 0.5, 0.5, 0);
+}
+void GLFWWindow::swapBuffers() {
+  glfwSwapBuffers(window);
+  glfwPollEvents();
+}
 static void error_callback(int error, const char* description) {
   fputs(description, stderr);
 }
@@ -55,14 +73,14 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action,
     } else if (action == GLFW_RELEASE) {
     }
   } else {
-    Window_Context::world.update(key, Window_Context::stepsize);
+    ParticleRenderer::world.update(key, GLFWWindow::stepsize);
   }
 }
 static void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-  double mouse_x = (xpos - WINDOW_WIDTH / 2) * Window_Context::anglesize;
-  double mouse_y = (-ypos + WINDOW_HEIGHT / 2) * Window_Context::anglesize;
+  double mouse_x = (xpos - WINDOW_WIDTH / 2) * GLFWWindow::anglesize;
+  double mouse_y = (-ypos + WINDOW_HEIGHT / 2) * GLFWWindow::anglesize;
 
-  Window_Context::world.update(mouse_x, mouse_y);
+  ParticleRenderer::world.update(mouse_x, mouse_y);
   glfwSetCursorPos(window, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 }
 

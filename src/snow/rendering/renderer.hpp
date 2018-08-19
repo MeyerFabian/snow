@@ -12,8 +12,6 @@ class Renderer {
 
   virtual bool init() = 0;
   virtual void render() = 0;
-  virtual bool shouldClose() = 0;
-  virtual void stop() = 0;
 
   const RenderableScene scene;
 };

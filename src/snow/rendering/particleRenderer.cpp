@@ -2,14 +2,11 @@
 
 using namespace std;
 GLuint textureID;
-shared_ptr<Texture> helitex;
-Vector3f lightpos;
 
 static float lighty = 0.0f;
-
 ParticleRenderer::ParticleRenderer(RenderableScene&& scene)
-    : Window_Context(), Renderer(std::move(scene)) {}
-
+    : Renderer(std::move(scene)) {}
+pipeline ParticleRenderer::world;
 void ParticleRenderer::fillBufferFromMeshes() {
   for (int i = 0; i < scene.meshSys->size(); i++) {
     (*scene.meshSys)[i]->initVBO();
@@ -29,10 +26,11 @@ void ParticleRenderer::initVBO() {
   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
   glfwSwapInterval(1);
   fillBufferFromMeshes();
-
+  /*
+  Vector3f lightpos;
   helitex = make_shared<Texture>("textures/test.png");
   helitex->Load(GL_TEXTURE_2D);
-
+*/
   world.setPerspective(45, WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 50.0f);
   world.setCamera(3.0, 3.5f, 14.0f, 2.5125f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 }
@@ -70,10 +68,7 @@ void ParticleRenderer::shadowMapPass() {
 void ParticleRenderer::renderPass() {
   // pipeline light;
 
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glClearColor(0.5, 0.5, 0.5, 0);
-
-  lightpos = Vector3f(4.0f, 5.0f, 4.0f);
+  Vector3f lightpos = Vector3f(4.0f, 5.0f, 4.0f);
 
   // SMFBO.BindForReading(GL_TEXTURE1);
 
@@ -107,12 +102,9 @@ void ParticleRenderer::renderPass() {
   particleImposter.use();
   particleImposter.uniform_update("gMVP", world.getMVP());
   scene.particleSys->render();
-
-  glfwSwapBuffers(window);
-  glfwPollEvents();
 }
 
-void ParticleRenderer::renderQueue() {
+void ParticleRenderer::render() {
   // shadowMapPass();
 
   renderPass();
@@ -124,14 +116,5 @@ bool ParticleRenderer::init() {
   // Textur anlegen
 
   return 0;
-}
-
-void ParticleRenderer::render() { renderQueue(); }
-bool ParticleRenderer::shouldClose() { return !glfwWindowShouldClose(window); }
-
-void ParticleRenderer::stop() {
-  glfwDestroyWindow(window);
-  glfwTerminate();
-  exit(EXIT_SUCCESS);
 }
 
