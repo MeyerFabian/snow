@@ -6,88 +6,47 @@ void ExplicitTimeUpdate::init() {
   scene.grid->initSSBO();
   scene.colliderSys->initSSBO();
 
-  rg.init("shader/resetGrid.glsl");
+  // Initial all shader programs, shaders and uniforms
+  scratch_grid.init({});
 
-  rigidSim.init("shader/updateRigids.glsl");
+  advance_rigids.init({});
 
-  cMass.init("shader/computeMass.glsl");
-  cMass.use();
-  cMass.uniform_update("gGridPos", GRID_POS_X, GRID_POS_Y, GRID_POS_Z);
-  cMass.uniform_update("gGridDim", GRID_DIM_X, GRID_DIM_Y, GRID_DIM_Z);
-  cMass.uniform_update("gridSpacing", GRID_SPACING);
-  cMass.uniform_update("indexSize", numParticles);
+  compute_grid_mass.init({numParticles});
 
-  cVolume.init("shader/computeParticleVolume.glsl");
-  cVolume.use();
-  cVolume.uniform_update("gGridPos", GRID_POS_X, GRID_POS_Y, GRID_POS_Z);
-  cVolume.uniform_update("gGridDim", GRID_DIM_X, GRID_DIM_Y, GRID_DIM_Z);
-  cVolume.uniform_update("gridSpacing", GRID_SPACING);
-  cVolume.uniform_update("indexSize", numParticles);
+  compute_particle_volumes.init({numParticles});
 
-  to_grid.init({numParticles});
+  transfer_to_grid.init({numParticles});
 
-  g2g.init("shader/updateGridVelCollision.glsl");
-  g2g.uniform_update("gNumColliders", numColliders);
+  compute_grid_derivates.init({numColliders});
 
-  g2p.init("shader/updateParticleVel.glsl");
-  g2p.use();
-  g2p.uniform_update("gGridPos", GRID_POS_X, GRID_POS_Y, GRID_POS_Z);
-  g2p.uniform_update("gGridDim", GRID_DIM_X, GRID_DIM_Y, GRID_DIM_Z);
-  g2p.uniform_update("gridSpacing", GRID_SPACING);
-  g2p.uniform_update("indexSize", numParticles);
+  transfer_back_to_particles.init({numParticles});
 
-  pU.init("shader/updateParticles.glsl");
-  pU.use();
-  pU.uniform_update("critComp", CRIT_COMPRESSION);
-  pU.uniform_update("critStretch", CRIT_STRETCH);
-  pU.uniform_update("gNumColliders", numColliders);
-  pU.uniform_update("indexSize", numParticles);
-  rg.use();
-  glDispatchCompute(
-      GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
-  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+  advance_particles.init({numParticles, numColliders});
 
-  cMass.use();
-  glDispatchCompute((numParticles) / NUM_OF_GPGPU_THREADS_X + 1,
-                    PARTICLE_TO_GRID_SIZE, 1);
-  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+  // Compute the initial volume particles occupy and keep throughout the
+  // simulation
 
-  cVolume.use();
-  glDispatchCompute((numParticles) / NUM_OF_GPGPU_THREADS_X + 1,
-                    PARTICLE_TO_GRID_SIZE, 1);
-  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+  scratch_grid.dispatch_with_barrier({});
+
+  compute_grid_mass.dispatch_with_barrier();
+
+  compute_particle_volumes.dispatch_with_barrier();
 }
 
 void ExplicitTimeUpdate::update(double dt) {
-  rigidSim.use();
-  rigidSim.uniform_update("dt", dt);
-  glDispatchCompute(numColliders, 1, 1);
+  // MPM-Explicit update procedure
+  advance_rigids.dispatch({numColliders, dt});
 
   scene.colliderSys->updateRenderBuffer(dt);
 
-  rg.use();
-  glDispatchCompute(
-      GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
-  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+  scratch_grid.dispatch_with_barrier({});
 
-  to_grid.dispatch({});
+  transfer_to_grid.dispatch_with_barrier({});
 
-  g2g.use();
-  g2g.uniform_update("dt", dt);
-  glDispatchCompute(
-      GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
-  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+  compute_grid_derivates.dispatch_with_barrier({dt});
 
-  g2p.use();
-  glDispatchCompute((numParticles) / NUM_OF_GPGPU_THREADS_X + 1,
-                    PARTICLE_TO_GRID_SIZE, 1);
-  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+  transfer_back_to_particles.dispatch_with_barrier({});
 
-  // scene.particleSys->debug();
-  // scene.grid->debug();
-  pU.use();
-  pU.uniform_update("dt", dt);
-  glDispatchCompute((numParticles) / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
-  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+  advance_particles.dispatch_with_barrier({dt});
 }
 

@@ -3,39 +3,39 @@
 #include "../../object/collisionObjects.hpp"
 #include "../../object/grid.hpp"
 #include "../../utils/defines.hpp"
-#include "../computingTechnique/g2pCompute.hpp"
-#include "../computingTechnique/massCompute.hpp"
-#include "../computingTechnique/p2gCompute.hpp"
-#include "../computingTechnique/particleCompute.hpp"
-#include "../computingTechnique/resetGridCompute.hpp"
-#include "../computingTechnique/rigidCompute.hpp"
-#include "../computingTechnique/velGridCompute.hpp"
-#include "../computingTechnique/volumeCompute.hpp"
+#include "../computingTechnique/g2pTransfer.hpp"
+#include "../computingTechnique/gForceCompute.hpp"
+#include "../computingTechnique/gMassCompute.hpp"
+#include "../computingTechnique/gReset.hpp"
+#include "../computingTechnique/p2gTransfer.hpp"
+#include "../computingTechnique/pVolumeCompute.hpp"
+#include "../computingTechnique/particleAdvance.hpp"
+#include "../computingTechnique/rigidAdvance.hpp"
 #include "../timeUpdate.hpp"
 class ExplicitTimeUpdate : public TimeUpdate {
  public:
   ExplicitTimeUpdate(PhysicalScene&& sceneToSimulate)
       : TimeUpdate(std::move(sceneToSimulate)),
-        cVolume(VolumeCompute()),
-        to_grid(P2GCompute()),
-        g2p(G2PCompute()),
-        cMass(MassCompute()),
-        rg(ResetGridCompute()),
-        g2g(VelGridCompute()),
-        pU(ParticleCompute()),
-        rigidSim(RigidCompute()),
+        compute_particle_volumes(PVolumeCompute()),
+        transfer_to_grid(P2GTransfer()),
+        transfer_back_to_particles(G2PTransfer()),
+        compute_grid_mass(GMassCompute()),
+        scratch_grid(GReset()),
+        compute_grid_derivates(GForceCompute()),
+        advance_particles(ParticleAdvance()),
+        advance_rigids(RigidAdvance()),
         numParticles(sceneToSimulate.particleSys->particles.size()),
         numColliders(sceneToSimulate.colliderSys->colliders.size()) {}
   void init();
   void update(double dt);
-  VolumeCompute cVolume;
-  P2GCompute to_grid;
-  G2PCompute g2p;
-  MassCompute cMass;
-  ResetGridCompute rg;
-  VelGridCompute g2g;
-  ParticleCompute pU;
-  RigidCompute rigidSim;
+  PVolumeCompute compute_particle_volumes;
+  P2GTransfer transfer_to_grid;
+  G2PTransfer transfer_back_to_particles;
+  GMassCompute compute_grid_mass;
+  GReset scratch_grid;
+  GForceCompute compute_grid_derivates;
+  ParticleAdvance advance_particles;
+  RigidAdvance advance_rigids;
 
  private:
   // cached values
