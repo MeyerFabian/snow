@@ -17,7 +17,7 @@ class ExplicitTimeUpdate : public TimeUpdate {
   ExplicitTimeUpdate(PhysicalScene&& sceneToSimulate)
       : TimeUpdate(std::move(sceneToSimulate)),
         cVolume(VolumeCompute()),
-        p2g(P2GCompute()),
+        to_grid(P2GCompute()),
         g2p(G2PCompute()),
         cMass(MassCompute()),
         rg(ResetGridCompute()),
@@ -29,7 +29,7 @@ class ExplicitTimeUpdate : public TimeUpdate {
   void init();
   void update(double dt);
   VolumeCompute cVolume;
-  P2GCompute p2g;
+  P2GCompute to_grid;
   G2PCompute g2p;
   MassCompute cMass;
   ResetGridCompute rg;

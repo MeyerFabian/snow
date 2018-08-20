@@ -24,15 +24,7 @@ void ExplicitTimeUpdate::init() {
   cVolume.uniform_update("gridSpacing", GRID_SPACING);
   cVolume.uniform_update("indexSize", numParticles);
 
-  p2g.init("shader/updateGridMassVel.glsl");
-  p2g.use();
-  p2g.uniform_update("gGridPos", GRID_POS_X, GRID_POS_Y, GRID_POS_Z);
-  p2g.uniform_update("gGridDim", GRID_DIM_X, GRID_DIM_Y, GRID_DIM_Z);
-  p2g.uniform_update("gridSpacing", GRID_SPACING);
-  p2g.uniform_update("young", YOUNG_MODULUS);
-  p2g.uniform_update("poisson", POISSON);
-  p2g.uniform_update("hardening", HARDENING);
-  p2g.uniform_update("indexSize", numParticles);
+  to_grid.init({numParticles});
 
   g2g.init("shader/updateGridVelCollision.glsl");
   g2g.uniform_update("gNumColliders", numColliders);
@@ -78,10 +70,7 @@ void ExplicitTimeUpdate::update(double dt) {
       GRID_DIM_X * GRID_DIM_Y * GRID_DIM_Z / NUM_OF_GPGPU_THREADS_X + 1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
-  p2g.use();
-  glDispatchCompute((numParticles) / NUM_OF_GPGPU_THREADS_X + 1,
-                    PARTICLE_TO_GRID_SIZE, 1);
-  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+  to_grid.dispatch({});
 
   g2g.use();
   g2g.uniform_update("dt", dt);
