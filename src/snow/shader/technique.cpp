@@ -2,7 +2,7 @@
 void Technique::upload() {
   for (auto& shaderObject : shaderObjects) {
     if (!shaderObject->is_uploaded()) {
-      shaderObject->load_from_file();
+      shaderObject->load_shader_from_file();
       shaderObject->upload();
     }
   }

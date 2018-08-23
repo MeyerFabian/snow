@@ -88,19 +88,15 @@ meshes->push_back(std::move(quad));
       std::make_unique<ExplicitTimeUpdate>(scene.get_physical_scene());
   auto simulation = MPMPhysicEngine(std::move(simulationMethod));
 #ifdef BENCHMARK
-  Benchmarker bench;
-  bool re_err = bench.benchmark_CPU("Renderderer init()",
-                                    [&renderer]() { return renderer.init(); });
+  BenchmarkerCPU bench;
+  bench.time("Renderderer init()", [&renderer]() { return renderer.init(); });
 
-  bench.benchmark_CPU("Simulation init()",
-                      [&simulation]() { return simulation.init(); });
+  bench.time("Simulation init()",
+             [&simulation]() { return simulation.init(); });
 #else
-  bool re_err = renderer.init();
+  renderer.init();
   simulation.init();
 #endif
-  if (re_err) {
-    return 1;
-  }
 
   double currentTime = glfwGetTime();  // gafferongames.com
   double accumulator = 0.0;
@@ -112,9 +108,8 @@ meshes->push_back(std::move(quad));
     accumulator += frameTime;
     while (accumulator >= STEP_DT) {
 #ifdef BENCHMARK
-      bench.benchmark_CPU("Simulation update()", [&simulation]() {
-        return simulation.update(PHYSIC_DT);
-      });
+      bench.time("Simulation update()",
+                 [&simulation]() { return simulation.update(PHYSIC_DT); });
 #else
       simulation.update(PHYSIC_DT);
 #endif
@@ -123,12 +118,14 @@ meshes->push_back(std::move(quad));
     }
     GLFWWindow::clear();
 #ifdef BENCHMARK
-    bench.benchmark_CPU("Renderer update()",
-                        [&renderer] { return renderer.render(); });
+    bench.time("Renderer update()", [&renderer] { return renderer.render(); });
 #else
     renderer.render();
 #endif
     GLFWWindow::swapBuffers();
+#ifdef BENCHMARK
+    BenchmarkerGPU::collect_times_last_frame();
+#endif
   }
 #ifdef BENCHMARK
   bench.printStats();

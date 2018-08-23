@@ -10,7 +10,7 @@ class Renderer {
  public:
   Renderer(RenderableScene&& sceneToRender) : scene(std::move(sceneToRender)) {}
 
-  virtual bool init() = 0;
+  virtual void init() = 0;
   virtual void render() = 0;
 
   const RenderableScene scene;

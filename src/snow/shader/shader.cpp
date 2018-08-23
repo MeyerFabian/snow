@@ -2,21 +2,35 @@
 Shader::Shader(const ShaderType &t, const std::string &filename)
     : type(t), filename(filename) {}
 
-void Shader::load_from_file() {
-  std::ifstream file;
+void Shader::load_shader_from_file() {
+  auto shdr_source = FileSystem::load_string_from_file(filename);
+  const auto start = 0;
 
-  file.open(filename.c_str());
-  if (!file.good()) {
-    std::cerr << "could not open shader: " << filename.c_str() << std::endl;
-    exit(-1);
-  }
+  const auto main_start = shdr_source.find("void main");
+  process_includes(shdr_source, start, main_start);
 
-  std::stringstream stream;
-  stream << file.rdbuf();
-  file.close();
-  source = stream.str();
+  const auto tag = filename.find(".", 0);
+  auto filename_tagged = filename;
+  filename_tagged.insert(tag, "_compiled");
+  FileSystem::write_to_file(shdr_source, filename_tagged);
+  source = shdr_source;
 }
+void Shader::process_includes(std::string &file, unsigned long long start,
+                              unsigned long long end_search) {
+  while ((start = file.find("#include", start)) <= end_search) {
+    const auto path_start = file.find('\"', start);
+    const auto path_end = file.find('\"', path_start + 1);
+    auto path_inc = file.substr(path_start + 1, path_end - path_start - 1);
+    // const auto eol = file.find('\n', start);
+    std::cout << "Including " << path_inc << "\n";
 
+    auto inc = FileSystem::load_string_from_file(path_inc);
+    const auto eol = file.find('\n', path_end);
+    process_includes(inc, 0, inc.size());
+    file.replace(start, eol - start, inc.data());
+    end_search += inc.size();
+  }
+}
 void Shader::upload() {
   gl_create_id();
   if (!gl_compile()) {  // if shader could'nt get compiled
@@ -65,6 +79,7 @@ void Shader::gl_create_id() {
   id = glCreateShader(gl_type);
   uploaded = true;
 }
+
 bool Shader::gl_compile() {
   auto sourceChars = source.c_str();
 

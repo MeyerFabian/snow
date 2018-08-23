@@ -10,8 +10,9 @@
 #include "../rendering/renderer.hpp"
 #include "math3d.hpp"
 #include "pipeline/pipeline.hpp"
-#include "renderingTechnique/lightingtechnique.hpp"
-#include "renderingTechnique/particletechnique.hpp"
+#include "renderingTechnique/gBorders.hpp"
+#include "renderingTechnique/pPoints.hpp"
+#include "renderingTechnique/phong.hpp"
 #include "renderingTechnique/shadowMapTechnique.hpp"
 #include "renderingTechnique/shadowmapbufferobject.hpp"
 #include "stb_image.h"
@@ -21,11 +22,11 @@ class ParticleRenderer : public Renderer {
   ParticleRenderer(RenderableScene&&);
 
   static pipeline world;
-  virtual bool init() override;
+  virtual void init() override;
   virtual void render() override;
-  LightingTechnique lighting;
-  ParticleTechnique particleImposter;
-  ParticleTechnique gridBorderLines;
+  Phong basicLighting;
+  PPoints particleImposter;
+  GBorders gridBorderLines;
   GLuint VBO;
   GLuint IBO;
   void fillBufferFromMeshes();

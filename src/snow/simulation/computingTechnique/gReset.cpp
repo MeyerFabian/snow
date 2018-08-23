@@ -1,7 +1,7 @@
 #include "gReset.hpp"
 void GReset::init(UniformsInit&& uniforms) {
   Technique::add_shader(
-      std::make_shared<Shader>(ShaderType::COMPUTE, "shader/gReset.glsl"));
+      std::make_shared<Shader>(ShaderType::COMPUTE, "shader/compute/mpm/gReset.glsl"));
   Technique::upload();
   Technique::use();
   uniforms_init(std::move(uniforms));

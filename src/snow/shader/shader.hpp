@@ -4,10 +4,8 @@
 #include <GL/glew.h>
 
 #include <GLFW/glfw3.h>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <string>
+
+#include "../utils/file_loader.hpp"
 
 enum class ShaderType {
   VERTEX,
@@ -23,7 +21,9 @@ class Shader {
   Shader(const ShaderType &type, const std::string &filename);
   ~Shader();
 
-  void load_from_file();
+  void load_shader_from_file();
+  void process_includes(std::string &file, unsigned long long start,
+                        unsigned long long end_search);
   void upload();
 
   std::string get_source() const { return source; }

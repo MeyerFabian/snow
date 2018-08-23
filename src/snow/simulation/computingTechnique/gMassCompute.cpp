@@ -1,7 +1,7 @@
 #include "gMassCompute.hpp"
 void GMassCompute::init(UniformsStatic&& uniforms) {
   Technique::add_shader(std::make_shared<Shader>(ShaderType::COMPUTE,
-                                                 "shader/gMassCompute.glsl"));
+                                                 "shader/compute/mpm/gMassCompute.glsl"));
   Technique::upload();
   Technique::use();
   uniforms_init(std::move(uniforms));

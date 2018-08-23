@@ -1,7 +1,7 @@
 #include "g2pTransfer.hpp"
 void G2PTransfer::init(UniformsStatic&& uniforms) {
   Technique::add_shader(
-      std::make_shared<Shader>(ShaderType::COMPUTE, "shader/g2pTransfer.glsl"));
+      std::make_shared<Shader>(ShaderType::COMPUTE, "shader/compute/mpm/g2pTransfer.glsl"));
   Technique::upload();
   Technique::use();
   uniforms_init(std::move(uniforms));

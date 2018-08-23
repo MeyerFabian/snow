@@ -1,7 +1,7 @@
 #include "gForceCompute.hpp"
 void GForceCompute::init(UniformsStatic&& uniforms) {
   Technique::add_shader(std::make_shared<Shader>(ShaderType::COMPUTE,
-                                                 "shader/gForceCompute.glsl"));
+                                                 "shader/compute/mpm/gForceCompute.glsl"));
   Technique::upload();
   Technique::use();
   uniforms_init(std::move(uniforms));

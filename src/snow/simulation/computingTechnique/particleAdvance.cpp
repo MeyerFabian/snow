@@ -1,7 +1,7 @@
 #include "particleAdvance.hpp"
 void ParticleAdvance::init(UniformsStatic&& uniforms) {
   Technique::add_shader(std::make_shared<Shader>(
-      ShaderType::COMPUTE, "shader/particleAdvance.glsl"));
+      ShaderType::COMPUTE, "shader/compute/mpm/particleAdvance.glsl"));
   Technique::upload();
   Technique::use();
   uniforms_init(std::move(uniforms));
