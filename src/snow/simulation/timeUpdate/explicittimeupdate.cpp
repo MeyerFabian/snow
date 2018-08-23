@@ -35,18 +35,30 @@ void ExplicitTimeUpdate::init() {
 
 void ExplicitTimeUpdate::update(double dt) {
   // MPM-Explicit update procedure
-  advance_rigids.dispatch({numColliders, dt});
+
+  BenchmarkerGPU::getInstance().time("#Sim:Advance Rigids", [this, &dt]() {
+    return advance_rigids.dispatch({numColliders, dt});
+  });
 
   scene.colliderSys->updateRenderBuffer(dt);
 
-  scratch_grid.dispatch_with_barrier({});
+  BenchmarkerGPU::getInstance().time("#Sim:Scratch Grid", [this]() {
+    return scratch_grid.dispatch_with_barrier({});
+  });
 
-  transfer_to_grid.dispatch_with_barrier({});
+  BenchmarkerGPU::getInstance().time("#Sim:Transfer to Grid", [this]() {
+    return transfer_to_grid.dispatch_with_barrier({});
+  });
 
-  compute_grid_derivates.dispatch_with_barrier({dt});
+  BenchmarkerGPU::getInstance().time("#Sim:Compute Derivatives", [this, &dt]() {
+    return compute_grid_derivates.dispatch_with_barrier({dt});
+  });
 
-  transfer_back_to_particles.dispatch_with_barrier({});
-
-  advance_particles.dispatch_with_barrier({dt});
+  BenchmarkerGPU::getInstance().time("#Sim:Transfer to Particles", [this]() {
+    return transfer_back_to_particles.dispatch_with_barrier({});
+  });
+  BenchmarkerGPU::getInstance().time("#Sim:Advance Particles", [this, &dt]() {
+    return advance_particles.dispatch_with_barrier({dt});
+  });
 }
 

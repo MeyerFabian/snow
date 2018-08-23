@@ -8,6 +8,7 @@
 #include "../object/mesh.hpp"
 #include "../object/texture.hpp"
 #include "../rendering/renderer.hpp"
+#include "../utils/benchmarker.hpp"
 #include "math3d.hpp"
 #include "pipeline/pipeline.hpp"
 #include "renderingTechnique/gBorders.hpp"

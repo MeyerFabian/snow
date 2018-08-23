@@ -1,6 +1,8 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+#define BENCHMARK
+
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 
@@ -50,11 +52,11 @@
 #define CRIT_COMPRESSION 1.0e-2
 #define CRIT_STRETCH 1e-3
 #endif  // DEFINES_H
-//
-// 300x100x300 105 Fps
-// 200x100x200 155 Fps
-// 100x100x100 215 Fps
-// 63 x63 x63  180 Fps
-// 64 x64 x64  145 Fps
-// 50 x50 x50  285 Fps
+        //
+        // 300x100x300 105 Fps
+        // 200x100x200 155 Fps
+        // 100x100x100 215 Fps
+        // 63 x63 x63  180 Fps
+        // 64 x64 x64  145 Fps
+        // 50 x50 x50  285 Fps
 

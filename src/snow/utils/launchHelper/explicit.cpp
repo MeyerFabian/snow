@@ -87,48 +87,29 @@ meshes->push_back(std::move(quad));
   auto simulationMethod =
       std::make_unique<ExplicitTimeUpdate>(scene.get_physical_scene());
   auto simulation = MPMPhysicEngine(std::move(simulationMethod));
-#ifdef BENCHMARK
-  BenchmarkerCPU bench;
-  bench.time("Renderderer init()", [&renderer]() { return renderer.init(); });
-
-  bench.time("Simulation init()",
-             [&simulation]() { return simulation.init(); });
-#else
   renderer.init();
   simulation.init();
-#endif
 
   double currentTime = glfwGetTime();  // gafferongames.com
   double accumulator = 0.0;
-  std::cout << std::flush;
   while (GLFWWindow::shouldClose()) {
     double newTime = glfwGetTime();
     double frameTime = newTime - currentTime;
     currentTime = newTime;
     accumulator += frameTime;
     while (accumulator >= STEP_DT) {
-#ifdef BENCHMARK
-      bench.time("Simulation update()",
-                 [&simulation]() { return simulation.update(PHYSIC_DT); });
-#else
       simulation.update(PHYSIC_DT);
-#endif
-      // simulation->update(PHYSIC_DT);
       accumulator -= STEP_DT;
     }
     GLFWWindow::clear();
-#ifdef BENCHMARK
-    bench.time("Renderer update()", [&renderer] { return renderer.render(); });
-#else
     renderer.render();
-#endif
     GLFWWindow::swapBuffers();
 #ifdef BENCHMARK
-    BenchmarkerGPU::collect_times_last_frame();
+    BenchmarkerGPU::getInstance().collect_times_last_frame();
 #endif
   }
 #ifdef BENCHMARK
-  bench.printStats();
+  BenchmarkerGPU::getInstance().write_to_file();
 #endif
   GLFWWindow::stop();
   return 0;

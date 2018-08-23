@@ -18,8 +18,44 @@ BenchmarkerCPU::TimerRAIIChrono::~TimerRAIIChrono() noexcept {
   benchStats[name].emplace_back(elapsed);
 }
 
-bool BenchmarkerGPU::popReady = false;
-void BenchmarkerGPU::set_pop_ready() { BenchmarkerGPU::popReady = true; }
+BenchmarkerGPU::BenchmarkerGPU() {
+  benchStats[""].emplace_back(0);
+  benchStats.erase(benchStats.begin());
+  unprocTimers.push(UnprocTimers());
+}
+
+void BenchmarkerGPU::collect_times_last_frame() {
+  if (!unprocTimers.empty()) {
+    auto toProcessTimers = unprocTimers.front();
+    if (!toProcessTimers.empty()) {
+      GLint available = 0;
+      // Wait for all results to become available
+      while (!available) {
+        GLuint lastSubmittedQuery = toProcessTimers.back().second;
+        glGetQueryObjectiv(lastSubmittedQuery, GL_QUERY_RESULT_AVAILABLE,
+                           &available);
+      }
+
+      for (const auto& timer : toProcessTimers) {
+        auto name = timer.first;
+        auto query = timer.second;
+        GLuint64 timeElapsed = 0;
+        glGetQueryObjectui64v(query, GL_QUERY_RESULT, &timeElapsed);
+
+        // See how much time the rendering of object i took in nanoseconds.
+        BenchmarkerGPU::benchStats[name].emplace_back(timeElapsed);
+      }
+    }
+    unprocTimers.pop();
+  }
+  unprocTimers.push(UnprocTimers());
+}
+
+// This does not look to good, but repeating types is even worse for alias.
+decltype(BenchmarkerGPU::unprocTimers) BenchmarkerGPU::unprocTimers =
+    UnprocTimersQueue();
+decltype(BenchmarkerGPU::benchStats) BenchmarkerGPU::benchStats =
+    BenchmarkerMap();
 
 BenchmarkerGPU::TimerRAIIGL::TimerRAIIGL(std::string name) {
   GLuint query;
@@ -28,63 +64,34 @@ BenchmarkerGPU::TimerRAIIGL::TimerRAIIGL(std::string name) {
   unprocTimers.back().emplace_back(name, query);
 }
 
-void BenchmarkerGPU::collect_times_last_frame() {
-  if (popReady) {
-    GLint available = 0;
-    auto toProcessTimers = unprocTimers.front();
-    // Wait for all results to become available
-    while (!available) {
-      GLuint lastSubmittedQuery = toProcessTimers.back().second;
-      glGetQueryObjectiv(lastSubmittedQuery, GL_QUERY_RESULT_AVAILABLE,
-                         &available);
-    }
-
-    for (const auto& timer : toProcessTimers) {
-      auto name = timer.first;
-      auto query = timer.second;
-      GLuint64 timeElapsed = 0;
-      glGetQueryObjectui64v(query, GL_QUERY_RESULT, &timeElapsed);
-      // See how much time the rendering of object i took in nanoseconds.
-      BenchmarkerGPU::benchStats[name].emplace_back(timeElapsed);
-    }
-    unprocTimers.pop();
-    unprocTimers.push(UnprocTimers());
-  }
-  set_pop_ready();
-}
 BenchmarkerGPU::TimerRAIIGL::~TimerRAIIGL() noexcept {
   glEndQuery(GL_TIME_ELAPSED);
 }
+void BenchmarkerCPU::write_to_file() { Benchmarker::write(benchStats); };
+void BenchmarkerGPU::write_to_file() { Benchmarker::write(benchStats); };
 
-void BenchmarkerCPU::print_stats() { Benchmarker::print(benchStats); };
-void BenchmarkerGPU::print_stats() { Benchmarker::print(benchStats); };
-
-void Benchmarker::print(const BenchmarkerMap& benchStats) {
-  std::cout << "\nBENCHMARKER STATS: (all times in ns)" << std::endl;
-  std::cout << "Name:\t\t|Max:\t\t|Avg:\t\t|#Calls:\t|Measured Times:"
-            << std::endl;
-  std::cout << "-------------------------------------------------------------"
-               "---------------------------------"
-            << std::endl;
-  for (const auto& pair_name_times : benchStats) {
+void Benchmarker::write(BenchmarkerMap& benchStats) {
+  std::stringstream data;
+  data << "BENCHMARKER STATS: (all times in ns)\n" << std::endl;
+  data << "Name:;Max:;Min:;Avg:;Stdev:;#Calls:\n";
+  for (auto& pair_name_times : benchStats) {
     auto name = pair_name_times.first;
-    std::cout << name << "\t\t|";
 
+    data << name << ";";  // Name
     auto times = pair_name_times.second;
-    auto max = *(std::max_element(times.cbegin(), times.cend()));
-    auto sum =
-        static_cast<double>(std::accumulate(times.cbegin(), times.cend(), 0));
-    auto num_calls = times.size();
-    auto avg = sum / num_calls;
 
-    std::cout << max << "\t\t|";
-    std::cout << avg << "\t\t|";
-    std::cout << num_calls << "\t\t|";
+    data << stats::max(times) << ";";  // Max
+    data << stats::min(times) << ";";  // Min
 
-    for (const auto& time : times) {
-      std::cout << time << " ";
-    }
-    std::cout << std::endl;
+    auto avg = stats::avg(times);  // Avg
+    data << avg << ";";
+    data << stats::stdev(times, avg) << ";";  // Stdev
+
+    data << times.size() << ";";
+
+    data << "\n";
   }
+  FileSystem file;
+  file.write_to_file(data.str(), "benchstats.csv");
 }
 

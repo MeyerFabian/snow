@@ -39,25 +39,31 @@ void ParticleRenderer::initShader() {
       Vector3f(1.0f, 1.0f, 1.0f), 10,   world.getCameraPos()};
   basicLighting.init(std::move(uniforms));
 }
+
 void ParticleRenderer::renderPass() {
-  for (int i = 0; i < scene.meshSys->size(); i++) {
-    world.setPosition((*scene.meshSys)[i]->getPosition());
-    world.setScale((*scene.meshSys)[i]->getScale());
-    world.setRotation((*scene.meshSys)[i]->getRotation());
+  BenchmarkerGPU::getInstance().time("#Ren:Meshes", [this]() {
+    for (const auto& mesh : (*scene.meshSys)) {
+      world.setPosition(mesh->getPosition());
+      world.setScale(mesh->getScale());
+      world.setRotation(mesh->getRotation());
 
-    basicLighting.uniforms_update({world.getMVP(), world.getModelMatrix()});
-
-    (*scene.meshSys)[i]->Render();
-  }
+      basicLighting.uniforms_update({world.getMVP(), world.getModelMatrix()});
+      mesh->Render();
+    }
+  });
 
   world.setPosition(Vector3f(0.0f, 0.0f, 0.0f));
   world.setScale(Vector3f(1.0f, 1.0f, 1.0f));
   world.setRotation(Vector3f(0.0f, 0.0f, 0.0f));
 
   gridBorderLines.uniforms_update({world.getMVP()});
-  scene.grid->renderBorders();
+  BenchmarkerGPU::getInstance().time(
+      "#Ren:GridLines", [this]() { return scene.grid->renderBorders(); });
   particleImposter.uniforms_update({world.getMVP()});
-  scene.particleSys->render();
+
+  BenchmarkerGPU::getInstance().time("#Ren:ParticleImposter", [this]() {
+    return scene.particleSys->render();
+  });
 }
 
 void ParticleRenderer::render() { renderPass(); }
