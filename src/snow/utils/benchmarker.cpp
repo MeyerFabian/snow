@@ -19,17 +19,34 @@ BenchmarkerCPU::TimerRAIIChrono::~TimerRAIIChrono() noexcept {
 }
 
 BenchmarkerGPU::BenchmarkerGPU() {
+  // s.t. queue is never empty
+  unprocTimers.push(UnprocTimers());
+
+  // caching hack
   benchStats[""].emplace_back(0);
   benchStats.erase(benchStats.begin());
-  unprocTimers.push(UnprocTimers());
 }
-
+bool BenchmarkerGPU::notFirstFrame = false;
+void BenchmarkerGPU::set_not_first_frame() {
+  BenchmarkerGPU::notFirstFrame = true;
+}
+/*
+ * Queries all relevant GPU data without stalling the gpu
+ * (e.g: cpu <-> gpu sync at while(!available)) by waiting one rendered frame.
+ */
 void BenchmarkerGPU::collect_times_last_frame() {
-  if (!unprocTimers.empty()) {
+  if (notFirstFrame) {
+    // Therefore unprocTimers always has size 2 after the first frame.
+    assert(unprocTimers.size() == 2);
+
+    // Queries of the current frame in the back, queries of the last frame in
+    // the front.
     auto toProcessTimers = unprocTimers.front();
+
     if (!toProcessTimers.empty()) {
       GLint available = 0;
-      // Wait for all results to become available
+      // Check if last submitted query has become available, then all
+      // queries are available.
       while (!available) {
         GLuint lastSubmittedQuery = toProcessTimers.back().second;
         glGetQueryObjectiv(lastSubmittedQuery, GL_QUERY_RESULT_AVAILABLE,
@@ -40,13 +57,20 @@ void BenchmarkerGPU::collect_times_last_frame() {
         auto name = timer.first;
         auto query = timer.second;
         GLuint64 timeElapsed = 0;
-        glGetQueryObjectui64v(query, GL_QUERY_RESULT, &timeElapsed);
 
         // See how much time the rendering of object i took in nanoseconds.
+        glGetQueryObjectui64v(query, GL_QUERY_RESULT, &timeElapsed);
+
         BenchmarkerGPU::benchStats[name].emplace_back(timeElapsed);
+
+        // Free queries so opengl can reuse them.
+        glDeleteQueries(1, &query);
       }
     }
+    // Current frame becomes last frame for next run
     unprocTimers.pop();
+  } else {
+    set_not_first_frame();
   }
   unprocTimers.push(UnprocTimers());
 }

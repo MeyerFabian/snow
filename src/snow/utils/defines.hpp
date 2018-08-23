@@ -2,6 +2,7 @@
 #define DEFINES_H
 
 #define BENCHMARK
+//#define NDEBUG
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720

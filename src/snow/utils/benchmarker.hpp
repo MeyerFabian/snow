@@ -4,6 +4,7 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
+#include <assert.h>
 #include <chrono>
 #include <iostream>
 #include <queue>
@@ -65,8 +66,8 @@ class BenchmarkerGPU : public Benchmarker {
   BenchmarkerGPU(BenchmarkerGPU&&) = delete;
   void operator=(BenchmarkerGPU&&) = delete;
 
-  static void write_to_file();
   static void collect_times_last_frame();
+  static void write_to_file();
 
   template <typename F, typename... Args>
   decltype(auto) time(std::string name, F&& func, Args&&... args) {
@@ -80,6 +81,9 @@ class BenchmarkerGPU : public Benchmarker {
   BenchmarkerGPU();
   static BenchmarkerMap benchStats;
   static UnprocTimersQueue unprocTimers;
+
+  static bool notFirstFrame;
+  static void set_not_first_frame();
   class TimerRAIIGL {
    public:
     TimerRAIIGL(std::string name);
