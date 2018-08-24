@@ -15,7 +15,7 @@ int main() {
          (rand3 - radius) * (rand3 - radius)) < (radius * radius)) {
       scene.particleSys->particles.push_back(
           Particle(Vector3f(xpos + rand1, ypos + rand2, zpos + rand3),
-                   Vector3i(-10 * 1e8, 0, 0), 6.25e-3f));
+                   Vector3f(-10.0f, 0.0f, 0.0f), 6.25e-3f));
       x += 1;
     }
   }

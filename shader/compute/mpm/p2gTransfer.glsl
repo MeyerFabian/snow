@@ -1,4 +1,5 @@
 #version 440
+#include "shader/compute/atomic/nvidia.include.glsl"
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;
@@ -14,14 +15,14 @@ layout(std140, binding = 0) buffer pPosMass {
 };
 
 layout(std140, binding = 1) buffer pVelVolume {
-	ivec4 pv[ ];
+	vec4 pv[ ];
 };
 
 layout(std140, binding = 2) buffer gPosMass {
 	vec4 gxm[ ];
 };
 layout(std140, binding = 3) buffer gVel {
-	ivec4 gv[ ];
+	vec4 gv[ ];
 };
 layout(std140, binding = 4) buffer pForceElastic {
 	mat4 pFE[ ];
@@ -30,15 +31,15 @@ layout(std140, binding = 5) buffer pForcePlastic {
 	mat4 pFP[ ];
 };
 layout(std140, binding = 16) buffer gForce {
-	ivec4 gf[ ];
+	vec4 gf[ ];
 };
-
 #include "shader/compute/svd/SVD.include.glsl"
 #include "shader/compute/interpolation/cubic.include.glsl"
 //requires gGridDim uniform
 #include "shader/compute/indexing/gridIndex.include.glsl"
 #include "shader/compute/indexing/neighborIndex.include.glsl"
 #include "shader/compute/lame/snow.include.glsl"
+
 
 int n= 0;
 void main(void){
@@ -53,7 +54,7 @@ void main(void){
 	//pxm[pIndex].x +=0.00005;
 
 	vec4 particle = pxm[pIndex];
-	vec4 particleVelocity = vec4(pv[pIndex]);
+	vec4 particleVelocity = pv[pIndex];
 	mat4 FEp4 = mat4(pFE[pIndex]);
 	mat3 FEp =mat3(FEp4);
 	mat4 FPp4 = mat4(pFP[pIndex]);
@@ -61,11 +62,8 @@ void main(void){
 
 	vec3 xp= particle.xyz; //particle position
 	float mp = particle.w; // particle mass
-	if (abs(mp) > 100.0) {
-		return;
-	}
-	vec3 vp = vec3(particleVelocity.xyz)*1e-8f; //particle velocity
-	float pp0 = float(particleVelocity.w)*1e-6f; //particle density
+	vec3 vp = particleVelocity.xyz; //particle velocity
+	float pp0 = particleVelocity.w; //particle density
 
 	int gridOffsetOfParticle = int(globalInvocY); //  21
 	ivec3 gridOffset;
@@ -95,15 +93,15 @@ void main(void){
 
 		//min = sum_p [ mp *wipn]
 		//gxm[gI].w+= mp * wip;
-		atomicAdd(gv[gI].w,  int(mp * wip* 1e8f));
+		atomicAdd(gv[gI].w, mp * wip);
 
 		//vin = sum_p [ vpn * mp *wipn / min]
 		//gv[gI].xyz+= vp * mp * wip; // calculate added gridVelocity
 
 		vec3 velocity = (vp * mp * wip);
-		atomicAdd(gv[gI].x,int(velocity.x*1e8f));
-		atomicAdd(gv[gI].y,int(velocity.y*1e8f));
-		atomicAdd(gv[gI].z,int(velocity.z*1e8f));
+		atomicAdd(gv[gI].x,velocity.x);
+		atomicAdd(gv[gI].y,velocity.y);
+		atomicAdd(gv[gI].z,velocity.z);
 
 
 		mat3 REp, SEp;
@@ -111,7 +109,7 @@ void main(void){
 
 		for(int i=0; i<3; i++){
 			for(int j=0;j<3;j++){
-				REp[i][j] =round(1e9f*REp[i][j])/1e9f ;
+				REp[i][j] =round(1e5f*REp[i][j])/1e5f ;
 			}
 		}
 
@@ -123,7 +121,7 @@ void main(void){
 		// fi(^x) = - sum_p [ Vpn * sigmaP * d_wipn]
 		//        = - sum_p [ Vp0 * (Jpn * 2 * mu(FPp)/Jpn * (FEp-REp) * FEp^(T) + Jpn* lamba(FPp)/Jpn* (JEp -1.0f) * JEp * FEp^(-T) * FEp^(T))*d_wipn]
 		//        = - sum_p [ Vp0  * (2 * mu(FPp) * (FEp-REp) * FEp^(T) + lamba(FPp)* (JEp -1.0f) * JEp * I )*d_wipn]
-		if(pp0>0.0f){
+		if(pp0>.0f){
 			// if(gridOffset ==0 &&gridOffset ==0 &&gridOffset ==0){
 			vec3 force =-
 
@@ -141,9 +139,9 @@ void main(void){
 				;
 			//force = wipg;
 			//fi[gI].xyz += force;
-			atomicAdd(gf[gI].x,int(force.x*1e6f));
-			atomicAdd(gf[gI].y,int(force.y*1e6f));
-			atomicAdd(gf[gI].z,int(force.z*1e6f));
+			atomicAdd(gf[gI].x,force.x);
+			atomicAdd(gf[gI].y,force.y);
+			atomicAdd(gf[gI].z,force.z);
 
 		}
 		}

@@ -28,7 +28,7 @@ int main() {
 
       scene.particleSys->particles.push_back(
           Particle(Vector3f(xpos + rand1, ypos + rand2, zpos + rand3),
-                   Vector3i(0, 0, 0), mass));
+                   Vector3f(0.0f, 0.0f, 0.0f), mass));
 
       x += 1;
     }

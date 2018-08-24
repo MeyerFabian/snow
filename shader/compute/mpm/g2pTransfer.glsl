@@ -1,4 +1,5 @@
 #version 440
+#include "shader/compute/atomic/nvidia.include.glsl"
 #define alpha 0.95
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
@@ -17,7 +18,7 @@ layout(std140, binding = 0) buffer pPosMass {
 };
 
 layout(std140, binding = 1) buffer pVelVolume {
-	ivec4 pv[ ];
+	vec4 pv[ ];
 };
 
 layout(std140, binding = 2) buffer gPosMass {
@@ -25,23 +26,23 @@ layout(std140, binding = 2) buffer gPosMass {
 };
 
 layout(std140, binding = 3) buffer gVel {
-	ivec4 gv[ ];
+	vec4 gv[ ];
 };
 
 layout(std140, binding = 7) buffer gVeln {
 	vec4 gvn[ ];
 };
 layout(std140, binding = 6) buffer pVeln {
-	ivec4 pvn[ ];
+	vec4 pvn[ ];
 };
 layout(std140, binding = 13) buffer pDeltaVel0{
-	ivec4 pdvp0[];
+	vec4 pdvp0[];
 };
 layout(std140, binding = 14) buffer pDeltaVel1{
-	ivec4 pdvp1[];
+	vec4 pdvp1[];
 };
 layout(std140, binding = 15) buffer pDeltaVel2{
-	ivec4 pdvp2[];
+	vec4 pdvp2[];
 };
 
 #include "shader/compute/interpolation/cubic.include.glsl"
@@ -59,7 +60,7 @@ void main(void){
 
 
 	vec4 particle = pxm[pIndex];
-	vec4 particleVelocity = vec4(pv[pIndex]);
+	vec4 particleVelocity = pv[pIndex];
 
 	vec3 xp= particle.xyz; //particle position
 
@@ -92,52 +93,27 @@ void main(void){
 		getIndex(gridIndex,gI);
 
 		vec3 vin =gvn[gI].xyz;
-		vec3 vi =vec3(gv[gI].xyz)*1e-8f; //needs to be normalized with mi
-		float mi = float(gv[gI].w)*1e-8f;
+		vec3 vi = gv[gI].xyz; //needs to be normalized with mi
+		float mi = gv[gI].w;
 		//vpn+1 = a * vpn + temp_vpn+1
 		//temp_vpn+1 = sum_i [(1-a) * vin+1 * wipn + (a) * (vin+1 - vin)* wipn]
-		if(mi>0.0f){
+		if(mi>.0f){
 			vec3 vpn = ((1.0f-alpha) *vin * wip)+(alpha*(vin-vi/mi)*wip); // add ParticleMass to gridPointMass
 			//fi[gI].xyz += force;
-			atomicAdd(pvn[gl_GlobalInvocationID.x].x,int(vpn.x*1e8f));
-			atomicAdd(pvn[gl_GlobalInvocationID.x].y,int(vpn.y*1e8f));
-			atomicAdd(pvn[gl_GlobalInvocationID.x].z,int(vpn.z*1e8f));
+			atomicAdd(pvn[gl_GlobalInvocationID.x].x,vpn.x);
+			atomicAdd(pvn[gl_GlobalInvocationID.x].y,vpn.y);
+			atomicAdd(pvn[gl_GlobalInvocationID.x].z,vpn.z);
 
-			//pvn[gl_GlobalInvocationID.x].xyz +=vin*wip;
-			//d_vpn+1 = sum_i [vin+1 * d_wipn^(T)]
-			/*
-			   atomicAdd(deltapvn0[gl_GlobalInvocationID.x].x,vin.x * gwip.x);
-			   atomicAdd(deltapvn0[gl_GlobalInvocationID.x].y,vin.y * gwip.x);
-			   atomicAdd(deltapvn0[gl_GlobalInvocationID.x].z,vin.z * gwip.x);
-			   atomicAdd(deltapvn1[gl_GlobalInvocationID.x].x,vin.x * gwip.y);
-			   atomicAdd(deltapvn1[gl_GlobalInvocationID.x].y,vin.y * gwip.y);
-			   atomicAdd(deltapvn1[gl_GlobalInvocationID.x].z,vin.z * gwip.y);
-			   atomicAdd(deltapvn2[gl_GlobalInvocationID.x].x,vin.x * gwip.z);
-			   atomicAdd(deltapvn2[gl_GlobalInvocationID.x].y,vin.y * gwip.z);
-			   atomicAdd(deltapvn2[gl_GlobalInvocationID.x].z,vin.z * gwip.z);
-
-			 */
-
-			atomicAdd(pdvp0[gl_GlobalInvocationID.x].x,int(vin.x * gwip.x*1e8f));
-			atomicAdd(pdvp0[gl_GlobalInvocationID.x].y,int(vin.y * gwip.x*1e8f));
-			atomicAdd(pdvp0[gl_GlobalInvocationID.x].z,int(vin.z * gwip.x*1e8f));
-			atomicAdd(pdvp1[gl_GlobalInvocationID.x].x,int(vin.x * gwip.y*1e8f));
-			atomicAdd(pdvp1[gl_GlobalInvocationID.x].y,int(vin.y * gwip.y*1e8f));
-			atomicAdd(pdvp1[gl_GlobalInvocationID.x].z,int(vin.z * gwip.y*1e8f));
-			atomicAdd(pdvp2[gl_GlobalInvocationID.x].x,int(vin.x * gwip.z*1e8f));
-			atomicAdd(pdvp2[gl_GlobalInvocationID.x].y,int(vin.y * gwip.z*1e8f));
-			atomicAdd(pdvp2[gl_GlobalInvocationID.x].z,int(vin.z * gwip.z*1e8f));
+			atomicAdd(pdvp0[gl_GlobalInvocationID.x].x,vin.x * gwip.x);
+			atomicAdd(pdvp0[gl_GlobalInvocationID.x].y,vin.y * gwip.x);
+			atomicAdd(pdvp0[gl_GlobalInvocationID.x].z,vin.z * gwip.x);
+			atomicAdd(pdvp1[gl_GlobalInvocationID.x].x,vin.x * gwip.y);
+			atomicAdd(pdvp1[gl_GlobalInvocationID.x].y,vin.y * gwip.y);
+			atomicAdd(pdvp1[gl_GlobalInvocationID.x].z,vin.z * gwip.y);
+			atomicAdd(pdvp2[gl_GlobalInvocationID.x].x,vin.x * gwip.z);
+			atomicAdd(pdvp2[gl_GlobalInvocationID.x].y,vin.y * gwip.z);
+			atomicAdd(pdvp2[gl_GlobalInvocationID.x].z,vin.z * gwip.z);
 		}
-		/*
-		   deltapvn[gl_GlobalInvocationID.x][0][0] += mat4( vin.x * gwip.x,vin.x * gwip.y, vin.x *gwip.z,0.0f,
-		   vin.y * gwip.x,vin.y * gwip.y, vin.y *gwip.z,0.0f,
-		   vin.z * gwip.x,vin.z * gwip.y, vin.z *gwip.z,0.0f,
-		   0.0f,0.0f,0.0f,0.0f);
-		/*
-		deltapvn[gl_GlobalInvocationID.x] += mat4( 0.0f,0.0f, 0.0f,0.0f,
-		0.0f,0.0f, 0.0f,0.0f,
-		0.0f,0.0f, 0.0f,0.0f,
-		0.0f,0.0f,0.0f,0.0f);*/
 	}
 
 }

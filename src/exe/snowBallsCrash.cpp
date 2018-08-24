@@ -21,7 +21,7 @@ int main() {
           (rand4 > 0.5) ? (((rand4 - 0.5) * 10.0f) + 1.0f) * 8.0e-4f : 10e-3f;
       scene.particleSys->particles.push_back(
           Particle(Vector3f(xpos + rand1, ypos + rand2, zpos + rand3),
-                   Vector3i(10 * 1e8, 0 * 1e8, 1 * 1e8), mass));
+                   Vector3f(10.0f, 0.0f, 1.0f), mass));
       x += 1;
     }
   }
@@ -43,7 +43,7 @@ int main() {
           (rand4 > 0.5) ? (((rand4 - 0.5) * 10.0f) + 1.0f) * 8.0e-4f : 10e-3f;
       scene.particleSys->particles.push_back(
           Particle(Vector3f(xpos + rand1, ypos + rand2, zpos + rand3),
-                   Vector3i(-12 * 1e8, 1 * 1e8, -5 * 1e8), mass));
+                   Vector3f(-12.0f, 1.0f, -5.0f), mass));
       x += 1;
     }
   }

@@ -1,4 +1,5 @@
 #version 440
+#include "shader/compute/atomic/nvidia.include.glsl"
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;
@@ -11,14 +12,14 @@ layout(std140, binding = 0) buffer pPosMass {
 };
 
 layout(std140, binding = 1) buffer pVelVolume {
-	ivec4 pv[ ];
+	vec4 pv[ ];
 };
 
 layout(std140, binding = 2) buffer gPosMass {
 	vec4 gxm[ ];
 };
 layout(std140, binding = 3) buffer gVel {
-	ivec4 gv[ ];
+	vec4 gv[ ];
 };
 
 #include "shader/compute/interpolation/cubic.include.glsl"
@@ -73,10 +74,8 @@ void main(void){
 		// pp0 = sum_i[ mi0 *wip0 / h^(3)]
 		// atomicAdd(gxm[gI].w, mp * wip);
 		//pv[pIndex].w += (mi * wip / gCellVolume)  ;
-		float mi = float(gv[gI].w)*1e-8f;
-		atomicAdd(pv[pIndex].w, int(
-					mi * wip / gCellVolume*1e6f)
-			 );
+		float mi = gv[gI].w;
+		atomicAdd(pv[pIndex].w, mi * wip / gCellVolume);
 
 	}
 

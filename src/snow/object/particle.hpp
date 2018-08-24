@@ -3,8 +3,8 @@
 #include "math3d.hpp"
 struct Particle {
   Particle(
-      Vector3f r = Vector3f(0.0f, 0.0f, 0.0f), Vector3i v = Vector3i(0, 0, 0),
-      float m = 1.25e-3f, unsigned int V = 0,
+      Vector3f r = Vector3f(0.0f, 0.0f, 0.0f),
+      Vector3f v = Vector3f(0.0, 0.0, 0.0), float m = 1.25e-3f, float V = 0.0,
       Matrix4f Fe = Matrix4f(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
                              0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
       Matrix4f Fp = Matrix4f(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
@@ -16,8 +16,8 @@ struct Particle {
         forceElastic(Fe),
         forcePlastic(Fp) {}
   Particle(float x = .0f, float y = .0f, float z = .0f,
-           Vector3i v = Vector3i(0, 0, 0), float m = 1.25e-3f,
-           unsigned int V = 0, Matrix4f Fe = Matrix4f(1.0f),
+           Vector3f v = Vector3f(0.0, 0.0, 0.0), float m = 1.25e-3f,
+           float V = 0.0f, Matrix4f Fe = Matrix4f(1.0f),
            Matrix4f Fp = Matrix4f(1.0f))
       : position(x, y, z),
         velocity(v),
@@ -26,10 +26,10 @@ struct Particle {
         forceElastic(Fe),
         forcePlastic(Fp) {}
   Vector3f position;
-  Vector3i velocity;
+  Vector3f velocity;
 
   float mass;
-  unsigned int volume;
+  float volume;
 
   Matrix4f forceElastic;
   Matrix4f forcePlastic;

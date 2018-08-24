@@ -40,13 +40,13 @@ class ParticleSystem {
   void updateSSBOBuffer();
   void debug() const;
   Vector4f* pPositions = nullptr;
-  Vector4i* pVelocities = nullptr;
+  Vector4f* pVelocities = nullptr;
   Matrix4f* pForcesE = nullptr;
   Matrix4f* pForcesP = nullptr;
-  Vector4i* pVelocitiesn = nullptr;
-  Vector4i* pDeltaV0 = nullptr;
-  Vector4i* pDeltaV1 = nullptr;
-  Vector4i* pDeltaV2 = nullptr;
+  Vector4f* pVelocitiesn = nullptr;
+  Vector4f* pDeltaV0 = nullptr;
+  Vector4f* pDeltaV1 = nullptr;
+  Vector4f* pDeltaV2 = nullptr;
 
  private:
   GLuint posB;

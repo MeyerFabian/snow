@@ -12,7 +12,7 @@ int main() {
         scene.particleSys->particles.push_back(Particle(
             Vector3f(xpos + ((float)x) * 0.025f, ypos + ((float)y) * 0.025f,
                      zpos + ((float)z) * 0.025f),
-            Vector3i(0, 0, 0)));
+            Vector3f(0.0, 0.0, 0.0)));
 
         x += 1;
       }

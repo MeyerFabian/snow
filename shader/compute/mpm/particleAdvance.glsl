@@ -13,7 +13,7 @@ layout(std140, binding = 0) buffer pPosMass {
 	vec4 pxm[ ];
 };
 layout(std140, binding = 1) buffer pVelVolume {
-	ivec4 pv[ ];
+	vec4 pv[ ];
 };
 
 layout(std140, binding = 2) buffer gPosMass {
@@ -26,7 +26,7 @@ layout(std140, binding = 5) buffer pForcePlastic {
 	mat4 pFP[ ];
 };
 layout(std140, binding = 6) buffer pVeln {
-	ivec4 pvn[ ];
+	vec4 pvn[ ];
 };
 
 layout(std140, binding = 8) buffer cPos {
@@ -39,13 +39,13 @@ layout(std140, binding = 10) buffer cNor {
 	vec4 cn[ ];
 };
 layout(std140, binding = 13) buffer pDeltaVel0{
-	ivec4 pdvp0[];
+	vec4 pdvp0[];
 };
 layout(std140, binding = 14) buffer pDeltaVel1{
-	ivec4 pdvp1[];
+	vec4 pdvp1[];
 };
 layout(std140, binding = 15) buffer pDeltaVel2{
-	ivec4 pdvp2[];
+	vec4 pdvp2[];
 };
 
 #include "shader/compute/svd/SVD.include.glsl"
@@ -84,26 +84,18 @@ void main(void){
 	mat4 FPp4 = mat4(pFP[pI]);
 	mat3 FPp = mat3(FPp4);
 
-	mat3 dvp = mat3( vec3(pdvp0[pI])*1e-8f,vec3(pdvp1[pI])*1e-8f,vec3(pdvp2[pI])*1e-8f);
-	/*
-	   for(int i=0; i<3; i++){
-	   for(int j=0;j<3;j++){
-	   dvp[i][j] =dvp[i][j]*10000.0f ;
-	   }
-	   }
-	 */
+	mat3 dvp = mat3(pdvp0[pI],pdvp1[pI],pdvp2[pI]);
+
+	for(int i=0; i<3; i++){
+		for(int j=0;j<3;j++){
+			dvp[i][j] =round(1e5f*dvp[i][j])/1e5f ;
+		}
+	}
+
 	mat3 FEpn = (mat3(1.0f) + dt * dvp)*FEp;
 	mat3 Fpn = (mat3(1.0f) + dt * dvp)* (FEp*FPp);
 	mat3 FPpn = FPp;
 	//FEpn = mat3(1.0025f);
-	/*
-	   for(int i=0; i<3; i++){
-	   for(int j=0;j<3;j++){
-	   Fpn[i][j] =round(1e5f*Fpn[i][j])/1e5f ;
-	   FEpn[i][j] =round(1e5f *FEpn[i][j])/1e5f ;
-	   }
-	   }
-	 */
 	//FEpn= mat3(1.0f);
 	//FEpn= mat3(2.0f,1.0f,1.0f,0.0f,3.0f,1.0f,2.0f,1.4f,2.4f);
 	mat3 W =mat3(0.0f);
@@ -119,7 +111,7 @@ void main(void){
 
 	for(int i=0; i<3; i++){
 		for(int j=0;j<3;j++){
-			FEpn[i][j] =round(1e9f *FEpn[i][j])/1e9f ;
+			FEpn[i][j] =round(1e5f *FEpn[i][j])/1e5f ;
 		}
 	}
 
@@ -135,7 +127,7 @@ void main(void){
 
 	for(int i=0; i<3; i++){
 		for(int j=0;j<3;j++){
-			FPpn[i][j] =round(1e9f *FPpn[i][j])/1e9f ;
+			FPpn[i][j] =round(1e5f *FPpn[i][j])/1e5f ;
 		}
 	}
 
@@ -155,8 +147,6 @@ void main(void){
 	 */
 
 	pFE[gl_GlobalInvocationID.x] = mat4( FEpn);
-
-
 	pFP[gl_GlobalInvocationID.x] = mat4( FPpn);
 
 
@@ -172,8 +162,8 @@ void main(void){
 	 */
 	// UPDATE VELOCITIES
 
-	vec3 vpn = vec3(pvn[pI].xyz)*1e-8f;
-	vec3 vp = vec3(pv[pI].xyz)*1e-8f;
+	vec3 vpn = pvn[pI].xyz;
+	vec3 vp = pv[pI].xyz;
 	//vpn+1 = a * vpn + temp_vpn+1
 
 
@@ -203,15 +193,15 @@ void main(void){
 		}
 	}
 
-	pv[pI].xyz = ivec3(vpn1*1e8f);
+	pv[pI].xyz = vpn1;
 	// UPDATE POSITION
 	// xpn+1 = xpn + d_t * vpn+1
 
 	pxm[pI].xyz += dt *  vpn1;
 
 	//Reset vpn+1 and delta vpn+1 to (0,0,0)
-	pvn[pI].xyz = ivec3(0,0,0);
-	pdvp0[pI].xyz = ivec3(0,0,0);
-	pdvp1[pI].xyz = ivec3(0,0,0);
-	pdvp2[pI].xyz = ivec3(0,0,0);
+	pvn[pI].xyz = vec3(0.0f,0.0f,0.0f);
+	pdvp0[pI].xyz = vec3(0.0f,0.0f,0.0f);
+	pdvp1[pI].xyz = vec3(0.0f,0.0f,0.0f);
+	pdvp2[pI].xyz = vec3(0.0f,0.0f,0.0f);
 }

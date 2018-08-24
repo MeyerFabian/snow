@@ -9,7 +9,7 @@ layout(std140, binding = 2) buffer gPosMass {
 	vec4 gxm[ ];
 };
 layout(std140, binding = 3) buffer gVel {
-	ivec4 gv[ ];
+	vec4 gv[ ];
 };
 
 
@@ -28,7 +28,7 @@ layout(std140, binding = 10) buffer cNor {
 };
 
 layout(std140, binding = 16) buffer gForce {
-	ivec4 gf[ ];
+	vec4 gf[ ];
 };
 
 
@@ -57,9 +57,9 @@ bool collides(const vec3 pPos,const int i, inout vec3 n){
 void main(void){
 	uint gI = gl_GlobalInvocationID.x;
 	vec3 xi = gxm[gI].xyz;
-	float mi = float(gv[gI].w)*1e-8f;
-	vec3 vi =  vec3(gv[gI].xyz)*1e-8f; //needs to be normalized with mi
-	vec3 fi = vec3(gf[gI].xyz)*1e-6f;//+vec3(0.0001,0.0002,0.0);
+	float mi = gv[gI].w;
+	vec3 vi =  gv[gI].xyz; //needs to be normalized with mi
+	vec3 fi = gf[gI].xyz;//+vec3(0.0001,0.0002,0.0);
 	//vin+1 = vin + d_t * mi^(-1) * fin
 
 	if(mi>0.0f){

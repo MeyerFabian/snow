@@ -25,12 +25,13 @@ void ExplicitTimeUpdate::init() {
 
   // Compute the initial volume particles occupy and keep throughout the
   // simulation
-
+  // scene.particleSys->debug();
   scratch_grid.dispatch_with_barrier({});
 
   compute_grid_mass.dispatch_with_barrier();
 
   compute_particle_volumes.dispatch_with_barrier();
+  // scene.particleSys->debug();
 }
 
 void ExplicitTimeUpdate::update(double dt) {
@@ -60,5 +61,6 @@ void ExplicitTimeUpdate::update(double dt) {
   BenchmarkerGPU::getInstance().time("#Sim:Advance Particles", [this, &dt]() {
     return advance_particles.dispatch_with_barrier({dt});
   });
+  // scene.particleSys->debug();
 }
 
