@@ -15,6 +15,7 @@ std::string FileSystem::load_string_from_file(const std::string& filename) {
 }
 void FileSystem::write_to_file(std::string source,
                                const std::string& filename) {
+  std::cerr << "Write to file:" << filename << std::endl;
   std::ofstream file;
   file.open(filename);
   file << source;

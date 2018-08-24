@@ -22,74 +22,13 @@ layout(std140, binding = 3) buffer gVel {
 	ivec4 gv[ ];
 };
 
+#include "shader/compute/interpolation/cubic.include.glsl"
+//requires gGridDim uniform
+#include "shader/compute/indexing/gridIndex.include.glsl"
+#include "shader/compute/indexing/neighborIndex.include.glsl"
 
 float gCellVolume = gridSpacing *gridSpacing*gridSpacing;
 int n= 0;
-
-
-/**
- * Takes an integer vector ijk and returns the respective buffer index.
- * i of [0,x-GridDimension]
- * j of[0,y-GridDimension]
- * k of [0, z-GridDimension]
- */
-void getIndex(const ivec3 ijk,inout int index){
-	index = ijk.x + (ijk.y * int(gGridDim[0].x)) + (ijk.z *int(gGridDim[1].x) * int(gGridDim[0].x));
-}
-
-/**
- * Takes an index with range [0,63] referring to one of the 64 neighbors
- * (4x*4y*4z = 64 Neighbors) and returns its relative signed and rounded position to
- * that grid node.
- */
-int width = 4;
-ivec3 windowOffset=ivec3(-1,-1,-1);
-
-void getIJK(const  int index,inout ivec3 ijk){
-	int temp = index%(width*width);
-	ijk= ivec3(temp%width,temp/width,index/(width*width))+windowOffset;
-}
-
-
-/*
- * Returns weight distribution by grid basis function (dyadic products of one-dimensional
- * cubic B-splines) from particle to actual grid neighbors dependant on their distance to the particle.
- */
-
-float weighting(const float x){
-	const float absX = abs(x);
-	if(absX < 1.0f){
-		return 0.5f *absX*absX*absX -x*x +2.0f/3.0f;
-	}
-	else if (absX < 2.0f){
-		return -1.0f/6.0f *absX*absX*absX +x*x - 2.0f *absX + 4.0f/3.0f;
-	}
-	return 0.0f;
-}
-
-/**
- * Weighting is split into x,y and z direction.
- */
-void weighting(const vec3 distanceVector, inout float w){
-	w = weighting(distanceVector.x)*  weighting(distanceVector.y) * weighting(distanceVector.z);
-}
-
-float weightingGradient(const float x){
-	const float absX = abs(x);
-	if(absX < 1.0f){
-		return 1.5f *x*absX-2.0f*x;
-	}
-	else if (absX < 2.0f){
-		return -1.0f/2.0f *absX*x + 2.0f*x - 2.0f*x/absX;
-	}
-	return 0.0f;
-}
-
-void weightingGradient(const vec3 distanceVector, inout vec3 wg){
-	wg.x = weightingGradient(distanceVector.x)*  weighting(distanceVector.y) * weighting(distanceVector.z);
-	wg.y = weighting(distanceVector.x)*  weightingGradient(distanceVector.y) * weighting(distanceVector.z);
-	wg.z = weighting(distanceVector.x)*  weighting(distanceVector.y) * weightingGradient(distanceVector.z);
-}
 
 void main(void){
 
