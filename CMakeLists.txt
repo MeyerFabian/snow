@@ -23,9 +23,13 @@ find_package(GLEW REQUIRED)
 find_package(ASSIMP REQUIRED)
 find_package(GLFW3 REQUIRED)
 find_package(GLM REQUIRED)
-#if(GLEW_FOUND)
-#	include_directories()
-#endif()
+
+set(TESTS_ENABLED OFF CACHE BOOL "enables tests")
+
+if("${TESTS_ENABLED}")
+	set(TEST_INCLUDES include/eigen)
+	file(GLOB_RECURSE TEST_FILES "src/test/*.cpp")
+endif()
 
 include_directories(
 	${GLEW_INCLUDE_PATH}
@@ -34,6 +38,7 @@ include_directories(
 	${GLM_INCLUDE_PATH}
 	include/stb_image
 	include/math3d
+	${TEST_INCLUDES}
 	)
 
 
@@ -54,7 +59,6 @@ endif()
 
 file(GLOB_RECURSE SOURCE_FILES "src/snow/*.cpp" "src/snow/*.hpp")
 file(GLOB_RECURSE EXE_FILES "src/exe/*.cpp")
-
 list(GET EXE_FILES 0 FIRST_EXEC)
 get_filename_component(FIRST_EXEC_NAME ${FIRST_EXEC} NAME_WE)
 foreach (EXEC ${EXE_FILES})
@@ -69,7 +73,19 @@ foreach (EXEC ${EXE_FILES})
 		)
 
 endforeach(EXEC)
+foreach (TEST ${TEST_FILES})
 
+	get_filename_component(TEST_NAME ${TEST} NAME_WE)
+	add_executable(${TEST_NAME}
+		${TEST}
+		)
+
+	target_link_libraries(${TEST_NAME}
+		SNOWGL_LIBRARY
+		${TEST_LIBS}
+		)
+
+endforeach(TEST)
 add_subdirectory(include/math3d)
 add_subdirectory(include/stb_image)
 add_subdirectory(src/snow)

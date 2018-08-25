@@ -351,11 +351,6 @@ void computeSVD( const mat3 A,inout mat3 W,inout mat3 S,inout mat3 V )
 
 	fromQuat(qV,V);
 
-	for(int i=0; i<3; i++){
-		for(int j=0;j<3;j++){
-			V[i][j] =round(1e5f *V[i][j])/1e5f ;
-		}
-	}
 	//V = mat3::fromQuat(qV);
 	mat3 B =A*V;
 

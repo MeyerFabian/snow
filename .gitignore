@@ -1,7 +1,8 @@
 # Build Path
 /bin
 /build
-
+#
+/include/eigen
 # CMake
 CMakeCache.txt
 CMakeFiles
