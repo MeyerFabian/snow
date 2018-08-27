@@ -74,7 +74,7 @@ void CollisionObjects::updateRenderBuffer(float dt) {
     glm::vec3 uPos(position + velocity * dt);
     colliders.at(i).mesh->setPosition(uPos);
     if (colliders.at(i).type == 1) {
-      colliders.at(i).velocity = glm::vec4(0.0f, dt * 0.0f, 0.0f, 0.0f);
+      colliders.at(i).velocity = glm::vec4(velocity, 0.0f);
     }
   }
 }

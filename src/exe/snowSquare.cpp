@@ -10,9 +10,9 @@ int main() {
     while (z < 32) {
       while (x < 32) {
         scene.particleSys->particles.push_back(Particle(
-            Vector3f(xpos + ((float)x) * 0.025f, ypos + ((float)y) * 0.025f,
-                     zpos + ((float)z) * 0.025f),
-            Vector3f(0.0, 0.0, 0.0)));
+            glm::vec3(xpos + ((float)x) * 0.025f, ypos + ((float)y) * 0.025f,
+                      zpos + ((float)z) * 0.025f),
+            glm::vec3(0.0, 0.0, 0.0)));
 
         x += 1;
       }

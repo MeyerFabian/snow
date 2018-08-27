@@ -15,8 +15,8 @@ int main() {
          (rand3 - radius) * (rand3 - radius)) < (radius * radius)) {
       float mass = 1.25e-3f;
       scene.particleSys->particles.push_back(
-          Particle(Vector3f(xpos + rand1, ypos + rand2, zpos + rand3),
-                   Vector3f(0.0f, 0.0f, 0.0f), mass));
+          Particle(glm::vec3(xpos + rand1, ypos + rand2, zpos + rand3),
+                   glm::vec3(0.0f, 0.0f, 0.0f), mass));
       x += 1;
     }
   }

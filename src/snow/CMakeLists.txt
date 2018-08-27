@@ -9,8 +9,6 @@ ${GLEW_LIBRARY}
 
 stb_image
 
-math3d
-
 opengl32.lib
 
 ${GLFW3_LIBRARY}

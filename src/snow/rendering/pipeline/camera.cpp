@@ -1,7 +1,7 @@
 #include "camera.hpp"
 
 glm::mat4 Camera::getViewMatrix() const {
-  return glm::lookAt(pos, pos + xAxis, up);
+  return glm::lookAt(pos, pos + zAxis, up);
 }
 
 glm::mat4 Camera::getProjectionMatrix(float width, float height) const {

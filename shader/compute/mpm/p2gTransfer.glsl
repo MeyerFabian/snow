@@ -107,11 +107,6 @@ void main(void){
 		mat3 REp, SEp;
 		computePD(FEp,REp,SEp);
 
-		for(int i=0; i<3; i++){
-			for(int j=0;j<3;j++){
-				REp[i][j] =round(1e5f*REp[i][j])/1e5f ;
-			}
-		}
 
 		//REp =mat3(1.0f);
 		float JPp = determinant(FPp);

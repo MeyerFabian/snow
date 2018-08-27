@@ -1,7 +1,7 @@
 #version 440
-layout(local_size_x =1, local_size_y =1,local_size_z =1)in;
+layout(local_size_x =1024, local_size_y =1,local_size_z =1)in;
 struct BufferData{
-    mat4 A;
+	mat4 A;
 	mat4 U;
 	mat4 S;
 	mat4 V;

@@ -86,11 +86,6 @@ void main(void){
 
 	mat3 dvp = mat3(pdvp0[pI],pdvp1[pI],pdvp2[pI]);
 
-	for(int i=0; i<3; i++){
-		for(int j=0;j<3;j++){
-			dvp[i][j] =round(1e5f*dvp[i][j])/1e5f ;
-		}
-	}
 
 	mat3 FEpn = (mat3(1.0f) + dt * dvp)*FEp;
 	mat3 Fpn = (mat3(1.0f) + dt * dvp)* (FEp*FPp);
@@ -109,11 +104,6 @@ void main(void){
 
 	FEpn = W*S*transpose(V);
 
-	for(int i=0; i<3; i++){
-		for(int j=0;j<3;j++){
-			FEpn[i][j] =round(1e5f *FEpn[i][j])/1e5f ;
-		}
-	}
 
 
 	mat3 S_I = mat3(0.0f);
@@ -125,11 +115,6 @@ void main(void){
 
 	//FPpn = inverse(FEpn) *Fpn;
 
-	for(int i=0; i<3; i++){
-		for(int j=0;j<3;j++){
-			FPpn[i][j] =round(1e5f *FPpn[i][j])/1e5f ;
-		}
-	}
 
 	/*
 	   pFE[gl_GlobalInvocationID.x][0].xyz =vec3(0.0f,0.0f,1.0f);

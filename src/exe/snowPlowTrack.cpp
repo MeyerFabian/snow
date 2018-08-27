@@ -17,7 +17,7 @@ int main() {
     // if(((rand1 -radius)*(rand1 -radius)+(rand2 -radius)*(rand2
     // -radius)+(rand3 -radius)*(rand3 -radius)) < (radius*radius)){
     scene.particleSys->particles.push_back(
-        Particle(Vector3f(xpos + rand1, ypos + rand2, zpos + rand3)));
+        Particle(glm::vec3(xpos + rand1, ypos + rand2, zpos + rand3)));
     x += 1;
     // }
   }
@@ -28,8 +28,9 @@ int main() {
   sphere->setScale(0.3f, 0.3f, 0.3f);
   sphere->setRotation(0, 0, 0);
 
-  scene.colliderSys->colliders.push_back(Collider(
-      sphere, 0.3f, 1, Vector3f(5.0f, 0.0f, 0.0f), Vector3f(0.0f, 0.0f, 0.0f)));
+  scene.colliderSys->colliders.push_back(Collider(sphere, 0.3f, 1,
+                                                  glm::vec3(5.0f, 0.0f, 0.0f),
+                                                  glm::vec3(0.0f, 0.0f, 0.0f)));
 
   scene.meshSys->push_back(std::move(sphere));
   if (!launchSnow(scene)) {

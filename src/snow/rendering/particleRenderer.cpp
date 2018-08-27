@@ -26,7 +26,7 @@ void ParticleRenderer::initVBO() {
   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
   glfwSwapInterval(1);
   fillBufferFromMeshes();
-  world.setCamera(3.0, 3.5f, 14.0f, 2.5125f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+  world.setCamera(3.0f, 3.5f, 14.0f, 2.5125f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 }
 
 void ParticleRenderer::initShader() {

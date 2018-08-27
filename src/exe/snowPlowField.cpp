@@ -16,7 +16,7 @@ int main() {
     float rand3 = (float(rand()) / 32727.0f) * length;
 
     scene.particleSys->particles.push_back(
-        Particle(Vector3f(xpos + rand1, ypos + rand2, zpos + rand3)));
+        Particle(glm::vec3(xpos + rand1, ypos + rand2, zpos + rand3)));
     x += 1;
   }
 
@@ -26,8 +26,8 @@ int main() {
   sphere2->setScale(0.2f, 0.2f, 0.2f);
   sphere2->setRotation(0, 0, 0);
   scene.colliderSys->colliders.push_back(Collider(sphere2, 0.2f, 1,
-                                                  Vector3f(10.0f, 0.0f, 0.0f),
-                                                  Vector3f(0.0f, 0.0f, 0.0f)));
+                                                  glm::vec3(10.0f, 0.0f, 0.0f),
+                                                  glm::vec3(0.0f, 0.0f, 0.0f)));
 
   scene.meshSys->push_back(std::move(sphere2));
 
@@ -38,8 +38,8 @@ int main() {
   sphere->setRotation(0, 0, 0);
 
   scene.colliderSys->colliders.push_back(Collider(sphere, 0.2f, 1,
-                                                  Vector3f(-10.0f, 0.0f, 0.0f),
-                                                  Vector3f(0.0f, 0.0f, 0.0f)));
+                                                  glm::vec3(-10.0f, 0.0f, 0.0f),
+                                                  glm::vec3(0.0f, 0.0f, 0.0f)));
   scene.meshSys->push_back(std::move(sphere));
 
   shared_ptr<Mesh> sphere3 = make_shared<Mesh>();
@@ -49,8 +49,8 @@ int main() {
   sphere3->setRotation(0, 0, 0);
 
   scene.colliderSys->colliders.push_back(Collider(sphere3, 0.2f, 1,
-                                                  Vector3f(0.0f, 0.0f, 10.0f),
-                                                  Vector3f(0.0f, 0.0f, 0.0f)));
+                                                  glm::vec3(0.0f, 0.0f, 10.0f),
+                                                  glm::vec3(0.0f, 0.0f, 0.0f)));
 
   scene.meshSys->push_back(std::move(sphere3));
 
