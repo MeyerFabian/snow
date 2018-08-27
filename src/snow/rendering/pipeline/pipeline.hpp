@@ -1,26 +1,18 @@
 #ifndef PIPELINE_H
 #define PIPELINE_H
 
+#include <glm/glm.hpp>
 #include "camera.hpp"
-#include "math3d.hpp"
 
 class pipeline {
  public:
-  const Matrix4f *getMVP();
-  const Matrix4f *getModelMatrix();
-  void setPerspective(const float fov, const float width, const float height,
-                      const float zNear, const float zFar) {
-    m_persp.fov = fov;
-    m_persp.width = width;
-    m_persp.height = height;
-    m_persp.zNear = zNear;
-    m_persp.zFar = zFar;
-  }
+  const glm::mat4 &getMVP(float width, float height);
+  const glm::mat4 &getModelMatrix();
 
-  void setScale(const Vector3f &scl) { scale = scl; }
-  void setRotation(const Vector3f &angle) { rotation = angle; }
-  void setPosition(const Vector3f &pos) { position = pos; }
-  Vector3f getCameraPos();
+  void setScale(const glm::vec3 &scl) { scale = scl; }
+  void setRotation(const glm::vec3 &angle) { rotation = angle; }
+  void setPosition(const glm::vec3 &pos) { position = pos; }
+  glm::vec3 getCameraPos();
   void setCamera(const float pos_x, const float pos_y, const float pos_z,
                  const float lookAt_x, const float lookAt_y,
                  const float lookAt_z, const float up_x, const float up_y,
@@ -29,13 +21,13 @@ class pipeline {
   void update(const double xpos, const double ypos);
 
  private:
-  Vector3f scale;
-  Vector3f rotation;
-  Vector3f position;
-  Matrix4f modelMatrix;
-  Matrix4f MVP;
-  persp_info m_persp;
+  glm::vec3 scale;
+  glm::vec3 rotation;
+  glm::vec3 position;
+  glm::mat4 modelMatrix;
+  glm::mat4 MVP;
   Camera m_camera;
 };
 
 #endif  // PIPELINE_H
+

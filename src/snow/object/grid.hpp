@@ -3,19 +3,18 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
+#include <glm/glm.hpp>
 #include <iostream>
 #include <memory>
 #include <vector>
 #include "../utils/defines.hpp"
 #include "gridPoint.hpp"
-#include "math3d.hpp"
 class Grid {
  public:
   Grid() = default;
-  ~Grid() { delete pPositions; }
 
   std::vector<GridPoint> gridPoints;
-  std::vector<Vector4f> gridBorders;
+  std::vector<glm::vec4> gridBorders;
   std::vector<unsigned int> iGridBorders;
   Grid(int x, int y, int z, float spacing, float pos_x, float pos_y,
        float pos_z)
@@ -39,21 +38,21 @@ class Grid {
     float left = (float(GRID_COLLISION_PLANE_OFFSET)) * spacing;
     float below = (float(GRID_COLLISION_PLANE_OFFSET)) * spacing;
     gridBorders.push_back(
-        Vector4f(pos_x + left, pos_y + below, pos_z + behind, 1.0f));
+        glm::vec4(pos_x + left, pos_y + below, pos_z + behind, 1.0f));
     gridBorders.push_back(
-        Vector4f(pos_x + left, pos_y + above, pos_z + behind, 1.0f));
+        glm::vec4(pos_x + left, pos_y + above, pos_z + behind, 1.0f));
     gridBorders.push_back(
-        Vector4f(pos_x + right, pos_y + above, pos_z + behind, 1.0f));
+        glm::vec4(pos_x + right, pos_y + above, pos_z + behind, 1.0f));
     gridBorders.push_back(
-        Vector4f(pos_x + right, pos_y + below, pos_z + behind, 1.0f));
+        glm::vec4(pos_x + right, pos_y + below, pos_z + behind, 1.0f));
     gridBorders.push_back(
-        Vector4f(pos_x + left, pos_y + below, pos_z + before, 1.0f));
+        glm::vec4(pos_x + left, pos_y + below, pos_z + before, 1.0f));
     gridBorders.push_back(
-        Vector4f(pos_x + left, pos_y + above, pos_z + before, 1.0f));
+        glm::vec4(pos_x + left, pos_y + above, pos_z + before, 1.0f));
     gridBorders.push_back(
-        Vector4f(pos_x + right, pos_y + above, pos_z + before, 1.0f));
+        glm::vec4(pos_x + right, pos_y + above, pos_z + before, 1.0f));
     gridBorders.push_back(
-        Vector4f(pos_x + right, pos_y + below, pos_z + before, 1.0f));
+        glm::vec4(pos_x + right, pos_y + below, pos_z + before, 1.0f));
     // gridBorders.at(0).print();
     iGridBorders.push_back(0);
     iGridBorders.push_back(1);
@@ -90,8 +89,6 @@ class Grid {
   GLuint velBn;
   GLuint borderVB;
   GLuint borderIB;
-
-  Vector4f* pPositions;
 
   void initVBO() const;
   void resetSSBOBuffer();

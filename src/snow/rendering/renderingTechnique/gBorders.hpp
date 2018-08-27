@@ -1,12 +1,12 @@
 #ifndef GBORDERS_H
 #define GBORDERS_H
+#include <glm/glm.hpp>
 #include "../../shader/technique.hpp"
-#include "math3d.hpp"
 class GBorders : public Technique {
  public:
   struct UniformsStatic {};
   struct UniformsDynamic {
-    const Matrix4f* WVP;
+    const glm::mat4& WVP;
   };
   void init(UniformsStatic&& uniforms);
   void uniforms_update(UniformsDynamic&& uniforms);

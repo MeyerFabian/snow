@@ -2,14 +2,13 @@
 #define PARTICLERENDERER_H
 #include <stdlib.h>
 #include <string.h>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <iostream>
 #include <memory>
 #include "../object/mesh.hpp"
 #include "../object/texture.hpp"
 #include "../rendering/renderer.hpp"
 #include "../utils/benchmarker.hpp"
-#include "math3d.hpp"
 #include "pipeline/pipeline.hpp"
 #include "renderingTechnique/gBorders.hpp"
 #include "renderingTechnique/pPoints.hpp"

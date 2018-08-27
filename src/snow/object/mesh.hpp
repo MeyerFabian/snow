@@ -7,19 +7,20 @@
 #include <vector>
 #define GLEW_STATIC
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 #include <memory>
-#include "math3d.hpp"
 #include "particlesystem.hpp"
 #include "texture.hpp"
 struct Vertex {
  public:
-  Vector3f pos;
-  Vector3f normal;
-  Vector2f texpos;
+  glm::vec3 pos;
+  glm::vec3 normal;
+  glm::vec2 texpos;
 
   Vertex() {}
 
-  Vertex(const Vector3f& pos, const Vector3f& normal, const Vector2f& texpos) {
+  Vertex(const glm::vec3& pos, const glm::vec3& normal,
+         const glm::vec2& texpos) {
     this->pos = pos;
     this->texpos = texpos;
     this->normal = normal;
@@ -51,11 +52,11 @@ class Mesh {
     position.y = y;
     position.z = z;
   }
-  void setPosition(const Vector3f& pos) { position = pos; }
+  void setPosition(const glm::vec3& pos) { position = pos; }
 
-  const Vector3f& getPosition() const { return position; }
-  const Vector3f& getRotation() { return rotation; }
-  const Vector3f& getScale() { return scale; }
+  const glm::vec3& getPosition() const { return position; }
+  const glm::vec3& getRotation() { return rotation; }
+  const glm::vec3& getScale() { return scale; }
 
  private:
   bool InitFromScene(const aiScene* pScene, const std::string& Filename);
@@ -80,9 +81,9 @@ class Mesh {
   };
   std::vector<MeshEntry> m_Entries;
   std::vector<shared_ptr<Texture>> m_Textures;
-  Vector3f scale;
-  Vector3f rotation;
-  Vector3f position;
+  glm::vec3 scale;
+  glm::vec3 rotation;
+  glm::vec3 position;
 };
 
 #endif  // MESH_H

@@ -8,41 +8,34 @@
 void CollisionObjects::debug() {
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
   std::cout << "pos" << std::endl;
-  Vector4f* p = (Vector4f*)(glMapBufferRange(
-      GL_SHADER_STORAGE_BUFFER, 0, sizeof(Vector4f) * colliders.size(),
-      GL_MAP_READ_BIT));
-  p[0].print();
-  p[1].print();
-  p[2].print();
-  p[3].print();
-  p[4].print();
-  p[5].print();
-  p[6].print();
-  p[7].print();
+  auto p = (glm::vec4*)(glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0,
+                                         sizeof(glm::vec4) * colliders.size(),
+                                         GL_MAP_READ_BIT));
   glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 }
 
 void CollisionObjects::initSSBO() {
   glGenBuffers(1, &posB);
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, posB);
-  glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Vector4f) * colliders.size(),
+  glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::vec4) * colliders.size(),
                NULL, GL_STREAM_DRAW);
-  cPositions = (Vector4f*)(glMapBufferRange(
-      GL_SHADER_STORAGE_BUFFER, 0, sizeof(Vector4f) * colliders.size(),
+  auto cPositions = (glm::vec4*)(glMapBufferRange(
+      GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::vec4) * colliders.size(),
       GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT));
   for (int i = 0; i < colliders.size(); i++) {
-    cPositions[i] = colliders.at(i).mesh->getPosition();
-    cPositions[i].w = (float)colliders.at(i).type;
+    glm::vec4 data(colliders.at(i).mesh->getPosition(),
+                   (float)colliders.at(i).type);
+    cPositions[i] = data;
   }
   glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, COLLIDER_POS_BUFFER, posB);
 
   glGenBuffers(1, &velB);
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, velB);
-  glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Vector4f) * colliders.size(),
+  glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::vec4) * colliders.size(),
                NULL, GL_STATIC_DRAW);
-  cVelocities = (Vector4f*)(glMapBufferRange(
-      GL_SHADER_STORAGE_BUFFER, 0, sizeof(Vector4f) * colliders.size(),
+  auto cVelocities = (glm::vec4*)(glMapBufferRange(
+      GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::vec4) * colliders.size(),
       GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT));
   for (int i = 0; i < colliders.size(); i++) {
     cVelocities[i] = colliders.at(i).velocity;
@@ -52,14 +45,14 @@ void CollisionObjects::initSSBO() {
 
   glGenBuffers(1, &norB);
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, norB);
-  glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Vector4f) * colliders.size(),
+  glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(glm::vec4) * colliders.size(),
                NULL, GL_STATIC_DRAW);
-  cNormals = (Vector4f*)(glMapBufferRange(
-      GL_SHADER_STORAGE_BUFFER, 0, sizeof(Vector4f) * colliders.size(),
+  auto cNormals = (glm::vec4*)(glMapBufferRange(
+      GL_SHADER_STORAGE_BUFFER, 0, sizeof(glm::vec4) * colliders.size(),
       GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT));
   for (int i = 0; i < colliders.size(); i++) {
-    cNormals[i] = colliders.at(i).normal;
-    cNormals[i].w = colliders.at(i).friction;
+    glm::vec4 data(colliders.at(i).normal, colliders.at(i).friction);
+    cNormals[i] = data;
   }
   glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, COLLIDER_NOR_BUFFER, norB);
@@ -75,14 +68,13 @@ void CollisionObjects::initSSBO() {
  */
 void CollisionObjects::updateRenderBuffer(float dt) {
   for (int i = 0; i < colliders.size(); i++) {
-    Vector3f position = colliders.at(i).mesh->getPosition();
-    Vector3f velocity = colliders.at(i).velocity.xyz();
+    glm::vec3 position = colliders.at(i).mesh->getPosition();
+    glm::vec3 velocity = colliders.at(i).velocity;
 
-    Vector3f uPos(position + velocity * dt);
+    glm::vec3 uPos(position + velocity * dt);
     colliders.at(i).mesh->setPosition(uPos);
     if (colliders.at(i).type == 1) {
-      velocity = velocity + Vector3f(0.0f, dt * 0.0f, 0.0f);
-      colliders.at(i).velocity = velocity;
+      colliders.at(i).velocity = glm::vec4(0.0f, dt * 0.0f, 0.0f, 0.0f);
     }
   }
 }

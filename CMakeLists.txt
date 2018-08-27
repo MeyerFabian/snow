@@ -37,7 +37,6 @@ include_directories(
 	${GLFW3_INCLUDE_PATH}
 	${GLM_INCLUDE_PATH}
 	include/stb_image
-	include/math3d
 	${TEST_INCLUDES}
 	)
 
@@ -86,7 +85,6 @@ foreach (TEST ${TEST_FILES})
 		)
 
 endforeach(TEST)
-add_subdirectory(include/math3d)
 add_subdirectory(include/stb_image)
 add_subdirectory(src/snow)
 IF(MSVC)

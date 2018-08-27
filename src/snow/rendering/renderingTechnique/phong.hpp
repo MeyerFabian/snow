@@ -1,21 +1,21 @@
 #ifndef PHONG_H
 #define PHONG_H
+#include <glm/glm.hpp>
 #include "../../shader/technique.hpp"
-#include "math3d.hpp"
 class Phong : public Technique {
  public:
   struct UniformsStatic {
-    Vector3f lightPos;
+    glm::vec3 lightPos;
     float ambient;
-    Vector3f color;
+    glm::vec3 color;
     float diffuse;
-    Vector3f specIntensity;
+    glm::vec3 specIntensity;
     GLint specPower;
-    Vector3f cameraPos;
+    glm::vec3 cameraPos;
   };
   struct UniformsDynamic {
-    const Matrix4f* WVP;
-    const Matrix4f* ModelMatrix;
+    const glm::mat4& WVP;
+    const glm::mat4& ModelMatrix;
   };
   void init(UniformsStatic&& uniforms);
   void uniforms_update(UniformsDynamic&& uniforms);

@@ -26,7 +26,6 @@ void ParticleRenderer::initVBO() {
   glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
   glfwSwapInterval(1);
   fillBufferFromMeshes();
-  world.setPerspective(45, WINDOW_WIDTH, WINDOW_HEIGHT, 1.0f, 50.0f);
   world.setCamera(3.0, 3.5f, 14.0f, 2.5125f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 }
 
@@ -35,8 +34,8 @@ void ParticleRenderer::initShader() {
   gridBorderLines.init({});
 
   Phong::UniformsStatic uniforms = {
-      Vector3f(4.0f, 5.0f, 4.0f), 0.1f, Vector3f(1.0f, 1.0f, 1.0f), 0.2f,
-      Vector3f(1.0f, 1.0f, 1.0f), 10,   world.getCameraPos()};
+      glm::vec3(4.0f, 5.0f, 4.0f), 0.1f, glm::vec3(1.0f, 1.0f, 1.0f), 0.2f,
+      glm::vec3(1.0f, 1.0f, 1.0f), 10,   world.getCameraPos()};
   basicLighting.init(std::move(uniforms));
 }
 
@@ -47,19 +46,20 @@ void ParticleRenderer::renderPass() {
       world.setScale(mesh->getScale());
       world.setRotation(mesh->getRotation());
 
-      basicLighting.uniforms_update({world.getMVP(), world.getModelMatrix()});
+      basicLighting.uniforms_update(
+          {world.getMVP(WINDOW_WIDTH, WINDOW_HEIGHT), world.getModelMatrix()});
       mesh->Render();
     }
   });
 
-  world.setPosition(Vector3f(0.0f, 0.0f, 0.0f));
-  world.setScale(Vector3f(1.0f, 1.0f, 1.0f));
-  world.setRotation(Vector3f(0.0f, 0.0f, 0.0f));
+  world.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+  world.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
+  world.setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
 
-  gridBorderLines.uniforms_update({world.getMVP()});
+  gridBorderLines.uniforms_update({world.getMVP(WINDOW_WIDTH, WINDOW_HEIGHT)});
   BenchmarkerGPU::getInstance().time(
       "#Ren:GridLines", [this]() { return scene.grid->renderBorders(); });
-  particleImposter.uniforms_update({world.getMVP()});
+  particleImposter.uniforms_update({world.getMVP(WINDOW_WIDTH, WINDOW_HEIGHT)});
 
   BenchmarkerGPU::getInstance().time("#Ren:ParticleImposter", [this]() {
     return scene.particleSys->render();

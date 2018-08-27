@@ -100,9 +100,9 @@ void Mesh::InitMesh(unsigned int Index, const aiMesh* paiMesh) {
                                       ? &(paiMesh->mTextureCoords[0][i])
                                       : &Zero3D;
 
-    Vector3f pos = Vector3f(pPos->x, pPos->y, pPos->z);
-    Vector3f normal = Vector3f(pNormal->x, pNormal->y, pNormal->z);
-    Vector2f texture = Vector2f(pTexCoord->x, pTexCoord->y);
+    glm::vec3 pos = glm::vec3(pPos->x, pPos->y, pPos->z);
+    glm::vec3 normal = glm::vec3(pNormal->x, pNormal->y, pNormal->z);
+    glm::vec2 texture = glm::vec2(pTexCoord->x, pTexCoord->y);
     m_Entries[Index].Vertices.push_back(Vertex(pos, normal, texture));
   }
 

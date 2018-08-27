@@ -1,7 +1,12 @@
 #include "camera.hpp"
-#include <GLFW/glfw3.h>
-#include <iostream>
-Camera::Camera() {}
+
+glm::mat4 Camera::getViewMatrix() const {
+  return glm::lookAt(pos, pos + xAxis, up);
+}
+
+glm::mat4 Camera::getProjectionMatrix(float width, float height) const {
+  return glm::perspective(glm::radians(35.0f), width / height, 0.1f, 400.f);
+}
 
 void Camera::update(const int key, const float stepsize) {
   if (key == GLFW_KEY_RIGHT) {
@@ -38,23 +43,19 @@ void Camera::update(const int key, const float stepsize) {
 }
 void Camera::update(const double xpos, const double ypos) {
   setCamera(this->pos.x, this->pos.y, this->pos.z,
-            this->pos.x + zAxis.x + xAxis.x * xpos + yAxis.x * ypos,
-            this->pos.y + zAxis.y + xAxis.y * xpos + yAxis.y * ypos,
-            this->pos.z + zAxis.z + xAxis.z * xpos + yAxis.z * ypos, 0.0, 1.0,
-            0.0);
+            this->pos.x + zAxis.x + xAxis.x * xpos,
+            this->pos.y + zAxis.y + xAxis.y * xpos + ypos,
+            this->pos.z + zAxis.z + xAxis.z * xpos, 0.0, 1.0, 0.0);
 }
 
 void Camera::setCamera(const float pos_x, const float pos_y, const float pos_z,
                        const float lookAt_x, const float lookAt_y,
                        const float lookAt_z, const float up_x, const float up_y,
                        const float up_z) {
-  this->pos = Vector3f(pos_x, pos_y, pos_z);
-  Vector3f lookAt = Vector3f(lookAt_x, lookAt_y, lookAt_z);
-  Vector3f up = Vector3f(up_x, up_y, up_z);
-  this->zAxis = lookAt - this->pos;
-  this->zAxis.normalize();
-
-  up.normalize();
-  this->xAxis = this->zAxis.cross(up);
-  this->yAxis = this->xAxis.cross(this->zAxis);
+  this->pos = glm::vec3(pos_x, pos_y, pos_z);
+  glm::vec3 lookAt = glm::vec3(lookAt_x, lookAt_y, lookAt_z);
+  this->up = glm::normalize(glm::vec3(up_x, up_y, up_z));
+  this->zAxis = glm::normalize(lookAt - this->pos);
+  this->xAxis = glm::cross(zAxis, up);
 }
+

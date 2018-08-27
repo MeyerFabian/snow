@@ -16,11 +16,9 @@ SET(GLM_SEARCH_PATHS
 
 FIND_PATH(GLM_INCLUDE_PATH
     NAMES
-        glm.hpp
+        glm/glm.hpp
     PATHS
         ${GLM_SEARCH_PATHS}
-    PATH_SUFFIXES
-        glm
     DOC
         "The directory where glm/glm.hpp resides"
 )

@@ -6,12 +6,13 @@
 
 #include <algorithm>
 #include <fstream>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "math3d.hpp"
 #include "shader.hpp"
 
 class Technique {
@@ -26,7 +27,7 @@ class Technique {
   void uniform_update(const std::string&, GLuint) const noexcept;
   void uniform_update(const std::string&, double) const noexcept;
   void uniform_update(const std::string&, float, float, float) const noexcept;
-  void uniform_update(const std::string&, const Matrix4f*) const noexcept;
+  void uniform_update(const std::string&, const glm::mat4&) const noexcept;
   void uniform_update(const std::string&, GLint, GLint, GLint) const noexcept;
   void uniform_update(const std::string& name, double x, double y,
                       double z) const noexcept;

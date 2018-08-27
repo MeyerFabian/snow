@@ -1,6 +1,6 @@
 #ifndef COLLIDER_H
 #define COLLIDER_H
-#include "math3d.hpp"
+#include <glm/glm.hpp>
 #include "mesh.hpp"
 struct Collider {
   /**
@@ -12,16 +12,17 @@ struct Collider {
    * @param t
    */
   Collider(std::shared_ptr<Mesh> const attachedMesh, float w = 0.0f,
-           GLint t = 0, Vector3f v = Vector3f(0.0f, 0.0f, 0.0f),
-           Vector3f n = Vector3f(0.0f, 0.0f, 0.0f), float f = 0.2f)
+           GLint t = 0, glm::vec3 v = glm::vec3(0.0f, 0.0f, 0.0f),
+           glm::vec3 n = glm::vec3(0.0f, 0.0f, 0.0f), float f = 0.2f)
       : mesh(attachedMesh), velocity(v, w), normal(n), friction(f), type(t) {}
 
   std::shared_ptr<Mesh> const mesh = std::make_shared<Mesh>();
 
-  Vector4f velocity;
-  Vector3f normal;
+  glm::vec4 velocity;
+  glm::vec3 normal;
   float friction;
   GLint type;
 };
 
 #endif  // COLLIDER_H
+

@@ -132,8 +132,8 @@ void Technique::uniform_update(const std::string& name, GLint x, GLint y,
   glUniform3i(uniform_look_up(name), x, y, z);
 }
 void Technique::uniform_update(const std::string& name,
-                               const Matrix4f* mat4) const noexcept {
-  glUniformMatrix4fv(uniform_look_up(name), 1, GL_TRUE, (const GLfloat*)mat4);
+                               const glm::mat4& mat4) const noexcept {
+  glUniformMatrix4fv(uniform_look_up(name), 1, GL_FALSE, glm::value_ptr(mat4));
 }
 void Technique::uniform_update(const std::string& name, double x, double y,
                                double z) const noexcept {

@@ -3,8 +3,8 @@
 int main() {
   Scene scene;
 
-  Vector3f pos(5.0f, 0.0, 5.0f);
-  Vector3f scale(12.5f * 1.259f, 12.5f * 1.259f, 12.5f * 1.259f);
+  glm::vec3 pos(5.0f, 0.0, 5.0f);
+  glm::vec3 scale(12.5f * 1.259f, 12.5f * 1.259f, 12.5f * 1.259f);
 
   std::string filename = "model/bunny.voxel";
   scene.particleSys->initParticlesFromFile(filename, pos, scale);

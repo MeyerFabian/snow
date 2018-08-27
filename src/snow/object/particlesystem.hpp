@@ -4,23 +4,15 @@
 #include <GL/glew.h>
 
 #include <fstream>
+#include <glm/glm.hpp>
 #include <memory>
 #include <string>
 #include <vector>
 #include "../utils/defines.hpp"
-#include "math3d.hpp"
 #include "particle.hpp"
 class ParticleSystem {
  public:
   ~ParticleSystem() {
-    delete pPositions;
-    delete pVelocities;
-    delete pForcesE;
-    delete pForcesP;
-    delete pVelocitiesn;
-    delete pDeltaV0;
-    delete pDeltaV1;
-    delete pDeltaV2;
     glDeleteBuffers(1, &posB);
     glDeleteBuffers(1, &velB);
     glDeleteBuffers(1, &velBn);
@@ -34,19 +26,11 @@ class ParticleSystem {
   std::vector<Particle> particles;
 
   void render() const;
-  void initParticlesFromFile(const std::string& filename, const Vector3f& pos,
-                             const Vector3f& scale);
+  void initParticlesFromFile(const std::string& filename, const glm::vec3& pos,
+                             const glm::vec3& scale);
   void initSSBO();
   void updateSSBOBuffer();
   void debug() const;
-  Vector4f* pPositions = nullptr;
-  Vector4f* pVelocities = nullptr;
-  Matrix4f* pForcesE = nullptr;
-  Matrix4f* pForcesP = nullptr;
-  Vector4f* pVelocitiesn = nullptr;
-  Vector4f* pDeltaV0 = nullptr;
-  Vector4f* pDeltaV1 = nullptr;
-  Vector4f* pDeltaV2 = nullptr;
 
  private:
   GLuint posB;

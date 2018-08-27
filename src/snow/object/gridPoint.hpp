@@ -1,17 +1,18 @@
 #ifndef GRIDPOINT_H
 #define GRIDPOINT_H
-#include "math3d.hpp"
+#include <glm/glm.hpp>
 struct GridPoint {
-  GridPoint(Vector3f v = Vector3f(0.0f, 0.0f, 0.0f), float m = 0,
-            Matrix3f Fe = Matrix3f(1.0f), Matrix3f Fp = Matrix3f(1.0f))
+  GridPoint(glm::vec3 v = glm::vec3(0.0f, 0.0f, 0.0f), float m = 0,
+            glm::mat3 Fe = glm::mat3(1.0f), glm::mat3 Fp = glm::mat3(1.0f))
       : velocity(v), mass(m), forceElastic(Fe), forcePlastic(Fp) {}
 
-  Vector3f velocity;
+  glm::vec3 velocity;
 
   float mass;
 
-  Matrix3f forceElastic;
-  Matrix3f forcePlastic;
+  glm::mat3 forceElastic;
+  glm::mat3 forcePlastic;
 };
 
 #endif  // GRIDPOINT_H
+
