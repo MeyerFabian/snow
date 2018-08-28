@@ -6,6 +6,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <memory>
+#include "../snow/buffer/buffer.hpp"
 #include "../snow/rendering/GLFWWindow.hpp"
 #include "../snow/shader/technique.hpp"
 class SVDTest : public Technique {
@@ -15,6 +16,10 @@ class SVDTest : public Technique {
         std::make_shared<Shader>(ShaderType::COMPUTE, "shader/test/svd.glsl"));
     Technique::upload();
     Technique::use();
+  }
+  void dispatch_with_barrier(size_t numTestMatrices) {
+    glDispatchCompute(numTestMatrices / 1024, 1, 1);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
   }
 };
 
@@ -57,35 +62,23 @@ int main() {
     Eigen::Matrix4f P;
   };
 
-  GLuint buffer_handle;
-  glGenBuffers(1, &buffer_handle);
-  glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer_handle);
-  glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(BufferData) * (numTestMatrices),
-               NULL, GL_STATIC_DRAW);
+  std::vector<BufferData> data;
+  std::transform(std::cbegin(testMatrices), std::cend(testMatrices),
+                 std::back_inserter(data), [](Eigen::MatrixXf E) {
+                   E.conservativeResizeLike(Eigen::MatrixXf::Zero(4, 4));
+                   return BufferData({E});
+                 });
 
-  // We are not the owner of this pointer, no delete required.
-  auto ptr = (BufferData *)(glMapBufferRange(
-      GL_SHADER_STORAGE_BUFFER, 0, sizeof(BufferData) * (numTestMatrices),
-      GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT));
-  for (size_t i = 0; i < numTestMatrices; i++) {
-    Eigen::MatrixXf E = testMatrices[i];
-    E.conservativeResize(4, 4);
-    ptr[i] = BufferData({E});
-  }
-  glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-  glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, buffer_handle);
+  Buffer<BufferData> buffer(BufferType::SSBO);
+  buffer.transfer_to_gpu(data);
+
+  buffer.gl_bind_base(1);
 
   auto shaderprogram = SVDTest();
   shaderprogram.init();
-  glDispatchCompute(numTestMatrices / 1024, 1, 1);
-  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+  shaderprogram.dispatch_with_barrier(numTestMatrices);
 
-  glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer_handle);
-  std::cout << "BufferData" << std::endl;
-  auto m = (BufferData *)(glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0,
-                                           sizeof(BufferData) * numTestMatrices,
-                                           GL_MAP_READ_BIT));
-  glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+  auto m(buffer.transfer_to_cpu());
 
   std::cout << "Example Random Matrices:" << std::endl;
   std::cerr << testMatrices[0] << std::endl;
@@ -138,7 +131,6 @@ int main() {
             << total_sign_errors_sigma3 << std::endl;
 
   GLFWWindow::swapBuffers();
-  glDeleteBuffers(1, &buffer_handle);
 
   GLFWWindow::stop();
 

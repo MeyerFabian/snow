@@ -1,5 +1,5 @@
 #include "shader.hpp"
-Shader::Shader(const ShaderType &t, const std::string &filename)
+Shader::Shader(ShaderType t, const std::string &filename)
     : type(t), filename(filename) {}
 
 void Shader::load_shader_from_file() {
@@ -56,31 +56,31 @@ void Shader::gl_delete() {
     uploaded = false;
   }
 }
-
-void Shader::gl_create_id() {
-  // We handle the GLuint type by scoped enums of C++14 which should be safer
-  GLuint gl_type;
+GLuint Shader::gl_map_type() {
   switch (type) {
     case ShaderType::VERTEX:
-      gl_type = GL_VERTEX_SHADER;
+      return GL_VERTEX_SHADER;
       break;
     case ShaderType::TESS_EVAL:
-      gl_type = GL_TESS_EVALUATION_SHADER;
+      return GL_TESS_EVALUATION_SHADER;
       break;
     case ShaderType::TESS_CNTRL:
-      gl_type = GL_TESS_CONTROL_SHADER;
+      return GL_TESS_CONTROL_SHADER;
       break;
     case ShaderType::GEOMETRY:
-      gl_type = GL_GEOMETRY_SHADER;
+      return GL_GEOMETRY_SHADER;
       break;
     case ShaderType::FRAGMENT:
-      gl_type = GL_FRAGMENT_SHADER;
+      return GL_FRAGMENT_SHADER;
       break;
     case ShaderType::COMPUTE:
-      gl_type = GL_COMPUTE_SHADER;
+      return GL_COMPUTE_SHADER;
       break;
   }
-
+}
+void Shader::gl_create_id() {
+  // We handle the GLuint type by scoped enums of C++14 which should be safer
+  GLuint gl_type = gl_map_type();
   // Note: If you segfault here you probably don't have a valid rendering
   // context and uploaded is not gonna get set.
   id = glCreateShader(gl_type);

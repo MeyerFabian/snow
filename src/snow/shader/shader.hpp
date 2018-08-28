@@ -18,7 +18,7 @@ enum class ShaderType {
 
 class Shader {
  public:
-  Shader(const ShaderType &type, const std::string &filename);
+  Shader(ShaderType type, const std::string &filename);
   ~Shader();
 
   void load_shader_from_file();
@@ -36,6 +36,7 @@ class Shader {
   void gl_create_id();
   bool gl_compile();
   void gl_delete();
+  GLuint gl_map_type();
 
   ShaderType type;
   std::string filename;
