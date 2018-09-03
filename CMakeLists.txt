@@ -11,8 +11,10 @@ function(assign_source_group)
 	endforeach()
 endfunction(assign_source_group)
 
+add_compile_options("/std:c++latest")
+
 project(snowProject)
-cmake_minimum_required(VERSION 3.0.1)
+cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
@@ -24,7 +26,7 @@ find_package(ASSIMP REQUIRED)
 find_package(GLFW3 REQUIRED)
 find_package(GLM REQUIRED)
 
-set(TESTS_ENABLED OFF CACHE BOOL "enables tests")
+set(TESTS_ENABLED ON CACHE BOOL "enables tests")
 
 if("${TESTS_ENABLED}")
 	set(TEST_INCLUDES include/eigen)
@@ -88,6 +90,7 @@ endforeach(TEST)
 add_subdirectory(include/stb_image)
 add_subdirectory(src/snow)
 IF(MSVC)
+
 	if(CMAKE_GENERATOR MATCHES "NMake")
 
 		#OVERWRITE in your path_to_cmake\Modules\Platform\Windows.cmake to use compile_commands

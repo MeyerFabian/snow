@@ -5,6 +5,9 @@
 
 #include <GLFW/glfw3.h>
 
+#include <algorithm>
+#include <array>
+#include <vector>
 #include "../utils/file_loader.hpp"
 
 enum class ShaderType {
@@ -15,6 +18,12 @@ enum class ShaderType {
   FRAGMENT,
   COMPUTE
 };
+struct LocalSize {
+  GLuint x = 1;
+  GLuint y = 1;
+  GLuint z = 1;
+};
+enum PreprocessorCmd { DEFINE, INCLUDE };
 
 class Shader {
  public:
@@ -32,14 +41,43 @@ class Shader {
   GLuint get_id() const { return id; }
   bool is_uploaded() const { return uploaded; }
 
+  std::vector<std::string> preprocess_cmds;
+
+  using CommandType = std::pair<PreprocessorCmd, std::string>;
+  template <typename Iterator>
+  void add_cmds(Iterator begin, Iterator end) {
+    // expects CommandType as type iterated over
+    static_assert(
+        std::is_same<typename std::iterator_traits<Iterator>::value_type,
+                     CommandType>::value,
+        "Not CommandType");
+
+    std::transform(begin, end, std::back_inserter(preprocess_cmds),
+                   [](const auto &pair_cmd) {
+                     std::string cmd;
+                     switch (pair_cmd.first) {
+                       case PreprocessorCmd::DEFINE:
+                         cmd += "#define ";
+                         break;
+                       case PreprocessorCmd::INCLUDE:
+                         cmd += "#include ";
+                         break;
+                     }
+                     return cmd + pair_cmd.second;
+                   });
+  }
+  void set_local_size(const LocalSize &c);
+
  private:
   void gl_create_id();
   bool gl_compile();
   void gl_delete();
   GLuint gl_map_type();
+  void add_local_size();
 
   ShaderType type;
   std::string filename;
+  LocalSize local_size;
 
   std::string source;
   GLuint id;

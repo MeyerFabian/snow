@@ -2,10 +2,35 @@
 Shader::Shader(ShaderType t, const std::string &filename)
     : type(t), filename(filename) {}
 
+void Shader::set_local_size(const LocalSize &w) { local_size = w; }
+
+void Shader::add_local_size() {
+  std::vector<CommandType> preprocess = {
+      {PreprocessorCmd::DEFINE, "X " + std::to_string(local_size.x)},
+      {PreprocessorCmd::DEFINE, "Y " + std::to_string(local_size.y)},
+      {PreprocessorCmd::DEFINE, "Z " + std::to_string(local_size.z)}};
+  add_cmds(preprocess.begin(), preprocess.end());
+}
+
 void Shader::load_shader_from_file() {
   auto shdr_source = FileSystem::load_string_from_file(filename);
   const auto start = 0;
 
+  const auto version_end = shdr_source.find("#version");
+  const auto preprocess_cmds_start = shdr_source.find('\n', version_end + 1);
+  if (type == ShaderType::COMPUTE) {
+    // Local size of the shader: "#define X (int)" will always be defined.
+    add_local_size();
+  }
+
+  // Add additional commands (#define,#include, ..)
+  std::string cmds_concat = "\n\n";
+  for (const auto &cmd : preprocess_cmds) {
+    cmds_concat += cmd + "\n";
+  }
+  shdr_source.insert(preprocess_cmds_start, cmds_concat);
+
+  // Handle all #include commands
   const auto main_start = shdr_source.find("void main");
   process_includes(shdr_source, start, main_start);
 
