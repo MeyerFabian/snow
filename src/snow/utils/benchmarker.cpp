@@ -91,10 +91,14 @@ BenchmarkerGPU::TimerRAIIGL::TimerRAIIGL(std::string name) {
 BenchmarkerGPU::TimerRAIIGL::~TimerRAIIGL() noexcept {
   glEndQuery(GL_TIME_ELAPSED);
 }
-void BenchmarkerCPU::write_to_file() { Benchmarker::write(benchStats); };
-void BenchmarkerGPU::write_to_file() { Benchmarker::write(benchStats); };
+void BenchmarkerCPU::write_to_file(std::string filename) {
+  Benchmarker::write(benchStats, filename);
+};
+void BenchmarkerGPU::write_to_file(std::string filename) {
+  Benchmarker::write(benchStats, filename);
+};
 
-void Benchmarker::write(BenchmarkerMap& benchStats) {
+void Benchmarker::write(BenchmarkerMap& benchStats, std::string filename) {
   std::stringstream data;
   data << "BENCHMARKER STATS: (all times in ns)\n" << std::endl;
   data << "Name:;Max:;Min:;Avg:;Stdev:;#Calls:\n";
@@ -116,6 +120,6 @@ void Benchmarker::write(BenchmarkerMap& benchStats) {
     data << "\n";
   }
   FileSystem file;
-  file.write_to_file(data.str(), "benchstats.csv");
+  file.write_to_file(data.str(), filename + ".csv");
 }
 

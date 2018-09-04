@@ -20,13 +20,13 @@ class Benchmarker {
   using BenchmarkerMap =
       std::unordered_map<std::string, std::vector<long long unsigned int>>;
 
-  static void write(BenchmarkerMap&);
+  static void write(BenchmarkerMap&, std::string);
 };
 
 class BenchmarkerCPU : public Benchmarker {
  public:
   BenchmarkerCPU();
-  void write_to_file();
+  void write_to_file(std::string);
 
   template <typename F, typename... Args>
   decltype(auto) time(std::string name, F&& func, Args&&... args) {
@@ -67,7 +67,7 @@ class BenchmarkerGPU : public Benchmarker {
   void operator=(BenchmarkerGPU&&) = delete;
 
   static void collect_times_last_frame();
-  static void write_to_file();
+  static void write_to_file(std::string);
 
   template <typename F, typename... Args>
   decltype(auto) time(std::string name, F&& func, Args&&... args) {

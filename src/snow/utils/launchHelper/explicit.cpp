@@ -109,7 +109,7 @@ meshes->push_back(std::move(quad));
 #endif
   }
 #ifdef BENCHMARK
-  BenchmarkerGPU::getInstance().write_to_file();
+  BenchmarkerGPU::getInstance().write_to_file("MPMBenchmarker");
 #endif
   GLFWWindow::stop();
   return 0;
