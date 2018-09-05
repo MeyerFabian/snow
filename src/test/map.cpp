@@ -10,13 +10,17 @@ class MapTest : public Technique {
  public:
   LocalSize local_size = {1024, 1, 1};
   void init() {
-    auto shader =
-        std::make_shared<Shader>(ShaderType::COMPUTE, "shader/test/map.glsl");
+    auto shader = std::make_shared<Shader>(ShaderType::COMPUTE,
+                                           "shader/compute/mapreduce/map.glsl");
 
     shader->set_local_size(local_size);
 
     std::vector<Shader::CommandType> vec = {
-        {PreprocessorCmd::DEFINE, "UNARY_OP(value) length(value)"}};
+        {PreprocessorCmd::DEFINE, "UNARY_OP(value) length(value)"},
+        {PreprocessorCmd::DEFINE, "INPUT(value) g_in[value].v"},
+        {PreprocessorCmd::DEFINE, "OUTPUT(value) g_out[value].f"},
+        {PreprocessorCmd::INCLUDE, "\"shader/test/map/buffer.glsl\""}};
+
     shader->add_cmds(vec.begin(), vec.end());
 
     Technique::add_shader(std::move(shader));

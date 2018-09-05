@@ -12,8 +12,8 @@
 class SVDTest : public Technique {
  public:
   void init() {
-    Technique::add_shader(
-        std::make_shared<Shader>(ShaderType::COMPUTE, "shader/test/svd.glsl"));
+    Technique::add_shader(std::make_shared<Shader>(ShaderType::COMPUTE,
+                                                   "shader/test/svd/svd.glsl"));
     Technique::upload();
     Technique::use();
   }

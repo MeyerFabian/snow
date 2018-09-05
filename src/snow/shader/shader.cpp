@@ -13,7 +13,14 @@ void Shader::add_local_size() {
 }
 
 void Shader::load_shader_from_file() {
+  const auto ext_start = filename.find(".");
+  auto filename_tagged = filename;
+  filename_tagged.insert(ext_start, "_compiled");
+  const auto path_end = filename.find_last_of("/");
+  filename_tagged.insert(path_end + 1, "compiled/");
+
   auto shdr_source = FileSystem::load_string_from_file(filename);
+
   const auto start = 0;
 
   const auto version_end = shdr_source.find("#version");
@@ -33,14 +40,8 @@ void Shader::load_shader_from_file() {
   // Handle all #include commands
   const auto main_start = shdr_source.find("void main");
   process_includes(shdr_source, start, main_start);
-
-  const auto ext_start = filename.find(".");
-  auto filename_tagged = filename;
-  filename_tagged.insert(ext_start, "_compiled");
-  const auto path_end = filename.find_last_of("/");
-  filename_tagged.insert(path_end + 1, "compiled/");
-
   FileSystem::write_to_file(shdr_source, filename_tagged);
+
   source = shdr_source;
 }
 
