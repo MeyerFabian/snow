@@ -14,6 +14,7 @@
 #include <vector>
 #include "defines.hpp"
 #include "file_loader.hpp"
+#include "gl_debug.hpp"
 #include "statistics.hpp"
 class Benchmarker {
  public:
@@ -73,6 +74,9 @@ class BenchmarkerGPU : public Benchmarker {
   decltype(auto) time(std::string name, F&& func, Args&&... args) {
 #ifdef BENCHMARK
     TimerRAIIGL scoped_timer(name);
+#endif
+#ifdef MARKERS
+    debug::MarkerRAII marker(name);
 #endif
     return std::forward<F>(func)(std::forward<Args>(args)...);
   }

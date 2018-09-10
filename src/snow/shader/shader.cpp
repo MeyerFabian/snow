@@ -24,7 +24,12 @@ void Shader::load_shader_from_file() {
   const auto start = 0;
 
   const auto version_end = shdr_source.find("#version");
-  const auto preprocess_cmds_start = shdr_source.find('\n', version_end + 1);
+  const auto extension_end = shdr_source.rfind("#extension");
+  auto important_end = version_end;
+  if (extension_end != std::string::npos) {
+    important_end = std::max(version_end, extension_end);
+  }
+  const auto preprocess_cmds_start = shdr_source.find('\n', important_end + 1);
   if (type == ShaderType::COMPUTE) {
     // Local size of the shader: "#define X (int)" will always be defined.
     add_local_size();

@@ -1,7 +1,4 @@
 #version 440
-
-#extension GL_ARB_gpu_shader_fp64 : enable
-
 layout(local_size_x =X)in;
 
 /*
@@ -11,9 +8,8 @@ layout(local_size_x =X)in;
  * OUTPUT(id) out_buffer[id]
  * where buffer needs to be included
  *
- * UNARY_OP(value) e.g. func(value)
- * UNARY_OP_RETURN_TYPE e.g. float
- * BINARY_OP(left,right) e.g. left+right
+ * UNARY_OP(value) func(value)
+ * UNARY_OP_RETURN_TYPE
  */
 
 shared UNARY_OP_RETURN_TYPE s_data[gl_WorkGroupSize.x];
@@ -28,9 +24,9 @@ void main(void){
 
 	memoryBarrierShared();
 	barrier();
-	for(unsigned int s=b_size/2; s > 0; s >>= 1) {
-		if (t_id < s) {
-			s_data[t_id] = BINARY_OP(s_data[t_id],s_data[t_id + s]);
+	for(unsigned int s=1; s < b_size; s *= 2) {
+		if (t_id % (2*s) == 0) {
+			s_data[t_id] += s_data[t_id + s];
 		}
 		memoryBarrierShared();
 		barrier();

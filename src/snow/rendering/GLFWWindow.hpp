@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <iostream>
 #include "../utils/defines.hpp"
+#include "../utils/gl_debug.hpp"
 #include "particleRenderer.hpp"
 #include "pipeline/pipeline.hpp"
 
@@ -19,6 +20,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action,
                          int mods);
 
 static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+
 class GLFWWindow {
  public:
   GLFWWindow();

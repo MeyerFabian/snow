@@ -97,13 +97,15 @@ void Technique::gl_uniforms_read() {
   }
 }
 Technique::Technique() : shaderProgram(glCreateProgram()) {
+  std::cout << "Created Shaderprogram";
   if (shaderProgram == 0) {
     std::cerr << "Error creating shader program" << std::endl;
   }
 }
 Technique::~Technique() {
+  std::cerr << "Deleted program:" << shaderProgram << std::endl;
+
   glDeleteProgram(shaderProgram);
-  std::cerr << "deleted program" << std::endl;
 }
 
 void Technique::uniform_update(const std::string& name, float value) const

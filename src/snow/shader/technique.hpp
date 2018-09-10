@@ -18,7 +18,7 @@
 class Technique {
  protected:
   Technique();
-  virtual ~Technique();
+  ~Technique();
   bool add_shader(std::shared_ptr<Shader>&& ptr);
 
  public:
@@ -45,6 +45,7 @@ class Technique {
   void gl_uniforms_read();
 
   GLuint shaderProgram;
+  bool original;
   std::vector<std::shared_ptr<Shader>> shaderObjects;
   std::unordered_map<std::string, GLuint> m_uniformMap;
 };

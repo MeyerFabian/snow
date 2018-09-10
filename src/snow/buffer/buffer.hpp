@@ -28,7 +28,7 @@ class Buffer {
     gl_write_buffer(std::forward<Container>(c));
   }
 
-  std::vector<ElemT> transfer_to_cpu() {
+  std::vector<ElemT> transfer_to_cpu() const {
     gl_bind();
     return gl_read_buffer();
   }
@@ -51,7 +51,7 @@ class Buffer {
 
     gl_unmap();
   }
-  GLenum gl_map_type() {
+  GLenum gl_map_type() const {
     switch (type) {
       case BufferType::SSBO:
         return GL_SHADER_STORAGE_BUFFER;
@@ -62,7 +62,7 @@ class Buffer {
     glBufferData(gl_map_type(), sizeof(ElemT) * (maxElems), NULL,
                  GL_STATIC_DRAW);
   }
-  std::vector<ElemT> gl_read_buffer() {
+  std::vector<ElemT> gl_read_buffer() const {
     GLbitfield bitmask = GL_MAP_READ_BIT;
     ElemT* ptr = gl_map_buffer(bitmask);
     std::vector<ElemT> data(ptr, ptr + maxElems);
@@ -70,14 +70,14 @@ class Buffer {
     return data;
   }
 
-  auto gl_map_buffer(GLbitfield bitmask) {
+  auto gl_map_buffer(GLbitfield bitmask) const {
     auto gl_type = gl_map_type();
     return (ElemT*)(glMapBufferRange(gl_type, 0, sizeof(ElemT) * (maxElems),
                                      bitmask));
   }
 
-  void gl_unmap() { glUnmapBuffer(gl_map_type()); }
-  void gl_bind() { glBindBuffer(gl_map_type(), bufferHandle); }
+  void gl_unmap() const { glUnmapBuffer(gl_map_type()); }
+  void gl_bind() const { glBindBuffer(gl_map_type(), bufferHandle); }
 
   size_t maxElems;
 

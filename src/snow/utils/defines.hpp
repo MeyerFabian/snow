@@ -2,6 +2,7 @@
 #define DEFINES_H
 
 #define BENCHMARK
+//#define MARKERS
 //#define NDEBUG
 
 #define WINDOW_WIDTH 1280

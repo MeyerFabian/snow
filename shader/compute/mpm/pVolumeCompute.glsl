@@ -1,5 +1,5 @@
 #version 440
-#include "shader/compute/atomic/nvidia.include.glsl"
+#extension GL_NV_shader_atomic_float: enable
 uniform vec3 gGridPos;
 uniform ivec3 gGridDim;
 uniform float gridSpacing;
