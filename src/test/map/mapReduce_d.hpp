@@ -53,8 +53,8 @@ class MapReduceBuffers {
   };
 
   MapReduceBuffers(size_t numVectors, LocalSize local_size)
-      : input(Buffer<Input>(BufferType::SSBO)),
-        output(Buffer<Output>(BufferType::SSBO)) {
+      : input(Buffer<Input>(BufferType::SSBO, BufferUsage::STATIC_DRAW)),
+        output(Buffer<Output>(BufferType::SSBO, BufferUsage::DYNAMIC_READ)) {
     for (size_t i = 0; i < numVectors; i++) {
       input_data.emplace_back(glm::dvec4(glm::ballRand(1.0f), 0.0f));
     }
@@ -87,7 +87,8 @@ class MapReduceTest {
   }
 
   void print() const {
-    auto gpu_output = buffer.output.transfer_to_cpu();
+    auto gpu_output =
+        buffer.output.transfer_to_cpu(std::size(buffer.output_data_init));
     auto sum = std::transform_reduce(
         std::execution::par, std::begin(buffer.input_data),
         std::end(buffer.input_data), 0.0, std::plus<>(),

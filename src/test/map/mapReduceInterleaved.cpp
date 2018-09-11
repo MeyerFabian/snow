@@ -8,14 +8,18 @@ int main() {
   MapReduceTest test(numVectors, "MapReduceInterleaved",
                      "shader/test/map/mapReduceInterleaved.glsl", local_size);
 
+#ifdef MARKERS
   while (GLFWWindow::shouldClose()) {
+#endif
     BenchmarkerGPU::getInstance().time(
         test.name, [&test, numVectors]() { test.run(numVectors); });
 
     GLFWWindow::clear();
     GLFWWindow::swapBuffers();
     BenchmarkerGPU::getInstance().collect_times_last_frame();
+#ifdef MARKERS
   }
+#endif
 
   BenchmarkerGPU::getInstance().collect_times_last_frame();
   BenchmarkerGPU::write_to_file("MapReduce");

@@ -45,7 +45,10 @@ void Technique::attach() const {
     gl_attach(shaderObject->get_id());
   }
 }
-
+Technique& Technique::operator=(Technique&& rhs) {
+  std::swap(shaderProgram, rhs.shaderProgram);
+  return *this;
+}
 /*
  * start of glFunction() calls
  */

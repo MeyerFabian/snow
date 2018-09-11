@@ -24,7 +24,7 @@ void main(void){
 
 	memoryBarrierShared();
 	barrier();
-	for(unsigned int s=1; s < b_size; s *= 2) {
+	for(uint s=1; s < b_size; s *= 2) {
 		if (t_id % (2*s) == 0) {
 			s_data[t_id] += s_data[t_id + s];
 		}

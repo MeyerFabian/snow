@@ -55,11 +55,11 @@ int main() {
     output_data_init.emplace_back(0.0f);
   }
 
-  Buffer<Input> input(BufferType::SSBO);
+  Buffer<Input> input(BufferType::SSBO, BufferUsage::STATIC_DRAW);
   input.transfer_to_gpu(input_data);
   input.gl_bind_base(1);
 
-  Buffer<Output> output(BufferType::SSBO);
+  Buffer<Output> output(BufferType::SSBO, BufferUsage::DYNAMIC_READ);
   output.transfer_to_gpu(output_data_init);
   output.gl_bind_base(2);
 
@@ -79,7 +79,7 @@ int main() {
   BenchmarkerGPU::getInstance().collect_times_last_frame();
   BenchmarkerGPU::write_to_file("Map");
 
-  auto m(output.transfer_to_cpu());
+  auto m(output.transfer_to_cpu(std::size(output_data_init)));
 
   auto sum = std::transform_reduce(
       std::begin(input_data), std::end(input_data), 0.0f, std::plus<>(),

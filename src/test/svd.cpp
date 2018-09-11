@@ -69,7 +69,7 @@ int main() {
                    return BufferData({E});
                  });
 
-  Buffer<BufferData> buffer(BufferType::SSBO);
+  Buffer<BufferData> buffer(BufferType::SSBO, BufferUsage::STATIC_DRAW);
   buffer.transfer_to_gpu(data);
 
   buffer.gl_bind_base(1);
@@ -78,7 +78,7 @@ int main() {
   shaderprogram.init();
   shaderprogram.dispatch_with_barrier(numTestMatrices);
 
-  auto m(buffer.transfer_to_cpu());
+  auto m(buffer.transfer_to_cpu(std::size(data)));
 
   std::cout << "Example Random Matrices:" << std::endl;
   std::cerr << testMatrices[0] << std::endl;

@@ -33,8 +33,12 @@ class Technique {
                       double z) const noexcept;
   void use() const;
   void upload();
+  Technique& operator=(Technique&& rhs);
+  Technique copy();
 
  private:
+  Technique(const Technique&) = delete;
+  Technique& operator=(const Technique&) = delete;
   GLuint uniform_look_up(std::string) const noexcept;
 
   void attach_and_link() const;

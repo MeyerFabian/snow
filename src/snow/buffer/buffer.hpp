@@ -8,10 +8,11 @@
 #include <vector>
 
 enum class BufferType { SSBO };
+enum class BufferUsage { STATIC_DRAW, DYNAMIC_DRAW, STATIC_READ, DYNAMIC_READ };
 template <typename ElemT>
 class Buffer {
  public:
-  Buffer(BufferType t) : type(t), maxElems(0) {
+  Buffer(BufferType t, BufferUsage us) : type(t), usage(us), maxElems(0) {
     glGenBuffers(1, &bufferHandle);
   }
   ~Buffer() { glDeleteBuffers(1, &bufferHandle); }
@@ -28,13 +29,20 @@ class Buffer {
     gl_write_buffer(std::forward<Container>(c));
   }
 
-  std::vector<ElemT> transfer_to_cpu() const {
+  std::vector<ElemT> transfer_to_cpu(size_t first_n_elem) const {
     gl_bind();
-    return gl_read_buffer();
+    return gl_read_buffer(first_n_elem);
   }
 
   void gl_bind_base(GLuint base) {
+    bufferBase = base;
     glBindBufferBase(gl_map_type(), base, bufferHandle);
+  }
+  GLuint get_name() { return bufferBase; }
+
+  void resize_buffer() {
+    glBufferData(gl_map_type(), sizeof(ElemT) * (maxElems), NULL,
+                 gl_map_usage());
   }
 
  private:
@@ -42,7 +50,7 @@ class Buffer {
   void gl_write_buffer(Container&& c) {
     GLbitfield bitmask = (GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
-    auto ptr = gl_map_buffer(bitmask);
+    auto ptr = gl_map_buffer(bitmask, std::size(c));
     size_t i = 0;
     for (const auto& elem : c) {
       ptr[i] = elem;
@@ -58,21 +66,34 @@ class Buffer {
         break;
     }
   }
-  void resize_buffer() {
-    glBufferData(gl_map_type(), sizeof(ElemT) * (maxElems), NULL,
-                 GL_STATIC_DRAW);
+  GLenum gl_map_usage() const {
+    switch (usage) {
+      case BufferUsage::STATIC_DRAW:
+        return GL_STATIC_DRAW;
+        break;
+      case BufferUsage::DYNAMIC_DRAW:
+        return GL_DYNAMIC_DRAW;
+        break;
+      case BufferUsage::STATIC_READ:
+        return GL_STATIC_READ;
+        break;
+      case BufferUsage::DYNAMIC_READ:
+        return GL_DYNAMIC_READ;
+        break;
+    }
   }
-  std::vector<ElemT> gl_read_buffer() const {
+
+  std::vector<ElemT> gl_read_buffer(size_t first_n_elem) const {
     GLbitfield bitmask = GL_MAP_READ_BIT;
-    ElemT* ptr = gl_map_buffer(bitmask);
-    std::vector<ElemT> data(ptr, ptr + maxElems);
+    ElemT* ptr = gl_map_buffer(bitmask, first_n_elem);
+    std::vector<ElemT> data(ptr, ptr + first_n_elem);
     gl_unmap();
     return data;
   }
 
-  auto gl_map_buffer(GLbitfield bitmask) const {
+  auto gl_map_buffer(GLbitfield bitmask, size_t first_n_elem) const {
     auto gl_type = gl_map_type();
-    return (ElemT*)(glMapBufferRange(gl_type, 0, sizeof(ElemT) * (maxElems),
+    return (ElemT*)(glMapBufferRange(gl_type, 0, sizeof(ElemT) * (first_n_elem),
                                      bitmask));
   }
 
@@ -83,7 +104,10 @@ class Buffer {
 
   GLuint bufferHandle;
 
+  GLuint bufferBase;
+
   BufferType type;
+  BufferUsage usage;
 };
 
 #endif

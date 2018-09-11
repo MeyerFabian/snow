@@ -28,7 +28,7 @@ void main(void){
 
 	memoryBarrierShared();
 	barrier();
-	for(unsigned int s=b_size/2; s > 0; s >>= 1) {
+	for(uint s=b_size/2; s > 0; s >>= 1) {
 		if (t_id < s) {
 			s_data[t_id] = BINARY_OP(s_data[t_id],s_data[t_id + s]);
 		}
