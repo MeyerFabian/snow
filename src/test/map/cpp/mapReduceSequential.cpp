@@ -1,13 +1,13 @@
-#include "mapReduce_d.hpp"
+#include "../mapReduceSingle.hpp"
+#include "../mapReduceTechnique.hpp"
 int main() {
   GLFWWindow();
 
-  size_t numVectors = 1'024 * 1'024;
+  GLuint numVectors = 1'024 * 1'024;
   LocalSize local_size = {1024, 1, 1};
 
   MapReduceTest test(numVectors, "MapReduceSequential",
-                     "shader/compute/mapreduce/mapReduce.glsl", local_size);
-
+                     "shader/test/map/mapReduceSequential.glsl", local_size);
 #ifdef MARKERS
   while (GLFWWindow::shouldClose()) {
 #endif
@@ -20,6 +20,7 @@ int main() {
 #ifdef MARKERS
   }
 #endif
+
   BenchmarkerGPU::getInstance().collect_times_last_frame();
   BenchmarkerGPU::write_to_file("MapReduce");
   test.print();

@@ -1,8 +1,12 @@
-#include "mapReduce.hpp"
+#include "../mapReduceTechnique.hpp"
+#undef MARKERS  // NVIDIA NSIGHT
+#include "../../test_util.hpp"
+#include "../mapReduceBuffers.hpp"
+#include "../mapReducePipeline.hpp"
 int main() {
   GLFWWindow();
 
-  size_t numVectors = 1'024 * 1'024;
+  GLuint numVectors = 1'024 * 1'024;
   LocalSize local_size = {1024, 1, 1};
 
   auto buffer = MapReduceBuffers(numVectors, local_size);
@@ -14,20 +18,16 @@ int main() {
       "left+right",
   });
   float sum_gpu;
-#ifdef MARKERS
-  while (GLFWWindow::shouldClose()) {
-#endif
-    test.run(numVectors);
-    GLFWWindow::clear();
-    GLFWWindow::swapBuffers();
+  BenchmarkerCPU bench;
+  bench.time("Total CPU time spent", [&buffer, numVectors, &test, &sum_gpu]() {
+    executeTest(1000, [&test, numVectors]() { return test.run(numVectors); });
+
     sum_gpu = test.fetch_gpu_result(numVectors, buffer.output,
                                     [](const auto& elem) { return elem.f; },
                                     std::plus<>());
-
     BenchmarkerGPU::getInstance().collect_times_last_frame();
-#ifdef MARKERS
-  }
-#endif
+  });
+
   auto sum = std::transform_reduce(
       std::execution::par, std::begin(buffer.input_data),
       std::end(buffer.input_data), 0.0f, std::plus<>(),
@@ -41,6 +41,7 @@ int main() {
 
   BenchmarkerGPU::getInstance().collect_times_last_frame();
   BenchmarkerGPU::write_to_file("MapReduce");
+  bench.write_to_file("CPU time");
   // test.print();
 
   GLFWWindow::stop();

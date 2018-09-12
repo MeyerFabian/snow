@@ -1,9 +1,9 @@
 #include <execution>
 #include <glm/gtc/random.hpp>
 #include <numeric>
-#include "../../snow/buffer/buffer.hpp"
-#include "../../snow/rendering/GLFWWindow.hpp"
-#include "../../snow/shader/technique.hpp"
+#include "../../../snow/buffer/buffer.hpp"
+#include "../../../snow/rendering/GLFWWindow.hpp"
+#include "../../../snow/shader/technique.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/norm.hpp>
 class MapTest : public Technique {

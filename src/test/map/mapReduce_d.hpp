@@ -25,6 +25,7 @@ class MapReduce : public Technique {
     std::vector<Shader::CommandType> vec = {
         {PreprocessorCmd::DEFINE, "UNARY_OP(value) length(value)"},
         {PreprocessorCmd::DEFINE, "UNARY_OP_RETURN_TYPE double"},
+        {PreprocessorCmd::DEFINE, "BINARY_OP(left,right) left+right"},
         {PreprocessorCmd::DEFINE, "INPUT(value) g_in[value].v"},
         {PreprocessorCmd::DEFINE, "OUTPUT(value) g_out[value].f"},
         {PreprocessorCmd::INCLUDE, "\"shader/test/map/buffer_d.glsl\""}};

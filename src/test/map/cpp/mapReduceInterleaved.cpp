@@ -1,8 +1,9 @@
-#include "mapReduce.hpp"
+#include "../mapReduceSingle.hpp"
+#include "../mapReduceTechnique.hpp"
 int main() {
   GLFWWindow();
 
-  size_t numVectors = 1'024 * 1'024;
+  GLuint numVectors = 1'024 * 1'024;
   LocalSize local_size = {1024, 1, 1};
 
   MapReduceTest test(numVectors, "MapReduceInterleaved",
