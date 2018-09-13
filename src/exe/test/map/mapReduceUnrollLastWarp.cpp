@@ -1,18 +1,18 @@
-#include "../mapReduceTechnique.hpp"
-#undef MARKERS  // NVIDIA NSIGHT
-#include "../../test_util.hpp"
-#include "../mapReduceBuffers.hpp"
-#include "../mapReducePipeline.hpp"
+#include "../../../test/map/mapReduceTechnique.hpp"
+//#undef MARKERS  // NVIDIA NSIGHT
+#include "../../../test/map/mapReduceBuffers.hpp"
+#include "../../../test/map/mapReducePipeline.hpp"
+#include "../../../test/test_util.hpp"
 int main() {
   GLFWWindow();
 
-  GLuint numVectors = 1'024 * 1'024;
+  GLuint numVectors = 1024 * 1024;
   LocalSize local_size = {1024, 1, 1};
 
   auto buffer = MapReduceBuffers(numVectors, local_size);
   MapReducePipeline test;
   test.init({
-      "shader/compute/mapreduce/mapReduce.glsl",
+      "shader/test/map/mapReduceUnrollLastWarp.glsl",
       local_size,
       "length(value)",
       "left+right",
@@ -20,7 +20,8 @@ int main() {
   float sum_gpu;
   BenchmarkerCPU bench;
   bench.time("Total CPU time spent", [&buffer, numVectors, &test, &sum_gpu]() {
-    executeTest(1000, [&test, numVectors]() { return test.run(numVectors); });
+    executeTest(100'000,
+                [&test, numVectors]() { return test.run(numVectors); });
 
     sum_gpu = test.fetch_gpu_result(numVectors, buffer.output,
                                     [](const auto& elem) { return elem.f; },

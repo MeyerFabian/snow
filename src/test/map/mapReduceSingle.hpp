@@ -46,7 +46,7 @@ class MapReduceTest {
     std::cout << "Relative error: " << rel_error << std::endl;
   }
   std::string name;
-  MapReduce shaderprogram;
+  MapReduceTechnique shaderprogram;
   MapReduceBuffers buffer;
 };
 #endif

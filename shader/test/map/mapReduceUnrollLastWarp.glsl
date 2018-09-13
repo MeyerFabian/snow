@@ -46,48 +46,16 @@ void main(void){
 	memoryBarrierShared();
 	barrier();
 
-#if X>=1024
-	if(t_id<512){
-		s_data[t_id] = BINARY_OP(
-				s_data[t_id],
-				s_data[t_id+512]
-				);
+	for(uint s=X/2; s > 32; s >>= 1) {
+		if (t_id < s) {
+			s_data[t_id] = BINARY_OP(
+					s_data[t_id],
+					s_data[t_id + s]
+					);
+		}
 		memoryBarrierShared();
 		barrier();
 	}
-#endif
-
-#if X>=512
-	if(t_id<256){
-		s_data[t_id] = BINARY_OP(
-				s_data[t_id],
-				s_data[t_id+256]
-				);
-		memoryBarrierShared();
-		barrier();
-	}
-#endif
-#if X>=256
-	if(t_id<128){
-		s_data[t_id] = BINARY_OP(
-				s_data[t_id],
-				s_data[t_id+128]
-				);
-		memoryBarrierShared();
-		barrier();
-	}
-#endif
-#if X>=128
-	if(t_id<64){
-		s_data[t_id] = BINARY_OP(
-				s_data[t_id],
-				s_data[t_id+64]
-				);
-		memoryBarrierShared();
-		barrier();
-	}
-#endif
-
 	if(t_id<32){
 #if X>=64
 		s_data[t_id] = BINARY_OP(

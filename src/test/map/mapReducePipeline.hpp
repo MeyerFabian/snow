@@ -10,33 +10,17 @@ class MapReducePipeline {
     std::string gl_binary_op;
   };
 
-  void init(MapReducePipelineData&& pipeline_data) {
-    local_size = pipeline_data.local_size;
-    MapReduce::MapReduceData reduction_data({
-        pipeline_data.filename,
-        pipeline_data.local_size,
-        pipeline_data.gl_unary_op,
-        pipeline_data.gl_binary_op,
-        "g_in[value].v",
-        "g_out[value].f",
-        "shader/test/map/buffer.glsl",
-    });
-    from_immutable.init(std::move(reduction_data));
-  }
+  void init(MapReducePipelineData&& pipeline_data);
 
-  void run(GLuint numVectors) {
-    BenchmarkerGPU::getInstance().time(
-        "MapReducePipeline 1st step", [this, &numVectors]() {
-          from_immutable.dispatch_with_barrier(numVectors / 2, {numVectors, 1});
-        });
-  }
+  void run(GLuint numVectors);
+
   template <typename Out, typename UnaryOp, typename BinaryOp>
   decltype(auto) fetch_gpu_result(GLuint numVectors,
                                   std::shared_ptr<Buffer<Out>> buffer,
                                   UnaryOp u_op, BinaryOp b_op) {
     auto gpu_output = BenchmarkerGPU::getInstance().time(
         "MapBuffer", [this, &numVectors, &buffer]() {
-          return buffer->transfer_to_cpu(numVectors / local_size.x);
+          return buffer->transfer_to_cpu(buffer_size_after);
         });
 
     return std::transform_reduce(std::execution::par, std::begin(gpu_output),
@@ -45,9 +29,10 @@ class MapReducePipeline {
 
  private:
   LocalSize local_size;
-  MapReduce from_immutable;
-  MapReduce to_mutable;
-  MapReduce to_host;
+  MapReduceTechnique firstStep;
+  MapReduceTechnique intermediateStep;
+  MapReduceTechnique to_host;
+  GLuint buffer_size_after;
 };
 #endif
 

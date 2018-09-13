@@ -12,7 +12,7 @@ static void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id,
             severity, message);
 }
 
-struct MarkerRAII {
+struct MarkerRAII {  // NVIDIA NSIGHT MARKERS
   MarkerRAII(std::string name) {
     glPushDebugGroup(GL_DEBUG_SOURCE_THIRD_PARTY, 0, 0, name.c_str());
   }

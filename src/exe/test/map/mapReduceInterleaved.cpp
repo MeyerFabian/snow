@@ -1,5 +1,5 @@
-#include "../mapReduceSingle.hpp"
-#include "../mapReduceTechnique.hpp"
+#include "../../../test/map/mapReduceSingle.hpp"
+#include "../../../test/map/mapReduceTechnique.hpp"
 int main() {
   GLFWWindow();
 

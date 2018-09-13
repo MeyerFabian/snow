@@ -1,4 +1,4 @@
-#include "../snow/utils/launchHelper/explicit.hpp"
+#include "../../snow/utils/launchHelper/explicit.hpp"
 
 int main() {
   Scene scene;

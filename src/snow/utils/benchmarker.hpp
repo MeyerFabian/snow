@@ -72,11 +72,11 @@ class BenchmarkerGPU : public Benchmarker {
 
   template <typename F, typename... Args>
   decltype(auto) time(std::string name, F&& func, Args&&... args) {
+#ifdef MARKERS  // NVIDIA NSIGHT
+    debug::MarkerRAII marker(name);
+#endif
 #ifdef BENCHMARK
     TimerRAIIGL scoped_timer(name);
-#endif
-#ifdef MARKERS
-    debug::MarkerRAII marker(name);
 #endif
     return std::forward<F>(func)(std::forward<Args>(args)...);
   }

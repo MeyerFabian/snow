@@ -6,9 +6,9 @@
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <memory>
-#include "../../snow/buffer/buffer.hpp"
-#include "../../snow/rendering/GLFWWindow.hpp"
-#include "../../snow/shader/technique.hpp"
+#include "../../../snow/buffer/buffer.hpp"
+#include "../../../snow/rendering/GLFWWindow.hpp"
+#include "../../../snow/shader/technique.hpp"
 class SVDTest : public Technique {
  public:
   void init() {

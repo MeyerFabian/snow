@@ -29,8 +29,9 @@ find_package(GLM REQUIRED)
 set(TESTS_ENABLED ON CACHE BOOL "enables tests")
 
 if("${TESTS_ENABLED}")
+	file(GLOB_RECURSE TEST_SOURCE "src/test/*.cpp")
 	set(TEST_INCLUDES include/eigen)
-	file(GLOB_RECURSE TEST_FILES "src/test/*.cpp")
+	file(GLOB_RECURSE TEST_FILES "src/exe/test/*.cpp")
 endif()
 
 include_directories(
@@ -59,7 +60,7 @@ endif()
 
 
 file(GLOB_RECURSE SOURCE_FILES "src/snow/*.cpp" "src/snow/*.hpp")
-file(GLOB_RECURSE EXE_FILES "src/exe/*.cpp")
+file(GLOB_RECURSE EXE_FILES "src/exe/snow/*.cpp")
 list(GET EXE_FILES 0 FIRST_EXEC)
 get_filename_component(FIRST_EXEC_NAME ${FIRST_EXEC} NAME_WE)
 foreach (EXEC ${EXE_FILES})
@@ -79,6 +80,7 @@ foreach (TEST ${TEST_FILES})
 	get_filename_component(TEST_NAME ${TEST} NAME_WE)
 	add_executable(${TEST_NAME}
 		${TEST}
+		${TEST_SOURCE}
 		)
 
 	target_link_libraries(${TEST_NAME}

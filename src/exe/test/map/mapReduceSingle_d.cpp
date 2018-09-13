@@ -1,4 +1,4 @@
-#include "../mapReduce_d.hpp"
+#include "../../../test/map/mapReduce_d.hpp"
 int main() {
   GLFWWindow();
 
