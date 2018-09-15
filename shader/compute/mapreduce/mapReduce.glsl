@@ -28,17 +28,28 @@ void main(void){
 	s_data[t_id] = 0;
 
 	while(i < bufferSize){
-		s_data[t_id] = BINARY_OP(
-				s_data[t_id],
-				BINARY_OP(
+		// if second seq. read out of bounds only do one
+		if(i+X <bufferSize ){
+			s_data[t_id] = BINARY_OP(
+					s_data[t_id],
+					BINARY_OP(
+						UNARY_OP(
+							INPUT(i)
+							),
+						UNARY_OP(
+							INPUT(i+X)
+							)
+						)
+					);
+		}
+		else {
+			s_data[t_id] = BINARY_OP(
+					s_data[t_id],
 					UNARY_OP(
 						INPUT(i)
-						),
-					UNARY_OP(
-						INPUT(i+X)
 						)
-					)
-				);
+					);
+		}
 		//e.g. s_data[t_id] += g_data[i]+g_data[i+X];
 		i+= dispatchSize;
 	}

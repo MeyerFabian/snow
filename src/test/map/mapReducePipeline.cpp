@@ -16,25 +16,48 @@ void MapReducePipeline::init(MapReducePipelineData&& pipeline_data) {
   reduction_data_2nd.gl_unary_op = "value";
   reduction_data_2nd.input = "g_out[value].f";
   reduction_data_2nd.local_size = {1, 1, 1};
+
+  MapReduceTechnique::MapReduceData reduction_data_alt = reduction_data_1st;
+  reduction_data_2nd.local_size = {1, 1, 1};
+
   firstStep.init(std::move(reduction_data_1st));
   intermediateStep.init(std::move(reduction_data_2nd));
+  altStep.init(std::move(reduction_data_alt));
 }
 
 void MapReducePipeline::run(GLuint numVectors) {
-  BenchmarkerGPU::getInstance().time(
-      "MapReducePipeline 1st step", [this, numVectors]() {
-        GLuint buffer_size_before = numVectors;
-        buffer_size_after = buffer_size_before / local_size.x / 128;
-        firstStep.dispatch_with_barrier(
-            {buffer_size_before, buffer_size_after});
-      });
-  /*
-  BenchmarkerGPU::getInstance().time("MapReducePipeline 2nd step", [this]() {
-    GLuint buffer_size_before = buffer_size_after;
-    buffer_size_after /= 8;
-    intermediateStep.dispatch_with_barrier(
-        {buffer_size_before, buffer_size_after});
-  });
-  */
+  if (numVectors > 1024) {
+    BenchmarkerGPU::getInstance().time(
+        "MapReducePipeline Map+Reduce", [this, numVectors]() {
+          // After tests we aim at a grid/dispatch size between 8-16
+          GLuint buffer_size_before = numVectors;
+          GLuint global_loads_per_thread =
+              buffer_size_before / local_size.x / 8;
+          if (!IsPowerOfTwo(buffer_size_before)) {
+            global_loads_per_thread = next_pow_2(global_loads_per_thread);
+          }
+          buffer_size_after =
+              buffer_size_before / local_size.x / global_loads_per_thread;
+          firstStep.dispatch_with_barrier(
+              {buffer_size_before, buffer_size_after});
+        });
+
+    std::string log_name = "MapReducePipeline Reduce: (" +
+                           std::to_string(buffer_size_after) + " -> 1)";
+    BenchmarkerGPU::getInstance().time(log_name, [this]() {
+      GLuint buffer_size_before = buffer_size_after;
+      buffer_size_after = 1;
+      intermediateStep.dispatch_with_barrier(
+          {buffer_size_before, buffer_size_after});
+    });
+  } else {
+    std::string log_name =
+        "MapReducePipeline altStep: (" + std::to_string(numVectors) + " -> 1)";
+    BenchmarkerGPU::getInstance().time(log_name, [this, &numVectors]() {
+      GLuint buffer_size_before = numVectors;
+      buffer_size_after = 1;
+      altStep.dispatch_with_barrier({buffer_size_before, buffer_size_after});
+    });
+  }
 }
 

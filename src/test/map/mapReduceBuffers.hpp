@@ -19,6 +19,7 @@ class MapReduceBuffers {
     float f;
   };
   MapReduceBuffers(GLuint numVectors, LocalSize local_size);
+  MapReduceBuffers(GLuint numVectors, LocalSize local_size, GLuint);
   std::vector<Input> input_data;
   std::vector<Output> output_data_init;
   std::shared_ptr<Buffer<Input>> input;

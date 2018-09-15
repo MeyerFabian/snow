@@ -1,5 +1,6 @@
 #ifndef MAPREDUCE_PIPELINE_H
 #define MAPREDUCE_PIPELINE_H
+#include "../../../snow/src/snow/utils/math.hpp"
 #include "mapReduceTechnique.hpp"
 class MapReducePipeline {
  public:
@@ -31,7 +32,7 @@ class MapReducePipeline {
   LocalSize local_size;
   MapReduceTechnique firstStep;
   MapReduceTechnique intermediateStep;
-  MapReduceTechnique to_host;
+  MapReduceTechnique altStep;
   GLuint buffer_size_after;
 };
 #endif
