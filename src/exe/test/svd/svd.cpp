@@ -9,6 +9,7 @@
 #include "../../../snow/buffer/buffer.hpp"
 #include "../../../snow/rendering/GLFWWindow.hpp"
 #include "../../../snow/shader/technique.hpp"
+#undef SOA
 class SVDTest : public Technique {
  public:
   void init() {
@@ -69,7 +70,8 @@ int main() {
                    return BufferData({E});
                  });
 
-  Buffer<BufferData> buffer(BufferType::SSBO, BufferUsage::STATIC_DRAW);
+  Buffer<BufferData> buffer(BufferType::SSBO, BufferUsage::STATIC_DRAW,
+                            BufferLayout::AOS);
   buffer.transfer_to_gpu(data);
 
   buffer.gl_bind_base(1);

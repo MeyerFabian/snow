@@ -26,11 +26,13 @@ int main() {
     output_data_init.emplace_back(0.0f);
   }
 
-  Buffer<Input> input(BufferType::SSBO, BufferUsage::STATIC_DRAW);
+  Buffer<Input> input(BufferType::SSBO, BufferUsage::STATIC_DRAW,
+                      BufferLayout::AOS);
   input.transfer_to_gpu(input_data);
   input.gl_bind_base(1);
 
-  Buffer<Output> output(BufferType::SSBO, BufferUsage::DYNAMIC_READ);
+  Buffer<Output> output(BufferType::SSBO, BufferUsage::DYNAMIC_READ,
+                        BufferLayout::SOA);
   output.transfer_to_gpu(output_data_init);
   output.gl_bind_base(2);
 

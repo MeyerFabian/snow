@@ -1,24 +1,22 @@
 #include <execution>
 #include <glm/gtc/random.hpp>
 #include <numeric>
+#define SOA
 #include "../../../snow/rendering/GLFWWindow.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/norm.hpp>
 #include "../../../../shader/utils/precision.hpp"
 #include "../../../test/map/mapTechnique.hpp"
 #include "../../../test/test_util.hpp"
-
 int main() {
   GLFWWindow();
   size_t numVectors = 1'024 * 1'024;
   struct Input {
-    Input(glm::PREC_VEC_TYPE n_x, glm::PREC_VEC_TYPE n_v) : x(n_x), v(n_v) {}
     glm::PREC_VEC_TYPE x;
     glm::PREC_VEC_TYPE v;
   };
 
   struct Output {
-    Output(PREC_SCAL_TYPE n_f, PREC_SCAL_TYPE n_g) : f(n_f), g(n_g) {}
     PREC_SCAL_TYPE f;
     PREC_SCAL_TYPE g;
   };
@@ -27,16 +25,18 @@ int main() {
   std::vector<Output> output_data_init;
 
   for (size_t i = 0; i < numVectors; i++) {
-    input_data.emplace_back(glm::PREC_VEC_TYPE(glm::ballRand(1.0f), 0.0f),
-                            glm::PREC_VEC_TYPE(glm::ballRand(1.0f), 0.0f));
-    output_data_init.emplace_back(50.0f, 50.0f);
+    input_data.push_back({glm::PREC_VEC_TYPE(glm::ballRand(1.0f), 0.0f),
+                          glm::PREC_VEC_TYPE(glm::ballRand(1.0f), 0.0f)});
+    output_data_init.push_back({50.0f, 50.0f});
   }
 
-  Buffer<Input> input(BufferType::SSBO, BufferUsage::STATIC_DRAW);
+  Buffer<Input> input(BufferType::SSBO, BufferUsage::STATIC_DRAW,
+                      BufferLayout::AOS);
   input.transfer_to_gpu(input_data);
   input.gl_bind_base(1);
 
-  Buffer<Output> output(BufferType::SSBO, BufferUsage::DYNAMIC_READ);
+  Buffer<Output> output(BufferType::SSBO, BufferUsage::DYNAMIC_READ,
+                        BufferLayout::AOS);
   output.transfer_to_gpu(output_data_init);
   output.gl_bind_base(2);
   MapTechnique::MapData map_data({

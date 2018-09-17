@@ -40,7 +40,7 @@ include_directories(
 	${GLFW3_INCLUDE_PATH}
 	${GLM_INCLUDE_PATH}
 	include/stb_image
-	include/boost
+	include/magic_get
 	${TEST_INCLUDES}
 	)
 

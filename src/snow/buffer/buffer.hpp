@@ -3,16 +3,20 @@
 
 #define GLEW_STATIC
 #include <GL/glew.h>
+#include <boost/pfr/precise.hpp>
 #include <iostream>
 #include <iterator>
+#include <typeindex>
+#include <typeinfo>
 #include <vector>
-
 enum class BufferType { SSBO };
 enum class BufferUsage { STATIC_DRAW, DYNAMIC_DRAW, STATIC_READ, DYNAMIC_READ };
+enum class BufferLayout { AOS, SOA };
 template <typename ElemT>
 class Buffer {
  public:
-  Buffer(BufferType t, BufferUsage us) : type(t), usage(us), maxElems(0) {
+  Buffer(BufferType t, BufferUsage us, BufferLayout ly)
+      : type(t), usage(us), layout(ly), maxElems(0) {
     glGenBuffers(1, &bufferHandle);
   }
   ~Buffer() { glDeleteBuffers(1, &bufferHandle); }
@@ -28,7 +32,6 @@ class Buffer {
     }
     gl_write_buffer(std::forward<Container>(c));
   }
-
   std::vector<ElemT> transfer_to_cpu(size_t first_n_elem) const {
     gl_bind();
     return gl_read_buffer(first_n_elem);
@@ -38,8 +41,8 @@ class Buffer {
     bufferBase = base;
     glBindBufferBase(gl_map_type(), base, bufferHandle);
   }
-  GLuint get_name() { return bufferBase; }
 
+  GLuint get_name() { return bufferBase; }
   void resize_buffer() {
     glBufferData(gl_map_type(), sizeof(ElemT) * (maxElems), NULL,
                  gl_map_usage());
@@ -49,16 +52,25 @@ class Buffer {
   template <typename Container>
   void gl_write_buffer(Container&& c) {
     GLbitfield bitmask = (GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-
-    auto ptr = gl_map_buffer(bitmask, std::size(c));
-    size_t i = 0;
-    for (const auto& elem : c) {
-      ptr[i] = elem;
-      i++;
+#ifdef SOA
+    boost::pfr::for_each_field(c[0], [](const auto& field, std::size_t idx) {
+      std::cout << idx << ": " << sizeof(field) << '\n';
+    });
+#endif
+    auto ptr = gl_map_buffer(bitmask);
+    if (layout == BufferLayout::AOS) {
+      auto ElemT_ptr = (ElemT*)ptr;
+      size_t i = 0;
+      for (const auto& elem : c) {
+        ElemT_ptr[i] = elem;
+        i++;
+      }
+    } else {
     }
 
     gl_unmap();
   }
+
   GLenum gl_map_type() const {
     switch (type) {
       case BufferType::SSBO:
@@ -66,6 +78,7 @@ class Buffer {
         break;
     }
   }
+
   GLenum gl_map_usage() const {
     switch (usage) {
       case BufferUsage::STATIC_DRAW:
@@ -85,16 +98,19 @@ class Buffer {
 
   std::vector<ElemT> gl_read_buffer(size_t first_n_elem) const {
     GLbitfield bitmask = GL_MAP_READ_BIT;
-    ElemT* ptr = gl_map_buffer(bitmask, first_n_elem);
-    std::vector<ElemT> data(ptr, ptr + first_n_elem);
+    std::vector<ElemT> data;
+    auto ptr = gl_map_buffer(bitmask);
+    if (layout == BufferLayout::AOS) {
+      auto ElemT_ptr = (ElemT*)ptr;
+      data = std::vector<ElemT>(ElemT_ptr, ElemT_ptr + first_n_elem);
+    }
     gl_unmap();
     return data;
   }
 
-  auto gl_map_buffer(GLbitfield bitmask, size_t first_n_elem) const {
+  auto gl_map_buffer(GLbitfield bitmask) const {
     auto gl_type = gl_map_type();
-    return (ElemT*)(glMapBufferRange(gl_type, 0, sizeof(ElemT) * (first_n_elem),
-                                     bitmask));
+    return (glMapBufferRange(gl_type, 0, sizeof(ElemT) * (maxElems), bitmask));
   }
 
   void gl_unmap() const { glUnmapBuffer(gl_map_type()); }
@@ -108,6 +124,7 @@ class Buffer {
 
   BufferType type;
   BufferUsage usage;
+  BufferLayout layout;
 };
 
 #endif

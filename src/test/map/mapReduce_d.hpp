@@ -54,8 +54,10 @@ class MapReduceBuffers {
   };
 
   MapReduceBuffers(size_t numVectors, LocalSize local_size)
-      : input(Buffer<Input>(BufferType::SSBO, BufferUsage::STATIC_DRAW)),
-        output(Buffer<Output>(BufferType::SSBO, BufferUsage::DYNAMIC_READ)) {
+      : input(Buffer<Input>(BufferType::SSBO, BufferUsage::STATIC_DRAW,
+                            BufferLayout::AOS)),
+        output(Buffer<Output>(BufferType::SSBO, BufferUsage::DYNAMIC_READ,
+                              BufferLayout::AOS)) {
     for (size_t i = 0; i < numVectors; i++) {
       input_data.emplace_back(glm::dvec4(glm::ballRand(1.0f), 0.0f));
     }
