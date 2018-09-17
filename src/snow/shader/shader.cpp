@@ -1,6 +1,9 @@
 #include "shader.hpp"
 Shader::Shader(ShaderType t, const std::string &filename)
-    : type(t), filename(filename) {}
+    : type(t), filename(filename) {
+  add_prec_include();
+  add_access_include();
+}
 
 void Shader::set_local_size(const LocalSize &w) { local_size = w; }
 
@@ -10,6 +13,20 @@ void Shader::add_local_size() {
       {PreprocessorCmd::DEFINE, "Y " + std::to_string(local_size.y)},
       {PreprocessorCmd::DEFINE, "Z " + std::to_string(local_size.z)}};
   add_cmds(preprocess.begin(), preprocess.end());
+}
+void Shader::add_prec_include() {
+  auto cmd_prec = {
+      CommandType(PreprocessorCmd::INCLUDE, "\"shader/utils/precision.hpp\""),
+  };
+  add_cmds(cmd_prec.begin(), cmd_prec.end());
+}
+
+void Shader::add_access_include() {
+  auto cmd_access = {
+      CommandType(PreprocessorCmd::INCLUDE,
+                  "\"shader/utils/access.include.glsl\""),
+  };
+  add_cmds(cmd_access.begin(), cmd_access.end());
 }
 
 void Shader::load_shader_from_file() {
@@ -30,6 +47,7 @@ void Shader::load_shader_from_file() {
     important_end = std::max(version_end, extension_end);
   }
   const auto preprocess_cmds_start = shdr_source.find('\n', important_end + 1);
+
   if (type == ShaderType::COMPUTE) {
     // Local size of the shader: "#define X (int)" will always be defined.
     add_local_size();

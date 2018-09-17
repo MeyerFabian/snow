@@ -3,6 +3,8 @@
 /build
 #
 /include/eigen
+/include/vulkanhpp
+/include/boost
 # CMake
 CMakeCache.txt
 CMakeFiles

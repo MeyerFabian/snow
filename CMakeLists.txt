@@ -40,6 +40,7 @@ include_directories(
 	${GLFW3_INCLUDE_PATH}
 	${GLM_INCLUDE_PATH}
 	include/stb_image
+	include/boost
 	${TEST_INCLUDES}
 	)
 
@@ -80,17 +81,17 @@ foreach (TEST ${TEST_FILES})
 	get_filename_component(TEST_NAME ${TEST} NAME_WE)
 	add_executable(${TEST_NAME}
 		${TEST}
-		${TEST_SOURCE}
 		)
 
 	target_link_libraries(${TEST_NAME}
 		SNOWGL_LIBRARY
-		${TEST_LIBS}
+		TEST_LIBRARY
 		)
 
 endforeach(TEST)
 add_subdirectory(include/stb_image)
 add_subdirectory(src/snow)
+add_subdirectory(src/test)
 IF(MSVC)
 
 	if(CMAKE_GENERATOR MATCHES "NMake")

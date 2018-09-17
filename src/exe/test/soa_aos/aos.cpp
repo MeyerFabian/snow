@@ -4,26 +4,32 @@
 #include "../../../snow/rendering/GLFWWindow.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/norm.hpp>
+#include "../../../../shader/utils/precision.hpp"
 #include "../../../test/map/mapTechnique.hpp"
+#include "../../../test/test_util.hpp"
+
 int main() {
-  GLuint numVectors = 1'024 * 1'024;
   GLFWWindow();
+  size_t numVectors = 1'024 * 1'024;
   struct Input {
-    Input(glm::vec4 n_v) : v(n_v) {}
-    glm::vec4 v;
+    Input(glm::PREC_VEC_TYPE n_x, glm::PREC_VEC_TYPE n_v) : x(n_x), v(n_v) {}
+    glm::PREC_VEC_TYPE x;
+    glm::PREC_VEC_TYPE v;
   };
 
   struct Output {
-    Output(float n_f) : f(n_f) {}
-    float f;
+    Output(PREC_SCAL_TYPE n_f, PREC_SCAL_TYPE n_g) : f(n_f), g(n_g) {}
+    PREC_SCAL_TYPE f;
+    PREC_SCAL_TYPE g;
   };
 
   std::vector<Input> input_data;
   std::vector<Output> output_data_init;
 
-  for (GLuint i = 0; i < numVectors; i++) {
-    input_data.emplace_back(glm::vec4(glm::ballRand(1.0f), 0.0f));
-    output_data_init.emplace_back(0.0f);
+  for (size_t i = 0; i < numVectors; i++) {
+    input_data.emplace_back(glm::PREC_VEC_TYPE(glm::ballRand(1.0f), 0.0f),
+                            glm::PREC_VEC_TYPE(glm::ballRand(1.0f), 0.0f));
+    output_data_init.emplace_back(50.0f, 50.0f);
   }
 
   Buffer<Input> input(BufferType::SSBO, BufferUsage::STATIC_DRAW);
@@ -33,27 +39,25 @@ int main() {
   Buffer<Output> output(BufferType::SSBO, BufferUsage::DYNAMIC_READ);
   output.transfer_to_gpu(output_data_init);
   output.gl_bind_base(2);
-
-  auto test = MapTechnique();
   MapTechnique::MapData map_data({
       "length(value)",
       "g_in",
       "g_out",
       "v",
-      "f",
-      "shader/test/map/buffer.glsl",
+      "g",
+      "shader/test/soa_aos/buffer_aos.include.glsl",
   });
-  test.init(std::move(map_data));
 
-  while (GLFWWindow::shouldClose()) {
-    BenchmarkerGPU::getInstance().time("Map", [&test, numVectors]() {
-      test.dispatch_with_barrier(numVectors);
+  auto test = MapTechnique();
+  test.init(std::move(map_data));
+  BenchmarkerCPU bench;
+  bench.time("Total CPU time spent", [&numVectors, &test]() {
+    executeTest(1'000, [&test, numVectors]() {
+      return test.dispatch_with_barrier(numVectors);
     });
 
-    GLFWWindow::clear();
-    GLFWWindow::swapBuffers();
     BenchmarkerGPU::getInstance().collect_times_last_frame();
-  }
+  });
 
   BenchmarkerGPU::getInstance().collect_times_last_frame();
   BenchmarkerGPU::write_to_file("Map");
@@ -66,7 +70,7 @@ int main() {
 
   auto sum_gpu =
       std::transform_reduce(std::begin(m), std::end(m), 0.0f, std::plus<>(),
-                            [](const auto& elem) { return elem.f; });
+                            [](const auto& elem) { return elem.g; });
   std::cout << "CPU map, CPU sum: " << sum << std::endl;
   std::cout << "GPU map, CPU sum: " << sum_gpu << std::endl;
   std::cout << "Difference: " << std::abs(sum - sum_gpu) << std::endl;

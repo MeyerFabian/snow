@@ -6,7 +6,7 @@
 int main() {
   GLFWWindow();
 
-  GLuint numVectors = 8 * 1024 * 1024;
+  GLuint numVectors = 4 * 1024 + 1;
   LocalSize local_size = {1024, 1, 1};
   auto bufferLengthMult = 2;
   auto buffer = MapReduceBuffers(numVectors, local_size, bufferLengthMult);

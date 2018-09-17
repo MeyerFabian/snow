@@ -11,7 +11,5 @@ stb_image
 
 opengl32.lib
 
-${GLFW3_LIBRARY}
-
 ${ASSIMP_LIBRARY}
 )

@@ -74,6 +74,8 @@ class Shader {
   void gl_delete();
   GLuint gl_map_type();
   void add_local_size();
+  void add_prec_include();
+  void add_access_include();
 
   ShaderType type;
   std::string filename;
