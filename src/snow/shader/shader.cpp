@@ -1,6 +1,13 @@
 #include "shader.hpp"
 Shader::Shader(ShaderType t, const std::string &filename)
     : type(t), filename(filename) {
+  add_glsl_define();
+#ifdef DOUBLE_PREC
+  add_prec_define();
+#endif
+#ifdef AOS_LAYOUT
+  add_aos_define();
+#endif
   add_prec_include();
   add_access_include();
 }
@@ -16,11 +23,33 @@ void Shader::add_local_size() {
 }
 void Shader::add_prec_include() {
   auto cmd_prec = {
-      CommandType(PreprocessorCmd::INCLUDE, "\"shader/utils/precision.hpp\""),
+      CommandType(PreprocessorCmd::INCLUDE,
+                  "\"shader/shared_hpp/precision.hpp\""),
   };
   add_cmds(cmd_prec.begin(), cmd_prec.end());
 }
 
+// adds #define GLSL mostly for includes of .hpp files that need to work
+// slightly different in the shader
+void Shader::add_glsl_define() {
+  auto cmd_prec = {
+      CommandType(PreprocessorCmd::DEFINE, "GLSL"),
+  };
+  add_cmds(cmd_prec.begin(), cmd_prec.end());
+}
+
+void Shader::add_prec_define() {
+  auto cmd_prec = {
+      CommandType(PreprocessorCmd::DEFINE, "DOUBLE_PREC"),
+  };
+  add_cmds(cmd_prec.begin(), cmd_prec.end());
+}
+void Shader::add_aos_define() {
+  auto cmd_prec = {
+      CommandType(PreprocessorCmd::DEFINE, "AOS_LAYOUT"),
+  };
+  add_cmds(cmd_prec.begin(), cmd_prec.end());
+}
 void Shader::add_access_include() {
   auto cmd_access = {
       CommandType(PreprocessorCmd::INCLUDE,
@@ -62,14 +91,15 @@ void Shader::load_shader_from_file() {
 
   // Handle all #include commands
   const auto main_start = shdr_source.find("void main");
-  process_includes(shdr_source, start, main_start);
-  FileSystem::write_to_file(shdr_source, filename_tagged);
+  process_includes(shdr_source, start, main_start, filename_tagged);
 
+  FileSystem::write_to_file(shdr_source, filename_tagged);
   source = shdr_source;
 }
 
 void Shader::process_includes(std::string &file, unsigned long long start,
-                              unsigned long long end_search) {
+                              unsigned long long end_search,
+                              std::string filename_tagged) {
   while ((start = file.find("#include", start)) <= end_search) {
     // file path for includes is within quotation marks
     const auto path_start = file.find('\"', start);
@@ -77,10 +107,12 @@ void Shader::process_includes(std::string &file, unsigned long long start,
     auto path_inc = file.substr(path_start + 1, path_end - path_start - 1);
     std::cout << "Including " << path_inc << "\n";
 
+    FileSystem::write_to_file(file, filename_tagged);
     auto inc = FileSystem::load_string_from_file(path_inc);
     const auto eol = file.find('\n', path_end);
     // nested includes
-    process_includes(inc, 0, inc.size());
+    process_includes(inc, 0, inc.size(), filename_tagged);
+
     // replace source of file with include pragma
     file.replace(start, eol - start, inc.data());
     end_search += inc.size();

@@ -8,8 +8,8 @@
 #include <algorithm>
 #include <array>
 #include <vector>
+#include "../utils/defines.hpp"
 #include "../utils/file_loader.hpp"
-
 enum class ShaderType {
   VERTEX,
   TESS_EVAL,
@@ -32,7 +32,8 @@ class Shader {
 
   void load_shader_from_file();
   void process_includes(std::string &file, unsigned long long start,
-                        unsigned long long end_search);
+                        unsigned long long end_search,
+                        std::string filename_tagged);
   void upload();
 
   std::string get_source() const { return source; }
@@ -75,7 +76,10 @@ class Shader {
   GLuint gl_map_type();
   void add_local_size();
   void add_prec_include();
+  void add_prec_define();
+  void add_aos_define();
   void add_access_include();
+  void add_glsl_define();
 
   ShaderType type;
   std::string filename;

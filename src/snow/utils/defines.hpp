@@ -5,6 +5,10 @@
 #define MARKERS
 //#define NDEBUG
 
+#define AOS_LAYOUT
+//#define DOUBLE_PREC
+#define REFLECTION
+
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 

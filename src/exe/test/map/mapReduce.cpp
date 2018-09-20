@@ -1,12 +1,12 @@
 #include "../../../test/map/mapReduceTechnique.hpp"
-#undef MARKERS  // NVIDIA NSIGHT
+//#undef MARKERS  // NVIDIA NSIGHT
 #include "../../../test/map/mapReduceBuffers.hpp"
 #include "../../../test/map/mapReducePipeline.hpp"
 #include "../../../test/test_util.hpp"
 int main() {
   GLFWWindow();
 
-  GLuint numVectors = 4 * 1024 + 1;
+  GLuint numVectors = 1024 * 1024;
   LocalSize local_size = {1024, 1, 1};
   auto bufferLengthMult = 2;
   auto buffer = MapReduceBuffers(numVectors, local_size, bufferLengthMult);

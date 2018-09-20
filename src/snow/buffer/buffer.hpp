@@ -52,7 +52,7 @@ class Buffer {
   template <typename Container>
   void gl_write_buffer(Container&& c) {
     GLbitfield bitmask = (GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-#ifdef SOA
+#ifdef REFLECTION
     boost::pfr::for_each_field(c[0], [](const auto& field, std::size_t idx) {
       std::cout << idx << ": " << sizeof(field) << '\n';
     });

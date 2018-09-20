@@ -9,7 +9,7 @@
 #include "../../../snow/shader/shader.hpp"
 #include "../../../snow/utils/benchmarker.hpp"
 #include "../../../test/map/mapTechnique.hpp"
-#include "../../../test/soa_aos/gpu_in_out_structs.hpp"
+#include "../../../test/soa_aos/gpu_in_out_structs_scalar.hpp"
 #include "../../../test/test_util.hpp"
 int main() {
   GLFWWindow();
@@ -17,8 +17,8 @@ int main() {
   std::vector<Input> input_data;
   std::vector<Output> output_data_init;
   for (size_t i = 0; i < numVectors; i++) {
-    input_data.push_back({// PREC_VEC_TYPE(glm::ballRand(1.0f), 0.0f),
-                          PREC_VEC_TYPE(glm::ballRand(1.0f), 0.0f)});
+    input_data.push_back({// PREC_SCAL_TYPE(1.0f),
+                          PREC_SCAL_TYPE(1.0f)});
     // val here (50.0f) is actually overwritten, so this is another test
     output_data_init.push_back({// 0.0f,
                                 0.0f});
@@ -39,7 +39,7 @@ int main() {
       "g_out",
       "v",
       "g",
-      "shader/test/soa_aos/buffer_aos.include.glsl",
+      "shader/test/soa_aos/buffer_aos_scalar.include.glsl",
   });
 
   auto test = MapTechnique();
@@ -60,9 +60,9 @@ int main() {
 
   BenchmarkerGPU::write_to_file("Map");
   bench.write_to_file("MapCPU");
-  auto sum = std::transform_reduce(
-      std::begin(input_data), std::end(input_data), 0.0f, std::plus<>(),
-      [](const auto& elem) { return glm::l2Norm(glm::vec3(elem.v)); });
+  auto sum = std::transform_reduce(std::begin(input_data), std::end(input_data),
+                                   0.0f, std::plus<>(),
+                                   [](const auto& elem) { return elem.v; });
 
   auto sum_gpu =
       std::transform_reduce(std::begin(m), std::end(m), 0.0f, std::plus<>(),

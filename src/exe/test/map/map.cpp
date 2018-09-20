@@ -31,8 +31,8 @@ int main() {
   input.transfer_to_gpu(input_data);
   input.gl_bind_base(1);
 
-  Buffer<Output> output(BufferType::SSBO, BufferUsage::DYNAMIC_READ,
-                        BufferLayout::SOA);
+  Buffer<Output> output(BufferType::SSBO, BufferUsage::STATIC_DRAW,
+                        BufferLayout::AOS);
   output.transfer_to_gpu(output_data_init);
   output.gl_bind_base(2);
 
@@ -54,9 +54,9 @@ int main() {
 
     GLFWWindow::clear();
     GLFWWindow::swapBuffers();
-    BenchmarkerGPU::getInstance().collect_times_last_frame();
   }
 
+  BenchmarkerGPU::getInstance().collect_times_last_frame();
   BenchmarkerGPU::getInstance().collect_times_last_frame();
   BenchmarkerGPU::write_to_file("Map");
 

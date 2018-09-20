@@ -75,9 +75,11 @@ class BenchmarkerGPU : public Benchmarker {
 #ifdef MARKERS  // NVIDIA NSIGHT
     debug::MarkerRAII marker(name);
 #endif
+
 #ifdef BENCHMARK
     TimerRAIIGL scoped_timer(name);
 #endif
+
     return std::forward<F>(func)(std::forward<Args>(args)...);
   }
 
