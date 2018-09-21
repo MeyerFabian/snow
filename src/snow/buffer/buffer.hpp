@@ -52,11 +52,6 @@ class Buffer {
   template <typename Container>
   void gl_write_buffer(Container&& c) {
     GLbitfield bitmask = (GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-#ifdef REFLECTION
-    boost::pfr::for_each_field(c[0], [](const auto& field, std::size_t idx) {
-      std::cout << idx << ": " << sizeof(field) << '\n';
-    });
-#endif
     auto ptr = gl_map_buffer(bitmask);
     if (layout == BufferLayout::AOS) {
       auto ElemT_ptr = (ElemT*)ptr;
@@ -65,7 +60,23 @@ class Buffer {
         ElemT_ptr[i] = elem;
         i++;
       }
-    } else {
+    } else if (layout == BufferLayout::SOA) {
+#ifdef REFLECTION
+      /*
+if(!std::empty(c){
+  boost::pfr::for_each_field(c[0],
+                             [](const auto& field, std::size_t idx) {
+                               auto type_ptr = (decltype(field)*)ptr;
+                               size_t i = 0;
+                               for (const auto& elem : c) {
+                               type_ptr[i+maxElems*idx] =
+boost::pfr::get<idx>(val);
+                               }
+                               i = 0;
+                             });
+}
+*/
+#endif
     }
 
     gl_unmap();
