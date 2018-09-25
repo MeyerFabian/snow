@@ -44,12 +44,10 @@ class MapReduce : public Technique {
 class MapReduceBuffers {
  public:
   struct Input {
-    Input(glm::dvec4 n_v) : v(n_v) {}
     glm::dvec4 v;
   };
 
   struct Output {
-    Output(double n_f) : f(n_f) {}
     double f;
   };
 
@@ -59,10 +57,10 @@ class MapReduceBuffers {
         output(Buffer<Output>(BufferType::SSBO, BufferUsage::DYNAMIC_READ,
                               BufferLayout::AOS)) {
     for (size_t i = 0; i < numVectors; i++) {
-      input_data.emplace_back(glm::dvec4(glm::ballRand(1.0f), 0.0f));
+      input_data.push_back({glm::dvec4(glm::ballRand(1.0f), 0.0f)});
     }
     for (size_t i = 0; i < numVectors / local_size.x; i++) {
-      output_data_init.emplace_back(0.0);
+      output_data_init.push_back({0.0f});
     }
 
     input.transfer_to_gpu(input_data);

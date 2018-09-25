@@ -5,10 +5,10 @@ MapReduceBuffers::MapReduceBuffers(GLuint numVectors, LocalSize local_size)
       output(std::make_shared<Buffer<Output>>(
           BufferType::SSBO, BufferUsage::STATIC_DRAW, BufferLayout::AOS)) {
   for (GLuint i = 0; i < numVectors; i++) {
-    input_data.emplace_back(glm::vec4(glm::ballRand(1.0f), 0.0f));
+    input_data.push_back({glm::vec4(glm::ballRand(1.0f), 0.0f)});
   }
   for (GLuint i = 0; i < numVectors; i++) {
-    output_data_init.emplace_back(0.0f);
+    output_data_init.push_back({0.0f});
   }
 
   input->transfer_to_gpu(input_data);
@@ -26,10 +26,10 @@ MapReduceBuffers::MapReduceBuffers(GLuint numVectors, LocalSize local_size,
       output(std::make_shared<Buffer<Output>>(
           BufferType::SSBO, BufferUsage::STATIC_DRAW, BufferLayout::AOS)) {
   for (GLuint i = 0; i < numRepl * numVectors; i++) {
-    input_data.emplace_back(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+    input_data.push_back({glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)});
   }
   for (GLuint i = 0; i < numVectors; i++) {
-    output_data_init.emplace_back(0.0f);
+    output_data_init.push_back({0.0f});
   }
 
   input->transfer_to_gpu(input_data);

@@ -60,6 +60,7 @@ void Technique::gl_attach(GLuint shaderid) const {
 }
 
 void Technique::gl_link() const {
+  std::cerr << "Linking begin:" << std::endl;
   GLint Success = 0;
   GLchar ErrorLog[1024] = {0};
   glLinkProgram(shaderProgram);
@@ -69,12 +70,14 @@ void Technique::gl_link() const {
     std::cerr << "Error linking shader program: " << ErrorLog << std::endl;
   }
 
+  std::cerr << "Validating begin:" << std::endl;
   glValidateProgram(shaderProgram);
   glGetProgramiv(shaderProgram, GL_VALIDATE_STATUS, &Success);
   if (!Success) {
     glGetProgramInfoLog(shaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
     std::cerr << "Invalid shader program: " << ErrorLog << std::endl;
   }
+  std::cerr << "Link/Validating successfull." << std::endl;
 }
 void Technique::gl_uniforms_read() {
   GLint numUniforms = -1;

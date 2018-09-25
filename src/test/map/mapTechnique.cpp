@@ -3,6 +3,7 @@ void MapTechnique::init(MapData&& data) {
   auto shader = std::make_shared<Shader>(ShaderType::COMPUTE,
                                          "shader/compute/mapreduce/map.glsl");
 
+  shader->add_n_define(data.numVectors);
   shader->set_local_size(local_size);
 
   std::vector<Shader::CommandType> vec = {

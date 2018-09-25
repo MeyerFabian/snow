@@ -9,12 +9,10 @@ int main() {
   GLuint numVectors = 1'024 * 1'024;
   GLFWWindow();
   struct Input {
-    Input(glm::vec4 n_v) : v(n_v) {}
     glm::vec4 v;
   };
 
   struct Output {
-    Output(float n_f) : f(n_f) {}
     float f;
   };
 
@@ -22,8 +20,8 @@ int main() {
   std::vector<Output> output_data_init;
 
   for (GLuint i = 0; i < numVectors; i++) {
-    input_data.emplace_back(glm::vec4(glm::ballRand(1.0f), 0.0f));
-    output_data_init.emplace_back(0.0f);
+    input_data.push_back({glm::vec4(glm::ballRand(1.0f), 0.0f)});
+    output_data_init.push_back({0.0f});
   }
 
   Buffer<Input> input(BufferType::SSBO, BufferUsage::STATIC_DRAW,

@@ -6,7 +6,6 @@
 #include <boost/pfr/precise.hpp>
 #include <iostream>
 #include <iterator>
-#include <typeindex>
 #include <typeinfo>
 #include <vector>
 enum class BufferType { SSBO };
@@ -62,20 +61,25 @@ class Buffer {
       }
     } else if (layout == BufferLayout::SOA) {
 #ifdef REFLECTION
-      /*
-if(!std::empty(c){
-  boost::pfr::for_each_field(c[0],
-                             [](const auto& field, std::size_t idx) {
-                               auto type_ptr = (decltype(field)*)ptr;
-                               size_t i = 0;
-                               for (const auto& elem : c) {
-                               type_ptr[i+maxElems*idx] =
-boost::pfr::get<idx>(val);
-                               }
-                               i = 0;
-                             });
-}
-*/
+      std::cerr << "henlo" << std::endl;
+      if (!std::empty(c)) {
+        size_t elem_idx = 0;
+        for (auto elem_it = std::begin(c); elem_it < std::end(c);
+             elem_it++, elem_idx++) {
+          size_t bytes_offset = 0;
+          boost::pfr::for_each_field(
+              *elem_it, [&elem_idx, maxElems = maxElems, &bytes_offset,
+                         ptr = ptr](const auto& field, std::size_t idx) {
+                size_t byte_of_field = sizeof(field);
+
+                auto casted_ptr = (std::decay_t<decltype(field)>*)ptr;
+                casted_ptr[elem_idx + bytes_offset / byte_of_field] = field;
+
+                bytes_offset += maxElems * byte_of_field;
+              });
+        }
+      }
+
 #endif
     }
 
@@ -110,11 +114,32 @@ boost::pfr::get<idx>(val);
   std::vector<ElemT> gl_read_buffer(size_t first_n_elem) const {
     GLbitfield bitmask = GL_MAP_READ_BIT;
     std::vector<ElemT> data;
+    data.resize(first_n_elem);
     auto ptr = gl_map_buffer(bitmask);
     if (layout == BufferLayout::AOS) {
       auto ElemT_ptr = (ElemT*)ptr;
       data = std::vector<ElemT>(ElemT_ptr, ElemT_ptr + first_n_elem);
+    } else if (layout == BufferLayout::SOA) {
+#ifdef REFLECTION
+      for (size_t elem_idx = 0; elem_idx < first_n_elem; elem_idx++) {
+        size_t bytes_offset = 0;
+        ElemT aos_elem = {};
+        boost::pfr::for_each_field(
+            aos_elem, [&elem_idx, maxElems = maxElems, &bytes_offset,
+                       ptr = ptr](auto& field, std::size_t idx) {
+              size_t byte_of_field = sizeof(field);
+
+              auto casted_ptr = (std::decay_t<decltype(field)>*)ptr;
+              field = casted_ptr[elem_idx + bytes_offset / byte_of_field];
+
+              bytes_offset += maxElems * byte_of_field;
+            });
+        data.push_back(std::move(aos_elem));
+      }
+
+#endif
     }
+
     gl_unmap();
     return data;
   }

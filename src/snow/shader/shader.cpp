@@ -50,6 +50,13 @@ void Shader::add_aos_define() {
   };
   add_cmds(cmd_prec.begin(), cmd_prec.end());
 }
+
+void Shader::add_n_define(GLuint n) {
+  auto cmd_prec = {
+      CommandType(PreprocessorCmd::DEFINE, "N " + std::to_string(n)),
+  };
+  add_cmds(cmd_prec.begin(), cmd_prec.end());
+}
 void Shader::add_access_include() {
   auto cmd_access = {
       CommandType(PreprocessorCmd::INCLUDE,

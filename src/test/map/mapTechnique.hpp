@@ -14,6 +14,7 @@ class MapTechnique : public Technique {
     std::string input_var;
     std::string output_var;
     std::string buffer_filename;
+    GLuint numVectors;  // SOA only
   };
 
   void init(MapData&& data);

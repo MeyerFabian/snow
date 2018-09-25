@@ -1,4 +1,4 @@
-#undef MARKERS
+#define AOS_LAYOUT
 #include <execution>
 #include <glm/gtc/random.hpp>
 #include <numeric>
@@ -17,11 +17,9 @@ int main() {
   std::vector<Input> input_data;
   std::vector<Output> output_data_init;
   for (size_t i = 0; i < numVectors; i++) {
-    input_data.push_back({// PREC_SCAL_TYPE(1.0f),
-                          PREC_SCAL_TYPE(1.0f)});
+    input_data.push_back({PREC_SCAL_TYPE(1.0f), PREC_SCAL_TYPE(1.0f)});
     // val here (50.0f) is actually overwritten, so this is another test
-    output_data_init.push_back({// 0.0f,
-                                0.0f});
+    output_data_init.push_back({0.0f, 0.0f});
   }
 
   Buffer<Input> input(BufferType::SSBO, BufferUsage::STATIC_DRAW,
@@ -39,7 +37,7 @@ int main() {
       "g_out",
       "v",
       "g",
-      "shader/test/soa_aos/buffer_aos_scalar.include.glsl",
+      "shader/test/soa_aos/buffer_scalar.include.glsl",
   });
 
   auto test = MapTechnique();

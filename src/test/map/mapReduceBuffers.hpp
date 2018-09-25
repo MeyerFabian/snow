@@ -9,13 +9,10 @@
 class MapReduceBuffers {
  public:
   struct Input {
-    Input(glm::vec4 n_v) : v(n_v) {}
     glm::vec4 v;
   };
 
   struct Output {
-    Output(float n_f) : f(n_f) {}
-
     float f;
   };
   MapReduceBuffers(GLuint numVectors, LocalSize local_size);

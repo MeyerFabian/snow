@@ -68,6 +68,7 @@ class Shader {
                    });
   }
   void set_local_size(const LocalSize &c);
+  void add_n_define(GLuint numVectors);
 
  private:
   void gl_create_id();

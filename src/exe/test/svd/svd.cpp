@@ -6,7 +6,6 @@
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <memory>
-#undef REFLECTION
 #include "../../../snow/buffer/buffer.hpp"
 #include "../../../snow/rendering/GLFWWindow.hpp"
 #include "../../../snow/shader/technique.hpp"

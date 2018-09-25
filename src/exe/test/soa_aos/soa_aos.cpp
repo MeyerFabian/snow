@@ -1,8 +1,6 @@
-#undef MARKERS
 #include <execution>
 #include <glm/gtc/random.hpp>
 #include <numeric>
-#include "../../../snow/rendering/GLFWWindow.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/norm.hpp>
 #include "../../../../shader/shared_hpp/precision.hpp"
@@ -13,7 +11,7 @@
 #include "../../../test/test_util.hpp"
 int main() {
   GLFWWindow();
-  size_t numVectors = 1'024 * 1'024;
+  GLuint numVectors = 1'024 * 16;
   std::vector<Input> input_data;
   std::vector<Output> output_data_init;
   for (size_t i = 0; i < numVectors; i++) {
@@ -24,15 +22,21 @@ int main() {
                                 0.0f});
   }
 
-  Buffer<Input> input(BufferType::SSBO, BufferUsage::STATIC_DRAW,
-                      BufferLayout::AOS);
+#ifdef AOS_LAYOUT
+  BufferLayout layout = BufferLayout::AOS;
+#else
+
+  BufferLayout layout = BufferLayout::SOA;
+
+#endif
+  Buffer<Input> input(BufferType::SSBO, BufferUsage::STATIC_DRAW, layout);
   input.transfer_to_gpu(input_data);
   input.gl_bind_base(1);
 
-  Buffer<Output> output(BufferType::SSBO, BufferUsage::STATIC_DRAW,
-                        BufferLayout::AOS);
+  Buffer<Output> output(BufferType::SSBO, BufferUsage::STATIC_DRAW, layout);
   output.transfer_to_gpu(output_data_init);
   output.gl_bind_base(2);
+
   MapTechnique::MapData map_data({
       "length(value)",
       "g_in",
@@ -40,10 +44,13 @@ int main() {
       "v",
       "g",
       "shader/test/soa_aos/buffer_aos.include.glsl",
+      numVectors,
   });
 
   auto test = MapTechnique();
+
   test.init(std::move(map_data));
+
   BenchmarkerCPU bench;
   bench.time("Total CPU time spent", [&numVectors, &test]() {
     executeTest(1'000, [&test, numVectors]() {

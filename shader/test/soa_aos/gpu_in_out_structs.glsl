@@ -2,13 +2,13 @@
 #define GPU_IN_OUT_STRUCTS_GLSL
 
 struct Input {
-	//	PREC_VEC_TYPE x;
-	PREC_VEC_TYPE v;
+	//STRUCT_LAYOUT(PREC_VEC_TYPE,x,N);
+	STRUCT_LAYOUT(PREC_VEC_TYPE,v,N);
 };
 
 struct Output {
-	//	PREC_SCAL_TYPE f;
-	PREC_SCAL_TYPE g;
+	//STRUCT_LAYOUT(PREC_SCAL_TYPE,f,N);
+	STRUCT_LAYOUT(PREC_SCAL_TYPE,g,N);
 };
 
-#endif /* end of include guard: GPU_IN_OUT_STRUCTS_GLSL */
+#endif /* eNd of iNclude guard: GPU_IN_OUT_STRUCTS_GLSL */

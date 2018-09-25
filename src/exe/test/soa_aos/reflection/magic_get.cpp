@@ -36,6 +36,7 @@ template <typename T, typename std::enable_if_t<
 void print(T t) {
   std::cout << glm::to_string(t) << std::endl;
 }
+
 int main() {
   Particle vec[array_size] = {
       {{1.0, 2.0, 3.0, 4.0}, {5.0, 6.0, 7.0, 8.0}, 9.0, 10.0, 11.0, 12.0},
