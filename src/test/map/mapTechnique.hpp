@@ -13,7 +13,8 @@ class MapTechnique : public Technique {
     std::string output;
     std::string input_var;
     std::string output_var;
-    std::string buffer_filename;
+    BufferInfo in_buffer;
+    BufferInfo out_buffer;
     GLuint numVectors;  // SOA only
   };
 

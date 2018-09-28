@@ -16,15 +16,6 @@ struct Particle_AOS {
   float m;
   float n;
 };
-constexpr size_t array_size = 2;
-struct Particle_SOA {
-  glm::vec4 x[array_size];
-  glm::vec4 v[array_size];
-  float k[array_size];
-  float l[array_size];
-  float m[array_size];
-  float n[array_size];
-};
 
 template <typename T, typename std::enable_if_t<
                           std::is_arithmetic_v<std::decay_t<T>>, int> = 0>
@@ -54,18 +45,18 @@ int main() {
       BufferLayout::SOA);  // Convert to SOA for GPU
 
   input_Buffer.transfer_to_gpu(input_data);
-  input_Buffer.gl_bind_base(2);
+  input_Buffer.gl_bind_base(1);
 
   executeTest(1'000, []() {
     return BenchmarkerGPU::getInstance().time("map", []() {});
   });
-  auto output_data(input_Buffer.transfer_to_cpu(std::size(input_data)));
-
+  std::vector<Particle_AOS> output_data(
+      input_Buffer.transfer_to_cpu(std::size(input_data)));
   BenchmarkerGPU::getInstance().collect_times_last_frame();
   BenchmarkerGPU::getInstance().collect_times_last_frame();
   float sum_in = 0.0f;
   float sum_out = 0.0f;
-  for (size_t i = 0; i < array_size; i++) {
+  for (size_t i = 0; i < std::size(input_data); i++) {
     boost::pfr::for_each_field(input_data[i], [&sum_in](const auto& field) {
       sum_in += norm1(field);
     });
@@ -73,6 +64,8 @@ int main() {
       sum_out += norm1(field);
     });
   }
+  std::cerr << "AOS sum: " << sum_in << std::endl;
+  std::cerr << "SOA sum: " << sum_out << std::endl;
   std::cerr << "Diff: " << sum_in - sum_out << std::endl;
 
   GLFWWindow::swapBuffers();

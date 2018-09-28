@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <array>
 #include <vector>
+#include "../buffer/buffer.hpp"
 #include "../utils/defines.hpp"
 #include "../utils/file_loader.hpp"
 enum class ShaderType {
@@ -28,6 +29,8 @@ enum PreprocessorCmd { DEFINE, INCLUDE };
 class Shader {
  public:
   Shader(ShaderType type, const std::string &filename);
+
+  Shader(ShaderType type, const std::string &filename, BufferInfo &&);
   ~Shader();
 
   void load_shader_from_file();
@@ -67,8 +70,32 @@ class Shader {
                      return cmd + pair_cmd.second;
                    });
   }
+  template <typename Iterator>
+  void add_buffers(Iterator begin, Iterator end) {
+    // expects Buffer as type iterated over
+    static_assert(
+        std::is_same<typename std::iterator_traits<Iterator>::value_type,
+                     CommandType>::value,
+        "Not CommandType");
+
+    std::transform(begin, end, std::back_inserter(preprocess_cmds),
+                   [](const auto &pair_cmd) {
+                     std::string cmd;
+                     switch (pair_cmd.first) {
+                       case PreprocessorCmd::DEFINE:
+                         cmd += "#define ";
+                         break;
+                       case PreprocessorCmd::INCLUDE:
+                         cmd += "#include ";
+                         break;
+                     }
+                     return cmd + pair_cmd.second;
+                   });
+  }
+
   void set_local_size(const LocalSize &c);
   void add_n_define(GLuint numVectors);
+  void add_aos_define(BufferLayout);
 
  private:
   void gl_create_id();
@@ -78,7 +105,6 @@ class Shader {
   void add_local_size();
   void add_prec_include();
   void add_prec_define();
-  void add_aos_define();
   void add_access_include();
   void add_glsl_define();
 

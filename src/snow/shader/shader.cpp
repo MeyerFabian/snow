@@ -5,13 +5,8 @@ Shader::Shader(ShaderType t, const std::string &filename)
 #ifdef DOUBLE_PREC
   add_prec_define();
 #endif
-#ifdef AOS_LAYOUT
-  add_aos_define();
-#endif
   add_prec_include();
-  add_access_include();
 }
-
 void Shader::set_local_size(const LocalSize &w) { local_size = w; }
 
 void Shader::add_local_size() {
@@ -44,11 +39,13 @@ void Shader::add_prec_define() {
   };
   add_cmds(cmd_prec.begin(), cmd_prec.end());
 }
-void Shader::add_aos_define() {
-  auto cmd_prec = {
-      CommandType(PreprocessorCmd::DEFINE, "AOS_LAYOUT"),
-  };
-  add_cmds(cmd_prec.begin(), cmd_prec.end());
+void Shader::add_aos_define(BufferLayout layout) {
+  if (layout == BufferLayout::AOS) {
+    auto cmd_prec = {
+        CommandType(PreprocessorCmd::DEFINE, "AOS_LAYOUT"),
+    };
+    add_cmds(cmd_prec.begin(), cmd_prec.end());
+  }
 }
 
 void Shader::add_n_define(GLuint n) {
@@ -89,6 +86,7 @@ void Shader::load_shader_from_file() {
     add_local_size();
   }
 
+  add_access_include();
   // Add additional commands (#define,#include, ..)
   std::string cmds_concat = "\n\n";
   for (const auto &cmd : preprocess_cmds) {

@@ -6,10 +6,10 @@
 #include <glm/gtx/string_cast.hpp>
 #include <iostream>
 #include <memory>
+#undef REFLECTION
 #include "../../../snow/buffer/buffer.hpp"
 #include "../../../snow/rendering/GLFWWindow.hpp"
 #include "../../../snow/shader/technique.hpp"
-
 class SVDTest : public Technique {
  public:
   void init() {
@@ -72,7 +72,7 @@ int main() {
 
   Buffer<BufferData> buffer(BufferType::SSBO, BufferUsage::STATIC_DRAW,
                             BufferLayout::AOS);
-  buffer.transfer_to_gpu(data);
+  buffer.transfer_to_gpu_no_refl(data);
 
   buffer.gl_bind_base(1);
 
@@ -80,7 +80,7 @@ int main() {
   shaderprogram.init();
   shaderprogram.dispatch_with_barrier(numTestMatrices);
 
-  auto m(buffer.transfer_to_cpu(std::size(data)));
+  auto m(buffer.transfer_to_cpu_no_refl(std::size(data)));
 
   std::cout << "Example Random Matrices:" << std::endl;
   std::cerr << testMatrices[0] << std::endl;

@@ -89,9 +89,11 @@ foreach (TEST ${TEST_FILES})
 		)
 
 endforeach(TEST)
+
 add_subdirectory(include/stb_image)
 add_subdirectory(src/snow)
 add_subdirectory(src/test)
+target_compile_definitions(svd PUBLIC -DREFLECTION=0)
 IF(MSVC)
 
 	if(CMAKE_GENERATOR MATCHES "NMake")
