@@ -1,15 +1,14 @@
-#include "mapTechnique.hpp"
-void MapTechnique::init(MapData&& data) {
-  auto shader = std::make_shared<Shader>(ShaderType::COMPUTE,
-                                         "shader/compute/mapreduce/map.glsl");
+#include "binTechnique.hpp"
+void BinningTechnique::init(BinningData&& data) {
+  auto shader = std::make_shared<Shader>(
+      ShaderType::COMPUTE, "shader/compute/preprocess/binning.glsl");
 
   shader->add_n_define(data.numVectors);
   shader->add_aos_define(data.io.in_buffer.info.layout);
   shader->set_local_size(local_size);
 
-  std::vector<Shader::CommandType> vec = {
-      {PreprocessorCmd::DEFINE, "UNARY_OP(value) " + data.gl_unary_op},
-  };
+  std::vector<Shader::CommandType> vec = {};
+
   auto io_cmds(data.io.generateCommands());
   vec.insert(std::end(vec), std::begin(io_cmds), std::end(io_cmds));
 
@@ -19,7 +18,8 @@ void MapTechnique::init(MapData&& data) {
   Technique::upload();
   Technique::use();
 }
-void MapTechnique::dispatch_with_barrier(GLuint numVectors) {
+
+void BinningTechnique::dispatch_with_barrier(GLuint numVectors) {
   Technique::uniform_update("bufferSize", numVectors);
   glDispatchCompute(numVectors / local_size.x + 1, 1 / local_size.y,
                     1 / local_size.z);

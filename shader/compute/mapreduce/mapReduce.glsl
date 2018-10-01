@@ -16,7 +16,7 @@ layout(local_size_x =X)in;
  * BINARY_OP(left,right) e.g. left+right
  */
 
-shared UNARY_OP_RETURN_TYPE s_data[X];
+shared PREC_SCAL_TYPE s_data[X];
 
 uniform uint dispatchDim_x;
 uniform uint bufferSize;
@@ -34,10 +34,10 @@ void main(void){
 					s_data[t_id],
 					BINARY_OP(
 						UNARY_OP(
-							INPUT(i)
+							AT(INPUT,INPUT_VAR,i)
 							),
 						UNARY_OP(
-							INPUT(i+X)
+							AT(INPUT,INPUT_VAR,i+X)
 							)
 						)
 					);
@@ -46,7 +46,7 @@ void main(void){
 			s_data[t_id] = BINARY_OP(
 					s_data[t_id],
 					UNARY_OP(
-						INPUT(i)
+						AT(INPUT,INPUT_VAR,i)
 						)
 					);
 		}
@@ -145,5 +145,5 @@ void main(void){
 	}
 
 
-	if(t_id ==0) OUTPUT(gl_WorkGroupID.x) = s_data[0];
+	if(t_id ==0) AT(OUTPUT,OUTPUT_VAR,gl_WorkGroupID.x) = s_data[0];
 }

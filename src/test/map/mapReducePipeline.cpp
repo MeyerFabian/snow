@@ -1,26 +1,21 @@
 #include "mapReducePipeline.hpp"
 
-void MapReducePipeline::init(MapReducePipelineData&& pipeline_data) {
+void MapReducePipeline::init(
+    MapReduceTechnique::MapReduceData&& pipeline_data) {
   local_size = pipeline_data.local_size;
-  MapReduceTechnique::MapReduceData reduction_data_1st({
-      pipeline_data.filename,
-      pipeline_data.local_size,
-      pipeline_data.gl_unary_op,
-      pipeline_data.gl_binary_op,
-      "g_in[value].v",
-      "g_out[value].f",
-      "shader/test/map/buffer.glsl",
-  });
 
-  MapReduceTechnique::MapReduceData reduction_data_2nd = reduction_data_1st;
+  MapReduceTechnique::MapReduceData reduction_data_2nd = pipeline_data;
   reduction_data_2nd.gl_unary_op = "value";
-  reduction_data_2nd.input = "g_out[value].f";
+  reduction_data_2nd.io.in_buffer.name = pipeline_data.io.out_buffer.name;
+
+  reduction_data_2nd.io.in_buffer.var = pipeline_data.io.out_buffer.var;
+
   reduction_data_2nd.local_size = {1, 1, 1};
 
-  MapReduceTechnique::MapReduceData reduction_data_alt = reduction_data_1st;
+  MapReduceTechnique::MapReduceData reduction_data_alt = pipeline_data;
   reduction_data_2nd.local_size = {1, 1, 1};
 
-  firstStep.init(std::move(reduction_data_1st));
+  firstStep.init(std::move(pipeline_data));
   intermediateStep.init(std::move(reduction_data_2nd));
   altStep.init(std::move(reduction_data_alt));
 }
@@ -59,5 +54,11 @@ void MapReducePipeline::run(GLuint numVectors) {
       altStep.dispatch_with_barrier({buffer_size_before, buffer_size_after});
     });
   }
+}
+void MapReducePipeline::runNoSeqAdd(GLuint numVectors) {
+  buffer_size_after = numVectors / local_size.x;
+  BenchmarkerGPU::getInstance().time(
+      "MapReducePipeline Map+Reduce",
+      [this, numVectors]() { firstStep.dispatch_with_barrier(numVectors); });
 }
 

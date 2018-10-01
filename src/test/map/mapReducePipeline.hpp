@@ -1,26 +1,20 @@
 #ifndef MAPREDUCE_PIPELINE_H
 #define MAPREDUCE_PIPELINE_H
 #include "../../../snow/src/snow/utils/math.hpp"
+#include "../IOBufferData.hpp"
 #include "mapReduceTechnique.hpp"
 class MapReducePipeline {
  public:
-  struct MapReducePipelineData {
-    std::string filename;
-    LocalSize local_size;
-    std::string gl_unary_op;
-    std::string gl_binary_op;
-  };
-
-  void init(MapReducePipelineData&& pipeline_data);
+  void init(MapReduceTechnique::MapReduceData&& pipeline_data);
 
   void run(GLuint numVectors);
+  void runNoSeqAdd(GLuint numVectors);
 
   template <typename Out, typename UnaryOp, typename BinaryOp>
-  decltype(auto) fetch_gpu_result(GLuint numVectors,
-                                  std::shared_ptr<Buffer<Out>> buffer,
+  decltype(auto) fetch_gpu_result(std::shared_ptr<Buffer<Out>> buffer,
                                   UnaryOp u_op, BinaryOp b_op) {
-    auto gpu_output = BenchmarkerGPU::getInstance().time(
-        "MapBuffer", [this, &numVectors, &buffer]() {
+    auto gpu_output =
+        BenchmarkerGPU::getInstance().time("MapBuffer", [this, &buffer]() {
           return buffer->transfer_to_cpu(buffer_size_after);
         });
 

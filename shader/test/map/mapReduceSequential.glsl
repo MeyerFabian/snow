@@ -16,7 +16,8 @@ layout(local_size_x =X)in;
  * BINARY_OP(left,right) e.g. left+right
  */
 
-shared UNARY_OP_RETURN_TYPE s_data[gl_WorkGroupSize.x];
+shared PREC_SCAL_TYPE s_data[gl_WorkGroupSize.x];
+
 
 void main(void){
 	uint b_id = gl_WorkGroupID.x;
@@ -24,7 +25,7 @@ void main(void){
 	uint t_id = gl_LocalInvocationIndex;
 	uint g_id = gl_GlobalInvocationID.x;
 
-	s_data[t_id] = UNARY_OP(INPUT(g_id));
+	s_data[t_id] = UNARY_OP(AT(INPUT,INPUT_VAR,g_id));
 
 	memoryBarrierShared();
 	barrier();
@@ -36,5 +37,5 @@ void main(void){
 		barrier();
 	}
 
-	if(t_id ==0) OUTPUT(b_id) = s_data[0];
+	if(t_id ==0) AT(OUTPUT,OUTPUT_VAR,gl_WorkGroupID.x) = s_data[0];
 }

@@ -7,7 +7,7 @@ layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
  * INPUT buffer
  * INPUT_VAR var
  * OUTPUT buffer
- * OUTPUT var
+ * OUTPUT_VAR var
  * where buffer needs to be included
  * e.g. AOS-Layout =>
  * AT(buffer,var,index) =>

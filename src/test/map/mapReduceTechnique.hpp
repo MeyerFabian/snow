@@ -10,6 +10,7 @@
 #include <glm/gtx/norm.hpp>
 #include <thread>
 #include "../../snow/utils/benchmarker.hpp"
+#include "../IOBufferData.hpp"
 class MapReduceTechnique : public Technique {
  public:
   struct MapReduceData {
@@ -17,9 +18,8 @@ class MapReduceTechnique : public Technique {
     LocalSize local_size;
     std::string gl_unary_op;
     std::string gl_binary_op;
-    std::string input;
-    std::string output;
-    std::string buffer_filename;
+    IOBufferData io;
+    GLuint numVectors;
   };
 
   struct DispatchData {
