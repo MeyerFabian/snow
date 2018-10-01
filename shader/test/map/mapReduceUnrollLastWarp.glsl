@@ -16,7 +16,7 @@ layout(local_size_x =X)in;
  * BINARY_OP(left,right) e.g. left+right
  */
 
-shared UNARY_OP_RETURN_TYPE s_data[X];
+shared PREC_SCAL_TYPE s_data[X];
 
 uniform uint dispatchDim_x;
 uniform uint bufferSize;
@@ -28,21 +28,31 @@ void main(void){
 	s_data[t_id] = 0;
 
 	while(i < bufferSize){
-		s_data[t_id] = BINARY_OP(
-				s_data[t_id],
-				BINARY_OP(
-					UNARY_OP(
-						INPUT(i)
-						),
-					UNARY_OP(
-						INPUT(i+X)
+		// if second seq. read out of bounds only do one
+		if(i+X <bufferSize ){
+			s_data[t_id] = BINARY_OP(
+					s_data[t_id],
+					BINARY_OP(
+						UNARY_OP(
+							AT(INPUT,INPUT_VAR,i)
+							),
+						UNARY_OP(
+							AT(INPUT,INPUT_VAR,i+X)
+							)
 						)
-					)
-				);
+					);
+		}
+		else {
+			s_data[t_id] = BINARY_OP(
+					s_data[t_id],
+					UNARY_OP(
+						AT(INPUT,INPUT_VAR,i)
+						)
+					);
+		}
 		//e.g. s_data[t_id] += g_data[i]+g_data[i+X];
 		i+= dispatchSize;
 	}
-
 	memoryBarrierShared();
 	barrier();
 
@@ -101,6 +111,5 @@ void main(void){
 #endif
 	}
 
-
-	if(t_id ==0) OUTPUT(gl_WorkGroupID.x) = s_data[0];
+	if(t_id ==0) AT(OUTPUT,OUTPUT_VAR,gl_WorkGroupID.x) = s_data[0];
 }
