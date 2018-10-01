@@ -107,6 +107,7 @@ class Shader {
   void add_prec_define();
   void add_access_include();
   void add_glsl_define();
+  void add_voxel_and_tile_size();
 
   ShaderType type;
   std::string filename;

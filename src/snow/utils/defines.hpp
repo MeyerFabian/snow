@@ -29,6 +29,14 @@
 
 #define NUMOFPARTICLES 32 * 64 * 64
 
+#define VOXEL_SIZE_X_BIT 3
+#define VOXEL_SIZE_Y_BIT 3
+#define VOXEL_SIZE_Z_BIT 3
+
+#define TILE_SIZE_X_BIT 7
+#define TILE_SIZE_Y_BIT 7
+#define TILE_SIZE_Z_BIT 7
+
 #define NUM_OF_GPGPU_THREADS_X 1024
 
 #define PARTICLE_POS_BUFFER 0

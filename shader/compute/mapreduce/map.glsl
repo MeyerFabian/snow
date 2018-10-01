@@ -15,6 +15,7 @@ layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
  *
  * UNARY_OP(value) func(value)
  */
+
 uniform uint bufferSize;
 
 void main(void){
