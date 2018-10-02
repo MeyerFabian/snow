@@ -7,6 +7,9 @@
 #include <glm/gtc/random.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/norm.hpp>
+
+#include <string>
+#include "../../../test/soa_aos/gpu_in_out_structs.hpp"
 #endif
 
 #ifndef NUMVECTORS
@@ -25,7 +28,6 @@
 #include "../../../snow/utils/benchmarker.hpp"
 #include "../../../test/map/mapReducePipeline.hpp"
 #include "../../../test/map/mapTechnique.hpp"
-#include "../../../test/soa_aos/gpu_in_out_structs.hpp"
 #include "../../../test/test_util.hpp"
 int main() {
   GLFWWindow();
@@ -61,6 +63,7 @@ int main() {
   MapReduceTechnique::MapReduceData reduce_data({
       filename,
       local_size,
+      "PREC_SCAL_TYPE",
       "length(value)",
       "left+right",
       // IOBufferData

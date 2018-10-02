@@ -10,6 +10,9 @@ void MapReduceTechnique::init(MapReduceData&& data) {
   shader->set_local_size(data.local_size);
 
   std::vector<Shader::CommandType> vec = {
+
+      {PreprocessorCmd::DEFINE,
+       "UNARY_OP_RETURN_TYPE " + data.gl_unary_op_return_type},
       {PreprocessorCmd::DEFINE, "UNARY_OP(value) " + data.gl_unary_op},
       {PreprocessorCmd::DEFINE, "BINARY_OP(left,right) " + data.gl_binary_op},
   };

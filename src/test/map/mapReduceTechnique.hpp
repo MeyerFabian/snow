@@ -16,6 +16,7 @@ class MapReduceTechnique : public Technique {
   struct MapReduceData {
     std::string shader_filename;
     LocalSize local_size;
+    std::string gl_unary_op_return_type;
     std::string gl_unary_op;
     std::string gl_binary_op;
     IOBufferData io;

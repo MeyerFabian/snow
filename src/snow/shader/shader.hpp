@@ -70,28 +70,6 @@ class Shader {
                      return cmd + pair_cmd.second;
                    });
   }
-  template <typename Iterator>
-  void add_buffers(Iterator begin, Iterator end) {
-    // expects Buffer as type iterated over
-    static_assert(
-        std::is_same<typename std::iterator_traits<Iterator>::value_type,
-                     CommandType>::value,
-        "Not CommandType");
-
-    std::transform(begin, end, std::back_inserter(preprocess_cmds),
-                   [](const auto &pair_cmd) {
-                     std::string cmd;
-                     switch (pair_cmd.first) {
-                       case PreprocessorCmd::DEFINE:
-                         cmd += "#define ";
-                         break;
-                       case PreprocessorCmd::INCLUDE:
-                         cmd += "#include ";
-                         break;
-                     }
-                     return cmd + pair_cmd.second;
-                   });
-  }
 
   void set_local_size(const LocalSize &c);
   void add_n_define(GLuint numVectors);
@@ -107,7 +85,6 @@ class Shader {
   void add_prec_define();
   void add_access_include();
   void add_glsl_define();
-  void add_voxel_and_tile_size();
 
   ShaderType type;
   std::string filename;

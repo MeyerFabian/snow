@@ -2,6 +2,8 @@
 Shader::Shader(ShaderType t, const std::string &filename)
     : type(t), filename(filename) {
   add_glsl_define();
+  if (t == ShaderType::COMPUTE) {
+  }
 #ifdef DOUBLE_PREC
   add_prec_define();
 #endif
@@ -17,17 +19,6 @@ void Shader::add_local_size() {
   add_cmds(preprocess.begin(), preprocess.end());
 }
 
-void Shader::add_voxel_and_tile_size() {
-  std::vector<CommandType> preprocess = {
-      {PreprocessorCmd::DEFINE, "VOXEL_SIZE_X_BIT " + VOXEL_SIZE_X_BIT},
-      {PreprocessorCmd::DEFINE, "VOXEL_SIZE_Y_BIT " + VOXEL_SIZE_Y_BIT},
-      {PreprocessorCmd::DEFINE, "VOXEL_SIZE_Z_BIT " + VOXEL_SIZE_Z_BIT},
-      {PreprocessorCmd::DEFINE, "TILE_SIZE_X_BIT " + TILE_SIZE_X_BIT},
-      {PreprocessorCmd::DEFINE, "TILE_SIZE_Y_BIT " + TILE_SIZE_Y_BIT},
-      {PreprocessorCmd::DEFINE, "TILE_SIZE_Z_BIT " + TILE_SIZE_Z_BIT},
-  };
-  add_cmds(preprocess.begin(), preprocess.end());
-}
 void Shader::add_prec_include() {
   auto cmd_prec = {
       CommandType(PreprocessorCmd::INCLUDE,
@@ -96,7 +87,6 @@ void Shader::load_shader_from_file() {
   if (type == ShaderType::COMPUTE) {
     // Local size of the shader: "#define X (int)" will always be defined.
     add_local_size();
-    add_voxel_and_tile_size();
   }
 
   add_access_include();
