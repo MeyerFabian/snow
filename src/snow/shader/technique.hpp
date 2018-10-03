@@ -26,9 +26,12 @@ class Technique {
   void uniform_update(const std::string&, GLint) const noexcept;
   void uniform_update(const std::string&, GLuint) const noexcept;
   void uniform_update(const std::string&, double) const noexcept;
-  void uniform_update(const std::string&, float, float, float) const noexcept;
+  void uniform_update(const std::string&, const glm::uvec3&) const noexcept;
   void uniform_update(const std::string&, const glm::mat4&) const noexcept;
   void uniform_update(const std::string&, GLint, GLint, GLint) const noexcept;
+  // glm::vec3 + glm::dvec3 calls often results in ambigous overloaded function
+  // calls
+  void uniform_update(const std::string&, float, float, float) const noexcept;
   void uniform_update(const std::string& name, double x, double y,
                       double z) const noexcept;
   void use() const;

@@ -129,7 +129,7 @@ void Technique::uniform_update(const std::string& name, GLuint value) const
 }
 void Technique::uniform_update(const std::string& name, double value) const
     noexcept {
-  glUniform1f(uniform_look_up(name), value);
+  glUniform1d(uniform_look_up(name), value);
 }
 void Technique::uniform_update(const std::string& name, float x, float y,
                                float z) const noexcept {
@@ -145,7 +145,11 @@ void Technique::uniform_update(const std::string& name,
 }
 void Technique::uniform_update(const std::string& name, double x, double y,
                                double z) const noexcept {
-  glUniform3f(uniform_look_up(name), x, y, z);
+  glUniform3d(uniform_look_up(name), x, y, z);
+}
+void Technique::uniform_update(const std::string& name,
+                               const glm::uvec3& vec) const noexcept {
+  glUniform3ui(uniform_look_up(name), vec.x, vec.y, vec.z);
 }
 GLuint Technique::uniform_look_up(std::string uniform) const noexcept {
   // Create an iterator to look through our uniform map and try to find the

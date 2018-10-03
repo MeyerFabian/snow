@@ -16,9 +16,16 @@ void CountingTechnique::init(CountingData&& data) {
   Technique::add_shader(std::move(shader));
   Technique::upload();
   Technique::use();
+  uniforms_init(std::move(data.uniforms));
 }
-
+void CountingTechnique::uniforms_init(UniformsStatic&& uniforms) {
+  Technique::uniform_update("gGridPos", uniforms.gGridPos.x,
+                            uniforms.gGridPos.y, uniforms.gGridPos.z);
+  Technique::uniform_update("gGridDim", uniforms.gGridDim);
+  Technique::uniform_update("gridSpacing", uniforms.gridSpacing);
+}
 void CountingTechnique::dispatch_with_barrier(GLuint numVectors) {
+  Technique::use();
   Technique::uniform_update("bufferSize", numVectors);
   glDispatchCompute(numVectors / local_size.x + 1, 1 / local_size.y,
                     1 / local_size.z);

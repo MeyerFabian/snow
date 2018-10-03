@@ -20,6 +20,7 @@ void MapTechnique::init(MapData&& data) {
   Technique::use();
 }
 void MapTechnique::dispatch_with_barrier(GLuint numVectors) {
+  Technique::use();
   Technique::uniform_update("bufferSize", numVectors);
   glDispatchCompute(numVectors / local_size.x + 1, 1 / local_size.y,
                     1 / local_size.z);

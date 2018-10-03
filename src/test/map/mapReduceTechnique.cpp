@@ -26,6 +26,7 @@ void MapReduceTechnique::init(MapReduceData&& data) {
   Technique::use();
 }
 void MapReduceTechnique::dispatch_with_barrier(GLuint numVectors) const {
+  Technique::use();
   glDispatchCompute(numVectors / local_size.x, 1 / local_size.y,
                     1 / local_size.z);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);

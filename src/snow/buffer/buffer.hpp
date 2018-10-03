@@ -90,6 +90,10 @@ class Buffer {
     glBufferData(gl_map_type(), sizeof(ElemT) * (maxElems), NULL,
                  gl_map_usage());
   }
+  void resize_buffer(size_t elements) {
+    maxElems = elements;
+    resize_buffer();
+  }
 
  private:
   template <typename Container>
