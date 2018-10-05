@@ -1,6 +1,7 @@
 #ifndef STATISTICS_H
 #define STATISTICS_H
 #include <algorithm>
+#include <cmath>
 #include <numeric>
 #include <utility>
 namespace stats {

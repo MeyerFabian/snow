@@ -1,6 +1,5 @@
 #ifndef MAPREDUCE_H
 #define MAPREDUCE_H
-#include <execution>
 #include <numeric>
 #include "../../snow/buffer/buffer.hpp"
 #include "../../snow/rendering/GLFWWindow.hpp"

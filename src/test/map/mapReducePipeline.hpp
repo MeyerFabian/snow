@@ -1,5 +1,6 @@
 #ifndef MAPREDUCE_PIPELINE_H
 #define MAPREDUCE_PIPELINE_H
+#include <execution>
 #include "../../../snow/src/snow/utils/math.hpp"
 #include "../IOBufferData.hpp"
 #include "mapReduceTechnique.hpp"

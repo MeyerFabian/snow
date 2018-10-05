@@ -92,6 +92,7 @@ class Buffer {
   }
   void resize_buffer(size_t elements) {
     maxElems = elements;
+    gl_bind();
     resize_buffer();
   }
 

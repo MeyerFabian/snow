@@ -11,8 +11,18 @@ function(assign_source_group)
 	endforeach()
 endfunction(assign_source_group)
 
-add_compile_options("/std:c++latest")
-
+IF(MSVC)
+set(CMAKE_CXX_FLAGS
+"${CMAKE_CXX_FLAGS} "
+"/std:c++latest"
+)
+ENDIF()
+IF(MINGW)
+set(CMAKE_CXX_FLAGS
+"${CMAKE_CXX_FLAGS} "
+"-std:c++17"
+)
+ENDIF()
 project(snowProject)
 cmake_minimum_required(VERSION 3.10)
 
@@ -95,7 +105,6 @@ add_subdirectory(src/snow)
 add_subdirectory(src/test)
 target_compile_definitions(svd PUBLIC -DREFLECTION=0)
 IF(MSVC)
-
 	if(CMAKE_GENERATOR MATCHES "NMake")
 
 		#OVERWRITE in your path_to_cmake\Modules\Platform\Windows.cmake to use compile_commands
