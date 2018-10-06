@@ -116,27 +116,33 @@ Technique::~Technique() {
 
 void Technique::uniform_update(const std::string& name, float value) const
     noexcept {
+  // std::cout << "f";
   glUniform1f(uniform_look_up(name), value);
 }
 
 void Technique::uniform_update(const std::string& name, GLint value) const
     noexcept {
+  // std::cout << "ui " << std::endl;
   glUniform1i(uniform_look_up(name), value);
 }
 void Technique::uniform_update(const std::string& name, GLuint value) const
     noexcept {
+  // std::cout << "i " << std::endl;
   glUniform1ui(uniform_look_up(name), value);
 }
 void Technique::uniform_update(const std::string& name, double value) const
     noexcept {
+  // std::cout << "d " << std::endl;
   glUniform1d(uniform_look_up(name), value);
 }
 void Technique::uniform_update(const std::string& name, float x, float y,
                                float z) const noexcept {
+  // std::cout << "vec3f " << std::endl;
   glUniform3f(uniform_look_up(name), x, y, z);
 }
 void Technique::uniform_update(const std::string& name, GLint x, GLint y,
                                GLint z) const noexcept {
+  // std::cout << "vec3i " << std::endl;
   glUniform3i(uniform_look_up(name), x, y, z);
 }
 void Technique::uniform_update(const std::string& name,
@@ -145,10 +151,12 @@ void Technique::uniform_update(const std::string& name,
 }
 void Technique::uniform_update(const std::string& name, double x, double y,
                                double z) const noexcept {
+  // std::cout << "vec3d " << std::endl;
   glUniform3d(uniform_look_up(name), x, y, z);
 }
 void Technique::uniform_update(const std::string& name,
                                const glm::uvec3& vec) const noexcept {
+  // std::cout << "vec3ui " << std::endl;
   glUniform3ui(uniform_look_up(name), vec.x, vec.y, vec.z);
 }
 GLuint Technique::uniform_look_up(std::string uniform) const noexcept {

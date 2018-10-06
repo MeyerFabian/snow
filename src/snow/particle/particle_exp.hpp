@@ -9,13 +9,13 @@
 #define AOS_LAYOUT
 #include "../../../shader/utils/access.include.glsl"
 
-#include "../../../shader/buffers/particle.include.glsl"
+#include "../../../shader/buffers/structs/particle.include.glsl"
 
 #undef AOS_LAYOUT
 #else
 #include "../../../shader/utils/access.include.glsl"
 
-#include "../../../shader/buffers/particle.include.glsl"
+#include "../../../shader/buffers/structs/particle.include.glsl"
 #endif
 
 #endif /* end of include guard: GPU_IN_OUT_STRUCTS_HPP */

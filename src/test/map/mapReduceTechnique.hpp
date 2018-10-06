@@ -17,6 +17,7 @@ class MapReduceTechnique : public Technique {
     LocalSize local_size;
     std::string gl_unary_op_return_type;
     std::string gl_unary_op;
+    std::string gl_binary_op_neutral_elem;
     std::string gl_binary_op;
     IOBufferData io;
     GLuint numVectors;

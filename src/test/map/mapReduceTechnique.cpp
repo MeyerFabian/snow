@@ -15,6 +15,8 @@ void MapReduceTechnique::init(MapReduceData&& data) {
        "UNARY_OP_RETURN_TYPE " + data.gl_unary_op_return_type},
       {PreprocessorCmd::DEFINE, "UNARY_OP(value) " + data.gl_unary_op},
       {PreprocessorCmd::DEFINE, "BINARY_OP(left,right) " + data.gl_binary_op},
+      {PreprocessorCmd::DEFINE,
+       "BINARY_OP_NEUTRAL_ELEMENT " + data.gl_binary_op_neutral_elem},
   };
   auto io_cmds(data.io.generateCommands());
   vec.insert(std::end(vec), std::begin(io_cmds), std::end(io_cmds));

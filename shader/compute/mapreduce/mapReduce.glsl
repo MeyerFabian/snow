@@ -25,7 +25,7 @@ void main(void){
   uint t_id = gl_LocalInvocationIndex;
   uint i = gl_WorkGroupID.x * X *2 + t_id;
   uint dispatchSize = X * 2 * dispatchDim_x;
-  s_data[t_id] = 0;
+  s_data[t_id] = BINARY_OP_NEUTRAL_ELEMENT;
 
   while(i < bufferSize){
     // if second seq. read out of bounds only do one

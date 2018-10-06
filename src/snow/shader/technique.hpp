@@ -1,5 +1,6 @@
 #ifndef TECHNIQUE_H
 #define TECHNIQUE_H
+#include "../utils/defines.hpp"
 
 #define GLEW_STATIC
 #include <GL/glew.h>

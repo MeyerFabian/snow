@@ -5,7 +5,6 @@
 //#define MARKERS
 //#define NDEBUG
 
-//#define AOS_LAYOUT
 //#define DOUBLE_PREC
 
 #define WINDOW_WIDTH 1280

@@ -83,6 +83,7 @@ std::vector<GLuint> test(testData& data) {
       data.gGridPos,
       data.gGridDim,
       data.gridSpacing,
+      // Local Size
       // NumVectors
       data.numVectors,
 

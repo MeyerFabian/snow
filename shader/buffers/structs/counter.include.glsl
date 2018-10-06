@@ -7,8 +7,8 @@ struct Counter {
 };
 #else
 #define Counter uint
-#define Counter_i 		0
+#define Counter_i		0
 #endif
 
-#endif /* end of include guard: PARTICLE_GLSL */
+#endif /* end of include guard: COUNTER_GLSL */
 

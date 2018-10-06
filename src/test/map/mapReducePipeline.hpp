@@ -20,7 +20,7 @@ class MapReducePipeline {
         });
 
     return std::transform_reduce(std::execution::par, std::begin(gpu_output),
-                                 std::end(gpu_output), 0.0f, b_op, u_op);
+                                 std::end(gpu_output), 0.0, b_op, u_op);
   }
 
  private:

@@ -1,5 +1,5 @@
-#ifndef COUNTINGTECHNIQUE_H
-#define COUNTINGTECHNIQUE_H
+#ifndef SCANTECHNIQUE_H
+#define SCANTECHNIQUE_H
 #include "../../snow/utils/defines.hpp"
 
 #include <glm/glm.hpp>
@@ -8,23 +8,20 @@
 #include "../../snow/shader/technique.hpp"
 #include "../IOBufferData.hpp"
 
-class CountingTechnique : public Technique {
+class ScanTechnique : public Technique {
  public:
   LocalSize local_size = {32, 1, 1};
-  struct UniformsStatic {
-    PREC_VEC3_TYPE gGridPos;
-    glm::uvec3 gGridDim;
-    PREC_SCAL_TYPE gridSpacing;
-  };
 
-  struct CountingData {
+  struct ScanData {
+    std::string gl_unary_op_return_type;
+    std::string gl_unary_op;
+    std::string gl_binary_op_neutral_elem;
+    std::string gl_binary_op;
     IOBufferData io;
-    UniformsStatic uniforms;
     GLuint numVectors;  // SOA only
   };
 
-  void init(CountingData&& data);
-  void uniforms_init(UniformsStatic&&);
+  void init(ScanData&& data);
   void dispatch_with_barrier(GLuint numVectors);
 };
 #endif

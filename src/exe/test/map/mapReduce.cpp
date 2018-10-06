@@ -65,6 +65,7 @@ int main() {
       local_size,
       "PREC_SCAL_TYPE",
       "length(value)",
+      "0",
       "left+right",
       // IOBufferData
       //   In

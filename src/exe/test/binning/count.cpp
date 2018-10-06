@@ -12,9 +12,9 @@ int main() {
     });
   }
 
-  PREC_VEC3_TYPE gGridPos(0.0f, 0.0f, 0.0f);
+  PREC_VEC3_TYPE gGridPos(0.0, 0.0, 0.0);
   glm::uvec3 gGridDim(128, 128, 128);
-  PREC_SCAL_TYPE gridSpacing(1.0f / 128.0f);
+  PREC_SCAL_TYPE gridSpacing(1.0 / 128.0);
   std::vector<GLuint> counter;
   for (size_t i = 0; i < numGridPoints; i++) {
     counter.push_back(0);
