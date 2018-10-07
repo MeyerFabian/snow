@@ -1,5 +1,8 @@
 #ifndef PREC_TYPE
 #define PREC_TYPE
+#ifdef GLSL
+#define GLuint uint
+#endif
 #ifdef DOUBLE_PREC
 #ifdef GLSL
 #define PREC_SCAL_TYPE double

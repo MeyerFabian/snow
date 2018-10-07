@@ -55,14 +55,19 @@ std::vector<GLuint> test(testData& data) {
       // unary_op
       "0",
       // IOBufferData
-      //   In
-      "counters",
-      "Counter_i",
-      output.get_buffer_info(),
-      //   Out
-      "counters",
-      "Counter_i",
-      output.get_buffer_info(),
+      IOBufferData(
+          {
+              //   In
+              "counters",
+              "Counter_i",
+              output.get_buffer_info(),
+          },
+          {
+              //   Out
+              "counters",
+              "Counter_i",
+              output.get_buffer_info(),
+          }),
       // numVectors
       data.numGridPoints,
   });
@@ -71,14 +76,19 @@ std::vector<GLuint> test(testData& data) {
 
   CountingTechnique::CountingData counting_data({
       // IOBufferData
-      // in
-      "particles",
-      "Particle_pos_mass",
-      input.get_buffer_info(),
-      // out
-      "counters",
-      "Counter_i",
-      output.get_buffer_info(),
+      IOBufferData(
+          {
+              // in
+              "particles",
+              "Particle_pos_mass",
+              input.get_buffer_info(),
+          },
+          {
+              // out
+              "counters",
+              "Counter_i",
+              output.get_buffer_info(),
+          }),
       // Uniforms
       data.gGridPos,
       data.gGridDim,

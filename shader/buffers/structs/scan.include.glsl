@@ -3,11 +3,13 @@
 
 #ifdef AOS_LAYOUT
 struct Scan {
-  uint Scan_i;
+  GLuint Scan_local_i;
+  GLuint Scan_block_i;
 };
 #else
-#define Scan uint
-#define Scan_i		0
+#define Scan GLuint
+#define Scan_local_i	0
+#define Scan_block_i	1
 #endif
 
 #endif /* end of include guard: SCAN_GLSL */

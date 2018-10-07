@@ -47,14 +47,19 @@ int main() {
       // unary_op
       unary_op,
       // IOBufferData
-      //   In
-      "g_in",
-      "in_v",
-      input.get_buffer_info(),
-      //   Out
-      "g_out",
-      "out_g",
-      output.get_buffer_info(),
+      IOBufferData(
+          {
+              //   In
+              "g_in",
+              "in_v",
+              input.get_buffer_info(),
+          },
+          {
+              //   Out
+              "g_out",
+              "out_g",
+              output.get_buffer_info(),
+          }),
       // numVectors
       numVectors,
   });

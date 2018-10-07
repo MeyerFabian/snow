@@ -1,10 +1,10 @@
 #include "scanTechnique.hpp"
-void ScanTechnique::init(ScanData&& data) {
+void ScanTechnique::init(ScanData&& data, IOBufferDataInterface&& io) {
   auto shader = std::make_shared<Shader>(ShaderType::COMPUTE,
                                          "shader/compute/preprocess/scan.glsl");
 
   shader->add_n_define(data.numVectors);
-  shader->add_aos_define(data.io.in_buffer.info.layout);
+  shader->add_aos_define(io.getLayout());
   shader->set_local_size(local_size);
 
   std::vector<Shader::CommandType> vec = {
@@ -16,7 +16,7 @@ void ScanTechnique::init(ScanData&& data) {
        "BINARY_OP_NEUTRAL_ELEMENT " + data.gl_binary_op_neutral_elem},
 
   };
-  auto io_cmds(data.io.generateCommands());
+  auto io_cmds(io.generateCommands());
   vec.insert(std::end(vec), std::begin(io_cmds), std::end(io_cmds));
 
   shader->add_cmds(vec.begin(), vec.end());

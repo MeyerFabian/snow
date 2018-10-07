@@ -17,11 +17,10 @@ class ScanTechnique : public Technique {
     std::string gl_unary_op;
     std::string gl_binary_op_neutral_elem;
     std::string gl_binary_op;
-    IOBufferData io;
     GLuint numVectors;  // SOA only
   };
 
-  void init(ScanData&& data);
+  void init(ScanData&& data, IOBufferDataInterface&& io);
   void dispatch_with_barrier(GLuint numVectors);
 };
 #endif

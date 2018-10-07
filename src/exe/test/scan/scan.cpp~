@@ -19,14 +19,13 @@ int main() {
 
   test(data);
   auto sum_cpu = std::transform_reduce(
-      std::begin(data.counter), std::prev(std::end(data.counter)), 0.0f,
-      std::plus<>(), [](const auto& elem) { return elem; });
+      std::begin(data.counter), std::end(data.counter), 0.0f, std::plus<>(),
+      [](const auto& elem) { return elem; });
 
-  auto sum_gpu = (*std::prev(std::end(data.scan))).Scan_local_i +
-                 data.scan[63].Scan_block_i;
-  std::cout << "cpu reduction (last-1) elem: " << sum_cpu << std::endl;
-  std::cout << "gpu scan last elem +last block elem:" << sum_gpu << std::endl;
-  std::cout << "diff : " << sum_gpu - sum_cpu << std::endl;
+  auto sum_gpu = *std::end(data.scan).Scan_local_i + data.scan[63].Scan_block_i;
+  std::cout << "cpu reduction (last-1) elem" << sum_cpu << std::endl;
+  std::cout << "gpu scan last elem +last block elem" << sum_gpu << std::endl;
+  std::cout << "GPU map, CPU sum: " << sum_gpu - sum_cpu << std::endl;
   return 0;
 }
 
