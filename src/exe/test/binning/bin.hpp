@@ -139,7 +139,8 @@ OutputData test(testData& data) {
   bench.time("Total CPU time spent", [&binCount, numVectors = data.numVectors,
                                       &resetCounter,
                                       numGridPoints = data.numGridPoints]() {
-    executeTest(1, [&binCount, &resetCounter, numVectors, numGridPoints]() {
+    executeTest(10'000, [&binCount, &resetCounter, numVectors,
+                         numGridPoints]() {
       BenchmarkerGPU::getInstance().time(
           "resetCounter", [&resetCounter, numGridPoints]() {
             resetCounter.dispatch_with_barrier(numGridPoints);

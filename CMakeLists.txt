@@ -11,20 +11,12 @@ function(assign_source_group)
 	endforeach()
 endfunction(assign_source_group)
 
-IF(MSVC)
-set(CMAKE_CXX_FLAGS
-"${CMAKE_CXX_FLAGS} "
-"/std:c++latest"
-)
-ENDIF()
+
 IF(MINGW)
-set(CMAKE_CXX_FLAGS
-"${CMAKE_CXX_FLAGS} "
-"-std:c++17"
-)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std:c++17")
 ENDIF()
 project(snowProject)
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
@@ -77,22 +69,29 @@ get_filename_component(FIRST_EXEC_NAME ${FIRST_EXEC} NAME_WE)
 foreach (EXEC ${EXE_FILES})
 
 	get_filename_component(EXEC_NAME ${EXEC} NAME_WE)
+	
 	add_executable(${EXEC_NAME}
 		${EXEC}
 		)
-
+		IF(MSVC)
+		set_target_properties(${EXEC_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/Release)
+		ENDIF()
 	target_link_libraries(${EXEC_NAME}
 		SNOWGL_LIBRARY
 		)
+
 
 endforeach(EXEC)
 foreach (TEST ${TEST_FILES})
 
 	get_filename_component(TEST_NAME ${TEST} NAME_WE)
+
 	add_executable(${TEST_NAME}
 		${TEST}
 		)
-
+		IF(MSVC)
+		set_target_properties(${TEST_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/Release)
+		ENDIF()
 	target_link_libraries(${TEST_NAME}
 		SNOWGL_LIBRARY
 		TEST_LIBRARY
@@ -119,12 +118,19 @@ IF(MSVC)
 			COMMAND ${CMAKE_COMMAND} -E copy  ${CMAKE_BINARY_DIR}/compile_commands.json ${CMAKE_SOURCE_DIR}
 			)
 	else()
-		set(CMAKE_CONFIGURATION_TYPES Release CACHE TYPE  INTERNAL FORCE)
-		set(CMAKE_BUILD_TYPE Release CACHE TYPE  INTERNAL FORCE)
+
 		set(BUILD_DESTINATION Release/)
 		set(DLL_DESTINATION ${PROJECT_BINARY_DIR}/$<CONFIGURATION>)
-	ENDIF()
 
+	ENDIF()
+	set(CMAKE_CONFIGURATION_TYPES Release CACHE TYPE  INTERNAL FORCE)
+	set(CMAKE_BUILD_TYPE Release CACHE TYPE  INTERNAL FORCE)
+	include(CheckCXXCompilerFlag)
+	CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
+	if (_cpp_latest_flag_supported)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest" CACHE TYPE INTERNAL FORCE)
+	endif()
+		
 	file(COPY shader DESTINATION ${BUILD_DESTINATION})
 	file(COPY resources/textures DESTINATION ${BUILD_DESTINATION})
 	file(COPY resources/model DESTINATION ${BUILD_DESTINATION})
@@ -150,4 +156,3 @@ IF(MSVC)
 		"${DLL_DESTINATION}/glew.dll"
 		)
 ENDIF()
-
