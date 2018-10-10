@@ -4,6 +4,6 @@
 #include "shader/buffers/structs/counter.include.glsl"
 
 layout(std430, binding = ATOMIC_COUNTER_BINDING) buffer AtomicCounter{
-  Counter counters[];
+	Counter counters[];
 };
 #endif

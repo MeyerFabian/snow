@@ -46,7 +46,7 @@ void test(testData& data) {
   scan_buffer.transfer_to_gpu(data.scan);
   scan_buffer.gl_bind_base(SCAN_BUFFER_BINDING);
 
-  ScanTechnique::ScanData scan_data({
+  ScanTechnique::ScanData scan_data{
       // alg-data
       "uint",
       "value",
@@ -55,40 +55,38 @@ void test(testData& data) {
       // IO2BufferData
       // NumValues
       data.numValues,
-  });
-  IO2BufferData io_data(
-      {
-          // in
-          "counters",
-          "Counter_i",
-          counter_buffer.get_buffer_info(),
-      },
-      {
-          // out
-          "scans",
-          "Scan_local_i",
-          scan_buffer.get_buffer_info(),
-      },
-      {
-          // out2
-          "scans",
-          "Scan_block_i",
-          scan_buffer.get_buffer_info(),
-      });
+  };
+  IO2BufferData io_data{{
+                            // in
+                            "counters",
+                            "Counter_i",
+                            counter_buffer.get_buffer_info(),
+                        },
+                        {
+                            // out
+                            "scans",
+                            "Scan_local_i",
+                            scan_buffer.get_buffer_info(),
+                        },
+                        {
+                            // out2
+                            "scans",
+                            "Scan_block_i",
+                            scan_buffer.get_buffer_info(),
+                        }};
 
-  IOBufferData io_block_data(
-      {
-          // in
-          "scans",
-          "Scan_block_i",
-          scan_buffer.get_buffer_info(),
-      },
-      {
-          // in
-          "scans",
-          "Scan_block_i",
-          scan_buffer.get_buffer_info(),
-      });
+  IOBufferData io_block_data{{
+                                 // in
+                                 "scans",
+                                 "Scan_block_i",
+                                 scan_buffer.get_buffer_info(),
+                             },
+                             {
+                                 // in
+                                 "scans",
+                                 "Scan_block_i",
+                                 scan_buffer.get_buffer_info(),
+                             }};
   auto scan_data_block = scan_data;
   auto scanShader = ScanTechnique();
   scanShader.init(std::move(scan_data), std::move(io_data));
