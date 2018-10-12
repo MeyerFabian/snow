@@ -10,9 +10,11 @@
 
 class ScanTechnique : public Technique {
  public:
-  LocalSize local_size = {32, 1, 1};
-
+  GLuint reduction_factor;
+  LocalSize local_size;
   struct ScanData {
+    LocalSize local_size;
+    std::string filename;
     std::string gl_unary_op_return_type;
     std::string gl_unary_op;
     std::string gl_binary_op_neutral_elem;

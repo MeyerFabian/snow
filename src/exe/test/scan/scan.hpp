@@ -9,7 +9,9 @@
 #include <glm/gtx/norm.hpp>
 #include "../../../snow/shader/shader.hpp"
 #endif
-
+#ifndef SHADER_NAME
+#define SHADER_NAME "shader/compute/preprocess/scan.glsl"
+#endif
 #ifndef UNARY_OPERATION_GL
 #include "../../src/snow/buffer/c_scan.hpp"
 
@@ -19,10 +21,11 @@
 
 #include <execution>
 #include "../../../snow/utils/benchmarker.hpp"
-#include "../../../test/scan/scanTechnique.hpp"
+#include "../../../test/scan/scanPipeline.hpp"
 #include "../../../test/test_util.hpp"
 
 struct testData {
+  LocalSize local_size;
   GLuint numValues;
   std::vector<GLuint> counter;
   std::vector<Scan> scan;
@@ -47,6 +50,9 @@ void test(testData& data) {
   scan_buffer.gl_bind_base(SCAN_BUFFER_BINDING);
 
   ScanTechnique::ScanData scan_data{
+      // local_size
+      data.local_size,
+      SHADER_NAME,
       // alg-data
       "uint",
       "value",
@@ -75,37 +81,15 @@ void test(testData& data) {
                             scan_buffer.get_buffer_info(),
                         }};
 
-  IOBufferData io_block_data{{
-                                 // in
-                                 "scans",
-                                 "Scan_block_i",
-                                 scan_buffer.get_buffer_info(),
-                             },
-                             {
-                                 // in
-                                 "scans",
-                                 "Scan_block_i",
-                                 scan_buffer.get_buffer_info(),
-                             }};
-  auto scan_data_block = scan_data;
-  auto scanShader = ScanTechnique();
-  scanShader.init(std::move(scan_data), std::move(io_data));
-  auto scan_block_shader = ScanTechnique();
-  scan_block_shader.init(std::move(scan_data_block), std::move(io_block_data));
+  auto scanPipeline = ScanPipeline();
+  scanPipeline.init(std::move(scan_data), std::move(io_data));
 
   BenchmarkerCPU bench;
-  bench.time("Total CPU time spent", [&scanShader, &scan_block_shader,
-                                      numValues = data.numValues]() {
-    executeTest(1, [&scanShader, &scan_block_shader, numValues]() {
-      BenchmarkerGPU::getInstance().time("Scan", [&scanShader, numValues]() {
-        scanShader.dispatch_with_barrier(numValues);
+  bench.time(
+      "Total CPU time spent", [&scanPipeline, numValues = data.numValues]() {
+        executeTest(
+            1, [&scanPipeline, numValues]() { scanPipeline.run(numValues); });
       });
-      BenchmarkerGPU::getInstance().time(
-          "ScanBlock", [&scan_block_shader, numValues]() {
-            scan_block_shader.dispatch_with_barrier(numValues / 32 / 2);
-          });
-    });
-  });
 
   BenchmarkerGPU::getInstance().collect_times_last_frame();
   BenchmarkerGPU::getInstance().collect_times_last_frame();

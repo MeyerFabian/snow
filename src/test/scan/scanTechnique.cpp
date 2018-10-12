@@ -1,7 +1,7 @@
 #include "scanTechnique.hpp"
 void ScanTechnique::init(ScanData&& data, IOBufferDataInterface&& io) {
-  auto shader = std::make_shared<Shader>(ShaderType::COMPUTE,
-                                         "shader/compute/preprocess/scan.glsl");
+  local_size = data.local_size;
+  auto shader = std::make_shared<Shader>(ShaderType::COMPUTE, data.filename);
 
   shader->add_n_define(data.numVectors);
   shader->add_aos_define(io.getLayout());
@@ -27,9 +27,8 @@ void ScanTechnique::init(ScanData&& data, IOBufferDataInterface&& io) {
 }
 void ScanTechnique::dispatch_with_barrier(GLuint numVectors) {
   Technique::use();
-  Technique::uniform_update("bufferSize", numVectors);
-  glDispatchCompute(numVectors / local_size.x / 2, 1 / local_size.y,
-                    1 / local_size.z);
+  //  Technique::uniform_update("bufferSize", numVectors);
+  glDispatchCompute(numVectors / local_size.x, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
 

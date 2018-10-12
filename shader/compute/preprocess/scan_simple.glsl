@@ -21,35 +21,16 @@ shared UNARY_OP_RETURN_TYPE s_data[X*2];
 
 uniform uint bufferSize;
 
-#define MULTIPLE_ELEMENTS 4
-
 void main(void){
   uint b_id = gl_WorkGroupID.x;
   uint tIndex = gl_LocalInvocationIndex;
   uint leftThreadIndex = 2 * tIndex;
   uint rightThreadIndex = 2 * tIndex +1;
-  uint globalIndexLeft = MULTIPLE_ELEMENTS*(gl_WorkGroupID.x * X * 2 + leftThreadIndex);
-  uint globalIndexRight = MULTIPLE_ELEMENTS*(gl_WorkGroupID.x * X * 2 + rightThreadIndex);
+  uint globalIndex = gl_WorkGroupID.x * X * 2 + leftThreadIndex;
 
-  // raking sequantial global loads all values in raking get stored in registers for global writes at end
-  uint[MULTIPLE_ELEMENTS] leftRaking;
-  uint[MULTIPLE_ELEMENTS] rightRaking;
-
-  leftRaking[0] = 0;
-  rightRaking[0] = 0;
-  for(int j = 0; j < MULTIPLE_ELEMENTS-1; j++) {
-    leftRaking[j+1] = BINARY_OP(leftRaking[j] , UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexLeft+j)));
-    rightRaking[j+1] = BINARY_OP(rightRaking[j] , UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexRight+j)));
-  }
-  // put partial reduced result in shared data
-  s_data[leftThreadIndex] = BINARY_OP(
-      leftRaking[MULTIPLE_ELEMENTS-1],
-      UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexLeft + MULTIPLE_ELEMENTS - 1))
-      );
-  s_data[rightThreadIndex] =BINARY_OP(
-      rightRaking[MULTIPLE_ELEMENTS-1],
-      UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexRight + MULTIPLE_ELEMENTS - 1))
-      );
+  // coalesced global loads
+  s_data[leftThreadIndex] = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndex));
+  s_data[rightThreadIndex] = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndex+1));
 
   //interleaved parallel reduction with reversed indices
   //tree up-sweep (we start at leaves, d= max_depth(tree))
@@ -108,11 +89,10 @@ void main(void){
   memoryBarrierShared();
   barrier();
 
-  // spread out partial scan by MULTIPLE_ELEMENTS stored in raking
-  for(int j = 0; j < MULTIPLE_ELEMENTS; j++) {
-    AT(OUTPUT,OUTPUT_VAR,globalIndexLeft+j) = s_data[leftThreadIndex]+leftRaking[j];
-    AT(OUTPUT,OUTPUT_VAR,globalIndexRight+j) = s_data[rightThreadIndex]+rightRaking[j];
-  }
+
+  //coalesced global writes
+  AT(OUTPUT,OUTPUT_VAR,globalIndex) = s_data[leftThreadIndex];
+  AT(OUTPUT,OUTPUT_VAR,globalIndex+1) = s_data[rightThreadIndex] ;
 
 }
 
