@@ -55,112 +55,125 @@ void main(void){
 	//tree up-sweep (we start at leaves, d= max_depth(tree))
 	//
 	//
-
+	int stride = 1;
 #if X>=1024
-	barrier();
 	memoryBarrierShared();
+	barrier();
 	if(tIndex < 1024){
-		uint leftSharedIndex  = 1*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 1*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		s_data[rightSharedIndex] = BINARY_OP(s_data[rightSharedIndex],s_data[leftSharedIndex]);
 	}
+	stride*=2;
 #endif
 
 #if X>=512
-	barrier();
 	memoryBarrierShared();
+	barrier();
 	if(tIndex < 512){
-		uint leftSharedIndex  = 2*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 2*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  =stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		s_data[rightSharedIndex] = BINARY_OP(s_data[rightSharedIndex],s_data[leftSharedIndex]);
 	}
+	stride*=2;
 #endif
 
 
 #if X>=256
-	barrier();
 	memoryBarrierShared();
+	barrier();
 	if(tIndex < 256){
-		uint leftSharedIndex  = 4*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 4*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		s_data[rightSharedIndex] = BINARY_OP(s_data[rightSharedIndex],s_data[leftSharedIndex]);
 	}
+	stride*=2;
 #endif
 
 #if X>=128
-	barrier();
 	memoryBarrierShared();
+	barrier();
 	if(tIndex < 128){
-		uint leftSharedIndex  = 8*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 8*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		s_data[rightSharedIndex] = BINARY_OP(s_data[rightSharedIndex],s_data[leftSharedIndex]);
 	}
+	stride*=2;
 #endif
 
 #if X>=64
-	barrier();
 	memoryBarrierShared();
+	barrier();
 	if(tIndex < 64){
-		uint leftSharedIndex  = 16*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 16*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		s_data[rightSharedIndex] = BINARY_OP(s_data[rightSharedIndex],s_data[leftSharedIndex]);
 	}
+	stride*=2;
 #endif
 
 #if X>=32
-	barrier();
 	memoryBarrierShared();
+	barrier();
 	if(tIndex < 32){
-		uint leftSharedIndex  = 32*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 32*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		s_data[rightSharedIndex] = BINARY_OP(s_data[rightSharedIndex],s_data[leftSharedIndex]);
 	}
+	stride*=2;
 #endif
 
 #if X>=16
 	memoryBarrierShared();
 	if(tIndex < 16){
-		uint leftSharedIndex  = 64*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 64*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		s_data[rightSharedIndex] = BINARY_OP(s_data[rightSharedIndex],s_data[leftSharedIndex]);
 	}
+	stride*=2;
 #endif
 
 #if X>=8
 	memoryBarrierShared();
 	if(tIndex < 8){
-		uint leftSharedIndex  = 128*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 128*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		s_data[rightSharedIndex] = BINARY_OP(s_data[rightSharedIndex],s_data[leftSharedIndex]);
 	}
+	stride*=2;
 #endif
 
 
 #if X>=4
 	memoryBarrierShared();
 	if(tIndex < 4){
-		uint leftSharedIndex  = 256*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 256*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		s_data[rightSharedIndex] = BINARY_OP(s_data[rightSharedIndex],s_data[leftSharedIndex]);
 	}
+
+	stride*=2;
 #endif
 
 #if X>=2
 	memoryBarrierShared();
 	if(tIndex < 2){
-		uint leftSharedIndex  = 512*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 512*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		s_data[rightSharedIndex] = BINARY_OP(s_data[rightSharedIndex],s_data[leftSharedIndex]);
 	}
+
+	stride*=2;
 #endif
 
 #if X>=1
 	memoryBarrierShared();
 	if(tIndex < 1){
-		uint leftSharedIndex  = 1024*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 1024*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		s_data[rightSharedIndex] = BINARY_OP(s_data[rightSharedIndex],s_data[leftSharedIndex]);
 	}
+
 #endif
 
 	// clear last element, s.t. after down-sweep s_data[0] is BINARY_OP_NEUTRAL_ELEMENT
@@ -183,8 +196,8 @@ void main(void){
 	if(tIndex < 1){
 		memoryBarrierShared();
 		//same indexing as above
-		uint leftSharedIndex  = 1024*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 1024*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		//swap left <- right, right <- left+right
 		UNARY_OP_RETURN_TYPE temp =s_data[leftSharedIndex];
 		s_data[leftSharedIndex] = s_data[rightSharedIndex];
@@ -194,6 +207,7 @@ void main(void){
 				);
 
 	}
+	stride>>=1;
 #endif
 
 #if X>=2
@@ -201,8 +215,8 @@ void main(void){
 	if(tIndex < 2){
 
 		//same indexing as above
-		uint leftSharedIndex  = 512*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 512*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		//swap left <- right, right <- left+right
 		UNARY_OP_RETURN_TYPE temp =s_data[leftSharedIndex];
 		s_data[leftSharedIndex] = s_data[rightSharedIndex];
@@ -212,6 +226,8 @@ void main(void){
 				);
 
 	}
+
+	stride>>=1;
 #endif
 
 #if X>=4
@@ -219,8 +235,8 @@ void main(void){
 	if(tIndex < 4){
 
 		//same indexing as above
-		uint leftSharedIndex  = 256*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 256*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		//swap left <- right, right <- left+right
 		UNARY_OP_RETURN_TYPE temp =s_data[leftSharedIndex];
 		s_data[leftSharedIndex] = s_data[rightSharedIndex];
@@ -230,6 +246,8 @@ void main(void){
 				);
 
 	}
+
+	stride>>=1;
 #endif
 
 #if X>=8
@@ -237,8 +255,8 @@ void main(void){
 	if(tIndex < 8){
 
 		//same indexing as above
-		uint leftSharedIndex  = 128*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 128*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		//swap left <- right, right <- left+right
 		UNARY_OP_RETURN_TYPE temp =s_data[leftSharedIndex];
 		s_data[leftSharedIndex] = s_data[rightSharedIndex];
@@ -248,14 +266,16 @@ void main(void){
 				);
 
 	}
+
+	stride>>=1;
 #endif
 #if X>=16
 	memoryBarrierShared();
 	if(tIndex < 16){
 
 		//same indexing as above
-		uint leftSharedIndex  = 64*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 64*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		//swap left <- right, right <- left+right
 		UNARY_OP_RETURN_TYPE temp =s_data[leftSharedIndex];
 		s_data[leftSharedIndex] = s_data[rightSharedIndex];
@@ -265,6 +285,8 @@ void main(void){
 				);
 
 	}
+
+	stride>>=1;
 #endif
 
 #if X>=32
@@ -272,8 +294,8 @@ void main(void){
 	if(tIndex < 32){
 
 		//same indexing as above
-		uint leftSharedIndex  = 32*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 32*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		//swap left <- right, right <- left+right
 		UNARY_OP_RETURN_TYPE temp =s_data[leftSharedIndex];
 		s_data[leftSharedIndex] = s_data[rightSharedIndex];
@@ -283,6 +305,8 @@ void main(void){
 				);
 
 	}
+
+	stride>>=1;
 #endif
 #if X>=64
 	memoryBarrierShared();
@@ -290,8 +314,8 @@ void main(void){
 	if(tIndex < 64){
 
 		//same indexing as above
-		uint leftSharedIndex  = 16*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 16*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		//swap left <- right, right <- left+right
 		UNARY_OP_RETURN_TYPE temp =s_data[leftSharedIndex];
 		s_data[leftSharedIndex] = s_data[rightSharedIndex];
@@ -301,6 +325,7 @@ void main(void){
 				);
 
 	}
+	stride>>=1;
 #endif
 #if X>=128
 	memoryBarrierShared();
@@ -308,8 +333,8 @@ void main(void){
 	if(tIndex < 128){
 
 		//same indexing as above
-		uint leftSharedIndex  = 8*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 8*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		//swap left <- right, right <- left+right
 		UNARY_OP_RETURN_TYPE temp =s_data[leftSharedIndex];
 		s_data[leftSharedIndex] = s_data[rightSharedIndex];
@@ -319,6 +344,7 @@ void main(void){
 				);
 
 	}
+	stride>>=1;
 #endif
 #if X>=256
 	memoryBarrierShared();
@@ -326,8 +352,8 @@ void main(void){
 	if(tIndex < 256){
 
 		//same indexing as above
-		uint leftSharedIndex  = 4*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 4*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride *(rightThreadIndex+1)-1;
 		//swap left <- right, right <- left+right
 		UNARY_OP_RETURN_TYPE temp =s_data[leftSharedIndex];
 		s_data[leftSharedIndex] = s_data[rightSharedIndex];
@@ -337,6 +363,8 @@ void main(void){
 				);
 
 	}
+
+	stride>>=1;
 #endif
 #if X>=512
 	memoryBarrierShared();
@@ -344,8 +372,8 @@ void main(void){
 	if(tIndex < 512){
 
 		//same indexing as above
-		uint leftSharedIndex  = 2*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 2*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		//swap left <- right, right <- left+right
 		UNARY_OP_RETURN_TYPE temp =s_data[leftSharedIndex];
 		s_data[leftSharedIndex] = s_data[rightSharedIndex];
@@ -355,6 +383,8 @@ void main(void){
 				);
 
 	}
+
+	stride>>=1;
 #endif
 #if X>=1024
 	memoryBarrierShared();
@@ -362,8 +392,8 @@ void main(void){
 	if(tIndex < 1024){
 
 		//same indexing as above
-		uint leftSharedIndex  = 1*(leftThreadIndex+1)-1;
-		uint rightSharedIndex = 1*(rightThreadIndex+1)-1;
+		uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+		uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
 		//swap left <- right, right <- left+right
 		UNARY_OP_RETURN_TYPE temp =s_data[leftSharedIndex];
 		s_data[leftSharedIndex] = s_data[rightSharedIndex];
