@@ -28,14 +28,15 @@ void main(void){
   uint globalIndexLeft = MULTIPLE_ELEMENTS*(gl_WorkGroupID.x * X * 2 + leftThreadIndex);
   uint globalIndexRight = MULTIPLE_ELEMENTS*(gl_WorkGroupID.x * X * 2 + rightThreadIndex);
 
-  if(globalIndexLeft > bufferSize) return;
   // raking sequantial global loads all values in raking get stored in registers for global writes at end
   uint[MULTIPLE_ELEMENTS] leftRaking;
   uint[MULTIPLE_ELEMENTS] rightRaking;
 
+  if(globalIndexLeft > bufferSize) return;
   leftRaking[0] = 0;
   rightRaking[0] = 0;
   for(int j = 0; j < MULTIPLE_ELEMENTS-1; j++) {
+
     leftRaking[j+1] = BINARY_OP(leftRaking[j] , UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexLeft+j)));
     rightRaking[j+1] = BINARY_OP(rightRaking[j] , UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexRight+j)));
   }
@@ -51,6 +52,11 @@ void main(void){
 
   //interleaved parallel reduction with reversed indices
   //tree up-sweep (we start at leaves, d= max_depth(tree))
+  //
+  //
+
+  uint leftSharedIndex =0;
+  uint rightSharedIndex = 0;
   int stride =1;
   for(int pow_d_of_2 = X; pow_d_of_2 > 0; pow_d_of_2 >>= 1) {
     memoryBarrierShared();
@@ -62,8 +68,8 @@ void main(void){
       // stride == 2**(d-max_depth(tree))
       // if leftSharedIndex is 2**(i-1)-1
       // rightSharedIndex is 2**i-1
-      uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
-      uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
+      leftSharedIndex  = stride*(leftThreadIndex+1)-1;
+      rightSharedIndex = stride*(rightThreadIndex+1)-1;
       // e.g. stride=8, tIndex==0 => s_data[7] + s_data[15]
       s_data[rightSharedIndex] = BINARY_OP(s_data[rightSharedIndex],s_data[leftSharedIndex]);
     }
@@ -105,7 +111,6 @@ void main(void){
   }
   memoryBarrierShared();
   barrier();
-
   // spread out partial scan by MULTIPLE_ELEMENTS stored in raking
   for(int j = 0; j < MULTIPLE_ELEMENTS; j++) {
     AT(OUTPUT,OUTPUT_VAR,globalIndexLeft+j) = s_data[leftThreadIndex]+leftRaking[j];

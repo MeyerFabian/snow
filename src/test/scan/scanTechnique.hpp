@@ -20,10 +20,18 @@ class ScanTechnique : public Technique {
     std::string gl_binary_op_neutral_elem;
     std::string gl_binary_op;
     GLuint numVectors;  // SOA only
+    GLuint raking = 1;
+  };
+
+  struct DispatchData {
+    GLuint bufferSize;
+    GLuint dispatchDim_x;
   };
 
   void init(ScanData&& data, IOBufferDataInterface&& io);
   void dispatch_with_barrier(GLuint numVectors);
+  void dispatch_with_barrier(DispatchData&& data) const;
+  void uniforms_update(DispatchData&& uniforms) const;
 };
 #endif
 

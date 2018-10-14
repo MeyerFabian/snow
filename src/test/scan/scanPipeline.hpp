@@ -10,6 +10,7 @@ class ScanPipeline {
   void init(ScanTechnique::ScanData&&, IO2BufferData&& io);
 
   void run(GLuint numVectors);
+  void runNoSeqAdd(GLuint numVectors);
 
  private:
   LocalSize local_size;
@@ -17,6 +18,7 @@ class ScanPipeline {
   ScanTechnique localScan;
   GLuint buffer_size_local;
   GLuint buffer_size_block;
+  GLuint raking;
 };
 #endif
 

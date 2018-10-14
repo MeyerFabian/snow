@@ -7,6 +7,7 @@ void ScanTechnique::init(ScanData&& data, IOBufferDataInterface&& io) {
   shader->add_aos_define(io.getLayout());
   shader->set_local_size(local_size);
 
+  std::string raking = std::to_string(data.raking);
   std::vector<Shader::CommandType> vec = {
       {PreprocessorCmd::DEFINE,
        "UNARY_OP_RETURN_TYPE " + data.gl_unary_op_return_type},
@@ -14,7 +15,7 @@ void ScanTechnique::init(ScanData&& data, IOBufferDataInterface&& io) {
       {PreprocessorCmd::DEFINE, "BINARY_OP(left,right) " + data.gl_binary_op},
       {PreprocessorCmd::DEFINE,
        "BINARY_OP_NEUTRAL_ELEMENT " + data.gl_binary_op_neutral_elem},
-
+      {PreprocessorCmd::DEFINE, "MULTIPLE_ELEMENTS " + raking},
   };
   auto io_cmds(io.generateCommands());
   vec.insert(std::end(vec), std::begin(io_cmds), std::end(io_cmds));
@@ -27,8 +28,18 @@ void ScanTechnique::init(ScanData&& data, IOBufferDataInterface&& io) {
 }
 void ScanTechnique::dispatch_with_barrier(GLuint numVectors) {
   Technique::use();
-  //  Technique::uniform_update("bufferSize", numVectors);
+  Technique::uniform_update("bufferSize", numVectors);
   glDispatchCompute(numVectors / local_size.x, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+}
+void ScanTechnique::dispatch_with_barrier(DispatchData&& data) const {
+  Technique::use();
+  GLuint dispatchDim_x = data.dispatchDim_x;
+  uniforms_update(std::move(data));
+  glDispatchCompute(dispatchDim_x, 1, 1);
+  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+}
+void ScanTechnique::uniforms_update(DispatchData&& uniforms) const {
+  Technique::uniform_update("bufferSize", uniforms.bufferSize);
 }
 

@@ -21,7 +21,7 @@
 
 #include <execution>
 #include "../../../snow/utils/benchmarker.hpp"
-#include "../../../test/scan/scanPipeline.hpp"
+#include "../../../test/scan/ScanPipeline.hpp"
 #include "../../../test/test_util.hpp"
 
 struct testData {
@@ -61,6 +61,9 @@ void test(testData& data) {
       // IO2BufferData
       // NumValues
       data.numValues,
+#ifndef NO_SEQUENTIAL_ADDS
+      MULTIPLE_ELEMENTS,
+#endif
   };
   IO2BufferData io_data{{
                             // in
@@ -85,11 +88,16 @@ void test(testData& data) {
   scanPipeline.init(std::move(scan_data), std::move(io_data));
 
   BenchmarkerCPU bench;
-  bench.time(
-      "Total CPU time spent", [&scanPipeline, numValues = data.numValues]() {
-        executeTest(
-            1, [&scanPipeline, numValues]() { scanPipeline.run(numValues); });
-      });
+  bench.time("Total CPU time spent",
+             [&scanPipeline, numValues = data.numValues]() {
+               executeTest(1, [&scanPipeline, numValues]() {
+#ifndef NO_SEQUENTIAL_ADDS
+                 scanPipeline.run(numValues);
+#else 
+		 scanPipeline.runNoSeqAdd(numValues);
+#endif
+               });
+             });
 
   BenchmarkerGPU::getInstance().collect_times_last_frame();
   BenchmarkerGPU::getInstance().collect_times_last_frame();
