@@ -12,7 +12,7 @@ int main() {
 #else
   GLuint reduction_factor = 1024 * 2;
 #endif
-  GLuint numVectors = 1024 * 1024;
+  GLuint numVectors = 1024 * 1024 * 4;
   std::vector<GLuint> counter;
   for (size_t i = 0; i < numVectors; i++) {
     counter.push_back({
