@@ -1,5 +1,5 @@
 #ifndef MULTIPLE_ELEMENTS
-#define MULTIPLE_ELEMENTS 1
+#define MULTIPLE_ELEMENTS 2
 #endif
 #include "scan.hpp"
 #include <random>
@@ -8,11 +8,12 @@ int main() {
   std::uniform_int_distribution<int> distribution(1, 4);
   GLuint local_size = 1024;
 #ifndef NO_SEQUENTIAL_ADDS
-  GLuint reduction_factor = 1024 * 2 * MULTIPLE_ELEMENTS;
+  GLuint reduction_factor = local_size * 2 * MULTIPLE_ELEMENTS;
 #else
-  GLuint reduction_factor = 1024 * 2;
+  GLuint reduction_factor = local_size * 2;
 #endif
-  GLuint numVectors = 1024 * 1024 * 4;
+  GLuint block_size = 1024;
+  GLuint numVectors = block_size * local_size * 2 * 2;
   std::vector<GLuint> counter;
   for (size_t i = 0; i < numVectors; i++) {
     counter.push_back({
@@ -28,7 +29,7 @@ int main() {
 
   test(data);
   auto sum_cpu = std::transform_reduce(
-      std::begin(data.counter), std::prev(std::end(data.counter)), 0.0f,
+      std::begin(data.counter), std::prev(std::end(data.counter)), 0,
       std::plus<>(), [](const auto& elem) { return elem; });
 
   std::cout << "block value: " <<
@@ -39,6 +40,7 @@ int main() {
   std::cout << "cpu reduction (last-1) elem: " << sum_cpu << std::endl;
   std::cout << "gpu scan last elem +last block elem:" << sum_gpu << std::endl;
   std::cout << "diff : " << sum_gpu - sum_cpu << std::endl;
+
   return 0;
 }
 

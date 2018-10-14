@@ -26,12 +26,6 @@ void ScanTechnique::init(ScanData&& data, IOBufferDataInterface&& io) {
   Technique::upload();
   Technique::use();
 }
-void ScanTechnique::dispatch_with_barrier(GLuint numVectors) {
-  Technique::use();
-  Technique::uniform_update("bufferSize", numVectors);
-  glDispatchCompute(numVectors / local_size.x, 1, 1);
-  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-}
 void ScanTechnique::dispatch_with_barrier(DispatchData&& data) const {
   Technique::use();
   GLuint dispatchDim_x = data.dispatchDim_x;

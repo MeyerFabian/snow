@@ -19,6 +19,7 @@ class ScanPipeline {
   GLuint buffer_size_local;
   GLuint buffer_size_block;
   GLuint raking;
+  GLuint numValues;
 };
 #endif
 
