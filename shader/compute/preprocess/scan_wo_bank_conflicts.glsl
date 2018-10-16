@@ -15,7 +15,18 @@ layout(local_size_x =X)in;
  */
 
 // start with half the dispatch size
-shared UNARY_OP_RETURN_TYPE s_data[X*2];
+
+#define LOG_NUM_BANKS 5
+// else case generally faster
+#define ZERO_BANK_CONFLICTS
+#ifdef ZERO_BANK_CONFLICTS
+#define CONFLICT_FREE_OFFSET(n) \
+  (((n) >> LOG_NUM_BANKS) + ((n) >> (2 * LOG_NUM_BANKS)))
+#else
+#define CONFLICT_FREE_OFFSET(n) ((n) >> LOG_NUM_BANKS)
+#endif
+
+shared UNARY_OP_RETURN_TYPE s_data[X*2 + CONFLICT_FREE_OFFSET(X*2-1)];
 
 // i will prob only use +
 
@@ -24,14 +35,12 @@ uniform uint bufferSize;
 void main(void){
   uint b_id = gl_WorkGroupID.x;
   uint tIndex = gl_LocalInvocationIndex;
-  uint leftThreadIndex = 2 * tIndex;
-  uint rightThreadIndex = 2 * tIndex +1;
-  uint globalIndex = gl_WorkGroupID.x * X * 2 + leftThreadIndex;
+  uint globalIndex = gl_WorkGroupID.x * X * 2 + tIndex;
 
   if(globalIndex > bufferSize) return;
-  // coalesced global loads
-  s_data[leftThreadIndex] = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndex));
-  s_data[rightThreadIndex] = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndex+1));
+  // global loads at 1) t_id and 2) t_id + X
+  s_data[tIndex + CONFLICT_FREE_OFFSET(tIndex)] = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndex));
+  s_data[(tIndex + X) + CONFLICT_FREE_OFFSET(tIndex+X)] = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndex+X));
 
   //interleaved parallel reduction with reversed indices
   //tree up-sweep (we start at leaves, d= max_depth(tree))
@@ -44,12 +53,18 @@ void main(void){
     //( => first run all threads, last run only tIndex==0)
     if (tIndex < pow_d_of_2) {
       // stride == 2**(d-max_depth(tree))
-      // if leftSharedIndex is 2**(i-1)-1
-      // rightSharedIndex is 2**i-1
-      uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
-      uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
+      // if left is 2**(i-1)-1
+      // right is 2**i-1
+      uint left  = stride*2*tIndex + stride - 1;
+      uint right = left + stride;
+      left += CONFLICT_FREE_OFFSET(left);
+      right += CONFLICT_FREE_OFFSET(right);
       // e.g. stride=8, tIndex==0 => s_data[7] + s_data[15]
-      s_data[rightSharedIndex] = BINARY_OP(s_data[rightSharedIndex],s_data[leftSharedIndex]);
+      s_data[right] =
+	BINARY_OP(
+	    s_data[right],
+	    s_data[left]
+	    );
     }
     stride *= 2;
   }
@@ -60,10 +75,11 @@ void main(void){
   // note: no barrier needed since above loop only works on tIndex==0
   // in last iteration
   if(tIndex==0) {
+    uint last = X*2-1 + CONFLICT_FREE_OFFSET(X*2-1);
 #ifdef OUTPUT2
-    AT(OUTPUT2,OUTPUT2_VAR,b_id) = s_data[X*2-1];
+    AT(OUTPUT2,OUTPUT2_VAR,b_id) = s_data[last];
 #endif
-    s_data[X*2-1] = BINARY_OP_NEUTRAL_ELEMENT;
+    s_data[last] = BINARY_OP_NEUTRAL_ELEMENT;
   }
 
   // down-sweep, reverse parallel red.
@@ -75,13 +91,17 @@ void main(void){
     barrier();
     if(tIndex < d){
       //same indexing as above
-      uint leftSharedIndex  = stride*(leftThreadIndex+1)-1;
-      uint rightSharedIndex = stride*(rightThreadIndex+1)-1;
+
+      uint left  = stride*2*tIndex + stride - 1;
+      uint right = left + stride;
+      left += CONFLICT_FREE_OFFSET(left);
+      right += CONFLICT_FREE_OFFSET(right);
+
       //swap left <- right, right <- left+right
-      UNARY_OP_RETURN_TYPE temp =s_data[leftSharedIndex];
-      s_data[leftSharedIndex] = s_data[rightSharedIndex];
-      s_data[rightSharedIndex] = BINARY_OP(
-	  s_data[rightSharedIndex],
+      UNARY_OP_RETURN_TYPE temp = s_data[left];
+      s_data[left] = s_data[right];
+      s_data[right] = BINARY_OP(
+	  s_data[right] ,
 	  temp
 	  );
 
@@ -91,9 +111,8 @@ void main(void){
   barrier();
 
 
-  //coalesced global writes
-  AT(OUTPUT,OUTPUT_VAR,globalIndex) = s_data[leftThreadIndex];
-  AT(OUTPUT,OUTPUT_VAR,globalIndex+1) = s_data[rightThreadIndex] ;
+  // global writes at 1) t_id and 2) t_id + X
+  AT(OUTPUT,OUTPUT_VAR,globalIndex) = s_data[tIndex +CONFLICT_FREE_OFFSET(tIndex)];
+  AT(OUTPUT,OUTPUT_VAR,globalIndex+X) = s_data[(tIndex+ X)+CONFLICT_FREE_OFFSET(tIndex+X)];
 
 }
-

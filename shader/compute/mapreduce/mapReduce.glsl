@@ -5,6 +5,17 @@
 layout(local_size_x =X)in;
 
 /*
+ * Copyright 1993-2009 NVIDIA Corporation.  All rights reserved.
+ *
+ * NVIDIA Corporation and its licensors retain all intellectual property and
+ * proprietary rights in and to this software and related documentation and
+ * any modifications thereto.  Any use, reproduction, disclosure, or distribution
+ * of this software and related documentation without an express license
+ * agreement from NVIDIA Corporation is strictly prohibited.
+ *
+ */
+
+/*
  * Macros to be defined:
  *
  * INPUT(id) in_buffer[id]
@@ -22,128 +33,128 @@ uniform uint dispatchDim_x;
 uniform uint bufferSize;
 
 void main(void){
-  uint t_id = gl_LocalInvocationIndex;
-  uint i = gl_WorkGroupID.x * X *2 + t_id;
-  uint dispatchSize = X * 2 * dispatchDim_x;
-  s_data[t_id] = BINARY_OP_NEUTRAL_ELEMENT;
+	uint t_id = gl_LocalInvocationIndex;
+	uint i = gl_WorkGroupID.x * X *2 + t_id;
+	uint dispatchSize = X * 2 * dispatchDim_x;
+	s_data[t_id] = BINARY_OP_NEUTRAL_ELEMENT;
 
-  while(i < bufferSize){
-    // if second seq. read out of bounds only do one
-    if(i+X <bufferSize ){
-      s_data[t_id] = BINARY_OP(
-	  s_data[t_id],
-	  BINARY_OP(
-	    UNARY_OP(
-	      AT(INPUT,INPUT_VAR,i)
-	      ),
-	    UNARY_OP(
-	      AT(INPUT,INPUT_VAR,i+X)
-	      )
-	    )
-	  );
-    }
-    else {
-      s_data[t_id] = BINARY_OP(
-	  s_data[t_id],
-	  UNARY_OP(
-	    AT(INPUT,INPUT_VAR,i)
-	    )
-	  );
-    }
-    //e.g. s_data[t_id] += g_data[i]+g_data[i+X];
-    i+= dispatchSize;
-  }
+	while(i < bufferSize){
+		// if second seq. read out of bounds only do one
+		if(i+X <bufferSize ){
+			s_data[t_id] = BINARY_OP(
+					s_data[t_id],
+					BINARY_OP(
+						UNARY_OP(
+							AT(INPUT,INPUT_VAR,i)
+							),
+						UNARY_OP(
+							AT(INPUT,INPUT_VAR,i+X)
+							)
+						)
+					);
+		}
+		else {
+			s_data[t_id] = BINARY_OP(
+					s_data[t_id],
+					UNARY_OP(
+						AT(INPUT,INPUT_VAR,i)
+						)
+					);
+		}
+		//e.g. s_data[t_id] += g_data[i]+g_data[i+X];
+		i+= dispatchSize;
+	}
 
-  memoryBarrierShared();
-  barrier();
+	memoryBarrierShared();
+	barrier();
 
 #if X>=1024
-  if(t_id<512){
-    s_data[t_id] = BINARY_OP(
-	s_data[t_id],
-	s_data[t_id+512]
-	);
-    memoryBarrierShared();
-    barrier();
-  }
+	if(t_id<512){
+		s_data[t_id] = BINARY_OP(
+				s_data[t_id],
+				s_data[t_id+512]
+				);
+		memoryBarrierShared();
+		barrier();
+	}
 #endif
 
 #if X>=512
-  if(t_id<256){
-    s_data[t_id] = BINARY_OP(
-	s_data[t_id],
-	s_data[t_id+256]
-	);
-    memoryBarrierShared();
-    barrier();
-  }
+	if(t_id<256){
+		s_data[t_id] = BINARY_OP(
+				s_data[t_id],
+				s_data[t_id+256]
+				);
+		memoryBarrierShared();
+		barrier();
+	}
 #endif
 #if X>=256
-  if(t_id<128){
-    s_data[t_id] = BINARY_OP(
-	s_data[t_id],
-	s_data[t_id+128]
-	);
-    memoryBarrierShared();
-    barrier();
-  }
+	if(t_id<128){
+		s_data[t_id] = BINARY_OP(
+				s_data[t_id],
+				s_data[t_id+128]
+				);
+		memoryBarrierShared();
+		barrier();
+	}
 #endif
 #if X>=128
-  if(t_id<64){
-    s_data[t_id] = BINARY_OP(
-	s_data[t_id],
-	s_data[t_id+64]
-	);
-    memoryBarrierShared();
-    barrier();
-  }
+	if(t_id<64){
+		s_data[t_id] = BINARY_OP(
+				s_data[t_id],
+				s_data[t_id+64]
+				);
+		memoryBarrierShared();
+		barrier();
+	}
 #endif
 
-  if(t_id<32){
+	if(t_id<32){
 #if X>=64
-    s_data[t_id] = BINARY_OP(
-	s_data[t_id],
-	s_data[t_id+32]
-	);
-    memoryBarrierShared();
+		s_data[t_id] = BINARY_OP(
+				s_data[t_id],
+				s_data[t_id+32]
+				);
+		memoryBarrierShared();
 #endif
 #if X>=32
-    s_data[t_id] = BINARY_OP(
-	s_data[t_id],
-	s_data[t_id+16]
-	);
-    memoryBarrierShared();
+		s_data[t_id] = BINARY_OP(
+				s_data[t_id],
+				s_data[t_id+16]
+				);
+		memoryBarrierShared();
 #endif
 #if X>=16
-    s_data[t_id] = BINARY_OP(
-	s_data[t_id],
-	s_data[t_id+8]
-	);
-    memoryBarrierShared();
+		s_data[t_id] = BINARY_OP(
+				s_data[t_id],
+				s_data[t_id+8]
+				);
+		memoryBarrierShared();
 #endif
 #if X>=8
-    s_data[t_id] = BINARY_OP(
-	s_data[t_id],
-	s_data[t_id+4]
-	);
-    memoryBarrierShared();
+		s_data[t_id] = BINARY_OP(
+				s_data[t_id],
+				s_data[t_id+4]
+				);
+		memoryBarrierShared();
 #endif
 #if X>=4
-    s_data[t_id] = BINARY_OP(
-	s_data[t_id],
-	s_data[t_id+2]
-	);
-    memoryBarrierShared();
+		s_data[t_id] = BINARY_OP(
+				s_data[t_id],
+				s_data[t_id+2]
+				);
+		memoryBarrierShared();
 #endif
 #if X>=2
-    s_data[t_id] = BINARY_OP(
-	s_data[t_id],
-	s_data[t_id+1]
-	);
-    memoryBarrierShared();
+		s_data[t_id] = BINARY_OP(
+				s_data[t_id],
+				s_data[t_id+1]
+				);
+		memoryBarrierShared();
 #endif
-  }
+	}
 
 
-  if(t_id ==0) AT(OUTPUT,OUTPUT_VAR,gl_WorkGroupID.x) = s_data[0];
+	if(t_id ==0) AT(OUTPUT,OUTPUT_VAR,gl_WorkGroupID.x) = s_data[0];
 }

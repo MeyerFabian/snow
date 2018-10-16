@@ -1,5 +1,5 @@
 #ifndef MULTIPLE_ELEMENTS
-#define MULTIPLE_ELEMENTS 4
+#define MULTIPLE_ELEMENTS 8
 #endif
 #include "scan.hpp"
 #include <random>

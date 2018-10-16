@@ -1,4 +1,3 @@
-
 #version 440
 layout(local_size_x =X)in;
 
@@ -14,9 +13,9 @@ layout(local_size_x =X)in;
  * BINARY_OP_NEUTRAL_ELEMENT 0
  * BINARY_OP(value) a+b
  */
+// i will prob only use +
 
 #define LOG_NUM_BANKS 5
-
 // else case generally faster
 #ifdef ZERO_BANK_CONFLICTS
 #define CONFLICT_FREE_OFFSET(n) \
@@ -29,41 +28,37 @@ shared UNARY_OP_RETURN_TYPE s_data[X*2 + CONFLICT_FREE_OFFSET(X*2-1)];
 
 // i will prob only use +
 
+
 uniform uint bufferSize;
 
 void main(void){
   uint tIndex = gl_LocalInvocationIndex;
+
   uint globalIndexLeft = MULTIPLE_ELEMENTS*(gl_WorkGroupID.x * X * 2 + tIndex);
   uint globalIndexRight = MULTIPLE_ELEMENTS*(gl_WorkGroupID.x * X * 2 + tIndex + X);
 
   if(globalIndexLeft > bufferSize) return;
   // raking sequantial global loads all values in raking get stored in registers for global writes at end
-
   uint[MULTIPLE_ELEMENTS-1] leftRaking;
   uint[MULTIPLE_ELEMENTS-1] rightRaking;
 
-  leftRaking[0] = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexLeft));
-  rightRaking[0] =  UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexRight));
-  for(int j = 0; j < MULTIPLE_ELEMENTS-2; j++) {
-    leftRaking[j+1]  = BINARY_OP(
-	leftRaking[j],
-	UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexLeft +j+1))
-	);
 
-    rightRaking[j+1] = BINARY_OP(
-	rightRaking[j],
-	UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexRight+j+1))
-	);
-  }
-  // put partial reduced result in shared data
+  leftRaking[0] = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexLeft));
+
+
   s_data[tIndex +  CONFLICT_FREE_OFFSET(tIndex)] = BINARY_OP(
       leftRaking[MULTIPLE_ELEMENTS-2],
       UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexLeft + MULTIPLE_ELEMENTS - 1))
       );
-  s_data[tIndex + X + CONFLICT_FREE_OFFSET(tIndex + X) ] = BINARY_OP(
+
+  // put partial reduced result in shared data
+  rightRaking[0] =  UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexRight));
+
+  s_data[tIndex + X + CONFLICT_FREE_OFFSET(tIndex + X) ] =BINARY_OP(
       rightRaking[MULTIPLE_ELEMENTS-2],
       UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexRight + MULTIPLE_ELEMENTS - 1))
       );
+
   //interleaved parallel reduction with reversed indices
   //tree up-sweep (we start at leaves, d= max_depth(tree))
   //
@@ -425,14 +420,15 @@ void main(void){
 
   memoryBarrierShared();
   barrier();
-
-  AT(OUTPUT,OUTPUT_VAR,globalIndexLeft) = s_data[tIndex +CONFLICT_FREE_OFFSET(tIndex)];
-  AT(OUTPUT,OUTPUT_VAR,globalIndexRight) = s_data[tIndex+X +CONFLICT_FREE_OFFSET(tIndex+X)];
   // spread out partial scan by MULTIPLE_ELEMENTS stored in raking
-  for(int j = 0; j < MULTIPLE_ELEMENTS-1; j++) {
-    AT(OUTPUT,OUTPUT_VAR,globalIndexLeft+j+1) = s_data[tIndex +CONFLICT_FREE_OFFSET(tIndex)]+leftRaking[j];
-    AT(OUTPUT,OUTPUT_VAR,globalIndexRight+j+1) = s_data[tIndex+X +CONFLICT_FREE_OFFSET(tIndex+X)]+rightRaking[j];
-  }
+  AT(OUTPUT,OUTPUT_VAR,globalIndexLeft) = s_data[tIndex +CONFLICT_FREE_OFFSET(tIndex)];
+
+  AT(OUTPUT,OUTPUT_VAR,globalIndexLeft+1) = s_data[tIndex +CONFLICT_FREE_OFFSET(tIndex)]+leftRaking[0];
+
+
+  AT(OUTPUT,OUTPUT_VAR,globalIndexRight) = s_data[tIndex+X +CONFLICT_FREE_OFFSET(tIndex+X)];
+
+  AT(OUTPUT,OUTPUT_VAR,globalIndexRight+1) = s_data[tIndex+X +CONFLICT_FREE_OFFSET(tIndex+X)]+rightRaking[0];
+
 
 }
-

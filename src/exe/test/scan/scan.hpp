@@ -90,7 +90,7 @@ void test(testData& data) {
   BenchmarkerCPU bench;
   bench.time("Total CPU time spent",
              [&scanPipeline, numValues = data.numValues]() {
-               executeTest(1, [&scanPipeline, numValues]() {
+               executeTest(100'000, [&scanPipeline, numValues]() {
 #ifndef NO_SEQUENTIAL_ADDS
                  scanPipeline.run(numValues);
 #else 

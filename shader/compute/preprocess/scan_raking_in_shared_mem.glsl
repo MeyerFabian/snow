@@ -39,8 +39,8 @@ shared UNARY_OP_RETURN_TYPE s_data[X*2 + CONFLICT_FREE_OFFSET(X*2-1)];
 
 // i will prob only use +
 
-uint[MULTIPLE_ELEMENTS-1] leftRaking;
-uint[MULTIPLE_ELEMENTS-1] rightRaking;
+shared UNARY_OP_RETURN_TYPE leftRaking[X*2][MULTIPLE_ELEMENTS-1];
+shared UNARY_OP_RETURN_TYPE rightRaking[X*2][MULTIPLE_ELEMENTS-1];
 
 uniform uint bufferSize;
 
@@ -53,26 +53,26 @@ void main(void){
   // raking sequantial global loads all values in raking get stored in registers for global writes at end
 
 
-  leftRaking[0]  = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexLeft ));
-  rightRaking[0] = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexRight));
+  leftRaking[tIndex][0]  = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexLeft ));
+  rightRaking[tIndex][0] = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexRight));
   for(int j = 0; j < MULTIPLE_ELEMENTS-2; j++) {
-    leftRaking[j+1]  = BINARY_OP(
-	leftRaking[j],
+    leftRaking[tIndex][j+1]  = BINARY_OP(
+	leftRaking[tIndex][j],
 	UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexLeft +j+1))
 	);
 
-    rightRaking[j+1] = BINARY_OP(
-	rightRaking[j],
+    rightRaking[tIndex][j+1] = BINARY_OP(
+	rightRaking[tIndex][j],
 	UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexRight+j+1))
 	);
   }
   // put partial reduced result in shared data
   s_data[tIndex +  CONFLICT_FREE_OFFSET(tIndex)] = BINARY_OP(
-      leftRaking[MULTIPLE_ELEMENTS-2],
+      leftRaking[tIndex][MULTIPLE_ELEMENTS-2],
       UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexLeft + MULTIPLE_ELEMENTS - 1))
       );
   s_data[tIndex + X + CONFLICT_FREE_OFFSET(tIndex + X) ] = BINARY_OP(
-      rightRaking[MULTIPLE_ELEMENTS-2],
+      rightRaking[tIndex][MULTIPLE_ELEMENTS-2],
       UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexRight + MULTIPLE_ELEMENTS - 1))
       );
 
@@ -140,8 +140,8 @@ void main(void){
   AT(OUTPUT,OUTPUT_VAR,globalIndexRight) = s_data[tIndex+X +CONFLICT_FREE_OFFSET(tIndex+X)];
   // spread out partial scan by MULTIPLE_ELEMENTS stored in raking
   for(int j = 0; j < MULTIPLE_ELEMENTS-1; j++) {
-    AT(OUTPUT,OUTPUT_VAR,globalIndexLeft+j+1) = s_data[tIndex +CONFLICT_FREE_OFFSET(tIndex)]+leftRaking[j];
-    AT(OUTPUT,OUTPUT_VAR,globalIndexRight+j+1) = s_data[tIndex+X +CONFLICT_FREE_OFFSET(tIndex+X)]+rightRaking[j];
+    AT(OUTPUT,OUTPUT_VAR,globalIndexLeft+j+1) = s_data[tIndex +CONFLICT_FREE_OFFSET(tIndex)]+leftRaking[tIndex][j];
+    AT(OUTPUT,OUTPUT_VAR,globalIndexRight+j+1) = s_data[tIndex+X +CONFLICT_FREE_OFFSET(tIndex+X)]+rightRaking[tIndex][j];
   }
 
 }
