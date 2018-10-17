@@ -22,7 +22,22 @@ uint getIndex(const uvec3 ijk, uvec3 dim){
 bool inBounds(const ivec3 index, const uvec3 dim){
   return index.x>= 0 && index.y>=0 && index.z>=0 && index.x < dim.x && index.y < dim.y && index.z< dim.z;
 }
-uint get_voxel_and_tile_index(const uvec3 globalID, uvec3 globalDim){
+uint get_tile_index(const uvec3 globalID, uvec3
+    globalDim){
+
+  uvec3 tileID = uvec3(
+      globalID.x>>VOXEL_SIZE_X_BIT,
+      globalID.y>>VOXEL_SIZE_Y_BIT,
+      globalID.z>>VOXEL_SIZE_Z_BIT);
+
+  uvec3 tileDim = uvec3(
+      globalDim.x>>VOXEL_SIZE_X_BIT,
+      globalDim.y>>VOXEL_SIZE_Y_BIT,
+      globalDim.z>>VOXEL_SIZE_Z_BIT);
+
+  return getIndex(tileID,tileDim);
+}
+uint get_voxel_index(const uvec3 globalID){
   uvec3 voxelDim = uvec3(
       VOXEL_DIM_X,
       VOXEL_DIM_Y,
@@ -32,21 +47,19 @@ uint get_voxel_and_tile_index(const uvec3 globalID, uvec3 globalDim){
       globalID.x%VOXEL_DIM_X,
       globalID.y%VOXEL_DIM_Y,
       globalID.z%VOXEL_DIM_Z);
+  return getIndex(voxelID,voxelDim);
+}
 
-  uint voxelIndex = getIndex(voxelID,voxelDim);
+uint get_voxel_and_tile_index(const uvec3 globalID, uvec3 globalDim){
+  uint tileIndex = get_tile_index(globalID, globalDim);
 
+  uint voxelIndex = get_voxel_index(globalID);
 
-  uvec3 tileID = uvec3(
-      globalID.x/VOXEL_DIM_X,
-      globalID.y/VOXEL_DIM_Y,
-      globalID.z/VOXEL_DIM_Z);
+  uint voxelDim_flat =VOXEL_DIM_X*VOXEL_DIM_Y*VOXEL_DIM_Z;
 
-  uvec3 tileDim = uvec3(
-      globalDim.x/VOXEL_DIM_X,
-      globalDim.y/VOXEL_DIM_Y,
-      globalDim.z/VOXEL_DIM_Z);
-
-  uint tileIndex = getIndex(tileID,tileDim);
+  return tileIndex *voxelDim_flat + voxelIndex;
+}
+uint get_voxel_and_tile_index(uint voxelIndex, uint tileIndex){
 
   uint voxelDim_flat =VOXEL_DIM_X*VOXEL_DIM_Y*VOXEL_DIM_Z;
 
