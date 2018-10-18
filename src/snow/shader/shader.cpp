@@ -44,14 +44,6 @@ void Shader::add_prec_define() {
   };
   add_cmds(cmd_prec.begin(), cmd_prec.end());
 }
-void Shader::add_aos_define(BufferLayout layout) {
-  if (layout == BufferLayout::AOS) {
-    auto cmd_prec = {
-        CommandType(PreprocessorCmd::DEFINE, "AOS_LAYOUT"),
-    };
-    add_cmds(cmd_prec.begin(), cmd_prec.end());
-  }
-}
 
 void Shader::add_access_include() {
   auto cmd_access = {

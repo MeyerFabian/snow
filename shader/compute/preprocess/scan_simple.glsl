@@ -49,8 +49,8 @@ void main(void){
 
   if(globalIndex > bufferSize) return;
   // coalesced global loads
-  s_data[leftThreadIndex] = UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
-  s_data[rightThreadIndex] = UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndex+1,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
+  s_data[leftThreadIndex] = UNARY_OP(INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
+  s_data[rightThreadIndex] = UNARY_OP(INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndex+1,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
 
   //interleaved parallel reduction with reversed indices
   //tree up-sweep (we start at leaves, d= max_depth(tree))
@@ -80,7 +80,7 @@ void main(void){
   // in last iteration
   if(tIndex==0) {
 #ifdef OUTPUT2
-    AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,b_id,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) = s_data[X*2-1];
+    OUTPUT2_AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,b_id,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) = s_data[X*2-1];
 #endif
     s_data[X*2-1] = BINARY_OP_NEUTRAL_ELEMENT;
   }
@@ -111,8 +111,8 @@ void main(void){
 
 
   //coalesced global writes
-  AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[leftThreadIndex];
-  AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndex+1,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[rightThreadIndex] ;
+  OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[leftThreadIndex];
+  OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndex+1,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[rightThreadIndex] ;
 
 }
 

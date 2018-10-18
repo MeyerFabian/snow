@@ -65,17 +65,17 @@ void main(void){
   leftRaking[0] = 0;
   rightRaking[0] = 0;
   for(int j = 0; j < MULTIPLE_ELEMENTS-1; j++) {
-    leftRaking[j+1] = BINARY_OP(leftRaking[j] , UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndexLeft+j   ,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER)));
-    rightRaking[j+1] = BINARY_OP(rightRaking[j] , UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndexRight+j,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER)));
+    leftRaking[j+1] = BINARY_OP(leftRaking[j] , UNARY_OP(INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndexLeft+j   ,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER)));
+    rightRaking[j+1] = BINARY_OP(rightRaking[j] , UNARY_OP(INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndexRight+j,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER)));
   }
   // put partial reduced result in shared data
   s_data[leftThreadIndex] = BINARY_OP(
       leftRaking[MULTIPLE_ELEMENTS-1],
-      UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndexLeft + MULTIPLE_ELEMENTS - 1,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER))
+      UNARY_OP(INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndexLeft + MULTIPLE_ELEMENTS - 1,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER))
       );
   s_data[rightThreadIndex] =BINARY_OP(
       rightRaking[MULTIPLE_ELEMENTS-1],
-      UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndexRight + MULTIPLE_ELEMENTS - 1,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER))
+      UNARY_OP(INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndexRight + MULTIPLE_ELEMENTS - 1,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER))
       );
 
   //interleaved parallel reduction with reversed indices
@@ -106,7 +106,7 @@ void main(void){
   // in last iteration
   if(tIndex==0) {
 #ifdef OUTPUT2
-    AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,gl_WorkGroupID.x,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) = s_data[X*2-1];
+    OUTPUT2_AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,gl_WorkGroupID.x,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) = s_data[X*2-1];
 #endif
     s_data[X*2-1] = BINARY_OP_NEUTRAL_ELEMENT;
   }
@@ -137,8 +137,8 @@ void main(void){
 
   // spread out partial scan by MULTIPLE_ELEMENTS stored in raking
   for(int j = 0; j < MULTIPLE_ELEMENTS; j++) {
-    AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndexLeft+j,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[leftThreadIndex]+leftRaking[j];
-    AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndexRight+j,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[rightThreadIndex]+rightRaking[j];
+    OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndexLeft+j,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[leftThreadIndex]+leftRaking[j];
+    OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndexRight+j,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[rightThreadIndex]+rightRaking[j];
   }
 
 }

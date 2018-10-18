@@ -71,17 +71,23 @@ int main() {
       IOBufferData(
           {
               //   In
-              "g_in",
-              "in_v",
-              input.get_buffer_info(),
-              numVectors,
+              {
+                  // INPUT
+                  "g_in",
+                  "in_v",
+                  input.get_buffer_info(),
+                  numVectors,
+              },
           },
           {
               //   Out
-              "g_out",
-              "out_g",
-              output->get_buffer_info(),
-              numVectors,
+              {
+                  // OUTPUT
+                  "g_out",
+                  "out_g",
+                  output->get_buffer_info(),
+                  numVectors,
+              },
           }),
   });
   MapReducePipeline test;

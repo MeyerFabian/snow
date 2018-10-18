@@ -7,7 +7,7 @@
 #include "scanTechnique.hpp"
 class ScanPipeline {
  public:
-  void init(ScanTechnique::ScanData&&, IO2BufferData&& io);
+  void init(ScanTechnique::ScanData&&, IOBufferData&& io);
 
   void run(GLuint numVectors);
   void runNoSeqAdd(GLuint numVectors);

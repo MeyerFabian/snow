@@ -42,7 +42,7 @@ void main(void){
 	if(i>=bufferSize){
 		return;
 	}
-	PREC_VEC3_TYPE pos = AT(INPUT,INPUT_VAR,INPUT_SIZE,i,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+	PREC_VEC3_TYPE pos = INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,i,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
 
 	// Bin due to position in grid
 	PREC_VEC3_TYPE positionInGrid= (pos-gGridPos)/gridSpacing;
@@ -52,8 +52,8 @@ void main(void){
 	if(inBounds(globalGridIndex,gGridDim)){
 		uint voxelAndTileIndex = get_voxel_and_tile_index(globalGridIndex,gGridDim);
 #ifdef OUTPUT2
-		AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,i,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) =
+		OUTPUT2_AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,i,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) =
 #endif
-			atomicAdd(AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,voxelAndTileIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER),1);
+			atomicAdd(OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,voxelAndTileIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER),1);
 	}
 }

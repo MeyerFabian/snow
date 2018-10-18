@@ -57,8 +57,8 @@ void main(void){
 
   if(globalIndex > bufferSize) return;
   // global loads at 1) t_id and 2) t_id + X
-  s_data[tIndex + CONFLICT_FREE_OFFSET(tIndex)] = UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndex ,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
-  s_data[(tIndex + X) + CONFLICT_FREE_OFFSET(tIndex+X)] = UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndex+X ,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
+  s_data[tIndex + CONFLICT_FREE_OFFSET(tIndex)] = UNARY_OP(INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndex ,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
+  s_data[(tIndex + X) + CONFLICT_FREE_OFFSET(tIndex+X)] = UNARY_OP(INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndex+X ,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
 
   //interleaved parallel reduction with reversed indices
   //tree up-sweep (we start at leaves, d= max_depth(tree))
@@ -95,7 +95,7 @@ void main(void){
   if(tIndex==0) {
     uint last = X*2-1 + CONFLICT_FREE_OFFSET(X*2-1);
 #ifdef OUTPUT2
-	AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,gl_WorkGroupID.x,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) = s_data[last];
+	OUTPUT2_AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,gl_WorkGroupID.x,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) = s_data[last];
 #endif
     s_data[last] = BINARY_OP_NEUTRAL_ELEMENT;
   }
@@ -130,7 +130,8 @@ void main(void){
 
 
   // global writes at 1) t_id and 2) t_id + X
-  AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[tIndex +CONFLICT_FREE_OFFSET(tIndex)];
-  AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndex+X,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[(tIndex+ X)+CONFLICT_FREE_OFFSET(tIndex+X)];
+  OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[tIndex +CONFLICT_FREE_OFFSET(tIndex)];
+  
+  OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndex+X,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[(tIndex+ X)+CONFLICT_FREE_OFFSET(tIndex+X)];
 
 }

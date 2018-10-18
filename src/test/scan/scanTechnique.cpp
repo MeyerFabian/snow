@@ -1,9 +1,8 @@
 #include "scanTechnique.hpp"
-void ScanTechnique::init(ScanData&& data, IOBufferDataInterface&& io) {
+void ScanTechnique::init(ScanData&& data, IOBufferData&& io) {
   local_size = data.local_size;
   auto shader = std::make_shared<Shader>(ShaderType::COMPUTE, data.filename);
 
-  shader->add_aos_define(io.getLayout());
   shader->set_local_size(local_size);
 
   std::string raking = std::to_string(data.raking);

@@ -22,7 +22,7 @@ class BinningTechnique : public Technique {
     UniformsStatic uniforms;
   };
 
-  void init(BinningData&& data, IOBufferDataInterface&&);
+  void init(BinningData&& data, IOBufferData&&);
   void uniforms_init(UniformsStatic&&);
   void dispatch_with_barrier(GLuint numVectors);
 };

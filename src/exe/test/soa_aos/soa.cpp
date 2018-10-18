@@ -50,17 +50,23 @@ int main() {
       IOBufferData(
           {
               //   In
-              "g_in",
-              "in_v",
-              input.get_buffer_info(),
-              numVectors,
+              {
+                  // INPUT
+                  "g_in",
+                  "in_v",
+                  input.get_buffer_info(),
+                  numVectors,
+              },
           },
           {
               //   Out
-              "g_out",
-              "out_g",
-              output.get_buffer_info(),
-              numVectors,
+              {
+                  // OUTPUT
+                  "g_out",
+                  "out_g",
+                  output.get_buffer_info(),
+                  numVectors,
+              },
           }),
   });
 
@@ -68,7 +74,7 @@ int main() {
   test.init(std::move(map_data));
   BenchmarkerCPU bench;
   bench.time("Total CPU time spent", [&numVectors, &test]() {
-    executeTest(1'000, [&test, numVectors]() {
+    executeTest(1, [&test, numVectors]() {
       return BenchmarkerGPU::getInstance().time("map", [&test, numVectors]() {
         test.dispatch_with_barrier(numVectors);
       });

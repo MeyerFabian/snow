@@ -6,9 +6,9 @@ void MapReducePipeline::init(
 
   MapReduceTechnique::MapReduceData reduction_data_2nd = pipeline_data;
   reduction_data_2nd.gl_unary_op = "value";
-  reduction_data_2nd.io.in_buffer.name = pipeline_data.io.out_buffer.name;
+  reduction_data_2nd.io.in_buffer[0].name = pipeline_data.io.out_buffer[0].name;
 
-  reduction_data_2nd.io.in_buffer.var = pipeline_data.io.out_buffer.var;
+  reduction_data_2nd.io.in_buffer[0].var = pipeline_data.io.out_buffer[0].var;
 
   reduction_data_2nd.local_size = {1, 1, 1};
 

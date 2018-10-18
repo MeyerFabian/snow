@@ -24,7 +24,7 @@ struct LocalSize {
   GLuint y = 1;
   GLuint z = 1;
 };
-enum PreprocessorCmd { DEFINE, INCLUDE };
+enum PreprocessorCmd { DEFINE, INCLUDE, UNDEFINE };
 
 class Shader {
  public:
@@ -66,13 +66,15 @@ class Shader {
                        case PreprocessorCmd::INCLUDE:
                          cmd += "#include ";
                          break;
+                       case PreprocessorCmd::UNDEFINE:
+                         cmd += "#undef ";
+                         break;
                      }
                      return cmd + pair_cmd.second;
                    });
   }
 
   void set_local_size(const LocalSize &c);
-  void add_aos_define(BufferLayout);
 
  private:
   void gl_create_id();

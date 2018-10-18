@@ -1,9 +1,8 @@
 #include "binTechnique.hpp"
-void BinningTechnique::init(BinningData&& data, IOBufferDataInterface&& io) {
+void BinningTechnique::init(BinningData&& data, IOBufferData&& io) {
   auto shader = std::make_shared<Shader>(ShaderType::COMPUTE,
                                          "shader/compute/preprocess/bin.glsl");
 
-  shader->add_aos_define(io.getLayout());
   shader->set_local_size(local_size);
 
   std::vector<Shader::CommandType> vec = {};

@@ -1,14 +1,16 @@
 #include "ScanPipeline.hpp"
 
 void ScanPipeline::init(ScanTechnique::ScanData&& scan_data,
-                        IO2BufferData&& io2) {
+                        IOBufferData&& io2) {
   raking = scan_data.raking;
 
   buffer_size_local = scan_data.numVectors;
   buffer_size_block = buffer_size_local / scan_data.local_size.x / raking / 2;
 
   ScanTechnique::ScanData scan_block_data = scan_data;
-  IOBufferData io{io2.out2_buffer, io2.out2_buffer};
+  std::vector<BufferData> block_buffer = {io2.out_buffer[1]};
+
+  IOBufferData io{{block_buffer}, {block_buffer}};
   scan_block_data.local_size = {1024, 1, 1};
   localScan.init(std::move(scan_data), std::move(io2));
   blockScan.init(std::move(scan_block_data), std::move(io));

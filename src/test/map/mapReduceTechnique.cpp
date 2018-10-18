@@ -5,7 +5,6 @@ void MapReduceTechnique::init(MapReduceData&& data) {
   auto shader =
       std::make_shared<Shader>(ShaderType::COMPUTE, data.shader_filename);
 
-  shader->add_aos_define(data.io.in_buffer.info.layout);
   shader->set_local_size(data.local_size);
 
   std::vector<Shader::CommandType> vec = {

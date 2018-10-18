@@ -28,7 +28,7 @@ class ScanTechnique : public Technique {
     GLuint dispatchDim_x;
   };
 
-  void init(ScanData&& data, IOBufferDataInterface&& io);
+  void init(ScanData&& data, IOBufferData&& io);
   void dispatch_with_barrier(GLuint numVectors);
   void dispatch_with_barrier(DispatchData&& data) const;
   void uniforms_update(DispatchData&& uniforms) const;

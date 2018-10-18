@@ -63,27 +63,36 @@ void test(testData& data) {
       MULTIPLE_ELEMENTS,
 #endif
   };
-  IO2BufferData io_data{{
-                            // in
-                            "counters",
-                            "Counter_i",
-                            counter_buffer.get_buffer_info(),
-                            data.numValues,
-                        },
-                        {
-                            // out
-                            "scans",
-                            "Scan_local_i",
-                            scan_buffer.get_buffer_info(),
-                            data.numValues,
-                        },
-                        {
-                            // out2
-                            "scans",
-                            "Scan_block_i",
-                            scan_buffer.get_buffer_info(),
-                            data.numValues,
-                        }};
+  IOBufferData io_data{
+      {
+          // in
+          {
+              // INPUT
+              "counters",
+              "Counter_i",
+              counter_buffer.get_buffer_info(),
+              data.numValues,
+          },
+      },
+      {
+
+          // out
+          {
+              // OUTPUT
+              "scans",
+              "Scan_local_i",
+              scan_buffer.get_buffer_info(),
+              data.numValues,
+          },
+          {
+              // OUTPUT2
+              "scans",
+              "Scan_block_i",
+              scan_buffer.get_buffer_info(),
+              data.numValues,
+          },
+      },
+  };
 
   auto scanPipeline = ScanPipeline();
   scanPipeline.init(std::move(scan_data), std::move(io_data));

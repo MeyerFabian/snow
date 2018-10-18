@@ -37,7 +37,7 @@ void main(void){
   uint t_id = gl_LocalInvocationIndex;
   uint g_id = gl_GlobalInvocationID.x;
 
-  s_data[t_id] = UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,g_id,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
+  s_data[t_id] = UNARY_OP(INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,g_id,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
 
   memoryBarrierShared();
   barrier();
@@ -49,5 +49,5 @@ void main(void){
     barrier();
   }
 
-  if(t_id ==0) AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,gl_WorkGroupID.x,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[0];
+  if(t_id ==0) OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,gl_WorkGroupID.x,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[0];
 }

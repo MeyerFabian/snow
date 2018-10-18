@@ -63,18 +63,25 @@ OutputData test(testData& data) {
       // IOBufferData
       IOBufferData(
           {
+
               //   In
-              "counters",
-              "Counter_i",
-              output.get_buffer_info(),
-              data.numGridPoints,
+              {
+                  // INPUT
+                  "counters",
+                  "Counter_i",
+                  output.get_buffer_info(),
+                  data.numGridPoints,
+              },
           },
           {
               //   Out
-              "counters",
-              "Counter_i",
-              output.get_buffer_info(),
-              data.numGridPoints,
+              {
+                  // OUTPUT
+                  "counters",
+                  "Counter_i",
+                  output.get_buffer_info(),
+                  data.numGridPoints,
+              },
           }),
   };
   auto resetCounter = MapTechnique();
@@ -95,27 +102,35 @@ OutputData test(testData& data) {
   output2.gl_bind_base(GRID_OFFSET_BINDING);
 
   // IOBufferData
-  IO2BufferData io_data{
+  IOBufferData io_data{
       {
           // in
-          "particles",
-          "Particle_pos_mass",
-          input.get_buffer_info(),
-          data.numVectors,
+          {
+              // INPUT
+              "particles",
+              "Particle_pos_mass",
+              input.get_buffer_info(),
+              data.numVectors,
+          },
       },
       {
           // out
-          "counters",
-          "Counter_i",
-          output.get_buffer_info(),
-          data.numGridPoints,
-      },
-      {
-          // out
-          "gridOffsets",
-          "GridOffset_i",
-          output2.get_buffer_info(),
-          data.numGridPoints,
+          {
+
+              // OUTPUT
+              "counters",
+              "Counter_i",
+              output.get_buffer_info(),
+              data.numGridPoints,
+          },
+          {
+
+              // OUTPUT2
+              "gridOffsets",
+              "GridOffset_i",
+              output2.get_buffer_info(),
+              data.numGridPoints,
+          },
       },
   };
 #else
@@ -123,17 +138,23 @@ OutputData test(testData& data) {
   IOBufferData io_data(
       {
           // in
-          "particles",
-          "Particle_pos_mass",
-          input.get_buffer_info(),
-          data.numVectors,
+          {
+              // INPUT
+              "particles",
+              "Particle_pos_mass",
+              input.get_buffer_info(),
+              data.numVectors,
+          },
       },
       {
           // out
-          "counters",
-          "Counter_i",
-          output.get_buffer_info(),
-          data.numGridPoints,
+          {
+              // OUTPUT
+              "counters",
+              "Counter_i",
+              output.get_buffer_info(),
+              data.numGridPoints,
+          },
       });
 #endif
   auto binCount = BinningTechnique();
