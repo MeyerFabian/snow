@@ -3,7 +3,6 @@ void BinningTechnique::init(BinningData&& data, IOBufferDataInterface&& io) {
   auto shader = std::make_shared<Shader>(ShaderType::COMPUTE,
                                          "shader/compute/preprocess/bin.glsl");
 
-  shader->add_n_define(data.numVectors);
   shader->add_aos_define(io.getLayout());
   shader->set_local_size(local_size);
 

@@ -33,6 +33,7 @@ int main() {
   auto sum_count_gpu = std::transform_reduce(
       std::begin(count_gpu), std::end(count_gpu), 0, std::plus<>(),
       [](const auto& elem) { return elem; });
+  std::cout << "Count on CPU: " << std::size(particles) << std::endl;
   std::cout << "Count on GPU: " << sum_count_gpu << std::endl;
   std::cout << "Difference: " << std::size(particles) - sum_count_gpu
             << std::endl;

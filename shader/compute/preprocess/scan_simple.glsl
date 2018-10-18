@@ -4,15 +4,34 @@ layout(local_size_x =X)in;
 /*
  * Macros to be defined:
  *
- * INPUT(id) in_buffer[id]
- * OUTPUT(id) out_buffer[id]
+ * {INPUT,OUTPUT,OUTPUT2} buffer
+ * {INPUT,OUTPUT,OUTPUT2}_VAR var
+ * {INPUT,OUTPUT,OUTPUT2}_SIZE buffer
+ * {INPUT,OUTPUT,OUTPUT2}_NUM_BUFFER double/multi buffer
+ * {INPUT,OUTPUT,OUTPUT2}_INDEX_BUFFER which of the multi buffers
+ *
  * where buffer needs to be included
+ * e.g. AOS-Layout =>
+ * AT(buffer,var,index) =>
+ * buffer[index].var
  *
  * UNARY_OP(value) length(value)
  * UNARY_OP_RETURN_TYPE float
- * BINARY_OP_NEUTRAL_ELEMENT 0
- * BINARY_OP(value) a+b
+ * BINARY_OP(left,right) left*right
+ * BINARY_OP_NEUTRAL_ELEMENT 1
  */
+
+#ifndef INPUT_INDEX_BUFFER
+#define INPUT_INDEX_BUFFER 0
+#endif
+
+#ifndef OUTPUT_INDEX_BUFFER
+#define OUTPUT_INDEX_BUFFER 0
+#endif
+
+#ifndef OUTPUT2_INDEX_BUFFER
+#define OUTPUT2_INDEX_BUFFER 0
+#endif
 
 // start with half the dispatch size
 shared UNARY_OP_RETURN_TYPE s_data[X*2];
@@ -30,8 +49,8 @@ void main(void){
 
   if(globalIndex > bufferSize) return;
   // coalesced global loads
-  s_data[leftThreadIndex] = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndex));
-  s_data[rightThreadIndex] = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndex+1));
+  s_data[leftThreadIndex] = UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
+  s_data[rightThreadIndex] = UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndex+1,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
 
   //interleaved parallel reduction with reversed indices
   //tree up-sweep (we start at leaves, d= max_depth(tree))
@@ -61,7 +80,7 @@ void main(void){
   // in last iteration
   if(tIndex==0) {
 #ifdef OUTPUT2
-    AT(OUTPUT2,OUTPUT2_VAR,b_id) = s_data[X*2-1];
+    AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,b_id,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) = s_data[X*2-1];
 #endif
     s_data[X*2-1] = BINARY_OP_NEUTRAL_ELEMENT;
   }
@@ -92,8 +111,8 @@ void main(void){
 
 
   //coalesced global writes
-  AT(OUTPUT,OUTPUT_VAR,globalIndex) = s_data[leftThreadIndex];
-  AT(OUTPUT,OUTPUT_VAR,globalIndex+1) = s_data[rightThreadIndex] ;
+  AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[leftThreadIndex];
+  AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndex+1,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[rightThreadIndex] ;
 
 }
 

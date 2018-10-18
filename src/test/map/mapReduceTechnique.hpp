@@ -20,7 +20,6 @@ class MapReduceTechnique : public Technique {
     std::string gl_binary_op_neutral_elem;
     std::string gl_binary_op;
     IOBufferData io;
-    GLuint numVectors;
   };
 
   struct DispatchData {

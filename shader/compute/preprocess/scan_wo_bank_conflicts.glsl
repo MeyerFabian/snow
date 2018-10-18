@@ -4,15 +4,34 @@ layout(local_size_x =X)in;
 /*
  * Macros to be defined:
  *
- * INPUT(id) in_buffer[id]
- * OUTPUT(id) out_buffer[id]
+ * {INPUT,OUTPUT,OUTPUT2} buffer
+ * {INPUT,OUTPUT,OUTPUT2}_VAR var
+ * {INPUT,OUTPUT,OUTPUT2}_SIZE buffer
+ * {INPUT,OUTPUT,OUTPUT2}_NUM_BUFFER double/multi buffer
+ * {INPUT,OUTPUT,OUTPUT2}_INDEX_BUFFER which of the multi buffers
+ *
  * where buffer needs to be included
+ * e.g. AOS-Layout =>
+ * AT(buffer,var,index) =>
+ * buffer[index].var
  *
  * UNARY_OP(value) length(value)
  * UNARY_OP_RETURN_TYPE float
- * BINARY_OP_NEUTRAL_ELEMENT 0
- * BINARY_OP(value) a+b
+ * BINARY_OP(left,right) left*right
+ * BINARY_OP_NEUTRAL_ELEMENT 1
  */
+
+#ifndef INPUT_INDEX_BUFFER
+#define INPUT_INDEX_BUFFER 0
+#endif
+
+#ifndef OUTPUT_INDEX_BUFFER
+#define OUTPUT_INDEX_BUFFER 0
+#endif
+
+#ifndef OUTPUT2_INDEX_BUFFER
+#define OUTPUT2_INDEX_BUFFER 0
+#endif
 
 // start with half the dispatch size
 
@@ -33,14 +52,13 @@ shared UNARY_OP_RETURN_TYPE s_data[X*2 + CONFLICT_FREE_OFFSET(X*2-1)];
 uniform uint bufferSize;
 
 void main(void){
-  uint b_id = gl_WorkGroupID.x;
   uint tIndex = gl_LocalInvocationIndex;
   uint globalIndex = gl_WorkGroupID.x * X * 2 + tIndex;
 
   if(globalIndex > bufferSize) return;
   // global loads at 1) t_id and 2) t_id + X
-  s_data[tIndex + CONFLICT_FREE_OFFSET(tIndex)] = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndex));
-  s_data[(tIndex + X) + CONFLICT_FREE_OFFSET(tIndex+X)] = UNARY_OP(AT(INPUT,INPUT_VAR,globalIndex+X));
+  s_data[tIndex + CONFLICT_FREE_OFFSET(tIndex)] = UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndex ,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
+  s_data[(tIndex + X) + CONFLICT_FREE_OFFSET(tIndex+X)] = UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndex+X ,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
 
   //interleaved parallel reduction with reversed indices
   //tree up-sweep (we start at leaves, d= max_depth(tree))
@@ -77,7 +95,7 @@ void main(void){
   if(tIndex==0) {
     uint last = X*2-1 + CONFLICT_FREE_OFFSET(X*2-1);
 #ifdef OUTPUT2
-    AT(OUTPUT2,OUTPUT2_VAR,b_id) = s_data[last];
+	AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,gl_WorkGroupID.x,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) = s_data[last];
 #endif
     s_data[last] = BINARY_OP_NEUTRAL_ELEMENT;
   }
@@ -112,7 +130,7 @@ void main(void){
 
 
   // global writes at 1) t_id and 2) t_id + X
-  AT(OUTPUT,OUTPUT_VAR,globalIndex) = s_data[tIndex +CONFLICT_FREE_OFFSET(tIndex)];
-  AT(OUTPUT,OUTPUT_VAR,globalIndex+X) = s_data[(tIndex+ X)+CONFLICT_FREE_OFFSET(tIndex+X)];
+  AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[tIndex +CONFLICT_FREE_OFFSET(tIndex)];
+  AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndex+X,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[(tIndex+ X)+CONFLICT_FREE_OFFSET(tIndex+X)];
 
 }

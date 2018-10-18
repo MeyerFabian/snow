@@ -67,15 +67,15 @@ OutputData test(testData& data) {
               "counters",
               "Counter_i",
               output.get_buffer_info(),
+              data.numGridPoints,
           },
           {
               //   Out
               "counters",
               "Counter_i",
               output.get_buffer_info(),
+              data.numGridPoints,
           }),
-      // numVectors
-      data.numGridPoints,
   };
   auto resetCounter = MapTechnique();
   resetCounter.init(std::move(map_data));
@@ -86,7 +86,6 @@ OutputData test(testData& data) {
           data.gGridDim,
           data.gridSpacing,
       },
-      data.numVectors,
   };
 #ifdef OUTPUT2
 
@@ -102,18 +101,21 @@ OutputData test(testData& data) {
           "particles",
           "Particle_pos_mass",
           input.get_buffer_info(),
+          data.numVectors,
       },
       {
           // out
           "counters",
           "Counter_i",
           output.get_buffer_info(),
+          data.numGridPoints,
       },
       {
           // out
           "gridOffsets",
           "GridOffset_i",
           output2.get_buffer_info(),
+          data.numGridPoints,
       },
   };
 #else
@@ -124,12 +126,14 @@ OutputData test(testData& data) {
           "particles",
           "Particle_pos_mass",
           input.get_buffer_info(),
+          data.numVectors,
       },
       {
           // out
           "counters",
           "Counter_i",
           output.get_buffer_info(),
+          data.numGridPoints,
       });
 #endif
   auto binCount = BinningTechnique();
@@ -139,8 +143,7 @@ OutputData test(testData& data) {
   bench.time("Total CPU time spent", [&binCount, numVectors = data.numVectors,
                                       &resetCounter,
                                       numGridPoints = data.numGridPoints]() {
-    executeTest(10'000, [&binCount, &resetCounter, numVectors,
-                         numGridPoints]() {
+    executeTest(1, [&binCount, &resetCounter, numVectors, numGridPoints]() {
       BenchmarkerGPU::getInstance().time(
           "resetCounter", [&resetCounter, numGridPoints]() {
             resetCounter.dispatch_with_barrier(numGridPoints);

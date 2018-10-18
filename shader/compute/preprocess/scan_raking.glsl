@@ -14,15 +14,34 @@ layout(local_size_x =X)in;
 /*
  * Macros to be defined:
  *
- * INPUT(id) in_buffer[id]
- * OUTPUT(id) out_buffer[id]
+ * {INPUT,OUTPUT} buffer
+ * {INPUT,OUTPUT}_VAR var
+ * {INPUT,OUTPUT}_SIZE buffer
+ * {INPUT,OUTPUT}_NUM_BUFFER double/multi buffer
+ * {INPUT,OUTPUT}_INDEX_BUFFER which of the multi buffers
+ *
  * where buffer needs to be included
+ * e.g. AOS-Layout =>
+ * AT(buffer,var,index) =>
+ * buffer[index].var
  *
  * UNARY_OP(value) length(value)
  * UNARY_OP_RETURN_TYPE float
- * BINARY_OP_NEUTRAL_ELEMENT 0
- * BINARY_OP(value) a+b
+ * BINARY_OP(left,right) left*right
+ * BINARY_OP_NEUTRAL_ELEMENT 1
  */
+
+#ifndef INPUT_INDEX_BUFFER
+#define INPUT_INDEX_BUFFER 0
+#endif
+
+#ifndef OUTPUT_INDEX_BUFFER
+#define OUTPUT_INDEX_BUFFER 0
+#endif
+
+#ifndef OUTPUT2_INDEX_BUFFER
+#define OUTPUT2_INDEX_BUFFER 0
+#endif
 
 // start with half the dispatch size
 shared UNARY_OP_RETURN_TYPE s_data[X*2];
@@ -46,17 +65,17 @@ void main(void){
   leftRaking[0] = 0;
   rightRaking[0] = 0;
   for(int j = 0; j < MULTIPLE_ELEMENTS-1; j++) {
-    leftRaking[j+1] = BINARY_OP(leftRaking[j] , UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexLeft+j)));
-    rightRaking[j+1] = BINARY_OP(rightRaking[j] , UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexRight+j)));
+    leftRaking[j+1] = BINARY_OP(leftRaking[j] , UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndexLeft+j   ,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER)));
+    rightRaking[j+1] = BINARY_OP(rightRaking[j] , UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndexRight+j,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER)));
   }
   // put partial reduced result in shared data
   s_data[leftThreadIndex] = BINARY_OP(
       leftRaking[MULTIPLE_ELEMENTS-1],
-      UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexLeft + MULTIPLE_ELEMENTS - 1))
+      UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndexLeft + MULTIPLE_ELEMENTS - 1,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER))
       );
   s_data[rightThreadIndex] =BINARY_OP(
       rightRaking[MULTIPLE_ELEMENTS-1],
-      UNARY_OP(AT(INPUT,INPUT_VAR,globalIndexRight + MULTIPLE_ELEMENTS - 1))
+      UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,globalIndexRight + MULTIPLE_ELEMENTS - 1,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER))
       );
 
   //interleaved parallel reduction with reversed indices
@@ -87,7 +106,7 @@ void main(void){
   // in last iteration
   if(tIndex==0) {
 #ifdef OUTPUT2
-    AT(OUTPUT2,OUTPUT2_VAR,gl_WorkGroupID.x) = s_data[X*2-1];
+    AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,gl_WorkGroupID.x,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) = s_data[X*2-1];
 #endif
     s_data[X*2-1] = BINARY_OP_NEUTRAL_ELEMENT;
   }
@@ -118,8 +137,8 @@ void main(void){
 
   // spread out partial scan by MULTIPLE_ELEMENTS stored in raking
   for(int j = 0; j < MULTIPLE_ELEMENTS; j++) {
-    AT(OUTPUT,OUTPUT_VAR,globalIndexLeft+j) = s_data[leftThreadIndex]+leftRaking[j];
-    AT(OUTPUT,OUTPUT_VAR,globalIndexRight+j) = s_data[rightThreadIndex]+rightRaking[j];
+    AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndexLeft+j,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[leftThreadIndex]+leftRaking[j];
+    AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndexRight+j,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[rightThreadIndex]+rightRaking[j];
   }
 
 }

@@ -4,6 +4,8 @@ Shader::Shader(ShaderType t, const std::string &filename)
   add_glsl_define();
   if (t == ShaderType::COMPUTE) {
   }
+
+  add_access_include();
 #ifdef DOUBLE_PREC
   add_prec_define();
 #endif
@@ -51,13 +53,6 @@ void Shader::add_aos_define(BufferLayout layout) {
   }
 }
 
-void Shader::add_n_define(GLuint n) {
-  auto cmd_prec = {
-      CommandType(PreprocessorCmd::DEFINE,
-                  "TOTAL_BUFFER_SIZE " + std::to_string(n)),
-  };
-  add_cmds(cmd_prec.begin(), cmd_prec.end());
-}
 void Shader::add_access_include() {
   auto cmd_access = {
       CommandType(PreprocessorCmd::INCLUDE,
@@ -90,7 +85,6 @@ void Shader::load_shader_from_file() {
     add_local_size();
   }
 
-  add_access_include();
   // Add additional commands (#define,#include, ..)
   std::string cmds_concat = "\n\n";
   for (const auto &cmd : preprocess_cmds) {

@@ -8,12 +8,41 @@ uniform PREC_SCAL_TYPE gridSpacing;
 
 uniform uint bufferSize;
 
+/*
+ * Macros to be defined:
+ *
+ * {INPUT,OUTPUT} buffer
+ * {INPUT,OUTPUT}_VAR var
+ * {INPUT,OUTPUT}_SIZE buffer
+ * {INPUT,OUTPUT}_NUM_BUFFER double/multi buffer
+ * {INPUT,OUTPUT}_INDEX_BUFFER which of the multi buffers
+ *
+ * where buffer needs to be included
+ * e.g. AOS-Layout =>
+ * AT(buffer,var,index) =>
+ * buffer[index].var
+ */
+
+#ifndef INPUT_INDEX_BUFFER
+#define INPUT_INDEX_BUFFER 0
+#endif
+
+#ifndef OUTPUT_INDEX_BUFFER
+#define OUTPUT_INDEX_BUFFER 0
+#endif
+
+
+#ifndef OUTPUT2_INDEX_BUFFER
+#define OUTPUT2_INDEX_BUFFER 0
+#endif
+
+
 void main(void){
 	uint i = gl_GlobalInvocationID.x;
 	if(i>=bufferSize){
 		return;
 	}
-	PREC_VEC3_TYPE pos = AT(INPUT,INPUT_VAR,i).xyz;
+	PREC_VEC3_TYPE pos = AT(INPUT,INPUT_VAR,INPUT_SIZE,i,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
 
 	// Bin due to position in grid
 	PREC_VEC3_TYPE positionInGrid= (pos-gGridPos)/gridSpacing;
@@ -23,8 +52,8 @@ void main(void){
 	if(inBounds(globalGridIndex,gGridDim)){
 		uint voxelAndTileIndex = get_voxel_and_tile_index(globalGridIndex,gGridDim);
 #ifdef OUTPUT2
-		AT(OUTPUT2,OUTPUT2_VAR,i) =
+		AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,i,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) =
 #endif
-			atomicAdd(AT(OUTPUT,OUTPUT_VAR,voxelAndTileIndex),1);
+			atomicAdd(AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,voxelAndTileIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER),1);
 	}
 }

@@ -20,7 +20,6 @@ class BinningTechnique : public Technique {
 
   struct BinningData {
     UniformsStatic uniforms;
-    GLuint numVectors;  // SOA only
   };
 
   void init(BinningData&& data, IOBufferDataInterface&&);

@@ -58,8 +58,6 @@ void test(testData& data) {
       "value",
       "0",
       "left+right",
-      // IO2BufferData
-      // NumValues
       data.numValues,
 #ifndef NO_SEQUENTIAL_ADDS
       MULTIPLE_ELEMENTS,
@@ -70,18 +68,21 @@ void test(testData& data) {
                             "counters",
                             "Counter_i",
                             counter_buffer.get_buffer_info(),
+                            data.numValues,
                         },
                         {
                             // out
                             "scans",
                             "Scan_local_i",
                             scan_buffer.get_buffer_info(),
+                            data.numValues,
                         },
                         {
                             // out2
                             "scans",
                             "Scan_block_i",
                             scan_buffer.get_buffer_info(),
+                            data.numValues,
                         }};
 
   auto scanPipeline = ScanPipeline();
@@ -90,7 +91,7 @@ void test(testData& data) {
   BenchmarkerCPU bench;
   bench.time("Total CPU time spent",
              [&scanPipeline, numValues = data.numValues]() {
-               executeTest(100'000, [&scanPipeline, numValues]() {
+               executeTest(1, [&scanPipeline, numValues]() {
 #ifndef NO_SEQUENTIAL_ADDS
                  scanPipeline.run(numValues);
 #else 

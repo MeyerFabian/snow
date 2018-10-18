@@ -19,7 +19,7 @@ class ScanTechnique : public Technique {
     std::string gl_unary_op;
     std::string gl_binary_op_neutral_elem;
     std::string gl_binary_op;
-    GLuint numVectors;  // SOA only
+    GLuint numVectors;
     GLuint raking = 1;
   };
 

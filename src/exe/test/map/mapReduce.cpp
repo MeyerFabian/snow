@@ -74,15 +74,15 @@ int main() {
               "g_in",
               "in_v",
               input.get_buffer_info(),
+              numVectors,
           },
           {
               //   Out
               "g_out",
               "out_g",
               output->get_buffer_info(),
+              numVectors,
           }),
-      // numVectors
-      numVectors,
   });
   MapReducePipeline test;
   test.init(std::move(reduce_data));

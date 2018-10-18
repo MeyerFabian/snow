@@ -7,14 +7,26 @@ layout(local_size_x =X)in;
 /*
  * Macros to be defined:
  *
- * INPUT(id) in_buffer[id]
- * OUTPUT(id) out_buffer[id]
- * where buffer needs to be included
+ * {INPUT,OUTPUT} buffer
+ * {INPUT,OUTPUT}_VAR var
+ * {INPUT,OUTPUT}_SIZE buffer
+ * {INPUT,OUTPUT}_NUM_BUFFER double/multi buffer
+ * {INPUT,OUTPUT}_INDEX_BUFFER which of the multi buffers
  *
- * UNARY_OP(value) e.g. func(value)
- * UNARY_OP_RETURN_TYPE e.g. float
- * BINARY_OP(left,right) e.g. left+right
+ * where buffer needs to be included
+ * e.g. AOS-Layout =>
+ * AT(buffer,var,index) =>
+ * buffer[index].var
  */
+
+#ifndef INPUT_INDEX_BUFFER
+#define INPUT_INDEX_BUFFER 0
+#endif
+
+#ifndef OUTPUT_INDEX_BUFFER
+#define OUTPUT_INDEX_BUFFER 0
+#endif
+
 
 shared UNARY_OP_RETURN_TYPE s_data[gl_WorkGroupSize.x];
 
@@ -25,7 +37,7 @@ void main(void){
   uint t_id = gl_LocalInvocationIndex;
   uint g_id = gl_GlobalInvocationID.x;
 
-  s_data[t_id] = UNARY_OP(AT(INPUT,INPUT_VAR,g_id));
+  s_data[t_id] = UNARY_OP(AT(INPUT,INPUT_VAR,INPUT_SIZE,g_id,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
 
   memoryBarrierShared();
   barrier();
@@ -37,5 +49,5 @@ void main(void){
     barrier();
   }
 
-  if(t_id ==0) AT(OUTPUT,OUTPUT_VAR,gl_WorkGroupID.x) = s_data[0];
+  if(t_id ==0) AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,gl_WorkGroupID.x,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[0];
 }

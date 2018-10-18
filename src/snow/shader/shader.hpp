@@ -72,7 +72,6 @@ class Shader {
   }
 
   void set_local_size(const LocalSize &c);
-  void add_n_define(GLuint numVectors);
   void add_aos_define(BufferLayout);
 
  private:

@@ -3,7 +3,6 @@ void ScanTechnique::init(ScanData&& data, IOBufferDataInterface&& io) {
   local_size = data.local_size;
   auto shader = std::make_shared<Shader>(ShaderType::COMPUTE, data.filename);
 
-  shader->add_n_define(data.numVectors);
   shader->add_aos_define(io.getLayout());
   shader->set_local_size(local_size);
 
