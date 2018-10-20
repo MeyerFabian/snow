@@ -22,18 +22,6 @@ layout(local_size_x =X)in;
  * BINARY_OP_NEUTRAL_ELEMENT 1
  */
 
-#ifndef INPUT_INDEX_BUFFER
-#define INPUT_INDEX_BUFFER 0
-#endif
-
-#ifndef OUTPUT_INDEX_BUFFER
-#define OUTPUT_INDEX_BUFFER 0
-#endif
-
-#ifndef OUTPUT2_INDEX_BUFFER
-#define OUTPUT2_INDEX_BUFFER 0
-#endif
-
 // i will prob only use +
 
 #define LOG_NUM_BANKS 5

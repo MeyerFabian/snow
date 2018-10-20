@@ -19,13 +19,6 @@ layout(local_size_x =X)in;
  * buffer[index].var
  */
 
-#ifndef INPUT_INDEX_BUFFER
-#define INPUT_INDEX_BUFFER 0
-#endif
-
-#ifndef OUTPUT_INDEX_BUFFER
-#define OUTPUT_INDEX_BUFFER 0
-#endif
 
 
 shared UNARY_OP_RETURN_TYPE s_data[gl_WorkGroupSize.x];

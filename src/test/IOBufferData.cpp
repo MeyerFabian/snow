@@ -1,5 +1,5 @@
 #include "IOBufferData.hpp"
-std::vector<Shader::CommandType> IOBufferData::generateCommands() {
+std::vector<Shader::CommandType> IOBufferData::generateCommands(bool abstract) {
   std::vector<Shader::CommandType> vec;
 
   // input buffers
@@ -10,14 +10,25 @@ std::vector<Shader::CommandType> IOBufferData::generateCommands() {
     }
     std::string layout = input + "_AT ";
     if (BufferLayout::AOS == in_buffer[i].info.layout) {
-      vec.insert(vec.end(), {
-                                {PreprocessorCmd::DEFINE, "AOS_LAYOUT"},
+      if (abstract) {
+        vec.insert(vec.end(),
+                   {
+                       {PreprocessorCmd::INCLUDE,
 
-                                {PreprocessorCmd::INCLUDE,
-                                 "\"" + in_buffer[i].info.glsl_filename + "\""},
-                                {PreprocessorCmd::UNDEFINE, "AOS_LAYOUT"},
+                        "\"" + in_buffer[i].info.glsl_filename + "\""},
+                   });
 
-                            });
+      } else {
+        vec.insert(vec.end(),
+                   {
+                       {PreprocessorCmd::DEFINE, "AOS_LAYOUT"},
+
+                       {PreprocessorCmd::INCLUDE,
+                        "\"" + in_buffer[i].info.glsl_filename + "\""},
+                       {PreprocessorCmd::UNDEFINE, "AOS_LAYOUT"},
+
+                   });
+      }
       layout = layout + "AOS";
     } else {
       vec.insert(vec.end(), {
@@ -35,9 +46,15 @@ std::vector<Shader::CommandType> IOBufferData::generateCommands() {
             {PreprocessorCmd::DEFINE,
              std::string(input + "_SIZE ") +
                  std::to_string(in_buffer[i].bufferSize)},
+            {PreprocessorCmd::DEFINE, std::string(input + "VAR_SIZE ") +
+                                          std::to_string(in_buffer[i].varSize)},
             {PreprocessorCmd::DEFINE,
              std::string(input + "_NUM_BUFFER ") +
                  std::to_string(in_buffer[i].bufferNum)},
+            {PreprocessorCmd::DEFINE,
+             std::string(input + "_INDEX_BUFFER ") +
+                 std::to_string(in_buffer[i].bufferIndex)},
+
             {PreprocessorCmd::DEFINE, layout},
 
         });
@@ -81,13 +98,25 @@ std::vector<Shader::CommandType> IOBufferData::generateCommands() {
              std::string(output + "_SIZE ") +
                  std::to_string(out_buffer[i].bufferSize)},
             {PreprocessorCmd::DEFINE,
+             std::string(output + "_VAR_SIZE ") +
+                 std::to_string(out_buffer[i].varSize)},
+
+            {PreprocessorCmd::DEFINE,
              std::string(output + "_NUM_BUFFER ") +
                  std::to_string(out_buffer[i].bufferNum)},
+
+            {PreprocessorCmd::DEFINE,
+             std::string(output + "_INDEX_BUFFER ") +
+                 std::to_string(out_buffer[i].bufferIndex)},
+
             {PreprocessorCmd::DEFINE, layout},
         });
   }
 
   // return combined commands
   return vec;
+}
+std::vector<Shader::CommandType> IOBufferData::generateCommands() {
+  return generateCommands(false);
 }
 

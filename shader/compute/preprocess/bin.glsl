@@ -23,20 +23,6 @@ uniform uint bufferSize;
  * buffer[index].var
  */
 
-#ifndef INPUT_INDEX_BUFFER
-#define INPUT_INDEX_BUFFER 0
-#endif
-
-#ifndef OUTPUT_INDEX_BUFFER
-#define OUTPUT_INDEX_BUFFER 0
-#endif
-
-
-#ifndef OUTPUT2_INDEX_BUFFER
-#define OUTPUT2_INDEX_BUFFER 0
-#endif
-
-
 void main(void){
 	uint i = gl_GlobalInvocationID.x;
 	if(i>=bufferSize){

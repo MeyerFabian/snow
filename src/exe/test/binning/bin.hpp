@@ -129,7 +129,7 @@ OutputData test(testData& data) {
               "gridOffsets",
               "GridOffset_i",
               output2.get_buffer_info(),
-              data.numGridPoints,
+              data.numVectors,
           },
       },
   };

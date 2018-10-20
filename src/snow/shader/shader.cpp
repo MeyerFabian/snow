@@ -5,7 +5,6 @@ Shader::Shader(ShaderType t, const std::string &filename)
   if (t == ShaderType::COMPUTE) {
   }
 
-  add_access_include();
 #ifdef DOUBLE_PREC
   add_prec_define();
 #endif
@@ -74,6 +73,7 @@ void Shader::load_shader_from_file() {
 
   if (type == ShaderType::COMPUTE) {
     // Local size of the shader: "#define X (int)" will always be defined.
+    add_access_include();
     add_local_size();
   }
 

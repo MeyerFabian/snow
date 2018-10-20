@@ -8,7 +8,9 @@ struct BufferData {
   std::string var;
   BufferInfo info;
   GLuint bufferSize;
+  GLuint bufferIndex = 0;
   GLuint bufferNum = 1;
+  GLuint varSize = 1;
 };
 
 struct IOBufferData {
@@ -19,6 +21,7 @@ struct IOBufferData {
   std::vector<BufferData> out_buffer;
 
   std::vector<Shader::CommandType> generateCommands();
+  std::vector<Shader::CommandType> generateCommands(bool);
 };
 #endif /* end of include guard: IOBUFFERDATA_HPP_FHDBM2YC */
 

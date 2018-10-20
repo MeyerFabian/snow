@@ -20,13 +20,6 @@ layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
 
 uniform uint bufferSize;
 
-#ifndef INPUT_INDEX_BUFFER
-#define INPUT_INDEX_BUFFER 0
-#endif
-
-#ifndef OUTPUT_INDEX_BUFFER
-#define OUTPUT_INDEX_BUFFER 0
-#endif
 
 void main(void){
 	uint i= gl_GlobalInvocationID.x;
