@@ -5,7 +5,9 @@ void ScanPipeline::init(ScanTechnique::ScanData&& scan_data,
   raking = scan_data.raking;
 
   buffer_size_local = scan_data.numVectors;
-  buffer_size_block = buffer_size_local / scan_data.local_size.x / raking / 2;
+
+  block_size = scan_data.local_size.x * raking * 2;
+  buffer_size_block = buffer_size_local / block_size;
 
   ScanTechnique::ScanData scan_block_data = scan_data;
   std::vector<BufferData> block_buffer = {io2.out_buffer[1]};
@@ -15,6 +17,7 @@ void ScanPipeline::init(ScanTechnique::ScanData&& scan_data,
   localScan.init(std::move(scan_data), std::move(io2));
   blockScan.init(std::move(scan_block_data), std::move(io));
 }
+GLuint ScanPipeline::get_scan_block_size() { return block_size; }
 
 // 2 levels is enough for tiles(block) -> voxel(local)
 void ScanPipeline::run(GLuint numValues) {

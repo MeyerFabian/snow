@@ -12,12 +12,15 @@ class ScanPipeline {
   void run(GLuint numVectors);
   void runNoSeqAdd(GLuint numVectors);
 
+  GLuint get_scan_block_size();
+
  private:
   LocalSize local_size;
   ScanTechnique blockScan;
   ScanTechnique localScan;
   GLuint buffer_size_local;
   GLuint buffer_size_block;
+  GLuint block_size;
   GLuint raking;
   GLuint numValues;
 };

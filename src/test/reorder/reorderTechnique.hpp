@@ -15,8 +15,7 @@ class ReorderTechnique : public Technique {
   struct ReorderData {
     LocalSize local_size;
     std::string filename;
-    GLuint numVectors;
-    GLuint raking = 1;
+    GLuint scan_block_size;
   };
 
   struct DispatchData {
@@ -24,10 +23,20 @@ class ReorderTechnique : public Technique {
     GLuint dispatchDim_x;
   };
 
+  struct UniformsStatic {
+    GLuint scanBlockSize;
+  };
+
+  struct UniformsDynamic {
+    GLuint bufferSize;
+  };
+
   void init(ReorderData&& data, IOBufferData&& io);
   void dispatch_with_barrier(GLuint numVectors);
   void dispatch_with_barrier(DispatchData&& data) const;
-  void uniforms_update(DispatchData&& uniforms) const;
+  void uniforms_update(UniformsDynamic&& uniforms) const;
+
+  void uniforms_init(UniformsStatic&& uniforms) const;
 };
 #endif
 

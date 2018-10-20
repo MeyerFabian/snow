@@ -17,6 +17,7 @@
 #include "../../../snow/utils/benchmarker.hpp"
 #include "../../../test/binning/binTechnique.hpp"
 #include "../../../test/map/mapTechnique.hpp"
+#include "../../../test/reorder/reorderTechnique.hpp"
 #include "../../../test/scan/ScanPipeline.hpp"
 #include "../../../test/test_util.hpp"
 
@@ -215,6 +216,38 @@ OutputData test(testData& data) {
   scanPipeline.init(std::move(scan_data), std::move(scan_io));
 
   // reorder
+  ReorderTechnique::ReorderData{
+      // LocalSize local_size;
+      {1024, 1, 1},
+      // std::string filename;
+      "shader/compute/preprocess/reorder.glsl",
+      // GLuint scan_block_size;
+      scanPipeline.get_scan_block_size(),
+  };
+
+  IOBufferData reorder_io{
+      {
+          // in
+          {
+              // INPUT offsets
+          },
+          {
+              // INPUT2 scan_local
+          },
+          {
+              // INPUT3 scan_block
+          },
+          {
+              // INPUT3+X container to sort
+          },
+      },
+      {
+          // out
+          {
+              // OUTPUTX container to put sort
+          },
+      },
+  };
 
   // execute test / dispatches
   BenchmarkerCPU bench;
@@ -243,6 +276,7 @@ OutputData test(testData& data) {
       // scan
       scanPipeline.run(numGridPoints);
       // reorder
+      // uniform for reorder
     });
   });
 

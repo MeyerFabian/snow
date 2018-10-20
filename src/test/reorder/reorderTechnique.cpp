@@ -16,15 +16,19 @@ void ReorderTechnique::init(ReorderData&& data, IOBufferData&& io) {
   Technique::add_shader(std::move(shader));
   Technique::upload();
   Technique::use();
+  uniforms_init({data.scan_block_size});
 }
 void ReorderTechnique::dispatch_with_barrier(DispatchData&& data) const {
   Technique::use();
   GLuint dispatchDim_x = data.dispatchDim_x;
-  uniforms_update(std::move(data));
+  uniforms_update({data.bufferSize});
   glDispatchCompute(dispatchDim_x, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
-void ReorderTechnique::uniforms_update(DispatchData&& uniforms) const {
+void ReorderTechnique::uniforms_update(UniformsDynamic&& uniforms) const {
   Technique::uniform_update("bufferSize", uniforms.bufferSize);
+}
+void ReorderTechnique::uniforms_init(UniformsStatic&& uniforms) const {
+  Technique::uniform_update("scanBlockSize", uniforms.scanBlockSize);
 }
 
