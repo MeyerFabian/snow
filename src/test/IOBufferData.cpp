@@ -46,8 +46,8 @@ std::vector<Shader::CommandType> IOBufferData::generateCommands(bool abstract) {
             {PreprocessorCmd::DEFINE,
              std::string(input + "_SIZE ") +
                  std::to_string(in_buffer[i].bufferSize)},
-            {PreprocessorCmd::DEFINE, std::string(input + "VAR_SIZE ") +
-                                          std::to_string(in_buffer[i].varSize)},
+            {PreprocessorCmd::DEFINE,
+             input + "VAR_SIZE " + in_buffer[i].var_size_def},
             {PreprocessorCmd::DEFINE,
              std::string(input + "_NUM_BUFFER ") +
                  std::to_string(in_buffer[i].bufferNum)},
@@ -98,8 +98,7 @@ std::vector<Shader::CommandType> IOBufferData::generateCommands(bool abstract) {
              std::string(output + "_SIZE ") +
                  std::to_string(out_buffer[i].bufferSize)},
             {PreprocessorCmd::DEFINE,
-             std::string(output + "_VAR_SIZE ") +
-                 std::to_string(out_buffer[i].varSize)},
+             output + "_VAR_SIZE " + out_buffer[i].var_size_def},
 
             {PreprocessorCmd::DEFINE,
              std::string(output + "_NUM_BUFFER ") +

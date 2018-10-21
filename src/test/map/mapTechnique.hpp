@@ -15,6 +15,7 @@ class MapTechnique : public Technique {
   };
 
   void init(MapData&& data);
+  void dispatch(GLuint numVectors);
   void dispatch_with_barrier(GLuint numVectors);
 };
 #endif

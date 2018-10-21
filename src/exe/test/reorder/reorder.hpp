@@ -88,6 +88,50 @@ OutputData test(testData& data) {
   /**********************************************************************
    *                    Techniques + IOData creation                    *
    **********************************************************************/
+  BufferData counter_i = {
+      "counters",
+      "Counter_i",
+      binning_buffer.get_buffer_info(),
+      data.numGridPoints,
+  };
+  BufferData gridOffset_i = {
+      "gridOffsets",
+      "GridOffset_i",
+      grid_offset_buffer.get_buffer_info(),
+      data.numParticles,
+  };
+
+  // DOUBLE BUFFER
+  BufferData Particle_pos_unsorted = {
+      "particles",
+      "Particle_pos_mass",
+      particle_buffer.get_buffer_info(),
+      data.numParticles,
+      0,
+      2,
+  };
+  BufferData Particle_pos_sorted = {
+      "particles",
+      "Particle_pos_mass",
+      particle_buffer.get_buffer_info(),
+      data.numParticles,
+      1,  //!
+      2,
+      "Particle_exp_size",
+  };
+  BufferData Scan_local_i = {
+      "scans",
+      "Scan_local_i",
+      scan_buffer.get_buffer_info(),
+      data.numGridPoints,
+  };
+  BufferData Scan_block_i = {
+      // OUTPUT2
+      "scans",
+      "Scan_block_i",
+      scan_buffer.get_buffer_info(),
+      data.numGridPoints,
+  };
 
   // map (reset counter)
   MapTechnique::MapData map_data{
@@ -95,30 +139,37 @@ OutputData test(testData& data) {
       "0",
       // IOBufferData
       IOBufferData(
+          //   In
           {
-
-              //   In
-              {
-                  // INPUT
-                  "counters",
-                  "Counter_i",
-                  binning_buffer.get_buffer_info(),
-                  data.numGridPoints,
-              },
+              counter_i,  // INPUT
           },
+          //   Out
           {
-              //   Out
-              {
-                  // OUTPUT
-                  "counters",
-                  "Counter_i",
-                  binning_buffer.get_buffer_info(),
-                  data.numGridPoints,
-              },
+              counter_i,  // OUTPUT
           }),
   };
+
   auto resetCounter = MapTechnique();
   resetCounter.init(std::move(map_data));
+
+  // resetGridOffset
+  MapTechnique::MapData reset_offset_data{
+      // unary_op
+      "0",
+      // IOBufferData
+      IOBufferData(
+          //   In
+          {
+              gridOffset_i,  // INPUT
+          },
+          //   Out
+          {
+              gridOffset_i,  // OUTPUT
+          }),
+  };
+  auto resetOffsets = MapTechnique();
+  resetOffsets.init(std::move(reset_offset_data));
+
   // bin
   BinningTechnique::BinningData binning_data{
       {
@@ -128,34 +179,14 @@ OutputData test(testData& data) {
       },
   };
   IOBufferData map_io{
+      // in
       {
-          // in
-          {
-              // INPUT
-              "particles",
-              "Particle_pos_mass",
-              particle_buffer.get_buffer_info(),
-              data.numParticles,
-          },
+          Particle_pos_unsorted,  // INPUT
       },
+      // out
       {
-          // out
-          {
-
-              // OUTPUT
-              "counters",
-              "Counter_i",
-              binning_buffer.get_buffer_info(),
-              data.numGridPoints,
-          },
-          {
-
-              // OUTPUT2
-              "gridOffsets",
-              "GridOffset_i",
-              grid_offset_buffer.get_buffer_info(),
-              data.numParticles,
-          },
+          counter_i,     // OUTPUT
+          gridOffset_i,  // OUTPUT2
       },
   };
   auto binCount = BinningTechnique();
@@ -182,33 +213,16 @@ OutputData test(testData& data) {
   };
 
   IOBufferData scan_io{
+      // in
       {
-          // in
-          {
-              // INPUT
-              "counters",
-              "Counter_i",
-              binning_buffer.get_buffer_info(),
-              data.numGridPoints,
-          },
+          // INPUT
+          counter_i,
       },
+      // out
       {
-
-          // out
-          {
-              // OUTPUT
-              "scans",
-              "Scan_local_i",
-              scan_buffer.get_buffer_info(),
-              data.numGridPoints,
-          },
-          {
-              // OUTPUT2
-              "scans",
-              "Scan_block_i",
-              scan_buffer.get_buffer_info(),
-              data.numGridPoints,
-          },
+          // OUTPUT
+          Scan_local_i,
+          Scan_block_i,
       },
   };
 
@@ -216,56 +230,68 @@ OutputData test(testData& data) {
   scanPipeline.init(std::move(scan_data), std::move(scan_io));
 
   // reorder
-  ReorderTechnique::ReorderData{
+  ReorderTechnique::ReorderData reorder_data{
       // LocalSize local_size;
       {1024, 1, 1},
       // std::string filename;
       "shader/compute/preprocess/reorder.glsl",
       // GLuint scan_block_size;
       scanPipeline.get_scan_block_size(),
+      data.gGridPos,
+      data.gGridDim,
+      data.gridSpacing,
   };
 
   IOBufferData reorder_io{
+      // in
       {
-          // in
-          {
-              // INPUT offsets
-          },
-          {
-              // INPUT2 scan_local
-          },
-          {
-              // INPUT3 scan_block
-          },
-          {
-              // INPUT3+X container to sort
-          },
+          // INPUT offsets
+          gridOffset_i,
+          // INPUT2 scan_local
+          Scan_local_i,
+          // INPUT3 scan_block
+          Scan_block_i,
+          // INPUT4 container to sort
+          Particle_pos_unsorted,
+
       },
+      // out
       {
-          // out
-          {
-              // OUTPUTX container to put sort
-          },
+          // OUTPUT container to put sort
+          Particle_pos_sorted,
       },
   };
 
-  // execute test / dispatches
+  auto reordering = ReorderTechnique();
+  reordering.init(std::move(reorder_data), std::move(reorder_io));
+
+  /**********************************************************************
+   *                         execute dispatches                         *
+   **********************************************************************/
+
   BenchmarkerCPU bench;
-  bench.time("Total CPU time spent", [&resetCounter,  // reset
+  bench.time("Total CPU time spent", [&resetCounter,  // resetcnt
+                                      &resetOffsets,  // resetoff
                                       &binCount,      // bin
                                       &scanPipeline,  // scan
-                                      // reorder
+                                      &reordering,    // reorder
                                       numParticles = data.numParticles,
                                       numGridPoints = data.numGridPoints]() {
     executeTest(1, [&resetCounter,  // reset
+                    &resetOffsets,  // resetoff
                     &binCount,      // bin
                     &scanPipeline,  // scan
-                                    // reorder
+                    &reordering,    // reorder
                     numParticles, numGridPoints]() {
       // reset
       BenchmarkerGPU::getInstance().time(
           "resetCounter", [&resetCounter, numGridPoints]() {
             resetCounter.dispatch_with_barrier(numGridPoints);
+          });
+      // reset
+      BenchmarkerGPU::getInstance().time(
+          "resetOffsets", [&resetOffsets, numParticles]() {
+            resetOffsets.dispatch_with_barrier(numParticles);
           });
 
       // bin
@@ -276,7 +302,10 @@ OutputData test(testData& data) {
       // scan
       scanPipeline.run(numGridPoints);
       // reorder
-      // uniform for reorder
+      BenchmarkerGPU::getInstance().time(
+          "Reorder Particles", [&reordering, numParticles]() {
+            reordering.dispatch_with_barrier({numParticles});
+          });
     });
   });
 

@@ -5,12 +5,19 @@ int main() {
   std::vector<Particle_exp> particles;
   std::vector<Particle_exp_2> particles2;
   std::vector<GLuint> grid_offset;
+  // DOUBLE BUFFER
   for (size_t i = 0; i < numParticles; i++) {
+    particles2.push_back({{(float)i, 0.0f, 0.0f, 0.0f}});
+    // 0
     particles.push_back(
         {PREC_VEC_TYPE(glm::linearRand(0.0f, 1.0f), glm::linearRand(0.0f, 1.0f),
                        glm::linearRand(0.0f, 1.0f), 0.0f)});
-    particles2.push_back({{(float)i, 0.0f, 0.0f, 0.0f}});
     grid_offset.push_back({0});
+  }
+  for (size_t i = 0; i < numParticles; i++) {
+    // 1
+    particles.push_back({{}});
+    particles2.push_back({{}});
   }
 
   PREC_VEC3_TYPE gGridPos(0.0, 0.0, 0.0);

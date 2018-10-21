@@ -10,7 +10,7 @@ struct BufferData {
   GLuint bufferSize;
   GLuint bufferIndex = 0;
   GLuint bufferNum = 1;
-  GLuint varSize = 1;
+  std::string var_size_def = "1";
 };
 
 struct IOBufferData {

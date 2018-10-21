@@ -17,11 +17,14 @@ void MapTechnique::init(MapData&& data) {
   Technique::upload();
   Technique::use();
 }
-void MapTechnique::dispatch_with_barrier(GLuint numVectors) {
+void MapTechnique::dispatch(GLuint numVectors) {
   Technique::use();
   Technique::uniform_update("bufferSize", numVectors);
   glDispatchCompute(numVectors / local_size.x + 1, 1 / local_size.y,
                     1 / local_size.z);
+}
+void MapTechnique::dispatch_with_barrier(GLuint numVectors) {
+  dispatch(numVectors);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
 

@@ -16,15 +16,20 @@ class ReorderTechnique : public Technique {
     LocalSize local_size;
     std::string filename;
     GLuint scan_block_size;
+    PREC_VEC3_TYPE gGridPos;
+    glm::uvec3 gGridDim;
+    PREC_SCAL_TYPE gridSpacing;
   };
 
   struct DispatchData {
     GLuint bufferSize;
-    GLuint dispatchDim_x;
   };
 
   struct UniformsStatic {
     GLuint scanBlockSize;
+    PREC_VEC3_TYPE gGridPos;
+    glm::uvec3 gGridDim;
+    PREC_SCAL_TYPE gridSpacing;
   };
 
   struct UniformsDynamic {
@@ -32,7 +37,6 @@ class ReorderTechnique : public Technique {
   };
 
   void init(ReorderData&& data, IOBufferData&& io);
-  void dispatch_with_barrier(GLuint numVectors);
   void dispatch_with_barrier(DispatchData&& data) const;
   void uniforms_update(UniformsDynamic&& uniforms) const;
 
