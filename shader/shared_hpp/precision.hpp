@@ -1,3 +1,4 @@
+// this file should be renamed to sth that expresses c-type to glsl type mapping
 #ifndef PREC_TYPE
 #define PREC_TYPE
 #ifdef GLSL

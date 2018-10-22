@@ -3,16 +3,11 @@
 // INPUT    offsets		  [N]
 // INPUT2   scan on local level	  [M]
 // INPUT3   scan on block level	  [M]
-// INPUT3+X container to sort     [N] ->| Double-
-// OUTPUTX  container to put sort [N] ->| Buffer prob.
+// INPUT4   container to sort     [N]
+// OUTPUT   key sorted            [N]
 //
 // add.:
 // INPUT4_VAR needs position variable
-// and object of
-// INPUT4 == OUTPUT
-// INPUT5 == OUTPUT2
-// ...
-// etc.
 
 #include "shader/shared_hpp/voxel_tile_size.hpp"
 #include "shader/compute/indexing/gridIndex.include.glsl"
@@ -53,19 +48,7 @@ void main(void){
 		uint scanOffset =
 			INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,unsortedIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER,INPUT_VAR_SIZE);
 		uint sortedIndex = scanIndex + scanOffset;
-		for(int var=0; var<OUTPUT_VAR_SIZE;var++){
-			OUTPUT_AT(OUTPUT,var,OUTPUT_SIZE,sortedIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER,OUTPUT_VAR_SIZE) = INPUT4_AT(INPUT4,var,INPUT4_SIZE,unsortedIndex,INPUT4_NUM_BUFFER,INPUT4_INDEX_BUFFER,INPUT4_VAR_SIZE);
-		}
-#ifdef OUTPUT2
-		for(int var=0; var<OUTPUT2_VAR_SIZE;var++){
-			OUTPUT2_AT(OUTPUT2,var,OUTPUT2_SIZE,sortedIndex,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER,OUTPUT2_VAR_SIZE) = INPUT5_AT(INPUT5,var,INPUT5_SIZE,unsortedIndex,INPUT5_NUM_BUFFER,INPUT5_INDEX_BUFFER,INPUT5_VAR_SIZE);
-		}
-#endif
 
-#ifdef OUTPUT3
-		for(int var=0; var<OUTPUT3_VAR_SIZE;var++){
-			OUTPUT3_AT(OUTPUT3,var,OUTPUT3_SIZE,sortedIndex,OUTPUT3_NUM_BUFFER,OUTPUT3_INDEX_BUFFER,OUTPUT3_VAR_SIZE) = INPUT6_AT(INPUT6,var,INPUT6_SIZE,unsortedIndex,INPUT6_NUM_BUFFER,INPUT6_INDEX_BUFFER,INPUT6_VAR_SIZE);
-		}
-#endif
+		OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,sortedIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER,OUTPUT_VAR_SIZE) = voxelAndTileIndex;
 	}
 }

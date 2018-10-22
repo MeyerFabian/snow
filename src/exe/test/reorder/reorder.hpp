@@ -10,6 +10,10 @@
 #include "../../../snow/shader/shader.hpp"
 #endif
 
+#ifdef REORDER_SINGLE
+#include "../../src/snow/particle/particle_indices.hpp"
+#endif
+
 #include "../../src/snow/buffer/c_scan.hpp"
 #include "../../src/snow/particle/particle_exp.hpp"
 
@@ -27,7 +31,11 @@ struct testData {
   std::vector<Particle_exp> particles;
   std::vector<Particle_exp_2> particles2;
   std::vector<GLuint> binning;
-  std::vector<GLuint> grid_offset;
+#ifdef REORDER_SINGLE
+  std::vector<ParticleIndices> particle_indices;
+#else
+  std::vector<GLuint> particle_indices;
+#endif
   std::vector<Scan> scan;
   glm::uvec3 gGridDim;
   PREC_VEC3_TYPE gGridPos;
@@ -35,6 +43,11 @@ struct testData {
 };
 struct OutputData {
   std::vector<Particle_exp> particles;
+#ifdef REORDER_SINGLE
+  std::vector<ParticleIndices> particle_indices;
+#else
+  std::vector<GLuint> particle_indices;
+#endif
 };
 
 OutputData test(testData& data) {
@@ -71,13 +84,22 @@ OutputData test(testData& data) {
   binning_buffer.transfer_to_gpu(data.binning);
   binning_buffer.gl_bind_base(ATOMIC_COUNTER_BINDING);
 
-  // grid_offset
-  Buffer<GLuint> grid_offset_buffer(
+  // particle_indices
+#ifdef REORDER_SINGLE
+  Buffer<ParticleIndices> particle_indices_buffer(
+      BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
+      "shader/buffers/particle_keys.include.glsl");
+  particle_indices_buffer.transfer_to_gpu(data.particle_indices);
+  particle_indices_buffer.gl_bind_base(PARTICLE_INDICES_BINDING);
+
+#else
+  Buffer<GLuint> particle_indices_buffer(
       BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
       "shader/buffers/particle_grid_offset.include.glsl");
-  grid_offset_buffer.transfer_to_gpu(data.grid_offset);
-  grid_offset_buffer.gl_bind_base(GRID_OFFSET_BINDING);
+  particle_indices_buffer.transfer_to_gpu(data.particle_indices);
+  particle_indices_buffer.gl_bind_base(PARTICLE_INDICES_BINDING);
 
+#endif
   // scan
 
   Buffer<Scan> scan_buffer(BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
@@ -95,12 +117,23 @@ OutputData test(testData& data) {
       data.numGridPoints,
   };
   BufferData gridOffset_i = {
-      "gridOffsets",
+      "particle_indices",
       "GridOffset_i",
-      grid_offset_buffer.get_buffer_info(),
+      particle_indices_buffer.get_buffer_info(),
       data.numParticles,
+      0,
+      1,
+      "ParticleIndices_VAR_SIZE",
   };
-
+  BufferData unsortedIndex_i = {
+      "particle_indices",
+      "UnsortedIndex_i",
+      particle_indices_buffer.get_buffer_info(),
+      data.numParticles,
+      0,
+      1,
+      "ParticleIndices_VAR_SIZE",
+  };
   // DOUBLE BUFFER
   BufferData Particle_pos_unsorted = {
       "particles",
@@ -109,6 +142,7 @@ OutputData test(testData& data) {
       data.numParticles,
       0,
       2,
+      "Particle_exp_size",
   };
   BufferData Particle_pos_sorted = {
       "particles",
@@ -119,11 +153,30 @@ OutputData test(testData& data) {
       2,
       "Particle_exp_size",
   };
+  BufferData Particle_2_unsorted = {
+      "particles_2",         "", particle_buffer.get_buffer_info(),
+      data.numParticles,     0,  2,
+
+      "Particle_exp_2_size",
+  };
+  BufferData Particle_2_sorted = {
+      "particles_2",
+      "",
+      particle_buffer.get_buffer_info(),
+      data.numParticles,
+      1,  //!
+      2,
+      "Particle_exp_2_size",
+  };
+
   BufferData Scan_local_i = {
       "scans",
       "Scan_local_i",
       scan_buffer.get_buffer_info(),
       data.numGridPoints,
+      0,
+      1,
+      "Scan_VAR_SIZE",
   };
   BufferData Scan_block_i = {
       // OUTPUT2
@@ -131,6 +184,9 @@ OutputData test(testData& data) {
       "Scan_block_i",
       scan_buffer.get_buffer_info(),
       data.numGridPoints,
+      0,
+      1,
+      "Scan_VAR_SIZE",
   };
 
   // map (reset counter)
@@ -151,25 +207,6 @@ OutputData test(testData& data) {
 
   auto resetCounter = MapTechnique();
   resetCounter.init(std::move(map_data));
-
-  // resetGridOffset
-  MapTechnique::MapData reset_offset_data{
-      // unary_op
-      "0",
-      // IOBufferData
-      IOBufferData(
-          //   In
-          {
-              gridOffset_i,  // INPUT
-          },
-          //   Out
-          {
-              gridOffset_i,  // OUTPUT
-          }),
-  };
-  auto resetOffsets = MapTechnique();
-  resetOffsets.init(std::move(reset_offset_data));
-
   // bin
   BinningTechnique::BinningData binning_data{
       {
@@ -233,8 +270,16 @@ OutputData test(testData& data) {
   ReorderTechnique::ReorderData reorder_data{
       // LocalSize local_size;
       {1024, 1, 1},
-      // std::string filename;
+  // std::string filename;
+#ifdef REORDER_SINGLE
+#ifdef REORDER_KEYS
+      "shader/compute/preprocess/reorder_keys.glsl",
+#else  // REORDER_INDICES
+      "shader/compute/preprocess/reorder_indices.glsl",
+#endif
+#else
       "shader/compute/preprocess/reorder.glsl",
+#endif
       // GLuint scan_block_size;
       scanPipeline.get_scan_block_size(),
       data.gGridPos,
@@ -253,12 +298,18 @@ OutputData test(testData& data) {
           Scan_block_i,
           // INPUT4 container to sort
           Particle_pos_unsorted,
+          Particle_2_unsorted,
 
       },
       // out
       {
-          // OUTPUT container to put sort
+  // OUTPUT container to put sort
+#ifdef REORDER_SINGLE
+          unsortedIndex_i,
+#else
           Particle_pos_sorted,
+          Particle_2_sorted,
+#endif
       },
   };
 
@@ -271,29 +322,21 @@ OutputData test(testData& data) {
 
   BenchmarkerCPU bench;
   bench.time("Total CPU time spent", [&resetCounter,  // resetcnt
-                                      &resetOffsets,  // resetoff
                                       &binCount,      // bin
                                       &scanPipeline,  // scan
                                       &reordering,    // reorder
                                       numParticles = data.numParticles,
                                       numGridPoints = data.numGridPoints]() {
-    executeTest(1, [&resetCounter,  // reset
-                    &resetOffsets,  // resetoff
-                    &binCount,      // bin
-                    &scanPipeline,  // scan
-                    &reordering,    // reorder
-                    numParticles, numGridPoints]() {
+    executeTest(10'000, [&resetCounter,  // reset
+                         &binCount,      // bin
+                         &scanPipeline,  // scan
+                         &reordering,    // reorder
+                         numParticles, numGridPoints]() {
       // reset
       BenchmarkerGPU::getInstance().time(
           "resetCounter", [&resetCounter, numGridPoints]() {
             resetCounter.dispatch_with_barrier(numGridPoints);
           });
-      // reset
-      BenchmarkerGPU::getInstance().time(
-          "resetOffsets", [&resetOffsets, numParticles]() {
-            resetOffsets.dispatch_with_barrier(numParticles);
-          });
-
       // bin
       BenchmarkerGPU::getInstance().time(
           "Counter", [&binCount, numParticles]() {
@@ -301,6 +344,7 @@ OutputData test(testData& data) {
           });
       // scan
       scanPipeline.run(numGridPoints);
+
       // reorder
       BenchmarkerGPU::getInstance().time(
           "Reorder Particles", [&reordering, numParticles]() {
@@ -316,8 +360,10 @@ OutputData test(testData& data) {
 
   // get buffer from gpu
   auto par1 = particle_buffer.transfer_to_cpu(std::size(data.particles));
+  auto particle_index =
+      particle_indices_buffer.transfer_to_cpu(std::size(data.particle_indices));
 
   GLFWWindow::swapBuffers();
-  return {par1};
+  return {par1, particle_index};
 }
 

@@ -99,7 +99,7 @@ OutputData test(testData& data) {
   Buffer<GLuint> output2(BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
                          BUFFER_OUT2_NAME);
   output2.transfer_to_gpu(data.grid_offset);
-  output2.gl_bind_base(GRID_OFFSET_BINDING);
+  output2.gl_bind_base(PARTICLE_INDICES_BINDING);
 
   // IOBufferData
   IOBufferData io_data{
@@ -126,7 +126,7 @@ OutputData test(testData& data) {
           {
 
               // OUTPUT2
-              "gridOffsets",
+              "particle_indices",
               "GridOffset_i",
               output2.get_buffer_info(),
               data.numVectors,

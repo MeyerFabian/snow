@@ -47,7 +47,7 @@ std::vector<Shader::CommandType> IOBufferData::generateCommands(bool abstract) {
              std::string(input + "_SIZE ") +
                  std::to_string(in_buffer[i].bufferSize)},
             {PreprocessorCmd::DEFINE,
-             input + "VAR_SIZE " + in_buffer[i].var_size_def},
+             input + "_VAR_SIZE " + in_buffer[i].var_size_def},
             {PreprocessorCmd::DEFINE,
              std::string(input + "_NUM_BUFFER ") +
                  std::to_string(in_buffer[i].bufferNum)},

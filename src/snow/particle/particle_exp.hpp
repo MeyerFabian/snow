@@ -18,5 +18,5 @@
 #include "../../../shader/buffers/structs/particle.include.glsl"
 #endif
 
-#endif /* end of include guard: GPU_IN_OUT_STRUCTS_HPP */
+#endif /* end of include guard: PARTICLE_EXP_HPP */
 

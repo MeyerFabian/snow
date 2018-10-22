@@ -2,7 +2,7 @@
 #define DEFINES_H
 
 #define BENCHMARK
-#define MARKERS
+//#define MARKERS
 //#define NDEBUG
 
 //#define DOUBLE_PREC
