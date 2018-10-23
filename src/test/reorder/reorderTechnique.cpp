@@ -1,6 +1,7 @@
 #include "reorderTechnique.hpp"
 void ReorderTechnique::init(ReorderData&& data, IOBufferData&& io) {
   local_size = data.local_size;
+  dw_back = data.dw_back;
   auto shader = std::make_shared<Shader>(ShaderType::COMPUTE, data.filename);
 
   shader->set_local_size(local_size);
@@ -8,6 +9,10 @@ void ReorderTechnique::init(ReorderData&& data, IOBufferData&& io) {
   std::vector<Shader::CommandType> vec = {
       {PreprocessorCmd::DEFINE, "ABSTRACT_LAYOUT"},
   };
+  if (dw_back) {
+    vec.insert(std::end(vec),
+               {PreprocessorCmd::DEFINE, "SCAN_DIRECT_WRITE_BACK"});
+  }
   auto io_cmds(io.generateCommands(true));
   vec.insert(std::end(vec), std::begin(io_cmds), std::end(io_cmds));
 
@@ -33,6 +38,8 @@ void ReorderTechnique::uniforms_init(UniformsStatic&& uniforms) const {
                             uniforms.gGridPos.y, uniforms.gGridPos.z);
   Technique::uniform_update("gGridDim", uniforms.gGridDim);
   Technique::uniform_update("gridSpacing", uniforms.gridSpacing);
-  Technique::uniform_update("scanBlockSize", uniforms.scanBlockSize);
+  if (!dw_back) {
+    Technique::uniform_update("scanBlockSize", uniforms.scanBlockSize);
+  }
 }
 

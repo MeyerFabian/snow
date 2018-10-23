@@ -32,11 +32,16 @@ int main() {
       std::begin(data.counter), std::prev(std::end(data.counter)), 0,
       std::plus<>(), [](const auto& elem) { return elem; });
 
+#ifndef SCAN_DIRECT_WRITE_BACK
   std::cout << "block value: "
             << data.scan[numVectors / reduction_factor - 1].Scan_block_i
             << std::endl;
   auto sum_gpu = (*std::prev(std::end(data.scan))).Scan_local_i +
                  data.scan[numVectors / reduction_factor - 1].Scan_block_i;
+#else
+  auto sum_gpu = (*std::prev(std::end(data.scan))).Scan_local_i;
+
+#endif
   std::cout << "cpu reduction (last-1) elem: " << sum_cpu << std::endl;
   std::cout << "gpu scan last elem +last block elem:" << sum_gpu << std::endl;
   std::cout << "diff : " << sum_gpu - sum_cpu << std::endl;

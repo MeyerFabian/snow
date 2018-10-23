@@ -191,6 +191,7 @@ OutputData test(testData& data) {
 
   // map (reset counter)
   MapTechnique::MapData map_data{
+      "shader/compute/mapreduce/map.glsl",
       // unary_op
       "0",
       // IOBufferData
@@ -264,8 +265,11 @@ OutputData test(testData& data) {
   };
 
   auto scanPipeline = ScanPipeline();
+#ifdef SCAN_DIRECT_WRITE_BACK
+  scanPipeline.initDirectWriteBack(std::move(scan_data), std::move(scan_io));
+#else
   scanPipeline.init(std::move(scan_data), std::move(scan_io));
-
+#endif
   // reorder
   ReorderTechnique::ReorderData reorder_data{
       // LocalSize local_size;
@@ -281,10 +285,15 @@ OutputData test(testData& data) {
       "shader/compute/preprocess/reorder.glsl",
 #endif
       // GLuint scan_block_size;
-      scanPipeline.get_scan_block_size(),
       data.gGridPos,
       data.gGridDim,
       data.gridSpacing,
+#ifdef SCAN_DIRECT_WRITE_BACK
+      true,
+#else
+      false,
+      scanPipeline.get_scan_block_size(),
+#endif
   };
 
   IOBufferData reorder_io{
@@ -335,7 +344,7 @@ OutputData test(testData& data) {
       // reset
       BenchmarkerGPU::getInstance().time(
           "resetCounter", [&resetCounter, numGridPoints]() {
-            resetCounter.dispatch_with_barrier(numGridPoints);
+            resetCounter.dispatch_with_barrier({numGridPoints});
           });
       // bin
       BenchmarkerGPU::getInstance().time(

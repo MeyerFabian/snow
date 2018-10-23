@@ -29,7 +29,6 @@ class ScanTechnique : public Technique {
   };
 
   void init(ScanData&& data, IOBufferData&& io);
-  void dispatch_with_barrier(GLuint numVectors);
   void dispatch_with_barrier(DispatchData&& data) const;
   void uniforms_update(DispatchData&& uniforms) const;
 };

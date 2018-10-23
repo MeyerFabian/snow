@@ -1,7 +1,6 @@
 #include "mapTechnique.hpp"
 void MapTechnique::init(MapData&& data) {
-  auto shader = std::make_shared<Shader>(ShaderType::COMPUTE,
-                                         "shader/compute/mapreduce/map.glsl");
+  auto shader = std::make_shared<Shader>(ShaderType::COMPUTE, data.filename);
 
   shader->set_local_size(local_size);
 
@@ -17,14 +16,25 @@ void MapTechnique::init(MapData&& data) {
   Technique::upload();
   Technique::use();
 }
-void MapTechnique::dispatch(GLuint numVectors) {
-  Technique::use();
-  Technique::uniform_update("bufferSize", numVectors);
-  glDispatchCompute(numVectors / local_size.x + 1, 1 / local_size.y,
-                    1 / local_size.z);
+void MapTechnique::uniform_update(UniformsDynamic&& data) {
+  Technique::uniform_update("bufferSize", data.bufferSize);
+  if (multiple) {
+    Technique::uniform_update("dispatchDim_x", data.dispatchDim_x);
+  }
 }
-void MapTechnique::dispatch_with_barrier(GLuint numVectors) {
-  dispatch(numVectors);
+void MapTechnique::dispatch(DispatchData&& data) {
+  Technique::use();
+  multiple = data.multiple;
+  GLuint dispatchDim_x = data.bufferSize / (local_size.x * data.seq_elements);
+  UniformsDynamic uniforms{
+      data.bufferSize,
+      dispatchDim_x,
+  };
+  uniform_update(std::move(uniforms));
+  glDispatchCompute(dispatchDim_x + 1, 1, 1);
+}
+void MapTechnique::dispatch_with_barrier(DispatchData&& data) {
+  dispatch(std::move(data));
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
 

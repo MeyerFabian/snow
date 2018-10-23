@@ -17,6 +17,34 @@ void ScanPipeline::init(ScanTechnique::ScanData&& scan_data,
   localScan.init(std::move(scan_data), std::move(io2));
   blockScan.init(std::move(scan_block_data), std::move(io));
 }
+void ScanPipeline::initDirectWriteBack(ScanTechnique::ScanData&& scan_data,
+                                       IOBufferData&& io2) {
+  // set bool flag for dispatch run
+  dw_back = true;
+  // ScanWriteBack so block_sum gets written back to locals
+  ScanWriteBackTechnique::ScanWriteBackData scan_write_back{
+      scan_data.gl_binary_op,
+      scan_data.numVectors,
+  };
+
+  IOBufferData io = {
+      // in
+      {
+          io2.out_buffer[1],
+      },
+      // out
+      {
+          io2.out_buffer[0],
+      },
+  };
+  ScanPipeline::init(std::move(scan_data), std::move(io2));
+
+  // get_scan_block_size() is ready only after pipeline init
+  scan_write_back.scanBlockSize = get_scan_block_size();
+
+  writeBack.init(std::move(scan_write_back), std::move(io));
+}
+
 GLuint ScanPipeline::get_scan_block_size() { return block_size; }
 
 // 2 levels is enough for tiles(block) -> voxel(local)
@@ -27,17 +55,11 @@ void ScanPipeline::run(GLuint numValues) {
   BenchmarkerGPU::getInstance().time("ScanBlock", [this]() {
     blockScan.dispatch_with_barrier({buffer_size_block, 1});
   });
-}
 
-// 2 levels is enough for tiles(block) -> voxel(local)
-void ScanPipeline::runNoSeqAdd(GLuint numValues) {
-  BenchmarkerGPU::getInstance().time("Scan", [this]() {
-    localScan.dispatch_with_barrier({buffer_size_local, buffer_size_block});
-  });
-
-  // std::cout << "block size: " << buffer_size_block << std::endl;
-  BenchmarkerGPU::getInstance().time("ScanBlock", [this]() {
-    blockScan.dispatch_with_barrier({buffer_size_block, 1});
-  });
+  if (dw_back) {
+    BenchmarkerGPU::getInstance().time("WriteBack", [this, &numValues]() {
+      writeBack.dispatch_with_barrier(numValues);
+    });
+  }
 }
 

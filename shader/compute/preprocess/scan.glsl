@@ -141,7 +141,6 @@ void main(void){
 	}
 	memoryBarrierShared();
 	barrier();
-
 	OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndexLeft,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[tIndex +CONFLICT_FREE_OFFSET(tIndex)];
 	OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndexRight,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[tIndex+X +CONFLICT_FREE_OFFSET(tIndex+X)];
 	// spread out partial scan by MULTIPLE_ELEMENTS stored in raking

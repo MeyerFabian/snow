@@ -1,3 +1,7 @@
+#ifndef MULTIPLE_ELEMENTS
+#define MULTIPLE_ELEMENTS 2
+#endif
+
 #ifndef UNARY_OPERATION_GL
 #include <glm/gtc/random.hpp>
 #include <numeric>
@@ -44,6 +48,11 @@ int main() {
   output.gl_bind_base(2);
   std::string unary_op = UNARY_OPERATION_GL;
   MapTechnique::MapData map_data({
+#ifndef MAP_SINGLE
+      "shader/compute/mapreduce/map.glsl",
+#else
+      "shader/compute/mapreduce/mapSingle.glsl",
+#endif
       // unary_op
       unary_op,
       // IOBufferData
@@ -74,9 +83,14 @@ int main() {
   test.init(std::move(map_data));
   BenchmarkerCPU bench;
   bench.time("Total CPU time spent", [&numVectors, &test]() {
-    executeTest(1, [&test, numVectors]() {
+    executeTest(100'000, [&test, numVectors]() {
       return BenchmarkerGPU::getInstance().time("map", [&test, numVectors]() {
-        test.dispatch_with_barrier(numVectors);
+        test.dispatch_with_barrier({numVectors
+#ifndef MAP_SINGLE
+                                    ,
+                                    true, MULTIPLE_ELEMENTS
+#endif
+        });
       });
     });
   });

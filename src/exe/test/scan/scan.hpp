@@ -95,17 +95,16 @@ void test(testData& data) {
   };
 
   auto scanPipeline = ScanPipeline();
+#ifndef SCAN_DIRECT_WRITE_BACK
   scanPipeline.init(std::move(scan_data), std::move(io_data));
-
+#else
+  scanPipeline.initDirectWriteBack(std::move(scan_data), std::move(io_data));
+#endif
   BenchmarkerCPU bench;
   bench.time("Total CPU time spent",
              [&scanPipeline, numValues = data.numValues]() {
-               executeTest(1, [&scanPipeline, numValues]() {
-#ifndef NO_SEQUENTIAL_ADDS
+               executeTest(10'000, [&scanPipeline, numValues]() {
                  scanPipeline.run(numValues);
-#else 
-		 scanPipeline.runNoSeqAdd(numValues);
-#endif
                });
              });
 

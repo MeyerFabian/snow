@@ -19,15 +19,10 @@ layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
  */
 
 uniform uint bufferSize;
-uniform uint dispatchDim_x;
 
 void main(void){
 	uint i= gl_GlobalInvocationID.x;
-
-	uint dispatchSize = X*dispatchDim_x;;
-	while(i<bufferSize){
-
+	if(i<bufferSize){
 		OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,i,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = UNARY_OP(INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,i,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER));
-		i+= dispatchSize;
 	}
 }

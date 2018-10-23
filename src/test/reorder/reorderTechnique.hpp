@@ -12,13 +12,16 @@ class ReorderTechnique : public Technique {
  public:
   GLuint reduction_factor;
   LocalSize local_size;
+  bool dw_back;
+
   struct ReorderData {
     LocalSize local_size;
     std::string filename;
-    GLuint scan_block_size;
     PREC_VEC3_TYPE gGridPos;
     glm::uvec3 gGridDim;
     PREC_SCAL_TYPE gridSpacing;
+    bool dw_back;
+    GLuint scan_block_size;
   };
 
   struct DispatchData {

@@ -58,6 +58,7 @@ OutputData test(testData& data) {
   output.transfer_to_gpu(data.binning);
   output.gl_bind_base(ATOMIC_COUNTER_BINDING);
   MapTechnique::MapData map_data{
+      "shader/compute/mapreduce/map.glsl",
       // unary_op
       "0",
       // IOBufferData
@@ -167,7 +168,7 @@ OutputData test(testData& data) {
     executeTest(1, [&binCount, &resetCounter, numVectors, numGridPoints]() {
       BenchmarkerGPU::getInstance().time(
           "resetCounter", [&resetCounter, numGridPoints]() {
-            resetCounter.dispatch_with_barrier(numGridPoints);
+            resetCounter.dispatch_with_barrier({numGridPoints});
           });
 
       BenchmarkerGPU::getInstance().time("Counter", [&binCount, numVectors]() {
