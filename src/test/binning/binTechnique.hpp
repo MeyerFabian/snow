@@ -11,7 +11,7 @@
 class BinningTechnique : public Technique {
  public:
   LocalSize local_size = {32, 1, 1};
-
+  bool multiple = false;
   struct UniformsStatic {
     PREC_VEC3_TYPE gGridPos;
     glm::uvec3 gGridDim;
@@ -19,9 +19,13 @@ class BinningTechnique : public Technique {
   };
 
   struct BinningData {
+    std::string filename;
     UniformsStatic uniforms;
+    bool multiple = false;
+    GLuint multiple_elements = 1;
   };
 
+  GLuint multiple_elements = 1;
   void init(BinningData&& data, IOBufferData&&);
   void uniforms_init(UniformsStatic&&);
   void dispatch_with_barrier(GLuint numVectors);

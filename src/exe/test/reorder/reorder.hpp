@@ -134,7 +134,9 @@ OutputData test(testData& data) {
       1,
       "ParticleIndices_VAR_SIZE",
   };
-  // DOUBLE BUFFER
+  // DOUBLE BUFFER switch:
+  // unsorted (0) -> sorted (1)
+  // unsorted (1) -> sorted (0)
   BufferData Particle_pos_unsorted = {
       "particles",
       "Particle_pos_mass",
@@ -210,11 +212,11 @@ OutputData test(testData& data) {
   resetCounter.init(std::move(map_data));
   // bin
   BinningTechnique::BinningData binning_data{
-      {
-          data.gGridPos,
-          data.gGridDim,
-          data.gridSpacing,
-      },
+      "shader/compute/preprocess/bin.glsl",
+      data.gGridPos,
+      data.gGridDim,
+      data.gridSpacing,
+
   };
   IOBufferData map_io{
       // in
@@ -344,7 +346,7 @@ OutputData test(testData& data) {
       // reset
       BenchmarkerGPU::getInstance().time(
           "resetCounter", [&resetCounter, numGridPoints]() {
-            resetCounter.dispatch_with_barrier({numGridPoints});
+            resetCounter.dispatch_with_barrier({numGridPoints, true, 2});
           });
       // bin
       BenchmarkerGPU::getInstance().time(

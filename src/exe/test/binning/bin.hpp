@@ -89,11 +89,19 @@ OutputData test(testData& data) {
   resetCounter.init(std::move(map_data));
 
   BinningTechnique::BinningData binning_data{
-      {
-          data.gGridPos,
-          data.gGridDim,
-          data.gridSpacing,
-      },
+#ifdef MULTIPLE_ELEMENTS
+
+      "shader/compute/preprocess/bin_mult.glsl",
+#else
+      "shader/compute/preprocess/bin.glsl",
+#endif
+      data.gGridPos,
+      data.gGridDim,
+      data.gridSpacing,
+#ifdef MULTIPLE_ELEMENTS
+      true,
+      MULTIPLE_ELEMENTS,
+#endif
   };
 #ifdef OUTPUT2
 
@@ -165,12 +173,12 @@ OutputData test(testData& data) {
   bench.time("Total CPU time spent", [&binCount, numVectors = data.numVectors,
                                       &resetCounter,
                                       numGridPoints = data.numGridPoints]() {
-    executeTest(1, [&binCount, &resetCounter, numVectors, numGridPoints]() {
+    executeTest(10'000, [&binCount, &resetCounter, numVectors,
+                         numGridPoints]() {
       BenchmarkerGPU::getInstance().time(
           "resetCounter", [&resetCounter, numGridPoints]() {
-            resetCounter.dispatch_with_barrier({numGridPoints});
+            resetCounter.dispatch_with_barrier({numGridPoints, true, 2});
           });
-
       BenchmarkerGPU::getInstance().time("Counter", [&binCount, numVectors]() {
         binCount.dispatch_with_barrier(numVectors);
       });
