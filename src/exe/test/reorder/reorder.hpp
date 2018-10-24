@@ -88,7 +88,7 @@ OutputData test(testData& data) {
 #ifdef REORDER_SINGLE
   Buffer<ParticleIndices> particle_indices_buffer(
       BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
-      "shader/buffers/particle_keys.include.glsl");
+      "shader/buffers/particle_indices.include.glsl");
   particle_indices_buffer.transfer_to_gpu(data.particle_indices);
   particle_indices_buffer.gl_bind_base(PARTICLE_INDICES_BINDING);
 
@@ -338,11 +338,11 @@ OutputData test(testData& data) {
                                       &reordering,    // reorder
                                       numParticles = data.numParticles,
                                       numGridPoints = data.numGridPoints]() {
-    executeTest(10'000, [&resetCounter,  // reset
-                         &binCount,      // bin
-                         &scanPipeline,  // scan
-                         &reordering,    // reorder
-                         numParticles, numGridPoints]() {
+    executeTest(1, [&resetCounter,  // reset
+                    &binCount,      // bin
+                    &scanPipeline,  // scan
+                    &reordering,    // reorder
+                    numParticles, numGridPoints]() {
       // reset
       BenchmarkerGPU::getInstance().time(
           "resetCounter", [&resetCounter, numGridPoints]() {
