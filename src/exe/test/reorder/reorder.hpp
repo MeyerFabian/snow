@@ -190,7 +190,6 @@ OutputData test(testData& data) {
       1,
       "Scan_VAR_SIZE",
   };
-
   // map (reset counter)
   MapTechnique::MapData map_data{
       "shader/compute/mapreduce/map.glsl",
