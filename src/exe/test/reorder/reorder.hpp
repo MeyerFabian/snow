@@ -19,12 +19,12 @@
 
 #include <execution>
 #include "../../../snow/utils/benchmarker.hpp"
+#include "../../../test/BufferData.hpp"
 #include "../../../test/binning/binTechnique.hpp"
 #include "../../../test/map/mapTechnique.hpp"
 #include "../../../test/reorder/reorderTechnique.hpp"
 #include "../../../test/scan/ScanPipeline.hpp"
 #include "../../../test/test_util.hpp"
-
 struct testData {
   GLuint numParticles;
   GLuint numGridPoints;
@@ -110,105 +110,53 @@ OutputData test(testData& data) {
   /**********************************************************************
    *                    Techniques + IOData creation                    *
    **********************************************************************/
-  BufferData counter_i = {
-      "counters",
-      "Counter_i",
-      binning_buffer.get_buffer_info(),
-      data.numGridPoints,
-  };
-  BufferData gridOffset_i = {
-      "particle_indices",
-      "GridOffset_i",
-      particle_indices_buffer.get_buffer_info(),
-      data.numParticles,
-      0,
-      1,
-      "ParticleIndices_VAR_SIZE",
-  };
-  BufferData unsortedIndex_i = {
-      "particle_indices",
-      "UnsortedIndex_i",
-      particle_indices_buffer.get_buffer_info(),
-      data.numParticles,
-      0,
-      1,
-      "ParticleIndices_VAR_SIZE",
-  };
-  // DOUBLE BUFFER switch:
-  // unsorted (0) -> sorted (1)
-  // unsorted (1) -> sorted (0)
-  BufferData Particle_pos_unsorted = {
-      "particles",
-      "Particle_pos_mass",
-      particle_buffer.get_buffer_info(),
-      data.numParticles,
-      0,
-      2,
-      "Particle_exp_size",
-  };
-  BufferData Particle_pos_sorted = {
-      "particles",
-      "Particle_pos_mass",
-      particle_buffer.get_buffer_info(),
-      data.numParticles,
-      1,  //!
-      2,
-      "Particle_exp_size",
-  };
-  BufferData Particle_2_unsorted = {
-      "particles_2",         "", particle_buffer.get_buffer_info(),
-      data.numParticles,     0,  2,
+  auto counter_i =
+      BufferData("counters", "Counter_i", binning_buffer.get_buffer_info(),
+                 data.numGridPoints);
+  auto gridOffset_i =
+      BufferData("particle_indices", "GridOffset_i",
+                 particle_indices_buffer.get_buffer_info(), data.numParticles,
+                 1, 0, "ParticleIndices_VAR_SIZE");
+  auto unsortedIndex_i =
+      BufferData("particle_indices", "UnsortedIndex_i",
+                 particle_indices_buffer.get_buffer_info(), data.numParticles,
+                 1, 0, "ParticleIndices_VAR_SIZE");
+  auto Particle_pos_unsorted = BufferData(
+      "particles", "Particle_pos_mass", particle_buffer.get_buffer_info(),
+      data.numParticles, 2, 0, "Particle_exp_size");
+  auto Particle_pos_sorted = BufferData(
+      "particles", "Particle_pos_mass", particle_buffer.get_buffer_info(),
+      data.numParticles, 2, 1, "Particle_exp_size");
+  auto Particle_2_unsorted =
+      BufferData("particles_2", "", particle_buffer.get_buffer_info(),
+                 data.numParticles, 2, 0,
 
-      "Particle_exp_2_size",
-  };
-  BufferData Particle_2_sorted = {
-      "particles_2",
-      "",
-      particle_buffer.get_buffer_info(),
-      data.numParticles,
-      1,  //!
-      2,
-      "Particle_exp_2_size",
-  };
+                 "Particle_exp_2_size");
+  auto Particle_2_sorted =
+      BufferData("particles_2", "", particle_buffer.get_buffer_info(),
+                 data.numParticles, 2, 1, "Particle_exp_2_size");
 
-  BufferData Scan_local_i = {
-      "scans",
-      "Scan_local_i",
-      scan_buffer.get_buffer_info(),
-      data.numGridPoints,
-      0,
-      1,
-      "Scan_VAR_SIZE",
-  };
-  BufferData Scan_block_i = {
-      // OUTPUT2
-      "scans",
-      "Scan_block_i",
-      scan_buffer.get_buffer_info(),
-      data.numGridPoints,
-      0,
-      1,
-      "Scan_VAR_SIZE",
-  };
+  auto Scan_local_i =
+      BufferData("scans", "Scan_local_i", scan_buffer.get_buffer_info(),
+                 data.numGridPoints, 1, 0, "Scan_VAR_SIZE");
+  auto Scan_block_i =
+      BufferData("scans", "Scan_block_i", scan_buffer.get_buffer_info(),
+                 data.numGridPoints, 1, 0, "Scan_VAR_SIZE");
   // map (reset counter)
   MapTechnique::MapData map_data{
       "shader/compute/mapreduce/map.glsl",
       // unary_op
       "0",
-      // IOBufferData
-      IOBufferData(
-          //   In
-          {
-              counter_i,  // INPUT
-          },
-          //   Out
-          {
-              counter_i,  // OUTPUT
-          }),
   };
 
+  IOBufferData io_map;
+  // INPUT
+  io_map.in_buffer.push_back(std::make_unique<BufferData>(counter_i));
+  // OUTPUT
+  io_map.out_buffer.push_back(std::make_unique<BufferData>(counter_i));
+
   auto resetCounter = MapTechnique();
-  resetCounter.init(std::move(map_data));
+  resetCounter.init(std::move(map_data), std::move(io_map));
   // bin
   BinningTechnique::BinningData binning_data{
       "shader/compute/preprocess/bin.glsl",
@@ -217,19 +165,19 @@ OutputData test(testData& data) {
       data.gridSpacing,
 
   };
-  IOBufferData map_io{
-      // in
-      {
-          Particle_pos_unsorted,  // INPUT
-      },
-      // out
-      {
-          counter_i,     // OUTPUT
-          gridOffset_i,  // OUTPUT2
-      },
-  };
+  IOBufferData io_bin;
+  // INPUT
+  io_bin.in_buffer.push_back(
+      std::make_unique<BufferData>(Particle_pos_unsorted));
+
+  // OUTPUT
+  io_bin.out_buffer.push_back(std::make_unique<BufferData>(counter_i));
+
+  // OUTPUT2
+  io_bin.out_buffer.push_back(std::make_unique<BufferData>(gridOffset_i));
+
   auto binCount = BinningTechnique();
-  binCount.init(std::move(binning_data), std::move(map_io));
+  binCount.init(std::move(binning_data), std::move(io_bin));
 
   // scan
 
@@ -251,25 +199,22 @@ OutputData test(testData& data) {
       2,
   };
 
-  IOBufferData scan_io{
-      // in
-      {
-          // INPUT
-          counter_i,
-      },
-      // out
-      {
-          // OUTPUT
-          Scan_local_i,
-          Scan_block_i,
-      },
-  };
+  IOBufferData io_scan;
+
+  // INPUT
+  io_scan.in_buffer.push_back(std::make_unique<BufferData>(counter_i));
+
+  // OUTPUT
+  io_scan.out_buffer.push_back(std::make_unique<BufferData>(Scan_local_i));
+
+  // OUTPUT2
+  io_scan.out_buffer.push_back(std::make_unique<BufferData>(Scan_block_i));
 
   auto scanPipeline = ScanPipeline();
 #ifdef SCAN_DIRECT_WRITE_BACK
-  scanPipeline.initDirectWriteBack(std::move(scan_data), std::move(scan_io));
+  scanPipeline.initDirectWriteBack(std::move(scan_data), std::move(io_scan));
 #else
-  scanPipeline.init(std::move(scan_data), std::move(scan_io));
+  scanPipeline.init(std::move(scan_data), std::move(io_scan));
 #endif
   // reorder
   ReorderTechnique::ReorderData reorder_data{
@@ -297,34 +242,35 @@ OutputData test(testData& data) {
 #endif
   };
 
-  IOBufferData reorder_io{
-      // in
-      {
-          // INPUT offsets
-          gridOffset_i,
-          // INPUT2 scan_local
-          Scan_local_i,
-          // INPUT3 scan_block
-          Scan_block_i,
-          // INPUT4 container to sort
-          Particle_pos_unsorted,
-          Particle_2_unsorted,
+  IOBufferData io_reorder;
 
-      },
-      // out
-      {
-  // OUTPUT container to put sort
+  // INPUT
+  io_reorder.in_buffer.push_back(std::make_unique<BufferData>(gridOffset_i));
+  // INPUT2
+  io_reorder.in_buffer.push_back(std::make_unique<BufferData>(Scan_local_i));
+  // INPUT3
+  io_reorder.in_buffer.push_back(std::make_unique<BufferData>(Scan_block_i));
+  // INPUT4
+  io_reorder.in_buffer.push_back(
+      std::make_unique<BufferData>(Particle_pos_unsorted));
+  // INPUT5
+  io_reorder.in_buffer.push_back(
+      std::make_unique<BufferData>(Particle_2_unsorted));
+
 #ifdef REORDER_SINGLE
-          unsortedIndex_i,
+  // OUTPUT
+  io_reorder.out_buffer.push_back(
+      std::make_unique<BufferData>(unsortedIndex_i));
 #else
-          Particle_pos_sorted,
-          Particle_2_sorted,
+  // OUTPUT
+  io_reorder.out_buffer.push_back(
+      std::make_unique<BufferData>(Particle_pos_sorted));
+  // OUTPUT2
+  io_reorder.out_buffer.push_back(
+      std::make_unique<BufferData>(Particle_2_sorted));
 #endif
-      },
-  };
-
   auto reordering = ReorderTechnique();
-  reordering.init(std::move(reorder_data), std::move(reorder_io));
+  reordering.init(std::move(reorder_data), std::move(io_reorder));
 
   /**********************************************************************
    *                         execute dispatches                         *

@@ -20,6 +20,7 @@
 #include <execution>
 #include "../../../snow/shader/shader.hpp"
 #include "../../../snow/utils/benchmarker.hpp"
+#include "../../../test/BufferData.hpp"
 #include "../../../test/binning/binTechnique.hpp"
 #include "../../../test/map/mapTechnique.hpp"
 #include "../../../test/test_util.hpp"
@@ -57,36 +58,26 @@ OutputData test(testData& data) {
                         BUFFER_OUT_NAME);
   output.transfer_to_gpu(data.binning);
   output.gl_bind_base(ATOMIC_COUNTER_BINDING);
+
+  // BufferData
+  auto Counter_i = BufferData(
+      // INPUT
+      "counters", "Counter_i", output.get_buffer_info(), data.numGridPoints);
+
   MapTechnique::MapData map_data{
       "shader/compute/mapreduce/map.glsl",
       // unary_op
       "0",
-      // IOBufferData
-      IOBufferData(
-          {
-
-              //   In
-              {
-                  // INPUT
-                  "counters",
-                  "Counter_i",
-                  output.get_buffer_info(),
-                  data.numGridPoints,
-              },
-          },
-          {
-              //   Out
-              {
-                  // OUTPUT
-                  "counters",
-                  "Counter_i",
-                  output.get_buffer_info(),
-                  data.numGridPoints,
-              },
-          }),
   };
+  IOBufferData io_reset;
+  // INPUT
+  io_reset.in_buffer.push_back(std::make_unique<BufferData>(Counter_i));
+
+  // OUTPUT
+  io_reset.out_buffer.push_back(std::make_unique<BufferData>(Counter_i));
+
   auto resetCounter = MapTechnique();
-  resetCounter.init(std::move(map_data));
+  resetCounter.init(std::move(map_data), std::move(io_reset));
 
   BinningTechnique::BinningData binning_data{
 #ifdef MULTIPLE_ELEMENTS
@@ -103,68 +94,37 @@ OutputData test(testData& data) {
       MULTIPLE_ELEMENTS,
 #endif
   };
+
+  auto Particle_pos_mass = BufferData("particles", "Particle_pos_mass",
+                                      input.get_buffer_info(), data.numVectors);
+
 #ifdef OUTPUT2
 
   Buffer<GLuint> output2(BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
                          BUFFER_OUT2_NAME);
   output2.transfer_to_gpu(data.grid_offset);
   output2.gl_bind_base(PARTICLE_INDICES_BINDING);
+  auto GridOffset_i = BufferData("particle_indices", "GridOffset_i",
+                                 output2.get_buffer_info(), data.numVectors);
 
-  // IOBufferData
-  IOBufferData io_data{
-      {
-          // in
-          {
-              // INPUT
-              "particles",
-              "Particle_pos_mass",
-              input.get_buffer_info(),
-              data.numVectors,
-          },
-      },
-      {
-          // out
-          {
+  IOBufferData io_data;
+  // INPUT
+  io_data.in_buffer.push_back(std::make_unique<BufferData>(Particle_pos_mass));
 
-              // OUTPUT
-              "counters",
-              "Counter_i",
-              output.get_buffer_info(),
-              data.numGridPoints,
-          },
-          {
+  // OUTPUT
+  io_data.out_buffer.push_back(std::make_unique<BufferData>(Counter_i));
 
-              // OUTPUT2
-              "particle_indices",
-              "GridOffset_i",
-              output2.get_buffer_info(),
-              data.numVectors,
-          },
-      },
-  };
+  // OUTPUT2
+  io_data.out_buffer.push_back(std::make_unique<BufferData>(GridOffset_i));
+
 #else
-  // IOBufferData
-  IOBufferData io_data(
-      {
-          // in
-          {
-              // INPUT
-              "particles",
-              "Particle_pos_mass",
-              input.get_buffer_info(),
-              data.numVectors,
-          },
-      },
-      {
-          // out
-          {
-              // OUTPUT
-              "counters",
-              "Counter_i",
-              output.get_buffer_info(),
-              data.numGridPoints,
-          },
-      });
+  IOBufferData io_data;
+
+  // INPUT
+  io_data.in_buffer.push_back(std::make_unique<BufferData>(Particle_pos_mass));
+
+  // OUTPUT
+  io_data.out_buffer.push_back(std::make_unique<BufferData>(Counter_i));
 #endif
   auto binCount = BinningTechnique();
   binCount.init(std::move(binning_data), std::move(io_data));
@@ -173,8 +133,7 @@ OutputData test(testData& data) {
   bench.time("Total CPU time spent", [&binCount, numVectors = data.numVectors,
                                       &resetCounter,
                                       numGridPoints = data.numGridPoints]() {
-    executeTest(10'000, [&binCount, &resetCounter, numVectors,
-                         numGridPoints]() {
+    executeTest(1, [&binCount, &resetCounter, numVectors, numGridPoints]() {
       BenchmarkerGPU::getInstance().time(
           "resetCounter", [&resetCounter, numGridPoints]() {
             resetCounter.dispatch_with_barrier({numGridPoints, true, 2});

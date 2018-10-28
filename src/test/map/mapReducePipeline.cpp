@@ -1,23 +1,25 @@
 #include "mapReducePipeline.hpp"
 
-void MapReducePipeline::init(
-    MapReduceTechnique::MapReduceData&& pipeline_data) {
+void MapReducePipeline::init(MapReduceTechnique::MapReduceData&& pipeline_data,
+                             IOBufferData&& io) {
   local_size = pipeline_data.local_size;
 
   MapReduceTechnique::MapReduceData reduction_data_2nd = pipeline_data;
   reduction_data_2nd.gl_unary_op = "value";
-  reduction_data_2nd.io.in_buffer[0].name = pipeline_data.io.out_buffer[0].name;
+  IOBufferData io2 = io.clone();
+  io2.in_buffer[0]->setName(io.out_buffer[0]->getName());
 
-  reduction_data_2nd.io.in_buffer[0].var = pipeline_data.io.out_buffer[0].var;
+  io2.in_buffer[0]->setVariable(io.out_buffer[0]->getVariable());
 
   reduction_data_2nd.local_size = {1, 1, 1};
 
   MapReduceTechnique::MapReduceData reduction_data_alt = pipeline_data;
   reduction_data_2nd.local_size = {1, 1, 1};
+  IOBufferData io_alt = io.clone();
 
-  firstStep.init(std::move(pipeline_data));
-  intermediateStep.init(std::move(reduction_data_2nd));
-  altStep.init(std::move(reduction_data_alt));
+  firstStep.init(std::move(pipeline_data), std::move(io));
+  intermediateStep.init(std::move(reduction_data_2nd), std::move(io2));
+  altStep.init(std::move(reduction_data_alt), std::move(io_alt));
 }
 
 void MapReducePipeline::run(GLuint numVectors) {

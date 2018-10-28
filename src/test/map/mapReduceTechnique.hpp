@@ -19,7 +19,6 @@ class MapReduceTechnique : public Technique {
     std::string gl_unary_op;
     std::string gl_binary_op_neutral_elem;
     std::string gl_binary_op;
-    IOBufferData io;
   };
 
   struct DispatchData {
@@ -28,7 +27,7 @@ class MapReduceTechnique : public Technique {
   };
 
   LocalSize local_size;
-  void init(MapReduceData&& data);
+  void init(MapReduceData&& data, IOBufferData&&);
   void dispatch_with_barrier(GLuint numVectors) const;
   void dispatch_with_barrier(DispatchData&& data) const;
   void uniforms_update(DispatchData&& uniforms) const;

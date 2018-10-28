@@ -11,7 +11,6 @@ class MapTechnique : public Technique {
   struct MapData {
     std::string filename;
     std::string gl_unary_op;
-    IOBufferData io;
     GLuint numVectors;  // SOA only
   };
 
@@ -27,7 +26,7 @@ class MapTechnique : public Technique {
   };
 
   void uniform_update(UniformsDynamic&& data);
-  void init(MapData&& data);
+  void init(MapData&& data, IOBufferData&&);
   void dispatch(DispatchData&& data);
   void dispatch_with_barrier(DispatchData&& data);
 };

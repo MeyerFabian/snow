@@ -6,7 +6,8 @@
 #include "mapReduceTechnique.hpp"
 class MapReducePipeline {
  public:
-  void init(MapReduceTechnique::MapReduceData&& pipeline_data);
+  void init(MapReduceTechnique::MapReduceData&& pipeline_data,
+            IOBufferData&& io);
 
   void run(GLuint numVectors);
   void runNoSeqAdd(GLuint numVectors);

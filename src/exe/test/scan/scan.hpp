@@ -21,6 +21,7 @@
 
 #include <execution>
 #include "../../../snow/utils/benchmarker.hpp"
+#include "../../../test/BufferData.hpp"
 #include "../../../test/scan/ScanPipeline.hpp"
 #include "../../../test/test_util.hpp"
 
@@ -63,36 +64,21 @@ void test(testData& data) {
       MULTIPLE_ELEMENTS,
 #endif
   };
-  IOBufferData io_data{
-      {
-          // in
-          {
-              // INPUT
-              "counters",
-              "Counter_i",
-              counter_buffer.get_buffer_info(),
-              data.numValues,
-          },
-      },
-      {
 
-          // out
-          {
-              // OUTPUT
-              "scans",
-              "Scan_local_i",
-              scan_buffer.get_buffer_info(),
-              data.numValues,
-          },
-          {
-              // OUTPUT2
-              "scans",
-              "Scan_block_i",
-              scan_buffer.get_buffer_info(),
-              data.numValues,
-          },
-      },
-  };
+  auto Counter_i = BufferData("counters", "Counter_i",
+                              counter_buffer.get_buffer_info(), data.numValues);
+  auto Scan_local_i = BufferData("scans", "Scan_local_i",
+                                 scan_buffer.get_buffer_info(), data.numValues);
+  auto Scan_block_i = BufferData(  // OUTPUT2
+      "scans", "Scan_block_i", scan_buffer.get_buffer_info(), data.numValues);
+
+  IOBufferData io_data;
+  // INPUT
+  io_data.in_buffer.push_back(std::make_unique<BufferData>(Counter_i));
+  // OUTPUT
+  io_data.out_buffer.push_back(std::make_unique<BufferData>(Scan_local_i));
+  // OUTPUT2
+  io_data.out_buffer.push_back(std::make_unique<BufferData>(Scan_block_i));
 
   auto scanPipeline = ScanPipeline();
 #ifndef SCAN_DIRECT_WRITE_BACK

@@ -29,6 +29,8 @@
 #include "../../../test/map/mapReducePipeline.hpp"
 #include "../../../test/map/mapTechnique.hpp"
 #include "../../../test/test_util.hpp"
+
+#include "../../../test/BufferData.hpp"
 int main() {
   GLFWWindow();
   GLuint numVectors = NUMVECTORS;
@@ -51,7 +53,7 @@ int main() {
   input.transfer_to_gpu(input_data);
   input.gl_bind_base(1);
 
-  auto output = make_shared<Buffer<Output>>(
+  auto output = std::make_shared<Buffer<Output>>(
       BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
 
       "shader/test/soa_aos/buffer_out.include.glsl"
@@ -60,6 +62,17 @@ int main() {
   output->transfer_to_gpu(output_data_init);
   output->gl_bind_base(2);
   std::string filename = SHADER_FILENAME;
+  auto in_v = BufferData("g_in", "in_v", input.get_buffer_info(), numVectors);
+  auto out_g =
+      BufferData("g_out", "out_g", output->get_buffer_info(), numVectors);
+
+  IOBufferData io;
+  // INPUT
+  io.in_buffer.push_back(std::make_unique<BufferData>(in_v));
+
+  // OUTPUT
+  io.out_buffer.push_back(std::make_unique<BufferData>(out_g));
+
   MapReduceTechnique::MapReduceData reduce_data({
       filename,
       local_size,
@@ -67,34 +80,13 @@ int main() {
       "length(value)",
       "0",
       "left+right",
-      // IOBufferData
-      IOBufferData(
-          {
-              //   In
-              {
-                  // INPUT
-                  "g_in",
-                  "in_v",
-                  input.get_buffer_info(),
-                  numVectors,
-              },
-          },
-          {
-              //   Out
-              {
-                  // OUTPUT
-                  "g_out",
-                  "out_g",
-                  output->get_buffer_info(),
-                  numVectors,
-              },
-          }),
   });
+
   MapReducePipeline test;
-  test.init(std::move(reduce_data));
+  test.init(std::move(reduce_data), std::move(io));
   BenchmarkerCPU bench;
   bench.time("Total CPU time spent", [&numVectors, &test]() {
-    executeTest(1'000, [&test, numVectors]() {
+    executeTest(1, [&test, numVectors]() {
 #ifndef NO_SEQUENTIAL_ADDS
       return test.run(numVectors);
 #else

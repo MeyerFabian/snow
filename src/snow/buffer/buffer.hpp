@@ -23,7 +23,7 @@ void print(T t) {
   std::cout << glm::to_string(t) << std::endl;
 }
 
-enum class BufferType { SSBO };
+enum class BufferType { SSBO, UNIFORM };
 enum class BufferUsage { STATIC_DRAW, DYNAMIC_DRAW, STATIC_READ, DYNAMIC_READ };
 enum class BufferLayout { AOS, SOA };
 
@@ -161,6 +161,9 @@ class Buffer {
     switch (type) {
       case BufferType::SSBO:
         return GL_SHADER_STORAGE_BUFFER;
+        break;
+      case BufferType::UNIFORM:
+        return GL_UNIFORM_BUFFER;
         break;
     }
   }

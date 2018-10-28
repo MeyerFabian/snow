@@ -1,5 +1,5 @@
 #include "mapTechnique.hpp"
-void MapTechnique::init(MapData&& data) {
+void MapTechnique::init(MapData&& data, IOBufferData&& io) {
   auto shader = std::make_shared<Shader>(ShaderType::COMPUTE, data.filename);
 
   shader->set_local_size(local_size);
@@ -7,7 +7,7 @@ void MapTechnique::init(MapData&& data) {
   std::vector<Shader::CommandType> vec = {
       {PreprocessorCmd::DEFINE, "UNARY_OP(value) " + data.gl_unary_op},
   };
-  auto io_cmds(data.io.generateCommands());
+  auto io_cmds(io.generateCommands());
   vec.insert(std::end(vec), std::begin(io_cmds), std::end(io_cmds));
 
   shader->add_cmds(vec.begin(), vec.end());

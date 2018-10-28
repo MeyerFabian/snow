@@ -19,6 +19,7 @@
 #include <execution>
 #include "../../../snow/shader/shader.hpp"
 #include "../../../snow/utils/benchmarker.hpp"
+#include "../../../test/BufferData.hpp"
 #include "../../../test/map/mapTechnique.hpp"
 #include "../../../test/test_util.hpp"
 int main() {
@@ -56,34 +57,24 @@ int main() {
       // unary_op
       unary_op,
       // IOBufferData
-      IOBufferData(
-          {
-              //   In
-              {
-                  // INPUT
-                  "g_in",
-                  "in_v",
-                  input.get_buffer_info(),
-                  numVectors,
-              },
-          },
-          {
-              //   Out
-              {
-                  // OUTPUT
-                  "g_out",
-                  "out_g",
-                  output.get_buffer_info(),
-                  numVectors,
-              },
-          }),
   });
 
+  auto in_v = BufferData("g_in", "in_v", input.get_buffer_info(), numVectors);
+  auto out_g =
+      BufferData("g_out", "out_g", output.get_buffer_info(), numVectors);
+
+  IOBufferData io_map;
+  // INPUT
+  io_map.in_buffer.push_back(std::make_unique<BufferData>(in_v));
+
+  // OUTPUT
+  io_map.out_buffer.push_back(std::make_unique<BufferData>(out_g));
+
   auto test = MapTechnique();
-  test.init(std::move(map_data));
+  test.init(std::move(map_data), std::move(io_map));
   BenchmarkerCPU bench;
   bench.time("Total CPU time spent", [&numVectors, &test]() {
-    executeTest(100'000, [&test, numVectors]() {
+    executeTest(1, [&test, numVectors]() {
       return BenchmarkerGPU::getInstance().time("map", [&test, numVectors]() {
         test.dispatch_with_barrier({numVectors
 #ifndef MAP_SINGLE

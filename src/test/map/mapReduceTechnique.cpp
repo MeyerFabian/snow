@@ -1,5 +1,5 @@
 #include "mapReduceTechnique.hpp"
-void MapReduceTechnique::init(MapReduceData&& data) {
+void MapReduceTechnique::init(MapReduceData&& data, IOBufferData&& io) {
   local_size = data.local_size;
 
   auto shader =
@@ -16,7 +16,7 @@ void MapReduceTechnique::init(MapReduceData&& data) {
       {PreprocessorCmd::DEFINE,
        "BINARY_OP_NEUTRAL_ELEMENT " + data.gl_binary_op_neutral_elem},
   };
-  auto io_cmds(data.io.generateCommands());
+  auto io_cmds(io.generateCommands());
   vec.insert(std::end(vec), std::begin(io_cmds), std::end(io_cmds));
 
   shader->add_cmds(vec.begin(), vec.end());

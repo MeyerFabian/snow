@@ -10,9 +10,15 @@ void ScanPipeline::init(ScanTechnique::ScanData&& scan_data,
   buffer_size_block = buffer_size_local / block_size;
 
   ScanTechnique::ScanData scan_block_data = scan_data;
-  std::vector<BufferData> block_buffer = {io2.out_buffer[1]};
 
-  IOBufferData io{{block_buffer}, {block_buffer}};
+  // std::vector<BufferData> block_buffer = {io2.out_buffer[1]};
+
+  IOBufferData io;
+  // in
+  io.in_buffer.push_back(io2.out_buffer[1]->cloneBufferDataInterface());
+  // out
+  io.out_buffer.push_back(io2.out_buffer[1]->cloneBufferDataInterface());
+
   scan_block_data.local_size = {1024, 1, 1};
   localScan.init(std::move(scan_data), std::move(io2));
   blockScan.init(std::move(scan_block_data), std::move(io));
@@ -26,17 +32,23 @@ void ScanPipeline::initDirectWriteBack(ScanTechnique::ScanData&& scan_data,
       scan_data.gl_binary_op,
       scan_data.numVectors,
   };
+  /*
+    IOBufferData io = {
+        // in
+        {
+            io2.out_buffer[1],
+        },
+        // out
+        {
+            io2.out_buffer[0],
+        },
+    };
+  */
+  IOBufferData io;
+  // in
+  io.in_buffer.push_back(io2.out_buffer[1]->cloneBufferDataInterface());
+  io.out_buffer.push_back(io2.out_buffer[0]->cloneBufferDataInterface());
 
-  IOBufferData io = {
-      // in
-      {
-          io2.out_buffer[1],
-      },
-      // out
-      {
-          io2.out_buffer[0],
-      },
-  };
   ScanPipeline::init(std::move(scan_data), std::move(io2));
 
   // get_scan_block_size() is ready only after pipeline init

@@ -1,21 +1,27 @@
 #ifndef COUNTINGSORTPIPELINE_HPP_W5WCXFCO
 #define COUNTINGSORTPIPELINE_HPP_W5WCXFCO
+#include "../IOBufferData.hpp"
 #include "../SortedBufferData.hpp"
 #include "../map/mapTechnique.hpp"
 class CountingSortPipeline {
- public:
-  void init(CountingSortData&& cnt_srt_data&& IOBufferData&& io_data,
-            SortingMethod);
+  /*
+          public:
+    struct CountingSortData {
+      std::string name;
+    };
 
- private:
-  void initIndexSort(CountingSortData&& cnt_srt_data&&, IOBufferData&& io_data);
-  void initFullSort(CountingSortData&& cnt_srt_data&& IOBufferData&& io_data);
+    void init(CountingSortData&& cnt_srt_data, IOBufferData&& io_data);
 
-  SortedBufferData getActiveSortedBufferData();
+   private:
+    void initIndexSort(CountingSortData&& cnt_srt_data, IOBufferData&& io_data);
+    void initFullSort(CountingSortData&& cnt_srt_data, IOBufferData&& io_data);
 
-  std::vector<GLuint> gridOffsets;
-  SortedBufferData activeBuffer;
-  MapTechnique resetCounter;
+    SortedBufferData getActiveSortedBufferData();
+
+    std::vector<GLuint> gridOffsets;
+    SortedBufferData activeBuffer;
+    MapTechnique resetCounter;
+  */
 };
 #endif /* end of include guard: COUNTINGSORTPIPELINE_HPP_W5WCXFCO */
 
