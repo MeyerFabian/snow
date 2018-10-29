@@ -1,7 +1,13 @@
 #ifndef SCAN_HPP
 #define SCAN_HPP
 // shared data structure (C++/GLSL), which is enabled in c++
-#include "../../../../shader/shared_hpp/precision.hpp"
+
+#include <glm/glm.hpp>
+
+#define GLEW_STATIC
+#include <GL/glew.h>
+
+#include "../../../shader/shared_hpp/precision.hpp"
 
 #ifndef AOS_LAYOUT
 #define AOS_LAYOUT

@@ -26,6 +26,8 @@ class BufferData : public BufferDataInterface {
   void setVariable(std::string) override;
   std::string getVariable() override;
 
+  GLuint getSize() override;
+
   std::string name;
   std::string var;
   BufferInfo info;

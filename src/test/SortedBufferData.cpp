@@ -11,6 +11,8 @@ std::string SortedBufferData::getVariable() {
   return buffer_interface->getVariable();
 }
 
+GLuint SortedBufferData::getSize() { return buffer_interface->getSize(); }
+
 std::unique_ptr<BufferDataInterface>
 SortedBufferData::cloneBufferDataInterface() const {
   return std::make_unique<SortedBufferData>(

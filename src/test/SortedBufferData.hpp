@@ -23,11 +23,11 @@ class SortedBufferData : public BufferDataInterface {
       const override;
 
   virtual void setName(std::string name) override;
-
-  virtual std::string getName() override;
-
   virtual void setVariable(std::string name) override;
+
   virtual std::string getVariable() override;
+  virtual std::string getName() override;
+  GLuint getSize() override;
 };
 
 #endif /* end of include guard: SORTEDBUFFERDATA_HPP_HQMWAVIY */

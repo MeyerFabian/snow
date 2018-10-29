@@ -6,10 +6,14 @@ std::unique_ptr<BufferDataInterface> BufferData::cloneBufferDataInterface()
 };
 
 void BufferData::setVariable(std::string in_var) { var = in_var; }
+
 std::string BufferData::getVariable() { return var; }
 
-std::string BufferData::getName() { return name; }
 void BufferData::setName(std::string in_name) { name = in_name; }
+
+std::string BufferData::getName() { return name; }
+
+GLuint BufferData::getSize() { return bufferSize; }
 
 std::vector<Shader::CommandType> BufferData::generateCommands(
     bool abstract, std::string define_name) {
