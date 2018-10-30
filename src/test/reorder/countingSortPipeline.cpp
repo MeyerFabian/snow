@@ -55,6 +55,42 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data,
   /**********************************************************************
    *                         Technique/Shaders                          *
    **********************************************************************/
+
+  // Reset
+  MapTechnique::MapData map_data{
+      "shader/compute/mapreduce/map.glsl",
+      // unary_op
+      "0",
+  };
+
+  IOBufferData io_map;
+  // INPUT
+  io_map.in_buffer.push_back(std::make_unique<BufferData>(counter_i));
+  // OUTPUT
+  io_map.out_buffer.push_back(std::make_unique<BufferData>(counter_i));
+
+  auto resetCounter = MapTechnique();
+  resetCounter.init(std::move(map_data), std::move(io_map));
+
+  BinningTechnique::BinningData binning_data{
+      "shader/compute/preprocess/bin.glsl",
+      cnt_srt_data.gGridPos,
+      cnt_srt_data.gGridDim,
+      cnt_srt_data.gridSpacing,
+
+  };
+  IOBufferData io_bin;
+  // INPUT
+  io_bin.in_buffer.push_back(std::make_unique<BufferData>());
+
+  // OUTPUT
+  io_bin.out_buffer.push_back(std::make_unique<BufferData>(counter_i));
+
+  // OUTPUT2
+  io_bin.out_buffer.push_back(std::make_unique<BufferData>(gridOffset_i));
+
+  auto binCount = BinningTechnique();
+  binCount.init(std::move(binning_data), std::move(io_bin));
 }
 void CountingSortPipeline::initFullSort(CountingSortData&& cnt_srt_data,
                                         IOBufferData&& io_data) {}

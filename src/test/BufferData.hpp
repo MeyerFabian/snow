@@ -6,7 +6,7 @@
 class BufferData : public BufferDataInterface {
  public:
   BufferData(std::string in_name, std::string in_var, BufferInfo in_info,
-             GLuint in_size, GLuint in_buf_num = 1, GLuint in_buf_ind = 0,
+             GLuint in_size, GLuint in_buf_num = 1, std::string in_buf_ind = 0,
              std::string in_var_size = "1")
       : name(in_name),
         var(in_var),
@@ -26,6 +26,9 @@ class BufferData : public BufferDataInterface {
   void setVariable(std::string) override;
   std::string getVariable() override;
 
+  void setIndexBuffer(std::string) override;
+  std::string getIndexBuffer() override;
+
   GLuint getSize() override;
 
   std::string name;
@@ -33,7 +36,7 @@ class BufferData : public BufferDataInterface {
   BufferInfo info;
   GLuint bufferSize;
   GLuint bufferNum = 1;
-  GLuint bufferIndex = 0;
+  std::string bufferIndex = "0";
   std::string var_size_def = "1";
 };
 

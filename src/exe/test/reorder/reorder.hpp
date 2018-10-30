@@ -116,32 +116,32 @@ OutputData test(testData& data) {
   auto gridOffset_i =
       BufferData("particle_indices", "GridOffset_i",
                  particle_indices_buffer.get_buffer_info(), data.numParticles,
-                 1, 0, "ParticleIndices_VAR_SIZE");
+                 1, "0", "ParticleIndices_VAR_SIZE");
   auto unsortedIndex_i =
       BufferData("particle_indices", "UnsortedIndex_i",
                  particle_indices_buffer.get_buffer_info(), data.numParticles,
-                 1, 0, "ParticleIndices_VAR_SIZE");
+                 1, "0", "ParticleIndices_VAR_SIZE");
   auto Particle_pos_unsorted = BufferData(
       "particles", "Particle_pos_mass", particle_buffer.get_buffer_info(),
-      data.numParticles, 2, 0, "Particle_exp_size");
+      data.numParticles, 2, "0", "Particle_exp_size");
   auto Particle_pos_sorted = BufferData(
       "particles", "Particle_pos_mass", particle_buffer.get_buffer_info(),
-      data.numParticles, 2, 1, "Particle_exp_size");
+      data.numParticles, 2, "1", "Particle_exp_size");
   auto Particle_2_unsorted =
       BufferData("particles_2", "", particle_buffer.get_buffer_info(),
-                 data.numParticles, 2, 0,
+                 data.numParticles, 2, "0",
 
                  "Particle_exp_2_size");
   auto Particle_2_sorted =
       BufferData("particles_2", "", particle_buffer.get_buffer_info(),
-                 data.numParticles, 2, 1, "Particle_exp_2_size");
+                 data.numParticles, 2, "1", "Particle_exp_2_size");
 
   auto Scan_local_i =
       BufferData("scans", "Scan_local_i", scan_buffer.get_buffer_info(),
-                 data.numGridPoints, 1, 0, "Scan_VAR_SIZE");
+                 data.numGridPoints, 1, "0", "Scan_VAR_SIZE");
   auto Scan_block_i =
       BufferData("scans", "Scan_block_i", scan_buffer.get_buffer_info(),
-                 data.numGridPoints, 1, 0, "Scan_VAR_SIZE");
+                 data.numGridPoints, 1, "0", "Scan_VAR_SIZE");
   // map (reset counter)
   MapTechnique::MapData map_data{
       "shader/compute/mapreduce/map.glsl",

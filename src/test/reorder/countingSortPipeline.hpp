@@ -3,6 +3,7 @@
 #include "../../../shader/shared_hpp/buffer_bindings.hpp"
 #include "../../src/snow/buffer/c_scan.hpp"
 
+#include "../../test/binning/binTechnique.hpp"
 #include "../BufferData.hpp"
 #include "../IOBufferData.hpp"
 #include "../SortedBufferData.hpp"

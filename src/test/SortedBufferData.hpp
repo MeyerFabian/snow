@@ -23,10 +23,14 @@ class SortedBufferData : public BufferDataInterface {
       const override;
 
   virtual void setName(std::string name) override;
-  virtual void setVariable(std::string name) override;
-
-  virtual std::string getVariable() override;
   virtual std::string getName() override;
+
+  virtual void setVariable(std::string name) override;
+  virtual std::string getVariable() override;
+
+  virtual void setIndexBuffer(std::string) override;
+  virtual std::string getIndexBuffer() override;
+
   GLuint getSize() override;
 };
 

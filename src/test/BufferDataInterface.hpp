@@ -11,6 +11,9 @@ class BufferDataInterface {
   virtual void setName(std::string) = 0;
   virtual void setVariable(std::string) = 0;
 
+  virtual void setIndexBuffer(std::string) = 0;
+  virtual std::string getIndexBuffer() = 0;
+
   virtual std::string getName() = 0;
   virtual std::string getVariable() = 0;
   virtual GLuint getSize() = 0;

@@ -13,6 +13,12 @@ void BufferData::setName(std::string in_name) { name = in_name; }
 
 std::string BufferData::getName() { return name; }
 
+void BufferData::setIndexBuffer(std::string in_index) {
+  bufferIndex = in_index;
+}
+
+std::string BufferData::getIndexBuffer() { return bufferIndex; }
+
 GLuint BufferData::getSize() { return bufferSize; }
 
 std::vector<Shader::CommandType> BufferData::generateCommands(
@@ -57,8 +63,7 @@ std::vector<Shader::CommandType> BufferData::generateCommands(
           {PreprocessorCmd::DEFINE, std::string(define_name + "_NUM_BUFFER ") +
                                         std::to_string(bufferNum)},
           {PreprocessorCmd::DEFINE,
-           std::string(define_name + "_INDEX_BUFFER ") +
-               std::to_string(bufferIndex)},
+           define_name + "_INDEX_BUFFER " + bufferIndex},
 
           {PreprocessorCmd::DEFINE, layout},
 
