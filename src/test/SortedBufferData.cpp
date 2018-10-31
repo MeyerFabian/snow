@@ -23,17 +23,7 @@ GLuint SortedBufferData::getSize() { return buffer_interface->getSize(); }
 std::unique_ptr<BufferDataInterface>
 SortedBufferData::cloneBufferDataInterface() const {
   return std::make_unique<SortedBufferData>(
-      sorting_method, buffer_interface->cloneBufferDataInterface());
+      buffer_interface->cloneBufferDataInterface(), ubo_name,
+      ubo_binding_point);
 };
-
-std::vector<Shader::CommandType> SortedBufferData::generateCommands(
-    bool abstract, std::string define_name) {
-  auto vec = buffer_interface->generateCommands(abstract, define_name);
-
-  if (sorting_method == SortingMethod::Index) {
-    vec.insert(vec.end(), {PreprocessorCmd::DEFINE,
-                           define_name + "_SORTING_METHOD index"});
-  }
-  return vec;
-}
 

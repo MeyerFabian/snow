@@ -69,7 +69,6 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data,
   // OUTPUT
   io_map.out_buffer.push_back(std::make_unique<BufferData>(counter_i));
 
-  auto resetCounter = MapTechnique();
   resetCounter.init(std::move(map_data), std::move(io_map));
 
   BinningTechnique::BinningData binning_data{
@@ -81,7 +80,7 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data,
   };
   IOBufferData io_bin;
   // INPUT
-  io_bin.in_buffer.push_back(std::make_unique<BufferData>());
+  io_bin.in_buffer.push_back(sorting_data[0].cloneBufferDataInterface());
 
   // OUTPUT
   io_bin.out_buffer.push_back(std::make_unique<BufferData>(counter_i));
@@ -89,11 +88,43 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data,
   // OUTPUT2
   io_bin.out_buffer.push_back(std::make_unique<BufferData>(gridOffset_i));
 
-  auto binCount = BinningTechnique();
   binCount.init(std::move(binning_data), std::move(io_bin));
 }
+void CountingSortPipeline::run(CountingSortDispatch&& dispatch_data) {
+  // reset
+  //
+  /*
+  BenchmarkerGPU::getInstance().time(
+      "resetCounter", [this, numGridPoints = dispatch_data.numGridPoints]() {
+        resetCounter.dispatch_with_barrier({numGridPoints, true, 2});
+      });
+
+  // bin
+  BenchmarkerGPU::getInstance().time(
+      "Counter", [this, numParticles = dispatch_data.numParticles]() {
+        binCount.dispatch_with_barrier(numParticles);
+      });
+        // scan
+        scanPipeline.run(numGridPoints);
+        // reorder
+        BenchmarkerGPU::getInstance().time(
+            "Reorder Particles", [&reordering, numParticles]() {
+              reordering.dispatch_with_barrier({numParticles});
+            });
+   */
+}
+
+void CountingSortPipeline::initSortedBufferData() {
+  for (auto it = io_data.out_buffer.begin(); it != io_data.out_buffer.end();
+       it++) {
+    sorting_data.push_back(SortedBufferData(
+        SortingMethod::Full, io_data.in_buffer[0]->cloneBufferDataInterface()));
+  }
+}
 void CountingSortPipeline::initFullSort(CountingSortData&& cnt_srt_data,
-                                        IOBufferData&& io_data) {}
+                                        IOBufferData&& io_data) {
+  initSortedBufferData(std::move(io_data));
+}
 
 void CountingSortPipeline::initIndexSort(CountingSortData&& cnt_srt_data,
                                          IOBufferData&& io_data) {

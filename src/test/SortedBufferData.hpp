@@ -5,19 +5,18 @@
 #include "../snow/shader/shader.hpp"
 #include "BufferDataInterface.hpp"
 
-enum class SortingMethod { Full, Index };
+enum class SortingMethod { Full, IndexRead, IndexWrite };
 
 class SortedBufferData : public BufferDataInterface {
- public:
-  SortedBufferData(SortingMethod in_sort,
-                   std::unique_ptr<BufferDataInterface> in_buffer)
+ protected:
+  SortedBufferData(std::unique_ptr<BufferDataInterface> in_buffer)
 
-      : buffer_interface(std::move(in_buffer)), sorting_method(in_sort) {}
+      : buffer_interface(std::move(in_buffer)) {}
 
   std::unique_ptr<BufferDataInterface> buffer_interface;
 
-  SortingMethod sorting_method;
-  std::vector<Shader::CommandType> generateCommands(bool, std::string) override;
+  virtual std::vector<Shader::CommandType> generateCommands(bool,
+                                                            std::string) = 0;
 
   virtual std::unique_ptr<BufferDataInterface> cloneBufferDataInterface()
       const override;

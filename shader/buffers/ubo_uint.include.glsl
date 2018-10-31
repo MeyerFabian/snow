@@ -1,0 +1,6 @@
+#ifndef UNIFORM_BLOCK_OFFSET
+layout (binding = UNIFORM_BLOCK_BINDING) uniform UNIFORM_BLOCK_BUFFER {
+	uint UNIFORM_BLOCK_OFFSET;
+};
+#endif
+
