@@ -18,7 +18,7 @@ class BufferData : public BufferDataInterface {
 
   std::vector<Shader::CommandType> generateCommands(bool, std::string) override;
   virtual std::unique_ptr<BufferDataInterface> cloneBufferDataInterface()
-      const override;
+      override;
 
   void setName(std::string) override;
   std::string getName() override;

@@ -18,8 +18,7 @@ class BufferDataInterface {
   virtual std::string getVariable() = 0;
   virtual GLuint getSize() = 0;
 
-  virtual std::unique_ptr<BufferDataInterface> cloneBufferDataInterface()
-      const = 0;
+  virtual std::unique_ptr<BufferDataInterface> cloneBufferDataInterface() = 0;
   virtual ~BufferDataInterface() = default;
 };
 

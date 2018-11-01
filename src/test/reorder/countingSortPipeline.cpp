@@ -78,6 +78,7 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data,
       cnt_srt_data.gridSpacing,
 
   };
+  /*
   IOBufferData io_bin;
   // INPUT
   io_bin.in_buffer.push_back(sorting_data[0].cloneBufferDataInterface());
@@ -89,6 +90,7 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data,
   io_bin.out_buffer.push_back(std::make_unique<BufferData>(gridOffset_i));
 
   binCount.init(std::move(binning_data), std::move(io_bin));
+  */
 }
 void CountingSortPipeline::run(CountingSortDispatch&& dispatch_data) {
   // reset
@@ -113,17 +115,23 @@ void CountingSortPipeline::run(CountingSortDispatch&& dispatch_data) {
             });
    */
 }
+/*
+void CountingSortPipeline::initSortedBufferData(
 
-void CountingSortPipeline::initSortedBufferData() {
-  for (auto it = io_data.out_buffer.begin(); it != io_data.out_buffer.end();
-       it++) {
-    sorting_data.push_back(SortedBufferData(
-        SortingMethod::Full, io_data.in_buffer[0]->cloneBufferDataInterface()));
-  }
+) {
+for (auto it = io_data.out_buffer.begin(); it != io_data.out_buffer.end();
+ it++) {
+sorting_data.push_back(SortedBufferData(
+  SortingMethod::Full, io_data.in_buffer[0]->cloneBufferDataInterface()));
 }
+}
+*/
+
 void CountingSortPipeline::initFullSort(CountingSortData&& cnt_srt_data,
                                         IOBufferData&& io_data) {
-  initSortedBufferData(std::move(io_data));
+  /*
+initSortedBufferData(std::move(io_data));
+*/
 }
 
 void CountingSortPipeline::initIndexSort(CountingSortData&& cnt_srt_data,

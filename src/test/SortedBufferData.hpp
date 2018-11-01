@@ -5,32 +5,21 @@
 #include "../snow/shader/shader.hpp"
 #include "BufferDataInterface.hpp"
 
-enum class SortingMethod { Full, IndexRead, IndexWrite };
-
 class SortedBufferData : public BufferDataInterface {
- protected:
-  SortedBufferData(std::unique_ptr<BufferDataInterface> in_buffer)
+ public:
+  void setName(std::string name) override;
+  std::string getName() override;
 
-      : buffer_interface(std::move(in_buffer)) {}
+  void setVariable(std::string name) override;
+  std::string getVariable() override;
 
-  std::unique_ptr<BufferDataInterface> buffer_interface;
-
-  virtual std::vector<Shader::CommandType> generateCommands(bool,
-                                                            std::string) = 0;
-
-  virtual std::unique_ptr<BufferDataInterface> cloneBufferDataInterface()
-      const override;
-
-  virtual void setName(std::string name) override;
-  virtual std::string getName() override;
-
-  virtual void setVariable(std::string name) override;
-  virtual std::string getVariable() override;
-
-  virtual void setIndexBuffer(std::string) override;
-  virtual std::string getIndexBuffer() override;
+  void setIndexBuffer(std::string) override;
+  std::string getIndexBuffer() override;
 
   GLuint getSize() override;
+  SortedBufferData(std::unique_ptr<BufferDataInterface> in_buffer)
+      : buffer_interface(std::move(in_buffer)) {}
+  std::unique_ptr<BufferDataInterface> buffer_interface;
 };
 
 #endif /* end of include guard: SORTEDBUFFERDATA_HPP_HQMWAVIY */

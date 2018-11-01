@@ -1,7 +1,6 @@
 #include "BufferData.hpp"
 
-std::unique_ptr<BufferDataInterface> BufferData::cloneBufferDataInterface()
-    const {
+std::unique_ptr<BufferDataInterface> BufferData::cloneBufferDataInterface() {
   return std::make_unique<BufferData>(*this);
 };
 

@@ -33,7 +33,7 @@ class CountingSortPipeline {
 
  private:
   void init(CountingSortData&& cnt_srt_data, IOBufferData&& io_data);
-  void initSortedBufferData(SortingMethod, IOBufferData&&);
+  // void initSortedBufferData(SortingMethod, IOBufferData&&);
 
   std::unique_ptr<Buffer<GLuint> > binning_buffer;
   std::unique_ptr<Buffer<GLuint> > gridOffsets_buffer;
