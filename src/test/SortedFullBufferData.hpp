@@ -5,10 +5,6 @@
 #include "SortedBufferData.hpp"
 class SortedFullBufferData : public SortedBufferData {
  public:
-  struct IndexUBOData {
-    BufferData data;
-    std::string binding;
-  };
   SortedFullBufferData(std::unique_ptr<BufferDataInterface> in_buffer,
                        IndexUBOData&& in_ubo)
       : SortedBufferData(std::move(in_buffer)), ubo(std::move(in_ubo)) {}

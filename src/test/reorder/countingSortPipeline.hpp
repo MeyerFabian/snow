@@ -10,6 +10,9 @@
 #include "../BufferData.hpp"
 #include "../IOBufferData.hpp"
 #include "../SortedBufferData.hpp"
+#include "../SortedFullBufferData.hpp"
+#include "../SortedIndexReadBufferData.hpp"
+#include "../SortedIndexWriteBufferData.hpp"
 #include "../map/mapTechnique.hpp"
 
 class CountingSortPipeline {
@@ -27,12 +30,17 @@ class CountingSortPipeline {
 
   void run(CountingSortDispatch&&);
 
-  void initIndexSort(CountingSortData&& cnt_srt_data, IOBufferData&& io_data);
+  void initIndexReadSort(CountingSortData&& cnt_srt_data,
+                         IOBufferData&& io_data);
+  void initIndexWriteSort(CountingSortData&& cnt_srt_data,
+                          IOBufferData&& io_data);
   // requires a double buffer for the buffer to be sorted
   void initFullSort(CountingSortData&& cnt_srt_data, IOBufferData&& io_data);
 
  private:
-  void init(CountingSortData&& cnt_srt_data, IOBufferData&& io_data);
+  SortedBufferData::IndexUBOData initUBO(std::string name) const;
+  void init(CountingSortData&& cnt_srt_data);
+  BufferData initIndexSort(CountingSortData cnt_srt_data, GLuint);
   // void initSortedBufferData(SortingMethod, IOBufferData&&);
 
   std::unique_ptr<Buffer<GLuint> > binning_buffer;
@@ -40,10 +48,12 @@ class CountingSortPipeline {
   std::unique_ptr<Buffer<Scan> > scan_buffer;
   // double buffer, only used for indexSort
   std::unique_ptr<Buffer<GLuint> > index_buffer;
+  std::unique_ptr<Buffer<GLuint> > uniform_buffer_sorted;
 
   MapTechnique resetCounter;
   BinningTechnique binCount;
-  std::vector<SortedBufferData> sorting_data;
+  std::vector<std::unique_ptr<BufferDataInterface> > sorting_data;
+  std::vector<std::unique_ptr<BufferDataInterface> > unsorting_data;
 };
 #endif /* end of include guard: COUNTINGSORTPIPELINE_HPP_W5WCXFCO */
 

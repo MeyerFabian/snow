@@ -1,18 +1,9 @@
 #ifndef SORTEDINDEXWRITEBUFFERDATA_HPP_RIQXSHUS
 #define SORTEDINDEXWRITEBUFFERDATA_HPP_RIQXSHUS
 
-#include "BufferData.hpp"
 #include "SortedBufferData.hpp"
 class SortedIndexWriteBufferData : public SortedBufferData {
  public:
-  struct IndexSSBOData {
-    BufferData data;
-    std::string binding;
-  };
-  struct IndexUBOData {
-    BufferData data;
-    std::string binding;
-  };
   SortedIndexWriteBufferData(std::unique_ptr<BufferDataInterface> in_buffer,
                              IndexSSBOData&& in_ssbo, IndexUBOData&& in_ubo)
 

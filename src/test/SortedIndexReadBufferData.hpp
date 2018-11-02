@@ -5,10 +5,6 @@
 #include "SortedBufferData.hpp"
 class SortedIndexReadBufferData : public SortedBufferData {
  public:
-  struct IndexSSBOData {
-    BufferData data;
-    std::string binding;
-  };
   SortedIndexReadBufferData(std::unique_ptr<BufferDataInterface> in_buffer,
                             IndexSSBOData&& in_ssbo)
 

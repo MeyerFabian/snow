@@ -1,10 +1,14 @@
 #ifndef COUNT_SRT_HPP_CN2ZL6DH
 #define COUNT_SRT_HPP_CN2ZL6DH
 
+#include <glm/gtc/random.hpp>
+
+#define GLM_ENABLE_EXPERIMENTAL
 #include "../../../../shader/shared_hpp/buffer_bindings.hpp"
 #include "../../../test/BufferData.hpp"
 #include "../../../test/reorder/countingSortPipeline.hpp"
 #include "../../../test/test_util.hpp"
+#include "../../src/snow/particle/particle_exp.hpp"
 
 struct testData {
   GLuint numParticles;
@@ -14,18 +18,13 @@ struct testData {
   glm::uvec3 gGridDim;
   PREC_VEC3_TYPE gGridPos;
   PREC_SCAL_TYPE gridSpacing;
-}
+};
 
 struct OutputData {
   std::vector<Particle_exp> particles;
-#ifdef REORDER_SINGLE
-  std::vector<ParticleIndices> particle_indices;
-#else
-  std::vector<GLuint> particle_indices;
-#endif
 };
 
-OutputData test(testData& data) {
+OutputData test(testData&& data) {
   GLFWWindow();
 
 #ifdef AOS_LAYOUT
@@ -81,20 +80,36 @@ OutputData test(testData& data) {
   };
 
   CountingSortPipeline cnt_srt_pipeline;
-  cnt_srt_pipeline.init(std::move(cnt_srt_data), std::move(io_cnt_srt));
+#ifdef REORDER_SINGLE
+#ifdef REORDER_INDEX_WRITE
+  cnt_srt_pipeline.initIndexWriteSort(std::move(cnt_srt_data),
+                                      std::move(io_cnt_srt));
+#else
+  cnt_srt_pipeline.initIndexReadSort(std::move(cnt_srt_data),
+                                     std::move(io_cnt_srt));
+#endif
+#else
+  cnt_srt_pipeline.initFullSort(std::move(cnt_srt_data), std::move(io_cnt_srt));
+#endif
 
   /**********************************************************************
    *                         execute dispatches                         *
    **********************************************************************/
 
   BenchmarkerCPU bench;
-  bench.time("Total CPU time spent", [&cnt_srt_pipeline]() {
-    executeTest(1, [&cnt_srt_pipeline]() {  // reset
-      // reorder
-      BenchmarkerGPU::getInstance().time(
-          "Sort Pipeline", [&cnt_srt_pipeline]() { cnt_srt_pipeline.run(); });
-    });
-  });
+  bench.time("Total CPU time spent",
+             [&cnt_srt_pipeline, numParticles = data.numParticles,
+              numGridPoints = data.numGridPoints]() {
+               executeTest(1, [&cnt_srt_pipeline, &numParticles,
+                               &numGridPoints]() {  // reset
+                 // reorder
+                 BenchmarkerGPU::getInstance().time(
+                     "Sort Pipeline",
+                     [&cnt_srt_pipeline, &numParticles, &numGridPoints]() {
+                       cnt_srt_pipeline.run({numParticles, numGridPoints});
+                     });
+               });
+             });
 
   BenchmarkerGPU::getInstance().collect_times_last_frame();
   BenchmarkerGPU::getInstance().collect_times_last_frame();

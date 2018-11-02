@@ -3,10 +3,17 @@
 #include <memory>
 #include "../snow/buffer/buffer.hpp"
 #include "../snow/shader/shader.hpp"
+#include "BufferData.hpp"
 #include "BufferDataInterface.hpp"
-
 class SortedBufferData : public BufferDataInterface {
  public:
+  struct IndexSSBOData {
+    BufferData data;
+  };
+  struct IndexUBOData {
+    std::string filename;
+    std::string name;
+  };
   void setName(std::string name) override;
   std::string getName() override;
 

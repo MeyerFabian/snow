@@ -6,8 +6,8 @@
 class BufferData : public BufferDataInterface {
  public:
   BufferData(std::string in_name, std::string in_var, BufferInfo in_info,
-             GLuint in_size, GLuint in_buf_num = 1, std::string in_buf_ind = 0,
-             std::string in_var_size = "1")
+             GLuint in_size, GLuint in_buf_num = 1,
+             std::string in_buf_ind = "0", std::string in_var_size = "1")
       : name(in_name),
         var(in_var),
         info(in_info),
