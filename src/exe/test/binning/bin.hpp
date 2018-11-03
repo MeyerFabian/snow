@@ -103,8 +103,10 @@ OutputData test(testData& data) {
   Buffer<GLuint> output2(BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
                          BUFFER_OUT2_NAME);
   output2.transfer_to_gpu(data.grid_offset);
-  output2.gl_bind_base(PARTICLE_INDICES_BINDING);
-  auto GridOffset_i = BufferData("particle_indices", "GridOffset_i",
+
+  output2.gl_bind_base(PARTICLE_GRIDOFFSET_BINDING);
+  auto GridOffset_i = BufferData("gridOffsets", "GridOffset_i",
+
                                  output2.get_buffer_info(), data.numVectors);
 
   IOBufferData io_data;

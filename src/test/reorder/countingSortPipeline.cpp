@@ -22,7 +22,7 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
       BufferType::SSBO, BufferUsage::STATIC_DRAW, cnt_srt_data.layout,
       "shader/buffers/particle_grid_offset.include.glsl");
   gridOffsets_buffer->resize_buffer(to_sort_size);
-  gridOffsets_buffer->gl_bind_base(PARTICLE_INDICES_BINDING);
+  gridOffsets_buffer->gl_bind_base(PARTICLE_GRIDOFFSET_BINDING);
 
   // scan       grid
   scan_buffer = std::make_unique<Buffer<Scan> >(
@@ -38,13 +38,11 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
   auto counter_i = BufferData("counters", "Counter_i",
                               binning_buffer->get_buffer_info(), gridSize);
 
-  std::cerr << "gridOffset before" << std::endl;
   // gridOffset to_sort
   auto gridOffset_i = BufferData(
-      "particle_indices", "GridOffset_i", gridOffsets_buffer->get_buffer_info(),
-      to_sort_size, 1, "0", "ParticleIndices_VAR_SIZE");
+      "gridOffsets", "GridOffset_i", gridOffsets_buffer->get_buffer_info(),
+      to_sort_size, 1, "0", "Particle_GridOffset_VAR_SIZE");
 
-  std::cerr << "gridOffset after" << std::endl;
   // scan       grid
   auto Scan_local_i =
       BufferData("scans", "Scan_local_i", scan_buffer->get_buffer_info(),
@@ -56,7 +54,6 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
   /**********************************************************************
    *                         Technique/Shaders                          *
    **********************************************************************/
-  std::cerr << "resetCounter begin" << std::endl;
   // Reset
   MapTechnique::MapData map_data{
       "shader/compute/mapreduce/map.glsl",
@@ -71,7 +68,6 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
   io_map.out_buffer.push_back(std::make_unique<BufferData>(counter_i));
 
   resetCounter.init(std::move(map_data), std::move(io_map));
-  std::cerr << "resetCounter end" << std::endl;
   BinningTechnique::BinningData binning_data{
       "shader/compute/preprocess/bin.glsl",
       cnt_srt_data.gGridPos,
@@ -154,17 +150,17 @@ BufferData CountingSortPipeline::initIndexSort(CountingSortData cnt_srt_data,
   index_buffer->resize_buffer(to_sort_size);
   index_buffer->gl_bind_base(PARTICLE_INDICES_BINDING);
   return BufferData("indices", "Index_i", index_buffer->get_buffer_info(),
-                    to_sort_size);
+                    to_sort_size, 1, "0", "Indices_VAR_SIZE");
 }
 void CountingSortPipeline::initIndexReadSort(CountingSortData&& cnt_srt_data,
                                              IOBufferData&& io_data) {
   GLuint to_sort_size = io_data.out_buffer[0]->getSize();
-  auto unsorted_buffer = initIndexSort(cnt_srt_data, to_sort_size);
+  auto indices_buffer = initIndexSort(cnt_srt_data, to_sort_size);
   for (auto it = io_data.out_buffer.begin(); it != io_data.out_buffer.end();
        it++) {
     auto sorted_buffer = std::make_unique<SortedIndexReadBufferData>(
         (*it)->cloneBufferDataInterface(),
-        SortedBufferData::IndexSSBOData{unsorted_buffer});
+        SortedBufferData::IndexSSBOData{indices_buffer});
     auto unsorted_buffer = sorted_buffer->cloneBufferDataInterface();
     unsorting_data.push_back(std::move(unsorted_buffer));
 
@@ -178,15 +174,20 @@ void CountingSortPipeline::initIndexWriteSort(CountingSortData&& cnt_srt_data,
                                               IOBufferData&& io_data) {
   GLuint to_sort_db_size = io_data.out_buffer[0]->getSize() * 2;
   std::string name = io_data.out_buffer[0]->getName();
-  auto unsorted_buffer = initIndexSort(cnt_srt_data, to_sort_db_size);
+  auto indices_buffer_sorted = initIndexSort(cnt_srt_data, to_sort_db_size);
+  auto indices_buffer_unsorted = indices_buffer_sorted;
+  indices_buffer_sorted.setIndexBuffer(name + "_sorted");
+  indices_buffer_unsorted.setIndexBuffer(name + "_unsorted");
   for (auto it = io_data.out_buffer.begin(); it != io_data.out_buffer.end();
        it++) {
     auto sorted_buffer = std::make_unique<SortedIndexWriteBufferData>(
         (*it)->cloneBufferDataInterface(),
-        SortedBufferData::IndexSSBOData{unsorted_buffer}, initUBO(name));
-    auto unsorted_buffer = sorted_buffer->cloneBufferDataInterface();
-    unsorted_buffer->setIndexBuffer(name + "_unsorted");
-    sorted_buffer->setIndexBuffer(name + "_sorted");
+        SortedBufferData::IndexSSBOData{indices_buffer_sorted}, initUBO(name));
+    auto unsorted_buffer = std::make_unique<SortedIndexWriteBufferData>(
+        (*it)->cloneBufferDataInterface(),
+        SortedBufferData::IndexSSBOData{indices_buffer_unsorted},
+        initUBO(name));
+
     sorting_data.push_back(std::move(sorted_buffer));
     unsorting_data.push_back(std::move(unsorted_buffer));
   }

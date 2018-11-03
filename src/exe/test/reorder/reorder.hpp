@@ -97,7 +97,7 @@ OutputData test(testData& data) {
       BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
       "shader/buffers/particle_grid_offset.include.glsl");
   particle_indices_buffer.transfer_to_gpu(data.particle_indices);
-  particle_indices_buffer.gl_bind_base(PARTICLE_INDICES_BINDING);
+  particle_indices_buffer.gl_bind_base(PARTICLE_GRIDOFFSET_BINDING);
 
 #endif
   // scan
@@ -113,10 +113,17 @@ OutputData test(testData& data) {
   auto counter_i =
       BufferData("counters", "Counter_i", binning_buffer.get_buffer_info(),
                  data.numGridPoints);
+#ifdef REORDER_SINGLE
   auto gridOffset_i =
       BufferData("particle_indices", "GridOffset_i",
                  particle_indices_buffer.get_buffer_info(), data.numParticles,
                  1, "0", "ParticleIndices_VAR_SIZE");
+#else
+  auto gridOffset_i = BufferData(
+      "gridOffsets", "GridOffset_i", particle_indices_buffer.get_buffer_info(),
+      data.numParticles, 1, "0", "Particle_GridOffset_VAR_SIZE");
+#endif
+
   auto unsortedIndex_i =
       BufferData("particle_indices", "UnsortedIndex_i",
                  particle_indices_buffer.get_buffer_info(), data.numParticles,

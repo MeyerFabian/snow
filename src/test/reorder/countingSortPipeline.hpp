@@ -41,7 +41,6 @@ class CountingSortPipeline {
   SortedBufferData::IndexUBOData initUBO(std::string name) const;
   void init(CountingSortData&& cnt_srt_data);
   BufferData initIndexSort(CountingSortData cnt_srt_data, GLuint);
-  // void initSortedBufferData(SortingMethod, IOBufferData&&);
 
   std::unique_ptr<Buffer<GLuint> > binning_buffer;
   std::unique_ptr<Buffer<GLuint> > gridOffsets_buffer;
