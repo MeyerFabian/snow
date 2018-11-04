@@ -24,7 +24,7 @@ struct LocalSize {
   GLuint y = 1;
   GLuint z = 1;
 };
-enum PreprocessorCmd { DEFINE, INCLUDE, UNDEFINE };
+enum PreprocessorCmd { DEFINE, INCLUDE, UNDEFINE, IFNDEF, ENDIF, IFDEF, ELSE };
 
 class Shader {
  public:
@@ -68,6 +68,18 @@ class Shader {
                          break;
                        case PreprocessorCmd::UNDEFINE:
                          cmd += "#undef ";
+                         break;
+                       case PreprocessorCmd::IFDEF:
+                         cmd += "#ifdef ";
+                         break;
+                       case PreprocessorCmd::IFNDEF:
+                         cmd += "#ifndef ";
+                         break;
+                       case PreprocessorCmd::ELSE:
+                         cmd += "#else";
+                         break;
+                       case PreprocessorCmd::ENDIF:
+                         cmd += "#endif";
                          break;
                      }
                      return cmd + pair_cmd.second;

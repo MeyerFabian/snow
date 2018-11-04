@@ -1,6 +1,7 @@
 #version 440
 #include "shader/shared_hpp/voxel_tile_size.hpp"
 #include "shader/compute/indexing/gridIndex.include.glsl"
+#include "shader/utils/sorting_method.include.glsl"
 layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
 uniform uvec3 gGridDim;
 uniform PREC_VEC3_TYPE gGridPos;
@@ -28,8 +29,11 @@ void main(void){
 	if(i>=bufferSize){
 		return;
 	}
-	PREC_VEC3_TYPE pos = INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,i,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
 
+#if INPUT_SORTING_METHOD == INDEX_WRITE
+	i = INPUT_INDEX_AT(INPUT_INDEX,INPUT_INDEX_VAR,INPUT_INDEX_SIZE,i,INPUT_INDEX_NUM_BUFFER,INPUT_INDEX_INDEX_BUFFER);
+#endif
+	PREC_VEC3_TYPE pos = INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,i,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
 	// Bin due to position in grid
 	PREC_VEC3_TYPE positionInGrid= (pos-gGridPos)/gridSpacing;
 

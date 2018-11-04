@@ -16,7 +16,7 @@
 
 #include "shader/shared_hpp/voxel_tile_size.hpp"
 #include "shader/compute/indexing/gridIndex.include.glsl"
-
+#include "shader/utils/sorting_method.include.glsl"
 
 layout(local_size_x =X)in;
 
@@ -33,6 +33,9 @@ void main(void){
 		return;
 	}
 
+#if INPUT4_SORTING_METHOD == INDEX_WRITE
+	unsortedIndex = INPUT4_INDEX_AT(INPUT4_INDEX,INPUT4_INDEX_VAR,INPUT4_INDEX_SIZE,unsortedIndex,INPUT4_INDEX_NUM_BUFFER,INPUT4_INDEX_INDEX_BUFFER,INPUT4_INDEX_VAR_SIZE);
+#endif
 	PREC_VEC3_TYPE pos = INPUT4_AT(INPUT4,INPUT4_VAR,INPUT4_SIZE, unsortedIndex,INPUT4_NUM_BUFFER,INPUT4_INDEX_BUFFER,INPUT4_VAR_SIZE).xyz;
 
 	// Bin due to position in grid
@@ -57,6 +60,11 @@ void main(void){
 		uint scanOffset =
 			INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,unsortedIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER,INPUT_VAR_SIZE);
 		uint sortedIndex = scanIndex + scanOffset;
+
+#if INPUT_SORTING_METHOD == INDEX_WRITE || INPUT_SORTING_METHOD == INDEX_READ
+
+		OUTPUT_INDEX_AT(OUTPUT_INDEX,OUTPUT_INDEX_VAR,OUTPUT_INDEX_SIZE,sortedIndex,OUTPUT_INDEX_NUM_BUFFER,OUTPUT_INDEX_INDEX_BUFFER,OUTPUT_INDEX_VAR_SIZE) = unsortedIndex;
+#else
 		for(int var=0; var<OUTPUT_VAR_SIZE;var++){
 			OUTPUT_AT(OUTPUT,var,OUTPUT_SIZE,sortedIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER,OUTPUT_VAR_SIZE) = INPUT4_AT(INPUT4,var,INPUT4_SIZE,unsortedIndex,INPUT4_NUM_BUFFER,INPUT4_INDEX_BUFFER,INPUT4_VAR_SIZE);
 		}
@@ -70,6 +78,7 @@ void main(void){
 		for(int var=0; var<OUTPUT3_VAR_SIZE;var++){
 			OUTPUT3_AT(OUTPUT3,var,OUTPUT3_SIZE,sortedIndex,OUTPUT3_NUM_BUFFER,OUTPUT3_INDEX_BUFFER,OUTPUT3_VAR_SIZE) = INPUT6_AT(INPUT6,var,INPUT6_SIZE,unsortedIndex,INPUT6_NUM_BUFFER,INPUT6_INDEX_BUFFER,INPUT6_VAR_SIZE);
 		}
+#endif
 #endif
 	}
 }

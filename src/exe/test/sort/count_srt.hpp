@@ -56,6 +56,18 @@ OutputData test(testData&& data) {
    *                    Techniques + IOData creation                    *
    **********************************************************************/
 
+#ifdef REORDER_SINGLE
+  auto Particle_pos_unsorted = BufferData(
+      "particles", "Particle_pos_mass", particle_buffer.get_buffer_info(),
+      data.numParticles, 1, "0", "Particle_exp_size");
+
+  auto Particle_2_unsorted =
+      BufferData("particles_2", "", particle_buffer.get_buffer_info(),
+                 data.numParticles, 1, "0",
+
+                 "Particle_exp_2_size");
+#else
+  // full sort double buffered
   auto Particle_pos_unsorted = BufferData(
       "particles", "Particle_pos_mass", particle_buffer.get_buffer_info(),
       data.numParticles, 2, "0", "Particle_exp_size");
@@ -65,6 +77,7 @@ OutputData test(testData&& data) {
                  data.numParticles, 2, "0",
 
                  "Particle_exp_2_size");
+#endif
   IOBufferData io_cnt_srt;
   // OUTPUT
   io_cnt_srt.out_buffer.push_back(
@@ -102,12 +115,8 @@ OutputData test(testData&& data) {
               numGridPoints = data.numGridPoints]() {
                executeTest(1, [&cnt_srt_pipeline, &numParticles,
                                &numGridPoints]() {  // reset
-                 // reorder
-                 BenchmarkerGPU::getInstance().time(
-                     "Sort Pipeline",
-                     [&cnt_srt_pipeline, &numParticles, &numGridPoints]() {
-                       cnt_srt_pipeline.run({numParticles, numGridPoints});
-                     });
+                                                    // reorder
+                 cnt_srt_pipeline.run({numParticles, numGridPoints});
                });
              });
 

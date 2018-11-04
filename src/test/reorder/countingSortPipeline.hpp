@@ -7,6 +7,8 @@
 
 #include "../../src/snow/utils/benchmarker.hpp"
 #include "../../test/binning/binTechnique.hpp"
+#include "../../test/reorder/reorderTechnique.hpp"
+#include "../../test/scan/ScanPipeline.hpp"
 #include "../BufferData.hpp"
 #include "../IOBufferData.hpp"
 #include "../SortedBufferData.hpp"
@@ -41,7 +43,7 @@ class CountingSortPipeline {
   SortedBufferData::IndexUBOData initUBO(std::string name) const;
   void init(CountingSortData&& cnt_srt_data);
   BufferData initIndexSort(CountingSortData cnt_srt_data, GLuint);
-
+  void initUniformBuffer();
   std::unique_ptr<Buffer<GLuint> > binning_buffer;
   std::unique_ptr<Buffer<GLuint> > gridOffsets_buffer;
   std::unique_ptr<Buffer<Scan> > scan_buffer;
@@ -51,8 +53,11 @@ class CountingSortPipeline {
 
   MapTechnique resetCounter;
   BinningTechnique binCount;
+  ScanPipeline scanPipeline;
+  ReorderTechnique reordering;
   std::vector<std::unique_ptr<BufferDataInterface> > sorting_data;
   std::vector<std::unique_ptr<BufferDataInterface> > unsorting_data;
+  std::deque<GLuint> circle_buffer_values;
 };
 #endif /* end of include guard: COUNTINGSORTPIPELINE_HPP_W5WCXFCO */
 

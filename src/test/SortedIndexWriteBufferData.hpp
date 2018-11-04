@@ -1,6 +1,5 @@
 #ifndef SORTEDINDEXWRITEBUFFERDATA_HPP_RIQXSHUS
 #define SORTEDINDEXWRITEBUFFERDATA_HPP_RIQXSHUS
-
 #include "SortedBufferData.hpp"
 class SortedIndexWriteBufferData : public SortedBufferData {
  public:

@@ -86,11 +86,93 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
   io_bin.out_buffer.push_back(std::make_unique<BufferData>(gridOffset_i));
 
   binCount.init(std::move(binning_data), std::move(io_bin));
+
+  // scan
+
+  ScanTechnique::ScanData scan_data{
+      // local_size
+      {1024, 1, 1},
+      // shader
+      "shader/compute/preprocess/scan.glsl",
+      // unary_op_return_type
+      "uint",
+      // unary_op
+      "value",
+      // gl_binary_op_neutral_elem
+      "0",
+      // gl_biunary_op
+      "left+right",
+      gridSize,
+      // raking
+      2,
+  };
+
+  IOBufferData io_scan;
+
+  // INPUT
+  io_scan.in_buffer.push_back(std::make_unique<BufferData>(counter_i));
+
+  // OUTPUT
+  io_scan.out_buffer.push_back(std::make_unique<BufferData>(Scan_local_i));
+
+  // OUTPUT2
+  io_scan.out_buffer.push_back(std::make_unique<BufferData>(Scan_block_i));
+
+  scanPipeline = ScanPipeline();
+#ifdef SCAN_DIRECT_WRITE_BACK
+  scanPipeline.initDirectWriteBack(std::move(scan_data), std::move(io_scan));
+#else
+  scanPipeline.init(std::move(scan_data), std::move(io_scan));
+#endif
+
+  ReorderTechnique::ReorderData reorder_data{
+      // LocalSize local_size;
+      {1024, 1, 1},
+      // std::string filename;
+      "shader/compute/preprocess/reorder.glsl",
+      // GLuint scan_block_size;
+      cnt_srt_data.gGridPos,
+      cnt_srt_data.gGridDim,
+      cnt_srt_data.gridSpacing,
+#ifdef SCAN_DIRECT_WRITE_BACK
+      true,
+#else
+      false,
+      scanPipeline.get_scan_block_size(),
+#endif
+  };
+
+  IOBufferData io_reorder;
+
+  // INPUT
+  io_reorder.in_buffer.push_back(std::make_unique<BufferData>(gridOffset_i));
+  // INPUT2
+  io_reorder.in_buffer.push_back(std::make_unique<BufferData>(Scan_local_i));
+  // INPUT3
+  io_reorder.in_buffer.push_back(std::make_unique<BufferData>(Scan_block_i));
+  for (auto it = unsorting_data.begin(); it != unsorting_data.end(); it++) {
+    // INPUT4+X
+    io_reorder.in_buffer.push_back((*it)->cloneBufferDataInterface());
+  }
+
+  for (auto it = sorting_data.begin(); it != sorting_data.end(); it++) {
+    // OUTPUT+X
+    io_reorder.out_buffer.push_back((*it)->cloneBufferDataInterface());
+  }
+
+  reordering = ReorderTechnique();
+  reordering.init(std::move(reorder_data), std::move(io_reorder));
 }
 void CountingSortPipeline::run(CountingSortDispatch&& dispatch_data) {
+  if (!circle_buffer_values.empty()) {
+    auto circle_buffer_back = circle_buffer_values.back();
+    circle_buffer_values.pop_back();
+    circle_buffer_values.push_front(circle_buffer_back);
+    uniform_buffer_sorted->transfer_to_gpu(circle_buffer_values);
+  }
+
   // reset
   //
-  /*
   BenchmarkerGPU::getInstance().time(
       "resetCounter", [this, numGridPoints = dispatch_data.numGridPoints]() {
         resetCounter.dispatch_with_barrier({numGridPoints, true, 2});
@@ -101,14 +183,13 @@ void CountingSortPipeline::run(CountingSortDispatch&& dispatch_data) {
       "Counter", [this, numParticles = dispatch_data.numParticles]() {
         binCount.dispatch_with_barrier(numParticles);
       });
-        // scan
-        scanPipeline.run(numGridPoints);
-        // reorder
-        BenchmarkerGPU::getInstance().time(
-            "Reorder Particles", [&reordering, numParticles]() {
-              reordering.dispatch_with_barrier({numParticles});
-            });
-   */
+  // scan
+  scanPipeline.run(dispatch_data.numGridPoints);
+  // reorder
+  BenchmarkerGPU::getInstance().time(
+      "Reorder Particles", [this, numParticles = dispatch_data.numParticles]() {
+        reordering.dispatch_with_barrier({numParticles});
+      });
 }
 SortedBufferData::IndexUBOData CountingSortPipeline::initUBO(
     std::string name) const {
@@ -132,12 +213,7 @@ void CountingSortPipeline::initFullSort(CountingSortData&& cnt_srt_data,
     unsorting_data.push_back(std::move(unsorted_buffer));
   }
 
-  std::vector<GLuint> bufferValue = {0, 1};
-  uniform_buffer_sorted = std::make_unique<Buffer<GLuint> >(
-      BufferType::UNIFORM, BufferUsage::DYNAMIC_DRAW, BufferLayout::AOS);
-
-  uniform_buffer_sorted->transfer_to_gpu(bufferValue);
-  uniform_buffer_sorted->gl_bind_base(UNIFORM_SORTED_BINDING);
+  initUniformBuffer();
 
   init(std::move(cnt_srt_data));
 }
@@ -169,6 +245,14 @@ void CountingSortPipeline::initIndexReadSort(CountingSortData&& cnt_srt_data,
 
   init(std::move(cnt_srt_data));
 }
+void CountingSortPipeline::initUniformBuffer() {
+  circle_buffer_values = {0, 1};
+  uniform_buffer_sorted = std::make_unique<Buffer<GLuint> >(
+      BufferType::UNIFORM, BufferUsage::DYNAMIC_DRAW, BufferLayout::AOS);
+
+  uniform_buffer_sorted->transfer_to_gpu(circle_buffer_values);
+  uniform_buffer_sorted->gl_bind_base(UNIFORM_SORTED_BINDING);
+}
 
 void CountingSortPipeline::initIndexWriteSort(CountingSortData&& cnt_srt_data,
                                               IOBufferData&& io_data) {
@@ -191,13 +275,7 @@ void CountingSortPipeline::initIndexWriteSort(CountingSortData&& cnt_srt_data,
     sorting_data.push_back(std::move(sorted_buffer));
     unsorting_data.push_back(std::move(unsorted_buffer));
   }
-  std::vector<GLuint> bufferValue = {0, 1};
-  uniform_buffer_sorted = std::make_unique<Buffer<GLuint> >(
-      BufferType::UNIFORM, BufferUsage::DYNAMIC_DRAW, BufferLayout::AOS);
-
-  uniform_buffer_sorted->transfer_to_gpu(bufferValue);
-  uniform_buffer_sorted->gl_bind_base(UNIFORM_SORTED_BINDING);
-
+  initUniformBuffer();
   init(std::move(cnt_srt_data));
 }
 

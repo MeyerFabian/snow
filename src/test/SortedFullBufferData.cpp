@@ -6,6 +6,10 @@ std::vector<Shader::CommandType> SortedFullBufferData::generateCommands(
   vec.insert(
       vec.end(),
       {
+
+          {PreprocessorCmd::IFNDEF, std_ext::to_upper(ubo.name + "_sorted")},
+          {PreprocessorCmd::DEFINE, std_ext::to_upper(ubo.name + "_sorted")},
+
           {PreprocessorCmd::DEFINE, "UNIFORM_SORTED " + ubo.name + "_sorted"},
           {PreprocessorCmd::DEFINE,
            "UNIFORM_UNSORTED " + ubo.name + "_unsorted"},
@@ -13,6 +17,8 @@ std::vector<Shader::CommandType> SortedFullBufferData::generateCommands(
           {PreprocessorCmd::UNDEFINE, "UNIFORM_SORTED"},
           {PreprocessorCmd::UNDEFINE, "UNIFORM_UNSORTED "},
           {PreprocessorCmd::DEFINE, define_name + "_SORTING_METHOD FULL"},
+
+          {PreprocessorCmd::ENDIF, ""},
       });
   return vec;
 }

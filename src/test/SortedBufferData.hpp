@@ -3,6 +3,7 @@
 #include <memory>
 #include "../snow/buffer/buffer.hpp"
 #include "../snow/shader/shader.hpp"
+#include "../snow/utils/string_to_upper.hpp"
 #include "BufferData.hpp"
 #include "BufferDataInterface.hpp"
 class SortedBufferData : public BufferDataInterface {

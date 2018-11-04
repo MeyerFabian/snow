@@ -2,20 +2,28 @@
 std::vector<Shader::CommandType> SortedIndexWriteBufferData::generateCommands(
     bool abstract, std::string define_name) {
   auto vec = buffer_interface->generateCommands(abstract, define_name);
-  vec.insert(vec.end(), {
-                            {PreprocessorCmd::DEFINE,
-                             "UNIFORM_SORTED " + ubo.name + "_sorted"},
-                            {PreprocessorCmd::DEFINE,
-                             "UNIFORM_UNSORTED " + ubo.name + "_unsorted"},
+  vec.insert(
+      vec.end(),
+      {
 
-                            {PreprocessorCmd::INCLUDE, ubo.filename},
-                            {PreprocessorCmd::UNDEFINE, "UNIFORM_SORTED "},
-                            {PreprocessorCmd::UNDEFINE, "UNIFORM_UNSORTED "},
-                            {PreprocessorCmd::DEFINE,
-                             define_name + "_SORTING_METHOD INDEX_WRITE"},
-                        });
+          {PreprocessorCmd::IFNDEF, std_ext::to_upper(ubo.name + "_sorted")},
+          {PreprocessorCmd::DEFINE, std_ext::to_upper(ubo.name + "_sorted")},
 
-  std::string ssbo_define = define_name + "_UNSORTED_INDEX";
+          {PreprocessorCmd::DEFINE, "UNIFORM_SORTED " + ubo.name + "_sorted"},
+          {PreprocessorCmd::DEFINE,
+           "UNIFORM_UNSORTED " + ubo.name + "_unsorted"},
+
+          {PreprocessorCmd::INCLUDE, "\"" + ubo.filename + "\""},
+
+          {PreprocessorCmd::UNDEFINE, "UNIFORM_SORTED "},
+          {PreprocessorCmd::UNDEFINE, "UNIFORM_UNSORTED "},
+          {PreprocessorCmd::DEFINE,
+           define_name + "_SORTING_METHOD INDEX_WRITE"},
+
+          {PreprocessorCmd::ENDIF, ""},
+      });
+
+  std::string ssbo_define = define_name + "_INDEX";
   auto vec_ssbo = ssbo.data.generateCommands(abstract, ssbo_define);
   vec.insert(vec.end(), vec_ssbo.begin(), vec_ssbo.end());
 

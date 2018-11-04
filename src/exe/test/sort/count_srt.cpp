@@ -12,6 +12,14 @@ int main() {
         {PREC_VEC_TYPE(glm::linearRand(0.0f, 1.0f), glm::linearRand(0.0f, 1.0f),
                        glm::linearRand(0.0f, 1.0f), 0.0f)});
   }
+#ifndef REORDER_SINGLE
+  // double buffer
+  for (size_t i = 0; i < numParticles; i++) {
+    particles2.push_back({{}});
+    // 0
+    particles.push_back({{}});
+  }
+#endif
 
   PREC_VEC3_TYPE gGridPos(0.0, 0.0, 0.0);
   glm::uvec3 gGridDim(128, 128, 128);
