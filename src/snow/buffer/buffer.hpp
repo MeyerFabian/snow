@@ -99,7 +99,6 @@ class Buffer {
  private:
   template <typename Container>
   void gl_write_aos(Container&& c, void* ptr) {
-    std::cout << "aos" << std::endl;
     auto ElemT_ptr = (ElemT*)ptr;
     size_t i = 0;
     for (const auto& elem : c) {
@@ -110,7 +109,6 @@ class Buffer {
 
   template <typename Container>
   void gl_write_soa(Container&& c, void* ptr) {
-    std::cout << "soa: " << std::size(c) << std::endl;
     if (!std::empty(c)) {
       size_t elem_idx = 0;
       for (auto elem_it = std::begin(c); elem_it < std::end(c);

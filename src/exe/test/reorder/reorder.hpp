@@ -226,7 +226,7 @@ OutputData test(testData& data) {
   // reorder
   ReorderTechnique::ReorderData reorder_data{
       // LocalSize local_size;
-      {1024, 1, 1},
+      {32, 1, 1},
   // std::string filename;
 #ifdef REORDER_SINGLE
 #ifdef REORDER_KEYS
@@ -290,11 +290,11 @@ OutputData test(testData& data) {
                                       &reordering,    // reorder
                                       numParticles = data.numParticles,
                                       numGridPoints = data.numGridPoints]() {
-    executeTest(1, [&resetCounter,  // reset
-                    &binCount,      // bin
-                    &scanPipeline,  // scan
-                    &reordering,    // reorder
-                    numParticles, numGridPoints]() {
+    executeTest(10'000, [&resetCounter,  // reset
+                         &binCount,      // bin
+                         &scanPipeline,  // scan
+                         &reordering,    // reorder
+                         numParticles, numGridPoints]() {
       // reset
       BenchmarkerGPU::getInstance().time(
           "resetCounter", [&resetCounter, numGridPoints]() {

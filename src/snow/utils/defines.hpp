@@ -5,6 +5,10 @@
 //#define MARKERS
 //#define NDEBUG
 
+// slower
+//#define SCAN_DIRECT_WRITE_BACK
+
+//#define BIN_MULTIPLE_ELEMENTS 2
 //#define DOUBLE_PREC
 
 #define WINDOW_WIDTH 1280

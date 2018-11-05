@@ -69,11 +69,19 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
 
   resetCounter.init(std::move(map_data), std::move(io_map));
   BinningTechnique::BinningData binning_data{
+#ifdef BIN_MULTIPLE_ELEMENTS
+      "shader/compute/preprocess/bin_mult.glsl",
+#else
       "shader/compute/preprocess/bin.glsl",
+#endif
+
       cnt_srt_data.gGridPos,
       cnt_srt_data.gGridDim,
       cnt_srt_data.gridSpacing,
-
+#ifdef BIN_MULTIPLE_ELEMENTS
+      true,
+      BIN_MULTIPLE_ELEMENTS,
+#endif
   };
   IOBufferData io_bin;
   // INPUT
@@ -127,7 +135,7 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
 
   ReorderTechnique::ReorderData reorder_data{
       // LocalSize local_size;
-      {1024, 1, 1},
+      {32, 1, 1},
       // std::string filename;
       "shader/compute/preprocess/reorder.glsl",
       // GLuint scan_block_size;
@@ -219,19 +227,20 @@ void CountingSortPipeline::initFullSort(CountingSortData&& cnt_srt_data,
 }
 
 BufferData CountingSortPipeline::initIndexSort(CountingSortData cnt_srt_data,
-                                               GLuint to_sort_size) {
+                                               GLuint to_sort_size,
+                                               GLuint multiple_buffers) {
   index_buffer = std::make_unique<Buffer<GLuint> >(
       BufferType::SSBO, BufferUsage::STATIC_DRAW, BufferLayout::SOA,
       "shader/buffers/indices.include.glsl");
-  index_buffer->resize_buffer(to_sort_size);
+  index_buffer->resize_buffer(to_sort_size * multiple_buffers);
   index_buffer->gl_bind_base(PARTICLE_INDICES_BINDING);
   return BufferData("indices", "Index_i", index_buffer->get_buffer_info(),
-                    to_sort_size, 1, "0", "Indices_VAR_SIZE");
+                    to_sort_size, multiple_buffers, "0", "Indices_VAR_SIZE");
 }
 void CountingSortPipeline::initIndexReadSort(CountingSortData&& cnt_srt_data,
                                              IOBufferData&& io_data) {
   GLuint to_sort_size = io_data.out_buffer[0]->getSize();
-  auto indices_buffer = initIndexSort(cnt_srt_data, to_sort_size);
+  auto indices_buffer = initIndexSort(cnt_srt_data, to_sort_size, 1);
   for (auto it = io_data.out_buffer.begin(); it != io_data.out_buffer.end();
        it++) {
     auto sorted_buffer = std::make_unique<SortedIndexReadBufferData>(
@@ -256,9 +265,9 @@ void CountingSortPipeline::initUniformBuffer() {
 
 void CountingSortPipeline::initIndexWriteSort(CountingSortData&& cnt_srt_data,
                                               IOBufferData&& io_data) {
-  GLuint to_sort_db_size = io_data.out_buffer[0]->getSize() * 2;
+  GLuint to_sort_size = io_data.out_buffer[0]->getSize();
   std::string name = io_data.out_buffer[0]->getName();
-  auto indices_buffer_sorted = initIndexSort(cnt_srt_data, to_sort_db_size);
+  auto indices_buffer_sorted = initIndexSort(cnt_srt_data, to_sort_size, 2);
   auto indices_buffer_unsorted = indices_buffer_sorted;
   indices_buffer_sorted.setIndexBuffer(name + "_sorted");
   indices_buffer_unsorted.setIndexBuffer(name + "_unsorted");
@@ -275,6 +284,12 @@ void CountingSortPipeline::initIndexWriteSort(CountingSortData&& cnt_srt_data,
     sorting_data.push_back(std::move(sorted_buffer));
     unsorting_data.push_back(std::move(unsorted_buffer));
   }
+
+  std::vector<GLuint> index_init;
+  for (auto i = 0; i < to_sort_size; i++) {
+    index_init.push_back(i);
+  }
+  index_buffer->transfer_to_gpu(index_init);
   initUniformBuffer();
   init(std::move(cnt_srt_data));
 }
