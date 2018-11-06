@@ -6,7 +6,7 @@
 
 class MapTechnique : public Technique {
  public:
-  LocalSize local_size = {32, 1, 1};
+  LocalSize local_size = {1024, 1, 1};
   bool multiple;
   struct MapData {
     std::string filename;

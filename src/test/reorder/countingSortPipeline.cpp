@@ -56,7 +56,7 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
    **********************************************************************/
   // Reset
   MapTechnique::MapData map_data{
-      "shader/compute/mapreduce/map.glsl",
+      "shader/compute/mapreduce/mapSingle.glsl",
       // unary_op
       "0",
   };
@@ -101,7 +101,7 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
       // local_size
       {1024, 1, 1},
       // shader
-      "shader/compute/preprocess/scan.glsl",
+      "shader/compute/preprocess/scan_unroll.glsl",
       // unary_op_return_type
       "uint",
       // unary_op
@@ -183,7 +183,7 @@ void CountingSortPipeline::run(CountingSortDispatch&& dispatch_data) {
   //
   BenchmarkerGPU::getInstance().time(
       "resetCounter", [this, numGridPoints = dispatch_data.numGridPoints]() {
-        resetCounter.dispatch_with_barrier({numGridPoints, true, 2});
+        resetCounter.dispatch_with_barrier({numGridPoints});
       });
 
   // bin

@@ -44,24 +44,24 @@ void main(void){
 	//floor
 	ivec3 globalGridIndex = ivec3(positionInGrid);
 
+	uint voxelAndTileIndex = get_voxel_and_tile_index(globalGridIndex,gGridDim);
+
+	uint scanIndex =
+		//scan_local
+		INPUT2_AT(INPUT2,INPUT2_VAR,INPUT2_SIZE,get_scan_local_index(voxelAndTileIndex),INPUT2_NUM_BUFFER,INPUT2_INDEX_BUFFER,INPUT2_VAR_SIZE)
+#ifndef SCAN_DIRECT_WRITE_BACK
+		+
+		//scan_block
+		INPUT3_AT(INPUT3,INPUT3_VAR,INPUT3_SIZE,get_scan_block_index(voxelAndTileIndex),INPUT3_NUM_BUFFER,INPUT3_INDEX_BUFFER,INPUT3_VAR_SIZE)
+#endif
+		;
+	uint scanOffset =
+		INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,unsortedIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER,INPUT_VAR_SIZE);
+	uint sortedIndex = scanIndex + scanOffset;
+
 
 	if(inBounds(globalGridIndex,gGridDim)){
-		uint voxelAndTileIndex = get_voxel_and_tile_index(globalGridIndex,gGridDim);
-
-		uint scanIndex =
-			//scan_local
-			INPUT2_AT(INPUT2,INPUT2_VAR,INPUT2_SIZE,get_scan_local_index(voxelAndTileIndex),INPUT2_NUM_BUFFER,INPUT2_INDEX_BUFFER,INPUT2_VAR_SIZE)
-#ifndef SCAN_DIRECT_WRITE_BACK
-			+
-			//scan_block
-			INPUT3_AT(INPUT3,INPUT3_VAR,INPUT3_SIZE,get_scan_block_index(voxelAndTileIndex),INPUT3_NUM_BUFFER,INPUT3_INDEX_BUFFER,INPUT3_VAR_SIZE)
-#endif
-			;
-		uint scanOffset =
-			INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,unsortedIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER,INPUT_VAR_SIZE);
-		uint sortedIndex = scanIndex + scanOffset;
-
-#if INPUT4_SORTING_METHOD == INDEX_WRITE || INPUT4_SORTING_METHOD == INDEX_READ
+#if INPUT_SORTING_METHOD == INDEX_WRITE || INPUT_SORTING_METHOD == INDEX_READ
 
 		OUTPUT_INDEX_AT(OUTPUT_INDEX,OUTPUT_INDEX_VAR,OUTPUT_INDEX_SIZE,sortedIndex,OUTPUT_INDEX_NUM_BUFFER,OUTPUT_INDEX_INDEX_BUFFER,OUTPUT_INDEX_VAR_SIZE) = unsortedIndex;
 #else
