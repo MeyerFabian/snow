@@ -129,10 +129,10 @@ OutputData test(testData& data) {
                  particle_indices_buffer.get_buffer_info(), data.numParticles,
                  1, "0", "ParticleIndices_VAR_SIZE");
   auto Particle_pos_unsorted = BufferData(
-      "particles", "Particle_pos_mass", particle_buffer.get_buffer_info(),
+      "particles", "Particle_pos_vol", particle_buffer.get_buffer_info(),
       data.numParticles, 2, "0", "Particle_exp_size");
   auto Particle_pos_sorted = BufferData(
-      "particles", "Particle_pos_mass", particle_buffer.get_buffer_info(),
+      "particles", "Particle_pos_vol", particle_buffer.get_buffer_info(),
       data.numParticles, 2, "1", "Particle_exp_size");
   auto Particle_2_unsorted =
       BufferData("particles_2", "", particle_buffer.get_buffer_info(),

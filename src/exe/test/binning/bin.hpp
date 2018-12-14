@@ -95,7 +95,7 @@ OutputData test(testData& data) {
 #endif
   };
 
-  auto Particle_pos_mass = BufferData("particles", "Particle_pos_mass",
+  auto Particle_pos_mass = BufferData("particles", "Particle_pos_vol",
                                       input.get_buffer_info(), data.numVectors);
 
 #ifdef OUTPUT2

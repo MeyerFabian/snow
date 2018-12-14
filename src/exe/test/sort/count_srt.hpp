@@ -58,7 +58,7 @@ OutputData test(testData&& data) {
 
 #ifdef REORDER_SINGLE
   auto Particle_pos_unsorted = BufferData(
-      "particles", "Particle_pos_mass", particle_buffer.get_buffer_info(),
+      "particles", "Particle_pos_vol", particle_buffer.get_buffer_info(),
       data.numParticles, 1, "0", "Particle_exp_size");
 
   auto Particle_2_unsorted =
@@ -69,7 +69,7 @@ OutputData test(testData&& data) {
 #else
   // full sort double buffered
   auto Particle_pos_unsorted = BufferData(
-      "particles", "Particle_pos_mass", particle_buffer.get_buffer_info(),
+      "particles", "Particle_pos_vol", particle_buffer.get_buffer_info(),
       data.numParticles, 2, "0", "Particle_exp_size");
 
   auto Particle_2_unsorted =
@@ -87,8 +87,8 @@ OutputData test(testData&& data) {
 
   CountingSortPipeline::CountingSortData cnt_srt_data{
       layout,
-      data.gGridDim,
       data.gGridPos,
+      data.gGridDim,
       data.gridSpacing,
   };
 
@@ -113,9 +113,9 @@ OutputData test(testData&& data) {
   bench.time("Total CPU time spent",
              [&cnt_srt_pipeline, numParticles = data.numParticles,
               numGridPoints = data.numGridPoints]() {
-               executeTest(10'000, [&cnt_srt_pipeline, &numParticles,
-                                    &numGridPoints]() {  // reset
-                                                         // reorder
+               executeTest(1, [&cnt_srt_pipeline, &numParticles,
+                               &numGridPoints]() {  // reset
+                                                    // reorder
                  cnt_srt_pipeline.run({numParticles, numGridPoints});
                });
              });

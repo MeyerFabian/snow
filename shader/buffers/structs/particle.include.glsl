@@ -3,8 +3,8 @@
 
 #ifdef AOS_LAYOUT
 struct Particle_exp {
-	PREC_VEC_TYPE Particle_pos_mass;
-	PREC_VEC_TYPE Particle_vel_vol;
+	PREC_VEC_TYPE Particle_pos_vol;
+	PREC_VEC_TYPE Particle_vel_mass;
 
 	PREC_VEC_TYPE Particle_ElasDeform_1;
 	PREC_VEC_TYPE Particle_ElasDeform_2;
@@ -17,8 +17,8 @@ struct Particle_exp_2{
 };
 #else
 #define Particle_exp PREC_VEC_TYPE
-#define Particle_pos_mass	0
-#define Particle_vel_vol	1
+#define Particle_pos_vol	0
+#define Particle_vel_mass	1
 
 #define Particle_ElasDeform_1	2
 #define Particle_ElasDeform_2	3

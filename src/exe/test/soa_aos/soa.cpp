@@ -1,5 +1,5 @@
 #ifndef MULTIPLE_ELEMENTS
-#define MULTIPLE_ELEMENTS 2
+#define MULTIPLE_ELEMENTS 1
 #endif
 
 #ifndef UNARY_OPERATION_GL
@@ -39,10 +39,8 @@ int main() {
 #endif
   Buffer<Input> input(BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
                       BUFFER_IN_NAME);
-
   input.transfer_to_gpu(input_data);
   input.gl_bind_base(1);
-
   Buffer<Output> output(BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
                         BUFFER_OUT_NAME);
   output.transfer_to_gpu(output_data_init);
@@ -74,7 +72,7 @@ int main() {
   test.init(std::move(map_data), std::move(io_map));
   BenchmarkerCPU bench;
   bench.time("Total CPU time spent", [&numVectors, &test]() {
-    executeTest(1, [&test, numVectors]() {
+    executeTest(1000, [&test, numVectors]() {
       return BenchmarkerGPU::getInstance().time("map", [&test, numVectors]() {
         test.dispatch_with_barrier({numVectors
 #ifndef MAP_SINGLE

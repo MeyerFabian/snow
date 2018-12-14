@@ -10,7 +10,7 @@
 #include "../IOBufferData.hpp"
 class BinningTechnique : public Technique {
  public:
-  LocalSize local_size = {32, 1, 1};
+  LocalSize local_size = {64, 1, 1};
   bool multiple = false;
   struct UniformsStatic {
     PREC_VEC3_TYPE gGridPos;

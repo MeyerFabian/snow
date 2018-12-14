@@ -8,6 +8,7 @@
 // grid buffers
 #define ATOMIC_COUNTER_BINDING 4
 #define SCAN_BUFFER_BINDING 5
+#define UNIFORM_GRID_BINDING 6
 
 #define UNIFORM_SORTED_BINDING 0
 #endif
