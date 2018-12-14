@@ -4,9 +4,7 @@ void P2G_atomic_global::init(P2GData&& data, IOBufferData&& io) {
   auto shader = std::make_shared<Shader>(ShaderType::COMPUTE, filename);
   shader->set_local_size(local_size);
 
-  std::vector<Shader::CommandType> vec = {
-      {PreprocessorCmd::DEFINE, "SORTING_KEY " + data.sorting_key},
-  };
+  std::vector<Shader::CommandType> vec = {};
 
   auto io_cmds(io.generateCommands());
   vec.insert(std::end(vec), std::begin(io_cmds), std::end(io_cmds));

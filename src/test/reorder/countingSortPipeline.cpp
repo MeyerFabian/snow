@@ -213,7 +213,8 @@ void CountingSortPipeline::initFullSort(CountingSortData&& cnt_srt_data,
   for (auto it = io_data.out_buffer.begin(); it != io_data.out_buffer.end();
        it++) {
     auto sorted_buffer = std::make_unique<SortedFullBufferData>(
-        (*it)->cloneBufferDataInterface(), initUBO(name));
+        (*it)->cloneBufferDataInterface(), initUBO(name),
+        cnt_srt_data.sorting_key);
     sorted_buffer->setIndexBuffer(name + "_sorted");
     auto unsorted_buffer = sorted_buffer->cloneBufferDataInterface();
     unsorted_buffer->setIndexBuffer(name + "_unsorted");
@@ -245,7 +246,8 @@ void CountingSortPipeline::initIndexReadSort(CountingSortData&& cnt_srt_data,
        it++) {
     auto sorted_buffer = std::make_unique<SortedIndexReadBufferData>(
         (*it)->cloneBufferDataInterface(),
-        SortedBufferData::IndexSSBOData{indices_buffer});
+        SortedBufferData::IndexSSBOData{indices_buffer},
+        cnt_srt_data.sorting_key);
     auto unsorted_buffer = sorted_buffer->cloneBufferDataInterface();
     unsorting_data.push_back(std::move(unsorted_buffer));
 
@@ -275,11 +277,12 @@ void CountingSortPipeline::initIndexWriteSort(CountingSortData&& cnt_srt_data,
        it++) {
     auto sorted_buffer = std::make_unique<SortedIndexWriteBufferData>(
         (*it)->cloneBufferDataInterface(),
-        SortedBufferData::IndexSSBOData{indices_buffer_sorted}, initUBO(name));
+        SortedBufferData::IndexSSBOData{indices_buffer_sorted}, initUBO(name),
+        cnt_srt_data.sorting_key);
     auto unsorted_buffer = std::make_unique<SortedIndexWriteBufferData>(
         (*it)->cloneBufferDataInterface(),
-        SortedBufferData::IndexSSBOData{indices_buffer_unsorted},
-        initUBO(name));
+        SortedBufferData::IndexSSBOData{indices_buffer_unsorted}, initUBO(name),
+        cnt_srt_data.sorting_key);
 
     sorting_data.push_back(std::move(sorted_buffer));
     unsorting_data.push_back(std::move(unsorted_buffer));

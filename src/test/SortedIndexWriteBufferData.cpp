@@ -20,6 +20,8 @@ std::vector<Shader::CommandType> SortedIndexWriteBufferData::generateCommands(
           {PreprocessorCmd::DEFINE,
            define_name + "_SORTING_METHOD INDEX_WRITE"},
 
+          {PreprocessorCmd::DEFINE, define_name + "_SORTING_KEY" + sorting_key},
+
           {PreprocessorCmd::ENDIF, ""},
       });
 
@@ -33,6 +35,6 @@ std::unique_ptr<BufferDataInterface>
 SortedIndexWriteBufferData::cloneBufferDataInterface() {
   return std::make_unique<SortedIndexWriteBufferData>(
       buffer_interface->cloneBufferDataInterface(), IndexSSBOData(ssbo),
-      IndexUBOData(ubo));
+      IndexUBOData(ubo), sorting_key);
 }
 

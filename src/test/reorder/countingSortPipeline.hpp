@@ -12,6 +12,7 @@
 #include "../BufferData.hpp"
 #include "../IOBufferData.hpp"
 #include "../SortedBufferData.hpp"
+#include "../SortedBufferDataAccess.hpp"
 #include "../SortedFullBufferData.hpp"
 #include "../SortedIndexReadBufferData.hpp"
 #include "../SortedIndexWriteBufferData.hpp"
@@ -40,7 +41,7 @@ class CountingSortPipeline {
   // requires a double buffer for the buffer to be sorted
   void initFullSort(CountingSortData&& cnt_srt_data, IOBufferData&& io_data);
 
-  const auto& getSortedBufferData() { return sorting_data; }
+  // const auto getSortedBufferData() { return sorting_data; }
 
  private:
   SortedBufferData::IndexUBOData initUBO(std::string name) const;
@@ -58,7 +59,7 @@ class CountingSortPipeline {
   BinningTechnique binCount;
   ScanPipeline scanPipeline;
   ReorderTechnique reordering;
-  std::vector<std::unique_ptr<BufferDataInterface> > sorting_data;
+  std::vector<std::unique_ptr<SortedBufferData> > sorting_data;
   std::vector<std::unique_ptr<BufferDataInterface> > unsorting_data;
   std::deque<GLuint> circle_buffer_values;
 };

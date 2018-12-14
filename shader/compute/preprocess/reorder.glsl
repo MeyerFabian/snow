@@ -14,6 +14,9 @@
 // ...
 // etc.
 
+#ifndef INPUT_SORTING_KEY
+#define INPUT_SORTING_KEY get_voxel_and_tile_index
+#endif
 #include "shader/shared_hpp/voxel_tile_size.hpp"
 #include "shader/compute/indexing/gridIndex.include.glsl"
 #include "shader/utils/sorting_method.include.glsl"
@@ -46,7 +49,7 @@ void main(void){
 
 
 	if(inBounds(globalGridIndex,gGridDim)){
-		uint key = SORTING_KEY(globalGridIndex,gGridDim);
+		uint key = INPUT_SORTING_KEY(globalGridIndex,gGridDim);
 
 		uint scanIndex =
 			//scan_local

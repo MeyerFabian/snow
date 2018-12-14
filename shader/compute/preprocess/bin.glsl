@@ -1,4 +1,8 @@
 #version 440
+
+#ifndef INPUT_SORTING_KEY
+#define INPUT_SORTING_KEY get_voxel_and_tile_index
+#endif
 #include "shader/compute/indexing/gridIndex.include.glsl"
 #include "shader/utils/sorting_method.include.glsl"
 layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
@@ -22,7 +26,6 @@ uniform uint bufferSize;
  * AT(buffer,var,index) =>
  * buffer[index].var
  */
-
 void main(void){
 	uint i = gl_GlobalInvocationID.x;
 	if(i>=bufferSize){
@@ -39,7 +42,7 @@ void main(void){
 	//floor
 	ivec3 globalGridIndex = ivec3(positionInGrid);
 	if(inBounds(globalGridIndex,gGridDim)){
-		uint key = SORTING_KEY(globalGridIndex,gGridDim);
+		uint key = INPUT_SORTING_KEY(globalGridIndex,gGridDim);
 #ifdef OUTPUT2
 		OUTPUT2_AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,i,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) =
 #endif
