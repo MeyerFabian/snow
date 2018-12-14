@@ -1,3 +1,3 @@
-#define ATOMIC_FULL_SORTED
-#include "atomic_global.cpp"
+#define FULL_SORTED
+#include "p2g_transfer_random.cpp"
 

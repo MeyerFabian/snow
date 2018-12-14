@@ -24,6 +24,7 @@ class CountingSortPipeline {
     PREC_VEC3_TYPE gGridPos;
     glm::uvec3 gGridDim;
     PREC_SCAL_TYPE gridSpacing;
+    std::string sorting_key;
   };
   struct CountingSortDispatch {
     GLuint numParticles;
@@ -38,6 +39,8 @@ class CountingSortPipeline {
                           IOBufferData&& io_data);
   // requires a double buffer for the buffer to be sorted
   void initFullSort(CountingSortData&& cnt_srt_data, IOBufferData&& io_data);
+
+  const auto& getSortedBufferData() { return sorting_data; }
 
  private:
   SortedBufferData::IndexUBOData initUBO(std::string name) const;

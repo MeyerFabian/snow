@@ -166,6 +166,7 @@ OutputData test(testData& data) {
   resetCounter.init(std::move(map_data), std::move(io_map));
   // bin
   BinningTechnique::BinningData binning_data{
+      "get_voxel_and_tile_index",
       "shader/compute/preprocess/bin.glsl",
       data.gGridPos,
       data.gGridDim,
@@ -225,6 +226,7 @@ OutputData test(testData& data) {
 #endif
   // reorder
   ReorderTechnique::ReorderData reorder_data{
+      "get_voxel_and_tile_index",
       // LocalSize local_size;
       {32, 1, 1},
   // std::string filename;

@@ -1,3 +1,3 @@
 #define ATOMIC_LOOP
-#include "atomic_global.cpp"
+#include "p2g_transfer_random.cpp"
 

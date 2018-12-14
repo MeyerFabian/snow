@@ -1,4 +1,11 @@
-#include "atomic_global.hpp"
+#if defined(FULL_SORTED) || defined(INDEX_WRITE_SORTED) || \
+    defined(INDEX_READ_SORTED)
+#define SORTED
+#endif
+#if defined(INDEX_WRITE_SORTED) || defined(INDEX_READ_SORTED)
+#define INDEX_SORTED
+#endif
+#include "p2g_transfer_random.hpp"
 int main() {
   GLuint numParticles = 1024 * 1024;
   GLuint numGridPoints = 128 * 128 * 128;
@@ -27,7 +34,7 @@ int main() {
                        glm::linearRand(-1.0f, 1.0f), 1.0f)});
   }
 
-#ifdef ATOMIC_FULL_SORTED
+#ifdef FULL_SORTED
   // double buffer
   for (size_t i = 0; i < numParticles; i++) {
     particles2.push_back({{}});

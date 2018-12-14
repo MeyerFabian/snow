@@ -39,10 +39,10 @@ void main(void){
 	//floor
 	ivec3 globalGridIndex = ivec3(positionInGrid);
 	if(inBounds(globalGridIndex,gGridDim)){
-		uint voxelAndTileIndex = get_voxel_and_tile_index(globalGridIndex,gGridDim);
+		uint key = SORTING_KEY(globalGridIndex,gGridDim);
 #ifdef OUTPUT2
 		OUTPUT2_AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,i,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) =
 #endif
-			atomicAdd(OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,voxelAndTileIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER),1);
+			atomicAdd(OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,key,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER),1);
 	}
 }

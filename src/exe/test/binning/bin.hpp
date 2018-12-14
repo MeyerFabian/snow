@@ -80,6 +80,7 @@ OutputData test(testData& data) {
   resetCounter.init(std::move(map_data), std::move(io_reset));
 
   BinningTechnique::BinningData binning_data{
+      "get_voxel_and_tile_index",
 #ifdef MULTIPLE_ELEMENTS
 
       "shader/compute/preprocess/bin_mult.glsl",

@@ -66,7 +66,7 @@ OutputData test(testData&& data) {
    *                    Techniques + IOData creation                    *
    **********************************************************************/
 
-#ifdef ATOMIC_FULL_SORTED
+#ifdef FULL_SORTED
   // full sort double buffered
   auto Particle_pos_unsorted = BufferData(
       "particles", "Particle_pos_vol", particle_buffer.get_buffer_info(),
@@ -77,7 +77,17 @@ OutputData test(testData&& data) {
                  data.numParticles, 2, "0",
 
                  "Particle_exp_2_size");
+#else
+  auto Particle_pos_unsorted = BufferData(
+      "particles", "Particle_pos_vol", particle_buffer.get_buffer_info(),
+      data.numParticles, 1, "0", "Particle_exp_size");
 
+  auto Particle_2_unsorted =
+      BufferData("particles_2", "", particle_buffer.get_buffer_info(),
+                 data.numParticles, 1, "0", "Particle_exp_2_size");
+#endif
+
+#ifdef SORTED
   CountingSortPipeline::CountingSortData cnt_srt_data{
       layout,
       data.gGridPos,
@@ -93,17 +103,20 @@ OutputData test(testData&& data) {
   io_cnt_srt.out_buffer.push_back(
       std::make_unique<BufferData>(Particle_2_unsorted));
 
-  cnt_srt_pipeline.initFullSort(std::move(cnt_srt_data), std::move(io_cnt_srt));
-#else
-  auto Particle_pos_unsorted = BufferData(
-      "particles", "Particle_pos_vol", particle_buffer.get_buffer_info(),
-      data.numParticles, 1, "0", "Particle_exp_size");
-
-  auto Particle_2_unsorted =
-      BufferData("particles_2", "", particle_buffer.get_buffer_info(),
-                 data.numParticles, 1, "0", "Particle_exp_2_size");
 #endif
 
+#if defined(FULL_SORTED)
+  cnt_srt_pipeline.initFullSort(std::move(cnt_srt_data), std::move(io_cnt_srt));
+#elif defined(INDEX_SORTED)
+#if defined(INDEX_WRITE_SORTED)
+  cnt_srt_pipeline.initIndexWriteSort(std::move(cnt_srt_data),
+                                      std::move(io_cnt_srt));
+#else
+
+  cnt_srt_pipeline.initIndexReadSort(std::move(cnt_srt_data),
+                                     std::move(io_cnt_srt));
+#endif
+#endif
   auto gridpoint_vel_mass = BufferData(
       "gridpoints", "Gridpoint_vel_mass", grid_buffer.get_buffer_info(),
       data.numGridPoints, 1, "0", "Gridpoint_size");
@@ -152,18 +165,18 @@ OutputData test(testData&& data) {
   BenchmarkerCPU bench;
   bench.time("Total CPU time spent",
              [
-#ifdef ATOMIC_FULL_SORTED
+#ifdef FULL_SORTED
                  &cnt_srt_pipeline,
 #endif
                  &resetGridVel, &p2gTransfer, numParticles = data.numParticles,
                  numGridPoints = data.numGridPoints]() {
                executeTest(1, [
-#ifdef ATOMIC_FULL_SORTED
+#ifdef FULL_SORTED
                                   &cnt_srt_pipeline,
 #endif
                                   &resetGridVel, &p2gTransfer, &numParticles,
                                   &numGridPoints]() {
-#ifdef ATOMIC_FULL_SORTED
+#ifdef FULL_SORTED
                  cnt_srt_pipeline.run({numParticles, numGridPoints});
 #endif
                  BenchmarkerGPU::getInstance().time(

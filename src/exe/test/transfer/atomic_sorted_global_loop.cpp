@@ -1,4 +1,4 @@
-#define ATOMIC_FULL_SORTED
+#define FULL_SORTED
 #define ATOMIC_LOOP
-#include "atomic_global.cpp"
+#include "p2g_transfer_random.cpp"
 

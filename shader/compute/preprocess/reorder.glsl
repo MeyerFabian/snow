@@ -46,15 +46,15 @@ void main(void){
 
 
 	if(inBounds(globalGridIndex,gGridDim)){
-		uint voxelAndTileIndex = get_voxel_and_tile_index(globalGridIndex,gGridDim);
+		uint key = SORTING_KEY(globalGridIndex,gGridDim);
 
 		uint scanIndex =
 			//scan_local
-			INPUT2_AT(INPUT2,INPUT2_VAR,INPUT2_SIZE,get_scan_local_index(voxelAndTileIndex),INPUT2_NUM_BUFFER,INPUT2_INDEX_BUFFER,INPUT2_VAR_SIZE)
+			INPUT2_AT(INPUT2,INPUT2_VAR,INPUT2_SIZE,get_scan_local_index(key),INPUT2_NUM_BUFFER,INPUT2_INDEX_BUFFER,INPUT2_VAR_SIZE)
 #ifndef SCAN_DIRECT_WRITE_BACK
 			+
 			//scan_block
-			INPUT3_AT(INPUT3,INPUT3_VAR,INPUT3_SIZE,get_scan_block_index(voxelAndTileIndex),INPUT3_NUM_BUFFER,INPUT3_INDEX_BUFFER,INPUT3_VAR_SIZE)
+			INPUT3_AT(INPUT3,INPUT3_VAR,INPUT3_SIZE,get_scan_block_index(key),INPUT3_NUM_BUFFER,INPUT3_INDEX_BUFFER,INPUT3_VAR_SIZE)
 #endif
 			;
 		uint scanOffset =
