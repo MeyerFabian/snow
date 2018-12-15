@@ -35,8 +35,8 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
    *                        In/Outs for Shaders                         *
    **********************************************************************/
   // binning     grid
-  auto counter_i = BufferData("counters", "Counter_i",
-                              binning_buffer->get_buffer_info(), gridSize);
+  counter_i = std::make_unique<BufferData>(
+      "counters", "Counter_i", binning_buffer->get_buffer_info(), gridSize);
 
   // gridOffset to_sort
   auto gridOffset_i = BufferData(
@@ -44,9 +44,9 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
       to_sort_size, 1, "0", "Particle_GridOffset_VAR_SIZE");
 
   // scan       grid
-  auto Scan_local_i =
-      BufferData("scans", "Scan_local_i", scan_buffer->get_buffer_info(),
-                 gridSize, 1, "0", "Scan_VAR_SIZE");
+  Scan_local_i = std::make_unique<BufferData>(
+      "scans", "Scan_local_i", scan_buffer->get_buffer_info(), gridSize, 1, "0",
+      "Scan_VAR_SIZE");
 
   auto Scan_block_i =
       BufferData("scans", "Scan_block_i", scan_buffer->get_buffer_info(),
@@ -63,9 +63,9 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
 
   IOBufferData io_map;
   // INPUT
-  io_map.in_buffer.push_back(std::make_unique<BufferData>(counter_i));
+  io_map.in_buffer.push_back(counter_i->cloneBufferDataInterface());
   // OUTPUT
-  io_map.out_buffer.push_back(std::make_unique<BufferData>(counter_i));
+  io_map.out_buffer.push_back(counter_i->cloneBufferDataInterface());
 
   resetCounter.init(std::move(map_data), std::move(io_map));
   BinningTechnique::BinningData binning_data{
@@ -88,7 +88,7 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
   io_bin.in_buffer.push_back(unsorting_data[0]->cloneBufferDataInterface());
 
   // OUTPUT
-  io_bin.out_buffer.push_back(std::make_unique<BufferData>(counter_i));
+  io_bin.out_buffer.push_back(counter_i->cloneBufferDataInterface());
 
   // OUTPUT2
   io_bin.out_buffer.push_back(std::make_unique<BufferData>(gridOffset_i));
@@ -118,10 +118,10 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
   IOBufferData io_scan;
 
   // INPUT
-  io_scan.in_buffer.push_back(std::make_unique<BufferData>(counter_i));
+  io_scan.in_buffer.push_back(counter_i->cloneBufferDataInterface());
 
   // OUTPUT
-  io_scan.out_buffer.push_back(std::make_unique<BufferData>(Scan_local_i));
+  io_scan.out_buffer.push_back(Scan_local_i->cloneBufferDataInterface());
 
   // OUTPUT2
   io_scan.out_buffer.push_back(std::make_unique<BufferData>(Scan_block_i));
@@ -155,7 +155,7 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
   // INPUT
   io_reorder.in_buffer.push_back(std::make_unique<BufferData>(gridOffset_i));
   // INPUT2
-  io_reorder.in_buffer.push_back(std::make_unique<BufferData>(Scan_local_i));
+  io_reorder.in_buffer.push_back(Scan_local_i->cloneBufferDataInterface());
   // INPUT3
   io_reorder.in_buffer.push_back(std::make_unique<BufferData>(Scan_block_i));
   for (auto it = unsorting_data.begin(); it != unsorting_data.end(); it++) {
@@ -295,5 +295,25 @@ void CountingSortPipeline::initIndexWriteSort(CountingSortData&& cnt_srt_data,
   index_buffer->transfer_to_gpu(index_init);
   initUniformBuffer();
   init(std::move(cnt_srt_data));
+}
+std::vector<std::unique_ptr<SortedBufferData> >
+CountingSortPipeline::getSortedBufferData() {
+  std::vector<std::unique_ptr<SortedBufferData> > ret;
+  for (auto& buffer_data : sorting_data) {
+    ret.push_back(buffer_data->clone());
+  }
+  return ret;
+}
+std::vector<std::unique_ptr<SortedBufferDataAccess> >
+CountingSortPipeline::getSortedBufferDataAccess() {
+  std::vector<std::unique_ptr<SortedBufferDataAccess> > ret;
+  for (auto& buffer_data : sorting_data) {
+    ret.push_back(std::make_unique<SortedBufferDataAccess>(
+        buffer_data->clone(), SortedBufferDataAccess::IndexSSBOData{
+                                  Scan_local_i->cloneBufferDataInterface(),
+                                  counter_i->cloneBufferDataInterface(),
+                              }));
+  }
+  return ret;
 }
 

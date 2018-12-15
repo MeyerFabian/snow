@@ -25,8 +25,12 @@ class SortedBufferData : public BufferDataInterface {
   std::string getIndexBuffer() override;
 
   GLuint getSize() override;
+
+  virtual std::unique_ptr<SortedBufferData> clone() = 0;
+
   SortedBufferData(std::unique_ptr<BufferDataInterface> in_buffer)
       : buffer_interface(std::move(in_buffer)) {}
+
   std::unique_ptr<BufferDataInterface> buffer_interface;
 };
 

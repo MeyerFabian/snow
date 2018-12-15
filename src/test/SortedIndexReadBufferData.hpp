@@ -17,6 +17,8 @@ class SortedIndexReadBufferData : public SortedBufferData {
 
   virtual std::unique_ptr<BufferDataInterface> cloneBufferDataInterface()
       override;
+
+  virtual std::unique_ptr<SortedBufferData> clone() override;
   IndexSSBOData ssbo;
   std::string sorting_key;
 };

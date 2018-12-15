@@ -15,6 +15,7 @@ class SortedIndexWriteBufferData : public SortedBufferData {
   virtual std::unique_ptr<BufferDataInterface> cloneBufferDataInterface()
       override;
 
+  virtual std::unique_ptr<SortedBufferData> clone() override;
   virtual std::vector<Shader::CommandType> generateCommands(
       bool, std::string) override;
   IndexSSBOData ssbo;

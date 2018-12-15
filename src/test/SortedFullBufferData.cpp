@@ -18,7 +18,8 @@ std::vector<Shader::CommandType> SortedFullBufferData::generateCommands(
           {PreprocessorCmd::UNDEFINE, "UNIFORM_UNSORTED "},
           {PreprocessorCmd::DEFINE, define_name + "_SORTING_METHOD FULL"},
 
-          {PreprocessorCmd::DEFINE, define_name + "_SORTING_KEY" + sorting_key},
+          {PreprocessorCmd::DEFINE,
+           define_name + "_SORTING_KEY " + sorting_key},
 
           {PreprocessorCmd::ENDIF, ""},
       });
@@ -27,6 +28,11 @@ std::vector<Shader::CommandType> SortedFullBufferData::generateCommands(
 
 std::unique_ptr<BufferDataInterface>
 SortedFullBufferData::cloneBufferDataInterface() {
+  return std::make_unique<SortedFullBufferData>(
+      buffer_interface->cloneBufferDataInterface(), IndexUBOData(ubo),
+      sorting_key);
+}
+std::unique_ptr<SortedBufferData> SortedFullBufferData::clone() {
   return std::make_unique<SortedFullBufferData>(
       buffer_interface->cloneBufferDataInterface(), IndexUBOData(ubo),
       sorting_key);

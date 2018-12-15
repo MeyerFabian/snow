@@ -9,9 +9,14 @@
 class SortedBufferDataAccess : public BufferDataInterface {
  public:
   struct IndexSSBOData {
-    BufferData scan;
-    BufferData count;
+    std::unique_ptr<BufferDataInterface> scan;
+    std::unique_ptr<BufferDataInterface> count;
   };
+
+  SortedBufferDataAccess(std::unique_ptr<SortedBufferData> in_buffer,
+                         IndexSSBOData&& in_ssbo)
+      : sorted_buffer(std::move(in_buffer)), ssbo(std::move(in_ssbo)) {}
+
   void setName(std::string name) override;
   std::string getName() override;
 
@@ -22,15 +27,13 @@ class SortedBufferDataAccess : public BufferDataInterface {
   std::string getIndexBuffer() override;
 
   GLuint getSize() override;
-  SortedBufferDataAccess(std::unique_ptr<SortedBufferData> in_buffer,
-                         IndexSSBOData&& in_ssbo)
-      : sorted_buffer(std::move(in_buffer)), ssbo(std::move(in_ssbo)) {}
-  std::unique_ptr<SortedBufferData> sorted_buffer;
   virtual std::vector<Shader::CommandType> generateCommands(
       bool, std::string) override;
 
   virtual std::unique_ptr<BufferDataInterface> cloneBufferDataInterface()
       override;
+
+  std::unique_ptr<SortedBufferData> sorted_buffer;
   IndexSSBOData ssbo;
 };
 

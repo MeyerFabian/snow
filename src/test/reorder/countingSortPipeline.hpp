@@ -18,6 +18,8 @@
 #include "../SortedIndexWriteBufferData.hpp"
 #include "../map/mapTechnique.hpp"
 
+#define SCAN_DIRECT_WRITE_BACK
+
 class CountingSortPipeline {
  public:
   struct CountingSortData {
@@ -41,7 +43,10 @@ class CountingSortPipeline {
   // requires a double buffer for the buffer to be sorted
   void initFullSort(CountingSortData&& cnt_srt_data, IOBufferData&& io_data);
 
-  // const auto getSortedBufferData() { return sorting_data; }
+  std::vector<std::unique_ptr<SortedBufferData> > getSortedBufferData();
+
+  std::vector<std::unique_ptr<SortedBufferDataAccess> >
+  getSortedBufferDataAccess();
 
  private:
   SortedBufferData::IndexUBOData initUBO(std::string name) const;
@@ -59,6 +64,8 @@ class CountingSortPipeline {
   BinningTechnique binCount;
   ScanPipeline scanPipeline;
   ReorderTechnique reordering;
+  std::unique_ptr<BufferData> Scan_local_i;
+  std::unique_ptr<BufferData> counter_i;
   std::vector<std::unique_ptr<SortedBufferData> > sorting_data;
   std::vector<std::unique_ptr<BufferDataInterface> > unsorting_data;
   std::deque<GLuint> circle_buffer_values;

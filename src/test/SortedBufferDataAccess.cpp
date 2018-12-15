@@ -1,4 +1,3 @@
-
 #include "SortedBufferDataAccess.hpp"
 void SortedBufferDataAccess::setName(std::string name) {
   sorted_buffer->setName(name);
@@ -29,9 +28,9 @@ std::vector<Shader::CommandType> SortedBufferDataAccess::generateCommands(
 
   std::string ssbo_define_scan = define_name + "_SCAN";
   std::string ssbo_define_count = define_name + "_COUNT";
-  auto vec_ssbo_scan = ssbo.scan.generateCommands(abstract, ssbo_define_scan);
+  auto vec_ssbo_scan = ssbo.scan->generateCommands(abstract, ssbo_define_scan);
   auto vec_ssbo_count =
-      ssbo.count.generateCommands(abstract, ssbo_define_count);
+      ssbo.count->generateCommands(abstract, ssbo_define_count);
   vec.insert(vec.end(), vec_ssbo_scan.begin(), vec_ssbo_scan.end());
   vec.insert(vec.end(), vec_ssbo_count.begin(), vec_ssbo_count.end());
 
@@ -40,6 +39,9 @@ std::vector<Shader::CommandType> SortedBufferDataAccess::generateCommands(
 std::unique_ptr<BufferDataInterface>
 SortedBufferDataAccess::cloneBufferDataInterface() {
   return std::make_unique<SortedBufferDataAccess>(
-      sorted_buffer->cloneBufferDataInterface(), IndexSSBOData(ssbo));
+      sorted_buffer->clone(), IndexSSBOData{
+                                  ssbo.scan->cloneBufferDataInterface(),
+                                  ssbo.count->cloneBufferDataInterface(),
+                              });
 }
 

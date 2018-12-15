@@ -93,6 +93,7 @@ OutputData test(testData&& data) {
       data.gGridPos,
       data.gGridDim,
       data.gridSpacing,
+      "get_voxel_and_tile_index",
   };
 
   CountingSortPipeline cnt_srt_pipeline;
@@ -145,7 +146,17 @@ OutputData test(testData&& data) {
   };
 
   IOBufferData p2g_io;
+
+#ifdef FULL_SORTED
+  auto particles_sorted = cnt_srt_pipeline.getSortedBufferData();
   // INPUT
+
+  for (auto& particle_sorted : particles_sorted) {
+    p2g_io.in_buffer.push_back(particle_sorted->cloneBufferDataInterface());
+  }
+
+#endif
+
   p2g_io.in_buffer.push_back(
       std::make_unique<BufferData>(Particle_pos_unsorted));
 

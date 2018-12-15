@@ -90,6 +90,7 @@ OutputData test(testData&& data) {
       data.gGridPos,
       data.gGridDim,
       data.gridSpacing,
+      "get_voxel_and_tile_index",
   };
 
   CountingSortPipeline cnt_srt_pipeline;

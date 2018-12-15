@@ -37,4 +37,9 @@ SortedIndexWriteBufferData::cloneBufferDataInterface() {
       buffer_interface->cloneBufferDataInterface(), IndexSSBOData(ssbo),
       IndexUBOData(ubo), sorting_key);
 }
+std::unique_ptr<SortedBufferData> SortedIndexWriteBufferData::clone() {
+  return std::make_unique<SortedIndexWriteBufferData>(
+      buffer_interface->cloneBufferDataInterface(), IndexSSBOData(ssbo),
+      IndexUBOData(ubo), sorting_key);
+}
 
