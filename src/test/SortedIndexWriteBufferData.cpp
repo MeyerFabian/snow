@@ -20,7 +20,8 @@ std::vector<Shader::CommandType> SortedIndexWriteBufferData::generateCommands(
           {PreprocessorCmd::DEFINE,
            define_name + "_SORTING_METHOD INDEX_WRITE"},
 
-          {PreprocessorCmd::DEFINE, define_name + "_SORTING_KEY" + sorting_key},
+          {PreprocessorCmd::DEFINE,
+           define_name + "_SORTING_KEY " + sorting_key},
 
           {PreprocessorCmd::ENDIF, ""},
       });
