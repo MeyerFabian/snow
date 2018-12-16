@@ -1,5 +1,5 @@
-#ifndef P2GATOMICCOMPUTE_H
-#define P2GATOMICCOMPUTE_H
+#ifndef P2GSHAREDCOMPUTE_H
+#define P2GSHAREDCOMPUTE_H
 #include <memory>
 
 #include "../../snow/utils/defines.hpp"
@@ -34,5 +34,5 @@ class P2G_shared : public Technique {
   glm::uvec3 gGridDim;
   std::string filename;
 };
-#endif  // P2GCOMPUTE_H
+#endif  // P2GSHAREDCOMPUTE_H
 
