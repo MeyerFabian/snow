@@ -29,10 +29,9 @@ void main(void){
 	PREC_VEC3_TYPE positionInGrid= (pos-gGridPos)/gridSpacing;
 
 
-	for(int x = -SUPPORT+1; x<= SUPPORT ;x++){
-#pragma optionNV (unroll all)
-		for(int y = -SUPPORT+1; y<= SUPPORT ;y++){
-			for(int z = -SUPPORT+1; z <= SUPPORT ;z++){
+	for(int x = -LEFT_SUPPORT; x<= RIGHT_SUPPORT ;x++){
+		for(int y = -LEFT_SUPPORT; y<= RIGHT_SUPPORT ;y++){
+			for(int z = -LEFT_SUPPORT; z <= RIGHT_SUPPORT ;z++){
 				ivec3 gridOffset = ivec3(x,y,z);
 
 				//floor

@@ -1,4 +1,5 @@
-#define SUPPORT 1
+#define LEFT_SUPPORT 1
+#define RIGHT_SUPPORT 2
 /*
  * Returns weight distribution by grid basis function (dyadic products of one-dimensional
  * cubic B-splines) from particle to actual grid neighbors dependant on their distance to the particle.
