@@ -27,7 +27,7 @@ void ReorderTechnique::init(ReorderData&& data, IOBufferData&& io) {
 void ReorderTechnique::dispatch_with_barrier(DispatchData&& data) const {
   Technique::use();
   uniforms_update({data.bufferSize});
-  glDispatchCompute(data.bufferSize / local_size.x, 1, 1);
+  glDispatchCompute(data.bufferSize / local_size.x + 1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
 void ReorderTechnique::uniforms_update(UniformsDynamic&& uniforms) const {

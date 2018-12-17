@@ -7,7 +7,7 @@
 #endif
 #include "p2g_transfer_random.hpp"
 int main() {
-  GLuint numParticles = 1024 * 1024;
+  GLuint numParticles = 1024*1024;
   GLuint numGridPoints = 128 * 128 * 128;
   std::vector<Particle_exp> particles;
   std::vector<Particle_exp_2> particles2;
@@ -21,11 +21,11 @@ int main() {
     // 0
     particles.push_back(
         {// pos_vol keep in grid +support bounds
-         PREC_VEC_TYPE(glm::linearRand(0.0f + 2.0 * gridSpacing,
+         PREC_VEC_TYPE(glm::linearRand(0.0f + 1.0 * gridSpacing,
                                        1.0f - 2.0 * gridSpacing),
-                       glm::linearRand(0.0f + 2.0 * gridSpacing,
+                       glm::linearRand(0.0f + 1.0 * gridSpacing,
                                        1.0f - 2.0 * gridSpacing),
-                       glm::linearRand(0.0f + 2.0 * gridSpacing,
+                       glm::linearRand(0.0f + 1.0 * gridSpacing,
                                        1.0f - 2.0 * gridSpacing),
                        0.0f),
          // vel_mass

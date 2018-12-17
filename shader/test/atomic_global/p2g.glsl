@@ -30,14 +30,13 @@ void main(void){
 	PREC_VEC3_TYPE positionInGrid= (pos-gGridPos)/gridSpacing;
 
 
-	ivec3 gridOffset = getIJK(int(particle_offset),SUPPORT); // temp = 21%16 = 5, ijk=(5%4, 5/4, 21/16) = (1,1,1)+(-2,-2,-2) = (-1,-1,-1)
+	ivec3 gridOffset = getIJK(int(particle_offset),RIGHT_SUPPORT); // temp = 21%16 = 5, ijk=(5%4, 5/4, 21/16) = (1,1,1)+(-2,-2,-2) = (-1,-1,-1)
 
 
 	//floor
 	ivec3 globalGridIndex = ivec3(positionInGrid) + gridOffset;
 	if(inBounds(globalGridIndex,gGridDim)){
-
-		uint voxelAndTileIndex = get_voxel_and_tile_index(globalGridIndex,gGridDim);
+		uint voxelAndTileIndex = get_dim_index(globalGridIndex,gGridDim);
 		vec3 gridDistanceToParticle = vec3(globalGridIndex)- positionInGrid;
 		float wip = .0f;
 		weighting (gridDistanceToParticle,wip);

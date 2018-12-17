@@ -36,7 +36,7 @@ void P2G_atomic_global::dispatch(UniformsDynamic&& uniforms) {
   Technique::use();
   auto numParticles = uniforms.numParticles;
   uniforms_update(std::move(uniforms));
-  glDispatchCompute(numParticles / local_size.x, ydim, 1);
+  glDispatchCompute(numParticles / local_size.x + 1, ydim, 1);
 }
 void P2G_atomic_global::dispatch_with_barrier(UniformsDynamic&& uniforms) {
   dispatch(std::move(uniforms));
