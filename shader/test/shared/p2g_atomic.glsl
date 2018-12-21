@@ -16,7 +16,6 @@ layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
 #define HALO_Y (Y+LEFT_SUPPORT+RIGHT_SUPPORT)
 #define HALO_Z (Z+LEFT_SUPPORT+RIGHT_SUPPORT)
 #define THREAD_RANGE int((HALO_X*HALO_Y*HALO_Z)/(X*Y*Z))
-#define THREAD_RANGE_REST int((HALO_X*HALO_Y*HALO_Z) % (X*Y*Z))
 shared PREC_VEC_TYPE temp [HALO_X][HALO_Y][HALO_Z];
 
 void main(void){
@@ -38,12 +37,13 @@ void main(void){
 		temp[halo_ijk.x][halo_ijk.y][halo_ijk.z] = PREC_VEC_TYPE(vec3(halo_ijk),float(local_i));
 		local_i += X*Y*Z;
 	}
-	/* BUGGED although i do the same thing below?!
-	   if(local_i < ((THREAD_RANGE)*int(X*Y*Z) + THREAD_RANGE_REST)) {
-	   ivec3 halo_ijk = getIJK(local_i,ivec3(HALO_X,HALO_Y,HALO_Z));
-	   temp[halo_ijk.x][halo_ijk.y][halo_ijk.z] = PREC_VEC_TYPE(vec3(halo_ijk),float(local_i));
-	   }
-	 */
+
+
+	if(local_i < (HALO_X*HALO_Y*HALO_Z)) {
+		ivec3 halo_ijk = getIJK(local_i,ivec3(HALO_X,HALO_Y,HALO_Z));
+		//bugs out
+		temp[halo_ijk.x][halo_ijk.y][halo_ijk.z] = PREC_VEC_TYPE(vec3(halo_ijk),float(local_i));
+	}
 	memoryBarrierShared();
 	barrier();
 	/*
@@ -114,7 +114,7 @@ void main(void){
 		local_i += X*Y*Z;
 	}
 
-	if(local_i < (THREAD_RANGE)*int(X*Y*Z) + THREAD_RANGE_REST) {
+	if(local_i < (HALO_X*HALO_Y*HALO_Z)) {
 		ivec3 halo_ijk = getIJK(local_i,ivec3(HALO_X,HALO_Y,HALO_Z));
 		ivec3 to_process = grid_start_node + halo_ijk;
 		if(inBounds(to_process,gGridDim)){
