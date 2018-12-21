@@ -38,7 +38,7 @@ void main(void){
 				ivec3 globalGridIndex = ivec3(positionInGrid) + gridOffset;
 				if(inBounds(globalGridIndex,gGridDim)){
 
-					uint voxelAndTileIndex = get_voxel_and_tile_index(globalGridIndex,gGridDim);
+					uint voxelAndTileIndex = get_dim_index(globalGridIndex,gGridDim);
 					vec3 gridDistanceToParticle = vec3(globalGridIndex)- positionInGrid;
 					float wip = .0f;
 					weighting (gridDistanceToParticle,wip);
@@ -46,7 +46,7 @@ void main(void){
 					float mp = vp_mp.w;
 					vec3 vp = vp_mp.xyz;
 
-					float mi = mp *wip;
+					float mi = mp;// *wip;
 					vec3 vi = vp*mp*wip;
 					atomicAdd(OUTPUT_AT(OUTPUT,Gridpoint_vel_mass,OUTPUT_SIZE,voxelAndTileIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).w,
 							mi);

@@ -6,7 +6,6 @@ uniform uvec3 gGridDim;
 uniform float gridSpacing;
 
 uniform uint indexSize;
-uniform uint ParticleMaxCount;
 
 #include "shader/compute/interpolation/cubic.include.glsl"
 #include "shader/compute/indexing/neighborIndex.include.glsl"
@@ -42,41 +41,42 @@ void main(void){
 
 	memoryBarrierShared();
 	barrier();
-	for(int particle_i = 0; particle_i < ParticleMaxCount; particle_i++){
 
-		PREC_VEC3_TYPE pos;
-		PREC_VEC_TYPE vp_mp;
-		uint globalParticleIndex;
-		PREC_VEC3_TYPE positionInGrid;
-		if(particle_i < count){
-			globalParticleIndex= scan+particle_i;
-
-			pos= INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+	for(int particle_i = 0; particle_i < count; particle_i++){
+		uint globalParticleIndex = scan+particle_i;
+		PREC_VEC3_TYPE pos = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
 
 
+		PREC_VEC_TYPE vp_mp =
+			INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
 
-			vp_mp=	INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+		PREC_VEC3_TYPE positionInGrid= (pos-gGridPos)/gridSpacing;
 
-			positionInGrid= (pos-gGridPos)/gridSpacing;
-		}
-		for(int i=0; i<64;i++){
-			if(particle_i < count){
-				uvec3 halo_ijk = getIJK(i,ivec3(4,4,4));
-				ivec3 gridOffset = ivec3(halo_ijk)-LEFT_SUPPORT;
-				halo_ijk += t_ijk;
-				PREC_VEC3_TYPE gridDistanceToParticle =vec3(ijk+gridOffset) -  positionInGrid ;
-				PREC_SCAL_TYPE wip = .0f;
-				weighting (gridDistanceToParticle,wip);
+		for(int x = -LEFT_SUPPORT; x<= RIGHT_SUPPORT ;x++){
+			for(int y = -LEFT_SUPPORT; y<= RIGHT_SUPPORT ;y++){
+				for(int z = -LEFT_SUPPORT; z <= RIGHT_SUPPORT ;z++){
+					ivec3 gridOffset = ivec3(x,y,z);
+					uvec3 global_grid_index = uvec3(ivec3(ijk)+gridOffset);
+					uint global_grid_key = get_dim_index(global_grid_index,gGridDim);
+					if(global_grid_key >= 770000 && global_grid_key <= 775000){
+						PREC_VEC3_TYPE gridDistanceToParticle =vec3(global_grid_index) -  positionInGrid ;
+						PREC_SCAL_TYPE wip = .0f;
+						weighting (gridDistanceToParticle,wip);
 
-				PREC_SCAL_TYPE mp = vp_mp.w;
-				PREC_VEC3_TYPE vp = vp_mp.xyz;
+						PREC_SCAL_TYPE mp = vp_mp.w;
+						PREC_VEC3_TYPE vp = vp_mp.xyz;
 
-				PREC_SCAL_TYPE mi = mp ;//*wip;
-				PREC_VEC3_TYPE vi = vp*mp*wip;
-				temp[halo_ijk.x][halo_ijk.y][halo_ijk.z] += vec4(vi,mi);
+						PREC_SCAL_TYPE mi = mp ;//*wip;
+						PREC_VEC3_TYPE vi = vp*mp*wip;
+						uvec3 halo_ijk = t_ijk + uvec3(gridOffset+LEFT_SUPPORT);
+						atomicAdd(temp[halo_ijk.x][halo_ijk.y][halo_ijk.z].x,vi.x );
+						atomicAdd(temp[halo_ijk.x][halo_ijk.y][halo_ijk.z].y,vi.y );
+						atomicAdd(temp[halo_ijk.x][halo_ijk.y][halo_ijk.z].z,vi.z );
+						atomicAdd(temp[halo_ijk.x][halo_ijk.y][halo_ijk.z].w,mi );
+					}
+
+				}
 			}
-			memoryBarrierShared();
-			barrier();
 		}
 	}
 	memoryBarrierShared();

@@ -7,27 +7,18 @@
 #include "../../../test/BufferData.hpp"
 #include "../../../test/map/mapTechnique.hpp"
 #include "../../../test/p2g/p2g_atomic_global.hpp"
-#include "../../../test/p2g/p2g_shared.hpp"
+#include "../../../test/p2g/p2g_shared_atomic.hpp"
+#include "../../../test/p2g/p2g_shared_sync.hpp"
 #include "../../../test/reorder/countingSortPipeline.hpp"
 #include "../../../test/test_util.hpp"
 #include "../../src/snow/grid/gridpoint.hpp"
 #include "../../src/snow/particle/particle_exp.hpp"
-
-struct testData {
-  GLuint numParticles;
-  GLuint numGridPoints;
-  std::vector<Particle_exp> particles;
-  std::vector<Particle_exp_2> particles2;
-  glm::uvec3 gGridDim;
-  PREC_VEC3_TYPE gGridPos;
-  PREC_SCAL_TYPE gridSpacing;
-};
-
+#include "testData.hpp"
 struct OutputData {
   std::vector<Gridpoint> grid;
 };
 
-OutputData test(testData&& data) {
+OutputData test(testData data) {
   GLFWWindow();
 
 #ifdef AOS_LAYOUT
@@ -90,11 +81,7 @@ OutputData test(testData&& data) {
 
 #ifdef SORTED
   CountingSortPipeline::CountingSortData cnt_srt_data{
-      layout,
-      data.gGridPos,
-      data.gGridDim,
-      data.gridSpacing,
-      "get_dim_index"
+      layout, data.gGridPos, data.gGridDim, data.gridSpacing, "get_dim_index",
   };
 
   CountingSortPipeline cnt_srt_pipeline;
@@ -141,7 +128,7 @@ OutputData test(testData&& data) {
   IOBufferData p2g_io;
 
 #ifdef FULL_SORTED
-#ifdef SHARED_PUSH
+#ifdef SHARED
 
   auto particles_sorted = cnt_srt_pipeline.getSortedBufferDataAccess();
   // INPUT
@@ -171,11 +158,22 @@ OutputData test(testData&& data) {
   };
 
   p2gTransfer.init_looping(std::move(p2g_data), std::move(p2g_io));
-#elif defined(SHARED_PUSH)
+#elif defined(SHARED_ATOMIC)
 
-  auto p2gTransfer = P2G_shared();
+  auto p2gTransfer = P2G_shared_atomic();
 
-  P2G_shared::P2GData p2g_data{
+  P2G_shared_atomic::P2GData p2g_data{
+      data.gGridPos,
+      data.gGridDim,
+      data.gridSpacing,
+  };
+  p2gTransfer.init_atomic(std::move(p2g_data), std::move(p2g_io));
+
+#elif defined(SHARED_SYNC)
+
+  auto p2gTransfer = P2G_shared_sync();
+
+  P2G_shared_sync::P2GData p2g_data{
       data.gGridPos,
       data.gGridDim,
       data.gridSpacing,
@@ -217,10 +215,14 @@ OutputData test(testData&& data) {
                        resetGridVel.dispatch_with_barrier({numGridPoints});
                      });
 
-#ifdef SHARED_PUSH
+#ifdef SHARED
                  BenchmarkerGPU::getInstance().time(
                      "p2gTransfer_shared", [&p2gTransfer, &numParticles]() {
-                       p2gTransfer.dispatch_with_barrier({});
+                       p2gTransfer.dispatch_with_barrier({
+#ifdef SHARED_SYNC
+                           MAX_COUNTS
+#endif
+                       });
                      });
 #else
 

@@ -1,6 +1,8 @@
 #ifndef GRIDPOINT_HPP
 #define GRIDPOINT_HPP
 // shared data structure (C++/GLSL), which is enabled in c++
+//
+
 #include "../../snow/utils/defines.hpp"
 
 #include "../../../../shader/shared_hpp/precision.hpp"

@@ -1,9 +1,10 @@
 #ifndef PARTICLE_HPP
 #define PARTICLE_HPP
 // shared data structure (C++/GLSL), which is enabled in c++
-#include "../../snow/utils/defines.hpp"
 
+#include <glm/glm.hpp>
 #include "../../../../shader/shared_hpp/precision.hpp"
+#include "../../snow/utils/defines.hpp"
 
 #ifndef AOS_LAYOUT
 #define AOS_LAYOUT

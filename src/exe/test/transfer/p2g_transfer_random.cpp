@@ -5,46 +5,24 @@
 #if defined(INDEX_WRITE_SORTED) || defined(INDEX_READ_SORTED)
 #define INDEX_SORTED
 #endif
-#include "p2g_transfer_random.hpp"
-int main() {
-  GLuint numParticles = 1024*1024;
-  GLuint numGridPoints = 128 * 128 * 128;
-  std::vector<Particle_exp> particles;
-  std::vector<Particle_exp_2> particles2;
-
-  PREC_VEC3_TYPE gGridPos(0.0, 0.0, 0.0);
-  glm::uvec3 gGridDim(128, 128, 128);
-  PREC_SCAL_TYPE gridSpacing(1.0 / 128.0);
-
-  for (size_t i = 0; i < numParticles; i++) {
-    particles2.push_back({{0.0f, 0.0f, 0.0f, 0.0f}});
-    // 0
-    particles.push_back(
-        {// pos_vol keep in grid +support bounds
-         PREC_VEC_TYPE(glm::linearRand(0.0f + 1.0 * gridSpacing,
-                                       1.0f - 2.0 * gridSpacing),
-                       glm::linearRand(0.0f + 1.0 * gridSpacing,
-                                       1.0f - 2.0 * gridSpacing),
-                       glm::linearRand(0.0f + 1.0 * gridSpacing,
-                                       1.0f - 2.0 * gridSpacing),
-                       0.0f),
-         // vel_mass
-         PREC_VEC_TYPE(glm::linearRand(-1.0f, 1.0f),
-                       glm::linearRand(-1.0f, 1.0f),
-                       glm::linearRand(-1.0f, 1.0f), 1.0f)});
-  }
-
-#ifdef FULL_SORTED
-  // double buffer
-  for (size_t i = 0; i < numParticles; i++) {
-    particles2.push_back({{}});
-    // 0
-    particles.push_back({{}});
-  }
+#if defined(SHARED_ATOMIC) || defined(SHARED_SYNC)
+#define SHARED
 #endif
 
-  auto output = test({numParticles, numGridPoints, particles, particles2,
-                      gGridDim, gGridPos, gridSpacing});
+#if defined(UNIFORM_INPUT)
+#include "uniformInput.hpp"
+#elif defined(UNIFORM_INPUT_2_PER_CELL)
+#include "uniformInput2percell.hpp"
+#elif defined(UNIFORM_INPUT_4_PER_CELL)
+#include "uniformInput4percell.hpp"
+#else
+#include "randomInput.hpp"
+#endif
+#include "p2g_transfer_random.hpp"
+int main() {
+  auto input = createInput();
+
+  auto output = test(input);
 
   auto mv_i = std::transform_reduce(
       std::begin(output.grid), std::end(output.grid),
@@ -52,7 +30,7 @@ int main() {
       [](const auto& elem) { return elem.Gridpoint_vel_mass; });
 
   auto mv_p = std::transform_reduce(
-      std::begin(particles), std::end(particles),
+      std::begin(input.particles), std::end(input.particles),
       PREC_VEC_TYPE(0.0f, 0.0f, 0.0f, 0.0f), std::plus<>(),
       [](const auto& elem) { return elem.Particle_vel_mass; });
 

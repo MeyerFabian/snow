@@ -1,5 +1,5 @@
-#ifndef P2GSHAREDCOMPUTE_H
-#define P2GSHAREDCOMPUTE_H
+#ifndef P2GSHAREDATOMICCOMPUTE_H
+#define P2GSHAREDATOMICCOMPUTE_H
 #include <memory>
 
 #include "../../snow/utils/defines.hpp"
@@ -10,7 +10,7 @@
 #include "../../snow/shader/technique.hpp"
 #include "../../snow/utils/defines.hpp"
 #include "../IOBufferData.hpp"
-class P2G_shared : public Technique {
+class P2G_shared_atomic : public Technique {
  public:
   LocalSize local_size = {VOXEL_DIM_X, VOXEL_DIM_Y, VOXEL_DIM_Z};
   struct UniformsStatic {
@@ -25,7 +25,7 @@ class P2G_shared : public Technique {
   struct UniformsDynamic {};
   void dispatch(UniformsDynamic&& uniforms);
   void dispatch_with_barrier(UniformsDynamic&& uniforms);
-  void init_sync(P2GData&& data, IOBufferData&& io);
+  void init_atomic(P2GData&& data, IOBufferData&& io);
 
  private:
   void init(P2GData&& data, IOBufferData&& io);
@@ -34,5 +34,5 @@ class P2G_shared : public Technique {
   glm::uvec3 gGridDim;
   std::string filename;
 };
-#endif  // P2GSHAREDCOMPUTE_H
+#endif  // P2GSHAREDATOMICCOMPUTE_H
 
