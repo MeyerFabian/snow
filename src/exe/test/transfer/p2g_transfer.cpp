@@ -5,7 +5,7 @@
 #if defined(INDEX_WRITE_SORTED) || defined(INDEX_READ_SORTED)
 #define INDEX_SORTED
 #endif
-#if defined(SHARED_ATOMIC) || defined(SHARED_SYNC)
+#if defined(SHARED_ATOMIC) || defined(PUSH_SYNC)
 #define SHARED
 #endif
 
@@ -18,7 +18,7 @@
 #else
 #include "randomInput.hpp"
 #endif
-#include "p2g_transfer_random.hpp"
+#include "p2g_transfer.hpp"
 int main() {
   auto input = createInput();
 

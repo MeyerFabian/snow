@@ -18,14 +18,22 @@ class P2G_shared_atomic : public Technique {
     glm::uvec3 gGridDim;
     PREC_SCAL_TYPE gridSpacing;
   };
+
   struct P2GData {
     UniformsStatic uniforms;
+  };
+
+  struct P2GBatchingData {
+    UniformsStatic uniforms;
+    GLuint multiple_particles;
   };
 
   struct UniformsDynamic {};
   void dispatch(UniformsDynamic&& uniforms);
   void dispatch_with_barrier(UniformsDynamic&& uniforms);
   void init_atomic(P2GData&& data, IOBufferData&& io);
+  void init_loop_reverse(P2GData&& data, IOBufferData&& io);
+  void init_batching(P2GBatchingData&& data, IOBufferData&& io);
 
  private:
   void init(P2GData&& data, IOBufferData&& io);
@@ -33,6 +41,7 @@ class P2G_shared_atomic : public Technique {
   void uniforms_update(UniformsDynamic&& uniforms);
   glm::uvec3 gGridDim;
   std::string filename;
+  std::vector<Shader::CommandType> vec = {};
 };
 #endif  // P2GSHAREDATOMICCOMPUTE_H
 

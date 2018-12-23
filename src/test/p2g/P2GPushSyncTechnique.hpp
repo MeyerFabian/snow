@@ -10,7 +10,7 @@
 #include "../../snow/shader/technique.hpp"
 #include "../../snow/utils/defines.hpp"
 #include "../IOBufferData.hpp"
-class P2G_shared_sync : public Technique {
+class P2GPushSyncTechnique : public Technique {
  public:
   LocalSize local_size = {VOXEL_DIM_X, VOXEL_DIM_Y, VOXEL_DIM_Z};
   struct UniformsStatic {

@@ -1,6 +1,6 @@
-#include "p2g_shared_sync.hpp"
+#include "p2gpushsynctechnique.hpp"
 
-void P2G_shared_sync::init(P2GData&& data, IOBufferData&& io) {
+void P2GPushSyncTechnique::init(P2GData&& data, IOBufferData&& io) {
   auto shader = std::make_shared<Shader>(ShaderType::COMPUTE, filename);
   shader->set_local_size(local_size);
 
@@ -15,28 +15,28 @@ void P2G_shared_sync::init(P2GData&& data, IOBufferData&& io) {
   Technique::use();
   uniforms_init(std::move(data.uniforms));
 }
-void P2G_shared_sync::init_sync(P2GData&& data, IOBufferData&& io) {
+void P2GPushSyncTechnique::init_sync(P2GData&& data, IOBufferData&& io) {
   filename = "shader/test/shared/p2g_sync.glsl";
   init(std::move(data), std::move(io));
 }
-void P2G_shared_sync::uniforms_init(UniformsStatic&& uniforms) {
+void P2GPushSyncTechnique::uniforms_init(UniformsStatic&& uniforms) {
   Technique::uniform_update("gGridPos", uniforms.gGridPos.x,
                             uniforms.gGridPos.y, uniforms.gGridPos.z);
   Technique::uniform_update("gGridDim", uniforms.gGridDim);
   Technique::uniform_update("gridSpacing", uniforms.gridSpacing);
   gGridDim = uniforms.gGridDim;
 }
-void P2G_shared_sync::dispatch(UniformsDynamic&& uniforms) {
+void P2GPushSyncTechnique::dispatch(UniformsDynamic&& uniforms) {
   Technique::use();
   uniforms_update(std::move(uniforms));
   glDispatchCompute(gGridDim.x / local_size.x, gGridDim.y / local_size.y,
                     gGridDim.z / local_size.z);
 }
-void P2G_shared_sync::dispatch_with_barrier(UniformsDynamic&& uniforms) {
+void P2GPushSyncTechnique::dispatch_with_barrier(UniformsDynamic&& uniforms) {
   dispatch(std::move(uniforms));
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
-void P2G_shared_sync::uniforms_update(UniformsDynamic&& uniforms) {
+void P2GPushSyncTechnique::uniforms_update(UniformsDynamic&& uniforms) {
   Technique::uniform_update("ParticleMaxCount", uniforms.max_count);
 }
 

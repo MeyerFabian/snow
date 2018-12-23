@@ -6,9 +6,9 @@
 #include "../../../../shader/shared_hpp/buffer_bindings.hpp"
 #include "../../../test/BufferData.hpp"
 #include "../../../test/map/mapTechnique.hpp"
+#include "../../../test/p2g/P2GPushSyncTechnique.hpp"
 #include "../../../test/p2g/p2g_atomic_global.hpp"
 #include "../../../test/p2g/p2g_shared_atomic.hpp"
-#include "../../../test/p2g/p2g_shared_sync.hpp"
 #include "../../../test/reorder/countingSortPipeline.hpp"
 #include "../../../test/test_util.hpp"
 #include "../../src/snow/grid/gridpoint.hpp"
@@ -162,18 +162,37 @@ OutputData test(testData data) {
 
   auto p2gTransfer = P2G_shared_atomic();
 
+#if defined(SHARED_ATOMIC_LOOP_REV)
+
+  P2G_shared_atomic::P2GData p2g_data{
+      data.gGridPos,
+      data.gGridDim,
+      data.gridSpacing,
+  };
+  p2gTransfer.init_loop_reverse(std::move(p2g_data), std::move(p2g_io));
+#elif defined(SHARED_ATOMIC_BATCHING_MULT_PART)
+  P2G_shared_atomic::P2GBatchingData p2g_data{
+      data.gGridPos,
+      data.gGridDim,
+      data.gridSpacing,
+      SHARED_ATOMIC_BATCHING_MULT_PART,
+  };
+  p2gTransfer.init_batching(std::move(p2g_data), std::move(p2g_io));
+#else
+
   P2G_shared_atomic::P2GData p2g_data{
       data.gGridPos,
       data.gGridDim,
       data.gridSpacing,
   };
   p2gTransfer.init_atomic(std::move(p2g_data), std::move(p2g_io));
+#endif
 
-#elif defined(SHARED_SYNC)
+#elif defined(PUSH_SYNC)
 
-  auto p2gTransfer = P2G_shared_sync();
+  auto p2gTransfer = P2GPushSyncTechnique();
 
-  P2G_shared_sync::P2GData p2g_data{
+  P2GPushSyncTechnique::P2GData p2g_data{
       data.gGridPos,
       data.gGridDim,
       data.gridSpacing,
@@ -219,7 +238,7 @@ OutputData test(testData data) {
                  BenchmarkerGPU::getInstance().time(
                      "p2gTransfer_shared", [&p2gTransfer, &numParticles]() {
                        p2gTransfer.dispatch_with_barrier({
-#ifdef SHARED_SYNC
+#ifdef PUSH_SYNC
                            MAX_COUNTS
 #endif
                        });
