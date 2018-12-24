@@ -7,9 +7,6 @@ std::vector<Shader::CommandType> SortedIndexReadBufferData::generateCommands(
                             {PreprocessorCmd::DEFINE,
                              define_name + "_SORTING_METHOD INDEX_READ"},
 
-                            {PreprocessorCmd::DEFINE,
-                             define_name + "_SORTING_KEY " + sorting_key},
-
                         });
 
   std::string ssbo_define = define_name + "_INDEX";
@@ -21,12 +18,10 @@ std::vector<Shader::CommandType> SortedIndexReadBufferData::generateCommands(
 std::unique_ptr<BufferDataInterface>
 SortedIndexReadBufferData::cloneBufferDataInterface() {
   return std::make_unique<SortedIndexReadBufferData>(
-      buffer_interface->cloneBufferDataInterface(), IndexSSBOData(ssbo),
-      sorting_key);
+      buffer_interface->cloneBufferDataInterface(), IndexSSBOData(ssbo));
 }
 std::unique_ptr<SortedBufferData> SortedIndexReadBufferData::clone() {
   return std::make_unique<SortedIndexReadBufferData>(
-      buffer_interface->cloneBufferDataInterface(), IndexSSBOData(ssbo),
-      sorting_key);
+      buffer_interface->cloneBufferDataInterface(), IndexSSBOData(ssbo));
 }
 

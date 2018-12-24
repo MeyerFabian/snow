@@ -35,14 +35,13 @@ OutputData test(testData data) {
   Buffer<Particle_exp> particle_buffer(
       BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
       "shader/buffers/particle_system.include.glsl");
-
   particle_buffer.transfer_to_gpu(data.particles);
   particle_buffer.gl_bind_base(PARTICLE_SYSTEM_BINDING);
+
   // Particle_exp2
   Buffer<Particle_exp_2> particle_2_buffer(
       BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
       "shader/buffers/particle_system.include.glsl");
-
   particle_2_buffer.transfer_to_gpu(data.particles2);
   particle_2_buffer.gl_bind_base(PARTICLE_SYSTEM_BINDING_2);
 
@@ -50,7 +49,6 @@ OutputData test(testData data) {
   Buffer<Gridpoint> grid_buffer(BufferType::SSBO, BufferUsage::STATIC_DRAW,
                                 layout,
                                 "shader/buffers/uniform_grid.include.glsl");
-
   grid_buffer.resize_buffer(data.numGridPoints);
   grid_buffer.gl_bind_base(UNIFORM_GRID_BINDING);
 
@@ -66,9 +64,7 @@ OutputData test(testData data) {
 
   auto Particle_2_unsorted =
       BufferData("particles_2", "", particle_buffer.get_buffer_info(),
-                 data.numParticles, 2, "0",
-
-                 "Particle_exp_2_size");
+                 data.numParticles, 2, "0", "Particle_exp_2_size");
 #else
   auto Particle_pos_unsorted = BufferData(
       "particles", "Particle_pos_vol", particle_buffer.get_buffer_info(),
@@ -81,7 +77,10 @@ OutputData test(testData data) {
 
 #ifdef SORTED
   CountingSortPipeline::CountingSortData cnt_srt_data{
-      layout, data.gGridPos, data.gGridDim, data.gridSpacing, "get_dim_index",
+      layout,
+      data.gGridPos,
+      data.gGridDim,
+      data.gridSpacing,
   };
 
   CountingSortPipeline cnt_srt_pipeline;
@@ -91,7 +90,6 @@ OutputData test(testData data) {
       std::make_unique<BufferData>(Particle_pos_unsorted));
   io_cnt_srt.out_buffer.push_back(
       std::make_unique<BufferData>(Particle_2_unsorted));
-
 #endif
 
 #if defined(FULL_SORTED)
@@ -129,14 +127,9 @@ OutputData test(testData data) {
 
 #ifdef FULL_SORTED
 #ifdef SHARED
-
   auto particles_sorted = cnt_srt_pipeline.getSortedBufferDataAccess();
-  // INPUT
-
 #else
   auto particles_sorted = cnt_srt_pipeline.getSortedBufferData();
-  // INPUT
-
 #endif
   for (auto& particle_sorted : particles_sorted) {
     p2g_io.in_buffer.push_back(particle_sorted->cloneBufferDataInterface());

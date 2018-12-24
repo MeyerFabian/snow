@@ -27,7 +27,6 @@ class CountingSortPipeline {
     PREC_VEC3_TYPE gGridPos;
     glm::uvec3 gGridDim;
     PREC_SCAL_TYPE gridSpacing;
-    std::string sorting_key;
   };
   struct CountingSortDispatch {
     GLuint numParticles;

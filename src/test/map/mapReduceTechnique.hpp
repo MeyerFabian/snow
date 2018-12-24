@@ -28,9 +28,14 @@ class MapReduceTechnique : public Technique {
 
   LocalSize local_size;
   void init(MapReduceData&& data, IOBufferData&&);
+  void init(std::vector<Shader::CommandType>&&, MapReduceData&& data,
+            IOBufferData&&);
   void dispatch_with_barrier(GLuint numVectors) const;
   void dispatch_with_barrier(DispatchData&& data) const;
   void uniforms_update(DispatchData&& uniforms) const;
+
+ private:
+  std::vector<Shader::CommandType> commands = {};
 };
 #endif  // MAPREDUCE_H
 
