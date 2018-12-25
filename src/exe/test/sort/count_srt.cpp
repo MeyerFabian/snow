@@ -25,8 +25,15 @@ int main() {
   glm::uvec3 gGridDim(128, 128, 128);
   PREC_SCAL_TYPE gridSpacing(1.0 / 128.0);
 
-  auto output = test({numParticles, numGridPoints, particles, particles2,
-                      gGridDim, gGridPos, gridSpacing});
+  auto output = test({
+      numParticles,
+      numGridPoints,
+      particles,
+      particles2,
+      gGridPos,
+      gridSpacing,
+      gGridDim,
+  });
   return 0;
 }
 

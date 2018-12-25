@@ -17,5 +17,6 @@
 // ubos
 // particle double buffer offset
 #define UNIFORM_SORTED_BINDING 0
+#define GRID_DEFINES_BINDING 1
 #endif
 

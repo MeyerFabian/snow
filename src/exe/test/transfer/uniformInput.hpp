@@ -2,6 +2,7 @@
 #define INPUT
 
 #include <glm/gtc/random.hpp>
+#include "../../src/snow/grid/grid_def.hpp"
 #include "../../src/snow/grid/gridpoint.hpp"
 #include "../../src/snow/particle/particle_exp.hpp"
 #include "testData.hpp"
@@ -41,8 +42,10 @@ static testData createInput() {
     particles.push_back({{}});
   }
 #endif
-  return {numParticles, numGridPoints, particles,  particles2,
-          gGridDim,     gGridPos,      gridSpacing};
+  return {
+      numParticles, numGridPoints, particles, particles2,
+      gGridPos,     gridSpacing,   gGridDim,
+  };
 }
 #endif
 

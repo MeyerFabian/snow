@@ -12,6 +12,7 @@
 #include "../../../test/reorder/countingSortPipeline.hpp"
 #include "../../../test/test_util.hpp"
 #include "../../../test/tile/TilePipeline.hpp"
+#include "../../src/snow/grid/grid_def.hpp"
 #include "../../src/snow/grid/gridpoint.hpp"
 #include "../../src/snow/particle/particle_exp.hpp"
 #include "testData.hpp"
@@ -31,6 +32,11 @@ OutputData test(testData data) {
   /**********************************************************************
    *                          Buffer creations                          *
    **********************************************************************/
+  Buffer<GridDefines> grid_def_buffer(
+      BufferType::UNIFORM, BufferUsage::DYNAMIC_DRAW, BufferLayout::AOS);
+
+  grid_def_buffer.transfer_to_gpu(std::vector<GridDefines>{data.grid_def});
+  grid_def_buffer.gl_bind_base(GRID_DEFINES_BINDING);
 
   // Particle_exp
   Buffer<Particle_exp> particle_buffer(
@@ -79,9 +85,7 @@ OutputData test(testData data) {
 #ifdef SORTED
   CountingSortPipeline::CountingSortData cnt_srt_data{
       layout,
-      data.gGridPos,
-      data.gGridDim,
-      data.gridSpacing,
+      data.numGridPoints,
   };
 
   CountingSortPipeline cnt_srt_pipeline;
@@ -110,10 +114,8 @@ OutputData test(testData data) {
   TilePipeline tile_pipeline;
 
   TilePipeline::TileData tile_data{
+      data.numGridPoints,
       layout,
-      data.gGridPos,
-      data.gGridDim,
-      data.gridSpacing,
   };
 
   IOBufferData io_tile;
@@ -162,11 +164,7 @@ OutputData test(testData data) {
 
 #if defined(ATOMIC_LOOP)
   auto p2gTransfer = P2G_atomic_global();
-  P2G_atomic_global::P2GData p2g_data{
-      data.gGridPos,
-      data.gGridDim,
-      data.gridSpacing,
-  };
+  P2G_atomic_global::P2GData p2g_data{};
 
   p2gTransfer.init_looping(std::move(p2g_data), std::move(p2g_io));
 #elif defined(SHARED_ATOMIC)
@@ -176,25 +174,19 @@ OutputData test(testData data) {
 #if defined(SHARED_ATOMIC_LOOP_REV)
 
   P2G_shared_atomic::P2GData p2g_data{
-      data.gGridPos,
-      data.gGridDim,
-      data.gridSpacing,
+      data.grid_def.gGridDim,
   };
   p2gTransfer.init_loop_reverse(std::move(p2g_data), std::move(p2g_io));
 #elif defined(SHARED_ATOMIC_BATCHING_MULT_PART)
   P2G_shared_atomic::P2GBatchingData p2g_data{
-      data.gGridPos,
-      data.gGridDim,
-      data.gridSpacing,
+      data.grid_def.gGridDim,
       SHARED_ATOMIC_BATCHING_MULT_PART,
   };
   p2gTransfer.init_batching(std::move(p2g_data), std::move(p2g_io));
 #else
 
   P2G_shared_atomic::P2GData p2g_data{
-      data.gGridPos,
-      data.gGridDim,
-      data.gridSpacing,
+      data.grid_def.gGridDim,
   };
   p2gTransfer.init_atomic(std::move(p2g_data), std::move(p2g_io));
 #endif
@@ -204,18 +196,12 @@ OutputData test(testData data) {
   auto p2gTransfer = P2GPushSyncTechnique();
 
   P2GPushSyncTechnique::P2GData p2g_data{
-      data.gGridPos,
-      data.gGridDim,
-      data.gridSpacing,
+      data.grid_def.gGridDim,
   };
   p2gTransfer.init_sync(std::move(p2g_data), std::move(p2g_io));
 #else
   auto p2gTransfer = P2G_atomic_global();
-  P2G_atomic_global::P2GData p2g_data{
-      data.gGridPos,
-      data.gGridDim,
-      data.gridSpacing,
-  };
+  P2G_atomic_global::P2GData p2g_data{};
   p2gTransfer.init_too_parallel(std::move(p2g_data), std::move(p2g_io));
 #endif
 

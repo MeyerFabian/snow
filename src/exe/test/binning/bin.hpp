@@ -24,6 +24,7 @@
 #include "../../../test/binning/binTechnique.hpp"
 #include "../../../test/map/mapTechnique.hpp"
 #include "../../../test/test_util.hpp"
+#include "../../src/snow/grid/grid_def.hpp"
 
 struct testData {
   GLuint numVectors;
@@ -31,9 +32,7 @@ struct testData {
   std::vector<Particle_exp> particles;
   std::vector<GLuint> binning;
   std::vector<GLuint> grid_offset;
-  glm::uvec3 gGridDim;
-  PREC_VEC3_TYPE gGridPos;
-  PREC_SCAL_TYPE gridSpacing;
+  GridDefines grid_def;
 };
 
 struct OutputData {
@@ -48,6 +47,13 @@ OutputData test(testData& data) {
 #else
   BufferLayout layout = BufferLayout::SOA;
 #endif
+
+  Buffer<GridDefines> grid_def_buffer(
+      BufferType::UNIFORM, BufferUsage::DYNAMIC_DRAW, BufferLayout::AOS);
+
+  grid_def_buffer.transfer_to_gpu(std::vector<GridDefines>{data.grid_def});
+  grid_def_buffer.gl_bind_base(GRID_DEFINES_BINDING);
+
   Buffer<Particle_exp> input(BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
                              BUFFER_IN_NAME);
 
@@ -81,14 +87,10 @@ OutputData test(testData& data) {
 
   BinningTechnique::BinningData binning_data{
 #ifdef MULTIPLE_ELEMENTS
-
       "shader/compute/preprocess/bin_mult.glsl",
 #else
       "shader/compute/preprocess/bin.glsl",
 #endif
-      data.gGridPos,
-      data.gGridDim,
-      data.gridSpacing,
 #ifdef MULTIPLE_ELEMENTS
       true,
       MULTIPLE_ELEMENTS,

@@ -38,12 +38,12 @@ void main(void){
 	j=0;
 	while(i<bufferSize){
 		// Bin due to position in grid
-		PREC_VEC3_TYPE positionInGrid= (pos[j]-gGridPos)/gridSpacing;
+		PREC_VEC3_TYPE positionInGrid= (pos[j]-grid_def.gGridPos)/grid_def.gridSpacing;
 
 		//floor
 		ivec3 globalGridIndex = ivec3(positionInGrid);
-		if(inBounds(globalGridIndex,gGridDim)){
-			uint voxelAndTileIndex = get_voxel_and_tile_index(globalGridIndex,gGridDim);
+		if(inBounds(globalGridIndex,grid_def.gGridDim)){
+			uint voxelAndTileIndex = SORTING_KEY(globalGridIndex,gGridDim);
 #ifdef OUTPUT2
 			OUTPUT2_AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,i,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) =
 #endif

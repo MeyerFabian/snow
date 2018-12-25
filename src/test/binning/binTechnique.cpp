@@ -19,14 +19,8 @@ void BinningTechnique::init(BinningData&& data, IOBufferData&& io) {
   Technique::add_shader(std::move(shader));
   Technique::upload();
   Technique::use();
-  uniforms_init(std::move(data.uniforms));
 }
-void BinningTechnique::uniforms_init(UniformsStatic&& uniforms) {
-  Technique::uniform_update("gGridPos", uniforms.gGridPos.x,
-                            uniforms.gGridPos.y, uniforms.gGridPos.z);
-  Technique::uniform_update("gGridDim", uniforms.gGridDim);
-  Technique::uniform_update("gridSpacing", uniforms.gridSpacing);
-}
+void BinningTechnique::uniforms_init(UniformsStatic&& uniforms) {}
 void BinningTechnique::dispatch_with_barrier(GLuint numVectors) {
   Technique::use();
   GLuint dispatchSize = numVectors / (multiple_elements);

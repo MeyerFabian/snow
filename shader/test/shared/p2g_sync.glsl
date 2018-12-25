@@ -1,9 +1,6 @@
 #version 440
 #extension GL_NV_shader_atomic_float: enable
 
-uniform vec3 gGridPos;
-uniform uvec3 gGridDim;
-uniform float gridSpacing;
 
 uniform uint indexSize;
 uniform uint ParticleMaxCount;
@@ -23,7 +20,7 @@ shared PREC_VEC_TYPE temp [HALO_X][HALO_Y][HALO_Z];
 void main(void){
 	uvec3 ijk = gl_GlobalInvocationID;
 	uvec3 t_ijk = gl_LocalInvocationID;
-	uint grid_key = INPUT_SORTING_KEY(ijk,gGridDim);
+	uint grid_key = INPUT_SORTING_KEY(ijk,grid_def.gGridDim);
 	uint count = INPUT_COUNT_AT(INPUT_COUNT,INPUT_COUNT_VAR,INPUT_COUNT_SIZE,grid_key,INPUT_COUNT_NUM_BUFFER,INPUT_COUNT_INDEX_BUFFER);
 
 	uint scan = INPUT_SCAN_AT(INPUT_SCAN,INPUT_SCAN_VAR,INPUT_SCAN_SIZE,grid_key,INPUT_SCAN_NUM_BUFFER,INPUT_SCAN_INDEX_BUFFER);
@@ -57,7 +54,7 @@ void main(void){
 
 			vp_mp=	INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
 
-			positionInGrid= (pos-gGridPos)/gridSpacing;
+			positionInGrid= (pos-grid_def.gGridPos)/grid_def.gridSpacing;
 		}
 		for(int i=0; i<64;i++){
 			if(particle_i < count){
@@ -88,8 +85,8 @@ void main(void){
 	for(int frac = 0; frac < THREAD_RANGE;frac++){
 		ivec3 halo_ijk = getIJK(local_i,ivec3(HALO_X,HALO_Y,HALO_Z));
 		ivec3 to_process = grid_start_node + halo_ijk;
-		if(inBounds(to_process,gGridDim)){
-			uint write_key = INPUT_SORTING_KEY(to_process,gGridDim);
+		if(inBounds(to_process,grid_def.gGridDim)){
+			uint write_key = INPUT_SORTING_KEY(to_process,grid_def.gGridDim);
 			PREC_VEC_TYPE to_write = temp[halo_ijk.x][halo_ijk.y][halo_ijk.z];
 
 			atomicAdd(OUTPUT_AT(OUTPUT,Gridpoint_vel_mass,OUTPUT_SIZE,write_key,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).x,
@@ -110,8 +107,8 @@ void main(void){
 	if(local_i < (THREAD_RANGE)*(X*Y*Z) + THREAD_RANGE_REST) {
 		ivec3 halo_ijk = getIJK(local_i,ivec3(HALO_X,HALO_Y,HALO_Z));
 		ivec3 to_process = grid_start_node + halo_ijk;
-		if(inBounds(to_process,gGridDim)){
-			uint write_key = INPUT_SORTING_KEY(to_process,gGridDim);
+		if(inBounds(to_process,grid_def.gGridDim)){
+			uint write_key = INPUT_SORTING_KEY(to_process,grid_def.gGridDim);
 			PREC_VEC_TYPE to_write = temp[halo_ijk.x][halo_ijk.y][halo_ijk.z];
 
 			atomicAdd(OUTPUT_AT(OUTPUT,Gridpoint_vel_mass,OUTPUT_SIZE,write_key,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).x,

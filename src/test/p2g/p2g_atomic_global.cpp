@@ -26,12 +26,7 @@ void P2G_atomic_global::init_looping(P2GData&& data, IOBufferData&& io) {
   ydim = 1;
   init(std::move(data), std::move(io));
 }
-void P2G_atomic_global::uniforms_init(UniformsStatic&& uniforms) {
-  Technique::uniform_update("gGridPos", uniforms.gGridPos.x,
-                            uniforms.gGridPos.y, uniforms.gGridPos.z);
-  Technique::uniform_update("gGridDim", uniforms.gGridDim);
-  Technique::uniform_update("gridSpacing", uniforms.gridSpacing);
-}
+void P2G_atomic_global::uniforms_init(UniformsStatic&& uniforms) {}
 void P2G_atomic_global::dispatch(UniformsDynamic&& uniforms) {
   Technique::use();
   auto numParticles = uniforms.numParticles;

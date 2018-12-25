@@ -12,9 +12,7 @@ struct testData {
   GLuint numGridPoints;
   std::vector<Particle_exp> particles;
   std::vector<Particle_exp_2> particles2;
-  glm::uvec3 gGridDim;
-  PREC_VEC3_TYPE gGridPos;
-  PREC_SCAL_TYPE gridSpacing;
+  GridDefines grid_def;
 };
 #endif
 

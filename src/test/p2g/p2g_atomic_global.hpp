@@ -12,11 +12,7 @@
 class P2G_atomic_global : public Technique {
  public:
   LocalSize local_size = {1024, 1, 1};
-  struct UniformsStatic {
-    PREC_VEC3_TYPE gGridPos;
-    glm::uvec3 gGridDim;
-    PREC_SCAL_TYPE gridSpacing;
-  };
+  struct UniformsStatic {};
   struct P2GData {
     UniformsStatic uniforms;
   };

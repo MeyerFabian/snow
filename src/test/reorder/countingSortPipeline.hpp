@@ -24,9 +24,7 @@ class CountingSortPipeline {
  public:
   struct CountingSortData {
     BufferLayout layout;
-    PREC_VEC3_TYPE gGridPos;
-    glm::uvec3 gGridDim;
-    PREC_SCAL_TYPE gridSpacing;
+    GLuint numGridPoints;
   };
   struct CountingSortDispatch {
     GLuint numParticles;

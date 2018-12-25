@@ -14,9 +14,7 @@ class P2GPushSyncTechnique : public Technique {
  public:
   LocalSize local_size = {VOXEL_DIM_X, VOXEL_DIM_Y, VOXEL_DIM_Z};
   struct UniformsStatic {
-    PREC_VEC3_TYPE gGridPos;
     glm::uvec3 gGridDim;
-    PREC_SCAL_TYPE gridSpacing;
   };
   struct P2GData {
     UniformsStatic uniforms;

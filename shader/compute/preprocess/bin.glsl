@@ -31,12 +31,12 @@ void main(void){
 #endif
 	PREC_VEC3_TYPE pos = INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,i,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
 	// Bin due to position in grid
-	PREC_VEC3_TYPE positionInGrid= (pos-gGridPos)/gridSpacing;
+	PREC_VEC3_TYPE positionInGrid= (pos-grid_def.gGridPos)/grid_def.gridSpacing;
 
 	//floor
 	ivec3 globalGridIndex = ivec3(positionInGrid);
-	if(inBounds(globalGridIndex,gGridDim)){
-		uint key = SORTING_KEY(globalGridIndex,gGridDim);
+	if(inBounds(globalGridIndex,grid_def.gGridDim)){
+		uint key = SORTING_KEY(globalGridIndex,grid_def.gGridDim);
 #ifdef OUTPUT2
 		OUTPUT2_AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,i,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) =
 #endif

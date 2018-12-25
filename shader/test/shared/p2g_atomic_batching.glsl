@@ -1,10 +1,6 @@
 #version 440
 #extension GL_NV_shader_atomic_float: enable
 
-uniform vec3 gGridPos;
-uniform uvec3 gGridDim;
-uniform float gridSpacing;
-
 uniform uint indexSize;
 
 #include "shader/compute/interpolation/cubic.include.glsl"
@@ -24,7 +20,7 @@ void main(void){
 
 
 
-	uint grid_key = INPUT_SORTING_KEY(ijk,gGridDim);
+	uint grid_key = SORTING_KEY(ijk,grid_def.gGridDim);
 	uint count = INPUT_COUNT_AT(INPUT_COUNT,INPUT_COUNT_VAR,INPUT_COUNT_SIZE,grid_key,INPUT_COUNT_NUM_BUFFER,INPUT_COUNT_INDEX_BUFFER);
 
 	uint scan = INPUT_SCAN_AT(INPUT_SCAN,INPUT_SCAN_VAR,INPUT_SCAN_SIZE,grid_key,INPUT_SCAN_NUM_BUFFER,INPUT_SCAN_INDEX_BUFFER);
@@ -51,10 +47,10 @@ void main(void){
 
 		for(uint particle_i = process_count; particle_i < process_count+batch_count; particle_i++){
 			uint globalParticleIndex = scan+particle_i;
-			pos[particle_i] = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+			pos[particle_i-process_count] = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
 
 
-			vp_mp[particle_i]=
+			vp_mp[particle_i-process_count]=
 				INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
 		}
 
@@ -66,7 +62,7 @@ void main(void){
 					PREC_VEC3_TYPE vi =vec3(0.0);
 					PREC_SCAL_TYPE mi = 0.0;
 					for(int particle_i = 0; particle_i < batch_count; particle_i++){
-						PREC_VEC3_TYPE positionInGrid= (pos[particle_i]-gGridPos)/gridSpacing;
+						PREC_VEC3_TYPE positionInGrid= (pos[particle_i]-grid_def.gGridPos)/grid_def.gridSpacing;
 
 						PREC_VEC3_TYPE gridDistanceToParticle =vec3(global_grid_index) -  positionInGrid ;
 						PREC_SCAL_TYPE wip = .0f;
@@ -98,8 +94,8 @@ void main(void){
 	for(int frac = 0; frac < THREAD_RANGE;frac++){
 		uvec3 halo_ijk = uvec3(getIJK(local_i,ivec3(HALO_X,HALO_Y,HALO_Z)));
 		ivec3 to_process = grid_start_node + ivec3(halo_ijk);
-		if(inBounds(to_process,gGridDim)){
-			uint write_key = INPUT_SORTING_KEY(to_process,gGridDim);
+		if(inBounds(to_process,grid_def.gGridDim)){
+			uint write_key = SORTING_KEY(to_process,grid_def.gGridDim);
 			PREC_VEC_TYPE to_write = temp[local_i];
 
 			atomicAdd(OUTPUT_AT(OUTPUT,Gridpoint_vel_mass,OUTPUT_SIZE,write_key,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).x,
@@ -120,8 +116,8 @@ void main(void){
 	if(local_i < (HALO_X*HALO_Y*HALO_Z)) {
 		uvec3 halo_ijk = uvec3(getIJK(local_i,ivec3(HALO_X,HALO_Y,HALO_Z)));
 		ivec3 to_process = grid_start_node + ivec3(halo_ijk);
-		if(inBounds(to_process,gGridDim)){
-			uint write_key = INPUT_SORTING_KEY(to_process,gGridDim);
+		if(inBounds(to_process,grid_def.gGridDim)){
+			uint write_key = SORTING_KEY(to_process,grid_def.gGridDim);
 			PREC_VEC_TYPE to_write = temp[local_i];
 
 			atomicAdd(OUTPUT_AT(OUTPUT,Gridpoint_vel_mass,OUTPUT_SIZE,write_key,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).x,

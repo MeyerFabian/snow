@@ -25,6 +25,7 @@
 #include "../../../test/reorder/reorderTechnique.hpp"
 #include "../../../test/scan/ScanPipeline.hpp"
 #include "../../../test/test_util.hpp"
+#include "../../src/snow/grid/grid_def.hpp"
 struct testData {
   GLuint numParticles;
   GLuint numGridPoints;
@@ -37,9 +38,7 @@ struct testData {
   std::vector<GLuint> particle_indices;
 #endif
   std::vector<Scan> scan;
-  glm::uvec3 gGridDim;
-  PREC_VEC3_TYPE gGridPos;
-  PREC_SCAL_TYPE gridSpacing;
+  GridDefines grid_def;
 };
 struct OutputData {
   std::vector<Particle_exp> particles;
@@ -61,6 +60,12 @@ OutputData test(testData& data) {
   /**********************************************************************
    *                          Buffer creations                          *
    **********************************************************************/
+
+  Buffer<GridDefines> grid_def_buffer(
+      BufferType::UNIFORM, BufferUsage::DYNAMIC_DRAW, BufferLayout::AOS);
+
+  grid_def_buffer.transfer_to_gpu(std::vector<GridDefines>{data.grid_def});
+  grid_def_buffer.gl_bind_base(GRID_DEFINES_BINDING);
 
   // Particle_exp
   Buffer<Particle_exp> particle_buffer(
@@ -167,9 +172,6 @@ OutputData test(testData& data) {
   // bin
   BinningTechnique::BinningData binning_data{
       "shader/compute/preprocess/bin.glsl",
-      data.gGridPos,
-      data.gGridDim,
-      data.gridSpacing,
 
   };
   IOBufferData io_bin;
@@ -237,10 +239,7 @@ OutputData test(testData& data) {
 #else
       "shader/compute/preprocess/reorder.glsl",
 #endif
-      // GLuint scan_block_size;
-      data.gGridPos,
-      data.gGridDim,
-      data.gridSpacing,
+  // GLuint scan_block_size;
 #ifdef SCAN_DIRECT_WRITE_BACK
       true,
 #else

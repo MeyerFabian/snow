@@ -17,9 +17,6 @@ class ReorderTechnique : public Technique {
   struct ReorderData {
     LocalSize local_size;
     std::string filename;
-    PREC_VEC3_TYPE gGridPos;
-    glm::uvec3 gGridDim;
-    PREC_SCAL_TYPE gridSpacing;
     bool dw_back;
     GLuint scan_block_size;
   };
@@ -30,9 +27,6 @@ class ReorderTechnique : public Technique {
 
   struct UniformsStatic {
     GLuint scanBlockSize;
-    PREC_VEC3_TYPE gGridPos;
-    glm::uvec3 gGridDim;
-    PREC_SCAL_TYPE gridSpacing;
   };
 
   struct UniformsDynamic {

@@ -20,10 +20,6 @@ void P2GPushSyncTechnique::init_sync(P2GData&& data, IOBufferData&& io) {
   init(std::move(data), std::move(io));
 }
 void P2GPushSyncTechnique::uniforms_init(UniformsStatic&& uniforms) {
-  Technique::uniform_update("gGridPos", uniforms.gGridPos.x,
-                            uniforms.gGridPos.y, uniforms.gGridPos.z);
-  Technique::uniform_update("gGridDim", uniforms.gGridDim);
-  Technique::uniform_update("gridSpacing", uniforms.gridSpacing);
   gGridDim = uniforms.gGridDim;
 }
 void P2GPushSyncTechnique::dispatch(UniformsDynamic&& uniforms) {

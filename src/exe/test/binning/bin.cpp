@@ -24,8 +24,8 @@ int main() {
     binning.push_back(0);
   }
   testData data = {
-      numVectors,  numGridPoints, particles, binning,
-      grid_offset, gGridDim,      gGridPos,  gridSpacing,
+      numVectors,  numGridPoints, particles,   binning,
+      grid_offset, gGridPos,      gridSpacing, gGridDim,
   };
   auto OutputData = test(data);
   auto count_gpu = OutputData.binning;

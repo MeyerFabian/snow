@@ -12,13 +12,13 @@
 #include "shader/shared_hpp/voxel_tile_size.hpp"
 #include "shader/compute/indexing/gridIndex.include.glsl"
 
+#include "shader/utils/sorting_method.include.glsl"
+#include "shader/buffers/grid_defines.include.glsl"
+
 
 layout(local_size_x =X)in;
 
 
-uniform uvec3 gGridDim;
-uniform PREC_VEC3_TYPE gGridPos;
-uniform PREC_SCAL_TYPE gridSpacing;
 
 uniform uint bufferSize;
 
@@ -31,14 +31,14 @@ void main(void){
 	PREC_VEC3_TYPE pos = INPUT4_AT(INPUT4,INPUT4_VAR,INPUT4_SIZE, unsortedIndex,INPUT4_NUM_BUFFER,INPUT4_INDEX_BUFFER,INPUT4_VAR_SIZE).xyz;
 
 	// Bin due to position in grid
-	PREC_VEC3_TYPE positionInGrid= (pos-gGridPos)/gridSpacing;
+	PREC_VEC3_TYPE positionInGrid= (pos-grid_def.gGridPos)/gridSpacing;
 
 	//floor
 	ivec3 globalGridIndex = ivec3(positionInGrid);
 
 
-	if(inBounds(globalGridIndex,gGridDim)){
-		uint voxelAndTileIndex = get_voxel_and_tile_index(globalGridIndex,gGridDim);
+	if(inBounds(globalGridIndex,grid_def.gGridDim)){
+		uint voxelAndTileIndex = SORTING_KEY(globalGridIndex,grid_def.gGridDim);
 		uint scanIndex =
 			//scan_local
 			INPUT2_AT(INPUT2,INPUT2_VAR,INPUT2_SIZE,get_scan_local_index(voxelAndTileIndex),INPUT2_NUM_BUFFER,INPUT2_INDEX_BUFFER,INPUT2_VAR_SIZE)

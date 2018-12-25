@@ -31,10 +31,6 @@ void P2G_shared_atomic::init_batching(P2GBatchingData&& data,
   init(P2GData{data.uniforms}, std::move(io));
 }
 void P2G_shared_atomic::uniforms_init(UniformsStatic&& uniforms) {
-  Technique::uniform_update("gGridPos", uniforms.gGridPos.x,
-                            uniforms.gGridPos.y, uniforms.gGridPos.z);
-  Technique::uniform_update("gGridDim", uniforms.gGridDim);
-  Technique::uniform_update("gridSpacing", uniforms.gridSpacing);
   gGridDim = uniforms.gGridDim;
 }
 void P2G_shared_atomic::dispatch(UniformsDynamic&& uniforms) {

@@ -3,6 +3,9 @@
 #define PREC_TYPE
 #ifdef GLSL
 #define GLuint uint
+#define GLuvec3 uvec3
+#else
+typedef glm::uvec3 GLuvec3;
 #endif
 #ifdef DOUBLE_PREC
 #ifdef GLSL

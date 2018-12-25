@@ -1,9 +1,8 @@
 #include "TilePipeline.hpp"
 
 void TilePipeline::init(TileData&& td_data, IOBufferData&& io) {
-  GLuint tileSize = td_data.gGridDim.x * td_data.gGridDim.y *
-                    td_data.gGridDim.z /
-                    (VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z);
+  GLuint tileSize =
+      td_data.numGridPoints / (VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z);
 
   /**********************************************************************
    *                          Buffer Creation                           *
@@ -50,7 +49,7 @@ void TilePipeline::init(TileData&& td_data, IOBufferData&& io) {
 
   std::vector<Shader::CommandType> reduce_commands = {
       //{PreprocessorCmd::DEFINE,"PERMUTATION(i)
-      //get_voxel_and_tile_index(getIJK(i,gGridDim),gGridDim)"},
+      // get_voxel_and_tile_index(getIJK(i,gGridDim),gGridDim)"},
   };
 
   max_count.init(std::move(reduce_commands), std::move(reduce_data),

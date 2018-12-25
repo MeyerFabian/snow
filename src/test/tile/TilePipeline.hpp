@@ -13,10 +13,8 @@
 class TilePipeline {
  public:
   struct TileData {
+    GLuint numGridPoints;
     BufferLayout layout;
-    PREC_VEC3_TYPE gGridPos;
-    glm::uvec3 gGridDim;
-    PREC_SCAL_TYPE gridSpacing;
   };
 
   struct TileDispatchData {

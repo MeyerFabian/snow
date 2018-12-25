@@ -8,6 +8,7 @@
 #include "../../../test/BufferData.hpp"
 #include "../../../test/reorder/countingSortPipeline.hpp"
 #include "../../../test/test_util.hpp"
+#include "../../src/snow/grid/grid_def.hpp"
 #include "../../src/snow/particle/particle_exp.hpp"
 
 struct testData {
@@ -15,9 +16,7 @@ struct testData {
   GLuint numGridPoints;
   std::vector<Particle_exp> particles;
   std::vector<Particle_exp_2> particles2;
-  glm::uvec3 gGridDim;
-  PREC_VEC3_TYPE gGridPos;
-  PREC_SCAL_TYPE gridSpacing;
+  GridDefines grid_def;
 };
 
 struct OutputData {
@@ -36,6 +35,12 @@ OutputData test(testData&& data) {
   /**********************************************************************
    *                          Buffer creations                          *
    **********************************************************************/
+
+  Buffer<GridDefines> grid_def_buffer(
+      BufferType::UNIFORM, BufferUsage::DYNAMIC_DRAW, BufferLayout::AOS);
+
+  grid_def_buffer.transfer_to_gpu(std::vector<GridDefines>{data.grid_def});
+  grid_def_buffer.gl_bind_base(GRID_DEFINES_BINDING);
 
   // Particle_exp
   Buffer<Particle_exp> particle_buffer(
@@ -87,9 +92,6 @@ OutputData test(testData&& data) {
 
   CountingSortPipeline::CountingSortData cnt_srt_data{
       layout,
-      data.gGridPos,
-      data.gGridDim,
-      data.gridSpacing,
   };
 
   CountingSortPipeline cnt_srt_pipeline;

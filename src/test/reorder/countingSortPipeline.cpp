@@ -1,8 +1,7 @@
 #include "countingSortPipeline.hpp"
 
 void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
-  GLuint gridSize = cnt_srt_data.gGridDim.x * cnt_srt_data.gGridDim.y *
-                    cnt_srt_data.gGridDim.z;
+  GLuint gridSize = cnt_srt_data.numGridPoints;
 
   GLuint to_sort_size = sorting_data[0]->getSize();
 
@@ -75,9 +74,6 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
       "shader/compute/preprocess/bin.glsl",
 #endif
 
-      cnt_srt_data.gGridPos,
-      cnt_srt_data.gGridDim,
-      cnt_srt_data.gridSpacing,
 #ifdef BIN_MULTIPLE_ELEMENTS
       true,
       BIN_MULTIPLE_ELEMENTS,
@@ -138,10 +134,7 @@ void CountingSortPipeline::init(CountingSortData&& cnt_srt_data) {
       {32, 1, 1},
       // std::string filename;
       "shader/compute/preprocess/reorder.glsl",
-      // GLuint scan_block_size;
-      cnt_srt_data.gGridPos,
-      cnt_srt_data.gGridDim,
-      cnt_srt_data.gridSpacing,
+  // GLuint scan_block_size;
 #ifdef SCAN_DIRECT_WRITE_BACK
       true,
 #else

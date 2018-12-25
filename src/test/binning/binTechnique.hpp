@@ -12,15 +12,10 @@ class BinningTechnique : public Technique {
  public:
   LocalSize local_size = {64, 1, 1};
   bool multiple = false;
-  struct UniformsStatic {
-    PREC_VEC3_TYPE gGridPos;
-    glm::uvec3 gGridDim;
-    PREC_SCAL_TYPE gridSpacing;
-  };
+  struct UniformsStatic {};
 
   struct BinningData {
     std::string filename;
-    UniformsStatic uniforms;
     bool multiple = false;
     GLuint multiple_elements = 1;
   };

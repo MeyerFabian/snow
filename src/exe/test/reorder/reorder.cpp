@@ -43,8 +43,8 @@ int main() {
     scan.push_back({0, 0});
   }
   testData data = {
-      numParticles,     numGridPoints, particles, particles2, binning,
-      particle_indices, scan,          gGridDim,  gGridPos,   gridSpacing,
+      numParticles,     numGridPoints, particles, particles2,  binning,
+      particle_indices, scan,          gGridPos,  gridSpacing, gGridDim,
   };
   auto OutputData = test(data);
   auto sorted_particles = OutputData.particles;

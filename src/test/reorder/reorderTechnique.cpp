@@ -21,8 +21,7 @@ void ReorderTechnique::init(ReorderData&& data, IOBufferData&& io) {
   Technique::add_shader(std::move(shader));
   Technique::upload();
   Technique::use();
-  uniforms_init(
-      {data.scan_block_size, data.gGridPos, data.gGridDim, data.gridSpacing});
+  uniforms_init({data.scan_block_size});
 }
 void ReorderTechnique::dispatch_with_barrier(DispatchData&& data) const {
   Technique::use();
@@ -34,10 +33,6 @@ void ReorderTechnique::uniforms_update(UniformsDynamic&& uniforms) const {
   Technique::uniform_update("bufferSize", uniforms.bufferSize);
 }
 void ReorderTechnique::uniforms_init(UniformsStatic&& uniforms) const {
-  Technique::uniform_update("gGridPos", uniforms.gGridPos.x,
-                            uniforms.gGridPos.y, uniforms.gGridPos.z);
-  Technique::uniform_update("gGridDim", uniforms.gGridDim);
-  Technique::uniform_update("gridSpacing", uniforms.gridSpacing);
   if (!dw_back) {
     Technique::uniform_update("scanBlockSize", uniforms.scanBlockSize);
   }
