@@ -7,6 +7,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <chrono>
 #include <glm/gtx/norm.hpp>
+#include <optional>
 #include <thread>
 #include "../../snow/utils/benchmarker.hpp"
 #include "../IOBufferData.hpp"
@@ -24,6 +25,7 @@ class MapReduceTechnique : public Technique {
   struct DispatchData {
     GLuint bufferSize;
     GLuint dispatchDim_x = 1;
+    std::optional<GLuint> global_loads_per_thread;
   };
 
   LocalSize local_size;
@@ -35,7 +37,7 @@ class MapReduceTechnique : public Technique {
   void uniforms_update(DispatchData&& uniforms) const;
 
  private:
-  std::vector<Shader::CommandType> commands = {};
+  std::vector<Shader::CommandType> commands;
 };
 #endif  // MAPREDUCE_H
 

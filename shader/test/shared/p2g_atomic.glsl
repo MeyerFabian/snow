@@ -1,10 +1,6 @@
 #version 440
 #extension GL_NV_shader_atomic_float: enable
 
-uniform vec3 gGridPos;
-uniform uvec3 gGridDim;
-uniform float gridSpacing;
-
 uniform uint indexSize;
 
 #include "shader/compute/interpolation/cubic.include.glsl"
@@ -88,7 +84,7 @@ void main(void){
 		uvec3 halo_ijk = uvec3(getIJK(local_i,ivec3(HALO_X,HALO_Y,HALO_Z)));
 		ivec3 to_process = grid_start_node + ivec3(halo_ijk);
 		if(inBounds(to_process,gGridDim)){
-			uint write_key = INPUT_SORTING_KEY(to_process,gGridDim);
+			uint write_key = SORTING_KEY(to_process,gGridDim);
 			PREC_VEC_TYPE to_write = temp[local_i];
 
 			atomicAdd(OUTPUT_AT(OUTPUT,Gridpoint_vel_mass,OUTPUT_SIZE,write_key,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).x,
@@ -110,7 +106,7 @@ void main(void){
 		uvec3 halo_ijk = uvec3(getIJK(local_i,ivec3(HALO_X,HALO_Y,HALO_Z)));
 		ivec3 to_process = grid_start_node + ivec3(halo_ijk);
 		if(inBounds(to_process,gGridDim)){
-			uint write_key = INPUT_SORTING_KEY(to_process,gGridDim);
+			uint write_key = SORTING_KEY(to_process,gGridDim);
 			PREC_VEC_TYPE to_write = temp[local_i];
 
 			atomicAdd(OUTPUT_AT(OUTPUT,Gridpoint_vel_mass,OUTPUT_SIZE,write_key,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).x,

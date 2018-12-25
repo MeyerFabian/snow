@@ -9,10 +9,11 @@ void TilePipeline::init(TileData&& td_data, IOBufferData&& io) {
    *                          Buffer Creation                           *
    **********************************************************************/
 
-  tile_buffer(BufferType::SSBO, BufferUsage::STATIC_DRAW, td_data.layout,
-              "shader/buffers/tile.include.glsl");
-  tile_buffer.resize_buffer(tileSize);
-  tile_buffer.gl_bind_base(TILE_BINDING);
+  tile_buffer = std::make_unique<Buffer<Tile> >(
+      BufferType::SSBO, BufferUsage::STATIC_DRAW, td_data.layout,
+      "shader/buffers/tile.include.glsl");
+  tile_buffer->resize_buffer(tileSize);
+  tile_buffer->gl_bind_base(TILES_BINDING);
   /**********************************************************************
    *                        In/Outs for Shaders                         *
    **********************************************************************/
@@ -32,27 +33,39 @@ void TilePipeline::init(TileData&& td_data, IOBufferData&& io) {
                                             tile_buffer->get_buffer_info(),
                                             tileSize, 1, "0", "Tile_VAR_SIZE");
 
-  IOBufferData io;
-  // grid here
-  io.in_buffer.push_back(std::make_unique<BufferData>(in_v));
-
   // tile counter here
-  io.out_buffer.push_back(std::make_unique<BufferData>(out_g));
+  io.out_buffer.push_back(tile_counter->cloneBufferDataInterface());
+
+  local_size = {
+      VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z / global_loads_per_thread, 1, 1};
 
   MapReduceTechnique::MapReduceData reduce_data({
-      "shader/compute/mapreduce/mapReduce.glsl",
-      LocalSize{VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z, 1, 1},
+      "shader/compute/mapreduce/mapReduceNear.glsl",
+      local_size,
       "uint",
-      "SORTING_KEY(value)",
+      "value",
       "0",
       "max(left,right)",
   });
 
-  std::vector<Shader::CommandType> reduce_commands = {};
+  std::vector<Shader::CommandType> reduce_commands = {
+      //{PreprocessorCmd::DEFINE,"PERMUTATION(i)
+      //get_voxel_and_tile_index(getIJK(i,gGridDim),gGridDim)"},
+  };
 
   max_count.init(std::move(reduce_commands), std::move(reduce_data),
                  std::move(io));
 }
 
-void TilePipeline::run() {}
+void TilePipeline::run(GLuint numVectors) {
+  GLuint buffer_size_before = numVectors;
+  GLuint buffer_size_after =
+      buffer_size_before / local_size.x / global_loads_per_thread;
+
+  BenchmarkerGPU::getInstance().time(
+      "tile_counter", [this, buffer_size_before, buffer_size_after]() {
+        max_count.dispatch_with_barrier(
+            {buffer_size_before, buffer_size_after, global_loads_per_thread});
+      });
+}
 

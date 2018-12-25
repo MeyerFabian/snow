@@ -301,6 +301,11 @@ CountingSortPipeline::getSortedBufferData() {
   }
   return ret;
 }
+
+std::unique_ptr<BufferDataInterface> CountingSortPipeline::getGridCounter() {
+  return counter_i->cloneBufferDataInterface();
+}
+
 std::vector<std::unique_ptr<SortedBufferDataAccess> >
 CountingSortPipeline::getSortedBufferDataAccess() {
   std::vector<std::unique_ptr<SortedBufferDataAccess> > ret;

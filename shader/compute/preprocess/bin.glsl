@@ -3,9 +3,6 @@
 #include "shader/compute/indexing/gridIndex.include.glsl"
 #include "shader/utils/sorting_method.include.glsl"
 layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
-uniform uvec3 gGridDim;
-uniform PREC_VEC3_TYPE gGridPos;
-uniform PREC_SCAL_TYPE gridSpacing;
 
 uniform uint bufferSize;
 

@@ -17,14 +17,10 @@
 #include "shader/shared_hpp/voxel_tile_size.hpp"
 #include "shader/compute/indexing/gridIndex.include.glsl"
 #include "shader/utils/sorting_method.include.glsl"
-#include "shader/defines/sorting_key.include.glsl"
+#include "shader/defines/grid_defines.include.glsl"
 
 layout(local_size_x =X)in;
 
-
-uniform uvec3 gGridDim;
-uniform PREC_VEC3_TYPE gGridPos;
-uniform PREC_SCAL_TYPE gridSpacing;
 
 uniform uint bufferSize;
 

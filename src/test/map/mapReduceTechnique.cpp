@@ -20,7 +20,7 @@ void MapReduceTechnique::init(MapReduceData&& data, IOBufferData&& io) {
   auto io_cmds(io.generateCommands());
   commands.insert(std::end(commands), std::begin(io_cmds), std::end(io_cmds));
 
-  shader->add_cmds(vec.begin(), vec.end());
+  shader->add_cmds(commands.begin(), commands.end());
 
   Technique::add_shader(std::move(shader));
   Technique::upload();
@@ -46,7 +46,11 @@ void MapReduceTechnique::dispatch_with_barrier(DispatchData&& data) const {
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
 void MapReduceTechnique::uniforms_update(DispatchData&& uniforms) const {
-  Technique::uniform_update("dispatchDim_x", uniforms.dispatchDim_x);
   Technique::uniform_update("bufferSize", uniforms.bufferSize);
+  if (uniforms.global_loads_per_thread) {
+    Technique::uniform_update("seq_loads", *uniforms.global_loads_per_thread);
+  } else {
+    Technique::uniform_update("dispatchDim_x", uniforms.dispatchDim_x);
+  }
 }
 

@@ -5,7 +5,7 @@
 
 #include "../../snow/utils/defines.hpp"
 
-#include "../../../../shader/shared_hpp/precision.hpp"
+#include "../../../shader/shared_hpp/precision.hpp"
 
 #ifndef AOS_LAYOUT
 #define AOS_LAYOUT

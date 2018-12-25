@@ -3,7 +3,7 @@
 #include "shader/defines/sorting_key.include.glsl"
 #include "shader/shared_hpp/buffer_bindings.hpp"
 #include "shader/buffers/structs/tile.include.glsl"
-layout(std430, binding = TILE_BINDING) buffer Tiles{
+layout(std430, binding = TILES_BINDING) buffer Tiles{
 	Tile tiles[];
 };
 #endif

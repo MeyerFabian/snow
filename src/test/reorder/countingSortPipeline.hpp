@@ -47,6 +47,8 @@ class CountingSortPipeline {
   std::vector<std::unique_ptr<SortedBufferDataAccess> >
   getSortedBufferDataAccess();
 
+  std::unique_ptr<BufferDataInterface> getGridCounter();
+
  private:
   SortedBufferData::IndexUBOData initUBO(std::string name) const;
   void init(CountingSortData&& cnt_srt_data);

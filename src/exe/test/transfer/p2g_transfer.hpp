@@ -11,6 +11,7 @@
 #include "../../../test/p2g/p2g_shared_atomic.hpp"
 #include "../../../test/reorder/countingSortPipeline.hpp"
 #include "../../../test/test_util.hpp"
+#include "../../../test/tile/TilePipeline.hpp"
 #include "../../src/snow/grid/gridpoint.hpp"
 #include "../../src/snow/particle/particle_exp.hpp"
 #include "testData.hpp"
@@ -103,6 +104,23 @@ OutputData test(testData data) {
   cnt_srt_pipeline.initIndexReadSort(std::move(cnt_srt_data),
                                      std::move(io_cnt_srt));
 #endif
+#endif
+
+#ifdef TILE_COMPACTION
+  TilePipeline tile_pipeline;
+
+  TilePipeline::TileData tile_data{
+      layout,
+      data.gGridPos,
+      data.gGridDim,
+      data.gridSpacing,
+  };
+
+  IOBufferData io_tile;
+  // in
+  io_tile.in_buffer.push_back(cnt_srt_pipeline.getGridCounter());
+
+  tile_pipeline.init(std::move(tile_data), std::move(io_tile));
 #endif
   auto gridpoint_vel_mass = BufferData(
       "gridpoints", "Gridpoint_vel_mass", grid_buffer.get_buffer_info(),
@@ -211,16 +229,26 @@ OutputData test(testData data) {
 #ifdef FULL_SORTED
                  &cnt_srt_pipeline,
 #endif
+#ifdef TILE_COMPACTION
+                 &tile_pipeline,
+#endif
                  &resetGridVel, &p2gTransfer, numParticles = data.numParticles,
                  numGridPoints = data.numGridPoints]() {
                executeTest(1, [
 #ifdef FULL_SORTED
                                   &cnt_srt_pipeline,
 #endif
+#ifdef TILE_COMPACTION
+                                  &tile_pipeline,
+#endif
                                   &resetGridVel, &p2gTransfer, &numParticles,
                                   &numGridPoints]() {
 #ifdef FULL_SORTED
                  cnt_srt_pipeline.run({numParticles, numGridPoints});
+#endif
+#ifdef TILE_COMPACTION
+
+                 tile_pipeline.run({numGridPoints});
 #endif
                  BenchmarkerGPU::getInstance().time(
                      "resetGridVel", [&resetGridVel, &numGridPoints]() {
