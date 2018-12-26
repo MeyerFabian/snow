@@ -1,6 +1,5 @@
 #version 440
 
-#include "shader/compute/indexing/gridIndex.include.glsl"
 #include "shader/utils/sorting_method.include.glsl"
 layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
 

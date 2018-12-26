@@ -63,7 +63,7 @@ void main(void){
 			s_data[t_id] = BINARY_OP(
 					s_data[t_id],
 					UNARY_OP(
-						INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,i,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER)
+						INPUT_AT(INPUT,INPUT_VAR,INPUT_SIZE,PERMUTATION(i),INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER)
 						)
 					);
 		}

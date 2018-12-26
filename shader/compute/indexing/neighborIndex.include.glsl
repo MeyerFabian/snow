@@ -1,3 +1,5 @@
+#ifndef NEIGHBORINDEX_GLSL
+#define NEIGHBORINDEX_GLSL
 /**
  * Takes an index with range [0,63] referring to one of the 64 neighbors
  * (4x*4y*4z = 64 Neighbors) and returns its relative signed and rounded position to
@@ -17,3 +19,8 @@ ivec3 getIJK(const int index, ivec3 dim){
 	return ivec3(temp%dim.x,temp/dim.x,index/(dim.x*dim.y));
 }
 
+uvec3 getIJK(const uint index, uvec3 dim){
+	uint temp = index%(dim.x*dim.y);
+	return uvec3(temp%dim.x,temp/dim.x,index/(dim.x*dim.y));
+}
+#endif

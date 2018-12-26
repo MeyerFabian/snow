@@ -26,11 +26,37 @@ void MapReduceTechnique::init(MapReduceData&& data, IOBufferData&& io) {
   Technique::upload();
   Technique::use();
 }
-
+//
+// copied method meh
 void MapReduceTechnique::init(std::vector<Shader::CommandType>&& in_cmds,
-                              MapReduceData&& data, IOBufferData&& io_data) {
+                              MapReduceData&& data, IOBufferData&& io) {
+  local_size = data.local_size;
+
+  auto shader =
+      std::make_shared<Shader>(ShaderType::COMPUTE, data.shader_filename);
+
+  shader->set_local_size(data.local_size);
+
+  std::vector<Shader::CommandType> vec = {
+      {PreprocessorCmd::DEFINE,
+       "UNARY_OP_RETURN_TYPE " + data.gl_unary_op_return_type},
+      {PreprocessorCmd::DEFINE, "UNARY_OP(value) " + data.gl_unary_op},
+      {PreprocessorCmd::DEFINE, "BINARY_OP(left,right) " + data.gl_binary_op},
+      {PreprocessorCmd::DEFINE,
+       "BINARY_OP_NEUTRAL_ELEMENT " + data.gl_binary_op_neutral_elem},
+  };
+
+  commands.insert(std::end(commands), std::begin(vec), std::end(vec));
+  auto io_cmds(io.generateCommands());
+  commands.insert(std::end(commands), std::begin(io_cmds), std::end(io_cmds));
+
   commands.insert(std::end(commands), std::begin(in_cmds), std::end(in_cmds));
-  init(std::move(data), std::move(io_data));
+
+  shader->add_cmds(commands.begin(), commands.end());
+
+  Technique::add_shader(std::move(shader));
+  Technique::upload();
+  Technique::use();
 }
 void MapReduceTechnique::dispatch_with_barrier(GLuint numVectors) const {
   Technique::use();

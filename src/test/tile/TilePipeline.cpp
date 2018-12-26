@@ -36,7 +36,8 @@ void TilePipeline::init(TileData&& td_data, IOBufferData&& io) {
   io.out_buffer.push_back(tile_counter->cloneBufferDataInterface());
 
   local_size = {
-      VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z / global_loads_per_thread, 1, 1};
+      VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z / global_loads_per_thread / 2, 1,
+      1};
 
   MapReduceTechnique::MapReduceData reduce_data({
       "shader/compute/mapreduce/mapReduceNear.glsl",
@@ -48,8 +49,10 @@ void TilePipeline::init(TileData&& td_data, IOBufferData&& io) {
   });
 
   std::vector<Shader::CommandType> reduce_commands = {
-      //{PreprocessorCmd::DEFINE,"PERMUTATION(i)
-      // get_voxel_and_tile_index(getIJK(i,gGridDim),gGridDim)"},
+      {PreprocessorCmd::IFDEF, "DIM_INDEX"},
+      {PreprocessorCmd::DEFINE,
+       "PERMUTATION(i) global_indexing_of_voxel_and_tile(i,grid_def.gGridDim)"},
+      {PreprocessorCmd::ENDIF, ""},
   };
 
   max_count.init(std::move(reduce_commands), std::move(reduce_data),

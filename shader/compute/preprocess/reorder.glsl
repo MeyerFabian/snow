@@ -15,7 +15,6 @@
 // etc.
 
 #include "shader/shared_hpp/voxel_tile_size.hpp"
-#include "shader/compute/indexing/gridIndex.include.glsl"
 #include "shader/utils/sorting_method.include.glsl"
 #include "shader/buffers/grid_defines.include.glsl"
 

@@ -4,8 +4,6 @@
 uniform uint indexSize;
 
 #include "shader/compute/interpolation/cubic.include.glsl"
-#include "shader/compute/indexing/neighborIndex.include.glsl"
-#include "shader/compute/indexing/gridIndex.include.glsl"
 layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
 
 #define HALO_X (X+LEFT_SUPPORT+RIGHT_SUPPORT)
