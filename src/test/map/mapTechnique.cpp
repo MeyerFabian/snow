@@ -2,6 +2,7 @@
 void MapTechnique::init(MapData&& data, IOBufferData&& io) {
   auto shader = std::make_shared<Shader>(ShaderType::COMPUTE, data.filename);
 
+  if (data.local_size) local_size = *data.local_size;
   shader->set_local_size(local_size);
 
   std::vector<Shader::CommandType> vec = {

@@ -10,6 +10,7 @@ void ScanPipeline::init(ScanTechnique::ScanData&& scan_data,
   buffer_size_block = buffer_size_local / block_size;
 
   ScanTechnique::ScanData scan_block_data = scan_data;
+  scan_block_data.gl_unary_op = "value";
 
   // std::vector<BufferData> block_buffer = {io2.out_buffer[1]};
 

@@ -1,8 +1,7 @@
 #include "TilePipeline.hpp"
 
 void TilePipeline::init(TileData&& td_data, IOBufferData&& io) {
-  GLuint tileSize =
-      td_data.numGridPoints / (VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z);
+  tileSize = td_data.numGridPoints / (VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z);
 
   /**********************************************************************
    *                          Buffer Creation                           *
@@ -57,6 +56,41 @@ void TilePipeline::init(TileData&& td_data, IOBufferData&& io) {
 
   max_count.init(std::move(reduce_commands), std::move(reduce_data),
                  std::move(io));
+
+  // scan
+
+  ScanTechnique::ScanData scan_data{
+      // local_size
+      {1024, 1, 1},
+      // shader
+      "shader/compute/preprocess/scan_unroll.glsl",
+      // unary_op_return_type
+      "uint",
+      // unary_op
+      "((value>0)?1:0)",
+      // gl_binary_op_neutral_elem
+      "0",
+      // gl_biunary_op
+      "left+right",
+      tileSize,
+      // raking
+      2,
+  };
+
+  IOBufferData io_scan;
+
+  // INPUT
+  io_scan.in_buffer.push_back(tile_counter->cloneBufferDataInterface());
+
+  // OUTPUT
+  io_scan.out_buffer.push_back(tile_scan_local.cloneBufferDataInterface());
+
+  // OUTPUT2
+  io_scan.out_buffer.push_back(tile_scan_block.cloneBufferDataInterface());
+
+  scanPipeline = ScanPipeline();
+
+  scanPipeline.initDirectWriteBack(std::move(scan_data), std::move(io_scan));
 }
 
 void TilePipeline::run(GLuint numVectors) {
@@ -69,5 +103,7 @@ void TilePipeline::run(GLuint numVectors) {
         max_count.dispatch_with_barrier(
             {buffer_size_before, buffer_size_after, global_loads_per_thread});
       });
+
+  scanPipeline.run(tileSize);
 }
 

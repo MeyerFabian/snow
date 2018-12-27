@@ -1,5 +1,6 @@
 #ifndef MAPTECHNIQUE_H
 #define MAPTECHNIQUE_H
+#include <optional>
 #include "../../snow/buffer/buffer.hpp"
 #include "../../snow/shader/technique.hpp"
 #include "../IOBufferData.hpp"
@@ -12,6 +13,7 @@ class MapTechnique : public Technique {
     std::string filename;
     std::string gl_unary_op;
     GLuint numVectors;  // SOA only
+    std::optional<LocalSize> local_size;
   };
 
   struct DispatchData {
