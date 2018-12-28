@@ -42,7 +42,59 @@ void main(void){
 	uint process_count = 0;
 	while(process_count != count){
 		uint batch_count = min(count-process_count,MULTIPLE_PARTICLES);
+		/*
+#if MULTIPLE_PARTICLES==2
+		//unroll
+		uint globalParticleIndex = scan+process_count;
+		if(0 < batch_count){
+		pos[0] = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
 
+		vp_mp[0]= INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+		}
+
+		if(1 < batch_count){
+
+		globalParticleIndex +=1;
+		pos[1] = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+
+		vp_mp[1]= INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+		}
+		 */
+#elif MULTIPLE_PARTICLES==4
+		//unroll
+		uint globalParticleIndex = scan+process_count;
+		if(0 < batch_count){
+
+			pos[0] = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+
+			vp_mp[0]= INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+		}
+
+		if(1 < batch_count){
+
+			globalParticleIndex +=1;
+			pos[1] = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+
+			vp_mp[1]= INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+		}
+
+		if(2 < batch_count){
+
+			globalParticleIndex +=1;
+			pos[2] = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+
+			vp_mp[2]= INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+		}
+
+
+		if(3 < batch_count){
+
+			globalParticleIndex +=1;
+			pos[3] = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+
+			vp_mp[3]= INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+		}
+#else
 		for(uint particle_i = process_count; particle_i < process_count+batch_count; particle_i++){
 			uint globalParticleIndex = scan+particle_i;
 			pos[particle_i-process_count] = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
@@ -51,6 +103,7 @@ void main(void){
 			vp_mp[particle_i-process_count]=
 				INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
 		}
+#endif
 
 		for(int x = -LEFT_SUPPORT; x<= RIGHT_SUPPORT ;x++){
 			for(int y = -LEFT_SUPPORT; y<= RIGHT_SUPPORT ;y++){

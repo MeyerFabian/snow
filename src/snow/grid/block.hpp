@@ -1,5 +1,5 @@
-#ifndef TILE_HPP
-#define TILE_HPP
+#ifndef BLOCK_HPP
+#define BLOCK_HPP
 // shared data structure (C++/GLSL), which is enabled in c++
 //
 
@@ -11,13 +11,13 @@
 #define AOS_LAYOUT
 #include "../../../shader/utils/access.include.glsl"
 
-#include "../../../shader/buffers/structs/tile.include.glsl"
+#include "../../../shader/buffers/structs/block.include.glsl"
 
 #undef AOS_LAYOUT
 #else
 #include "../../../shader/utils/access.include.glsl"
 
-#include "../../../shader/buffers/structs/tile.include.glsl"
+#include "../../../shader/buffers/structs/block.include.glsl"
 #endif
 
 #endif /* end of include guard: GRIDPOINT_HPP */

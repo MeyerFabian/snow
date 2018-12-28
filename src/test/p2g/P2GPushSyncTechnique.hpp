@@ -6,7 +6,7 @@
 
 #include <glm/glm.hpp>
 #include "../../../shader/shared_hpp/precision.hpp"
-#include "../../../shader/shared_hpp/voxel_tile_size.hpp"
+#include "../../../shader/shared_hpp/voxel_block_size.hpp"
 #include "../../snow/shader/technique.hpp"
 #include "../../snow/utils/defines.hpp"
 #include "../IOBufferData.hpp"

@@ -29,8 +29,13 @@ class MapTechnique : public Technique {
 
   void uniform_update(UniformsDynamic&& data);
   void init(MapData&& data, IOBufferData&&);
+  void init(std::vector<Shader::CommandType>&& in_cmds, MapData&& data,
+            IOBufferData&& io);
   void dispatch(DispatchData&& data);
   void dispatch_with_barrier(DispatchData&& data);
+
+ private:
+  std::vector<Shader::CommandType> commands;
 };
 #endif
 

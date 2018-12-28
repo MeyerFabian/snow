@@ -8,6 +8,9 @@
 #if defined(SHARED_ATOMIC) || defined(PUSH_SYNC)
 #define SHARED
 #endif
+#if defined(PUSH_SYNC)
+#define BLOCK_COMPACTION
+#endif
 
 #if defined(UNIFORM_INPUT)
 #include "uniformInput.hpp"

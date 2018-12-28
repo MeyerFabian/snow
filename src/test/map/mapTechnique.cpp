@@ -8,10 +8,36 @@ void MapTechnique::init(MapData&& data, IOBufferData&& io) {
   std::vector<Shader::CommandType> vec = {
       {PreprocessorCmd::DEFINE, "UNARY_OP(value) " + data.gl_unary_op},
   };
-  auto io_cmds(io.generateCommands());
-  vec.insert(std::end(vec), std::begin(io_cmds), std::end(io_cmds));
 
-  shader->add_cmds(vec.begin(), vec.end());
+  commands.insert(std::end(commands), std::begin(vec), std::end(vec));
+  auto io_cmds(io.generateCommands());
+  commands.insert(std::end(commands), std::begin(io_cmds), std::end(io_cmds));
+
+  shader->add_cmds(commands.begin(), commands.end());
+
+  Technique::add_shader(std::move(shader));
+  Technique::upload();
+  Technique::use();
+}
+
+void MapTechnique::init(std::vector<Shader::CommandType>&& in_cmds,
+                        MapData&& data, IOBufferData&& io) {
+  auto shader = std::make_shared<Shader>(ShaderType::COMPUTE, data.filename);
+
+  if (data.local_size) local_size = *data.local_size;
+  shader->set_local_size(local_size);
+
+  std::vector<Shader::CommandType> vec = {
+      {PreprocessorCmd::DEFINE, "UNARY_OP(value) " + data.gl_unary_op},
+  };
+
+  commands.insert(std::end(commands), std::begin(vec), std::end(vec));
+  auto io_cmds(io.generateCommands());
+  commands.insert(std::end(commands), std::begin(io_cmds), std::end(io_cmds));
+
+  commands.insert(std::end(commands), std::begin(in_cmds), std::end(in_cmds));
+
+  shader->add_cmds(commands.begin(), commands.end());
 
   Technique::add_shader(std::move(shader));
   Technique::upload();

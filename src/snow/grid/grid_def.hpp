@@ -9,5 +9,5 @@
 
 #include "../../../shader/buffers/structs/grid_def.include.glsl"
 
-#endif /* end of include guard: PARTICLE_EXP_HPP */
+#endif /* end of include guard: GRID_DEF_HPP */
 

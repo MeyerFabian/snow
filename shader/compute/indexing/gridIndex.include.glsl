@@ -18,7 +18,7 @@
  * k of [0, z-dim]
  */
 
-#include "shader/shared_hpp/voxel_tile_size.hpp"
+#include "shader/shared_hpp/voxel_block_size.hpp"
 uint get_dim_index(const uvec3 ijk, uvec3 dim){
 	return ijk.x + (ijk.y * dim.x) + (ijk.z *dim.y * dim.x);
 }
@@ -26,20 +26,20 @@ uint get_dim_index(const uvec3 ijk, uvec3 dim){
 bool inBounds(const ivec3 index, const uvec3 dim){
 	return index.x>= 0 && index.y>=0 && index.z>=0 && index.x < dim.x && index.y < dim.y && index.z< dim.z;
 }
-uint get_tile_index(const uvec3 globalID, uvec3
+uint get_block_index(const uvec3 globalID, uvec3
 		globalDim){
 
-	uvec3 tileID = uvec3(
+	uvec3 blockID = uvec3(
 			globalID.x>>VOXEL_SIZE_X_BIT,
 			globalID.y>>VOXEL_SIZE_Y_BIT,
 			globalID.z>>VOXEL_SIZE_Z_BIT);
 
-	uvec3 tileDim = uvec3(
+	uvec3 blockDim = uvec3(
 			globalDim.x>>VOXEL_SIZE_X_BIT,
 			globalDim.y>>VOXEL_SIZE_Y_BIT,
 			globalDim.z>>VOXEL_SIZE_Z_BIT);
 
-	return get_dim_index(tileID,tileDim);
+	return get_dim_index(blockID,blockDim);
 }
 uint get_voxel_index(const uvec3 globalID){
 	uvec3 voxelDim = uvec3(
@@ -54,30 +54,30 @@ uint get_voxel_index(const uvec3 globalID){
 	return get_dim_index(voxelID,voxelDim);
 }
 
-uint get_voxel_and_tile_index(const uvec3 globalID, uvec3 globalDim){
-	uint tileIndex = get_tile_index(globalID, globalDim);
+uint get_voxel_and_block_index(const uvec3 globalID, uvec3 globalDim){
+	uint blockIndex = get_block_index(globalID, globalDim);
 
 	uint voxelIndex = get_voxel_index(globalID);
 
 	uint voxelDim_flat =VOXEL_DIM_X*VOXEL_DIM_Y*VOXEL_DIM_Z;
 
-	return tileIndex *voxelDim_flat + voxelIndex;
+	return blockIndex *voxelDim_flat + voxelIndex;
 }
-uint get_voxel_and_tile_index(uint voxelIndex, uint tileIndex){
+uint get_voxel_and_block_index(uint voxelIndex, uint blockIndex){
 
 	uint voxelDim_flat =VOXEL_DIM_X*VOXEL_DIM_Y*VOXEL_DIM_Z;
 
-	return tileIndex *voxelDim_flat + voxelIndex;
+	return blockIndex *voxelDim_flat + voxelIndex;
 }
-uint global_indexing_of_voxel_and_tile(uint globalIndex,uvec3 globalDim){
-	uint tileIndex = globalIndex>>(VOXEL_SIZE_X_BIT+VOXEL_SIZE_Y_BIT+VOXEL_SIZE_Z_BIT);
+uint global_indexing_of_voxel_and_block(uint globalIndex,uvec3 globalDim){
+	uint blockIndex = globalIndex>>(VOXEL_SIZE_X_BIT+VOXEL_SIZE_Y_BIT+VOXEL_SIZE_Z_BIT);
 
-	uvec3 tileDim = uvec3(
+	uvec3 blockDim = uvec3(
 			globalDim.x>>VOXEL_SIZE_X_BIT,
 			globalDim.y>>VOXEL_SIZE_Y_BIT,
 			globalDim.z>>VOXEL_SIZE_Z_BIT);
 
-	uvec3 tileID = getIJK(tileIndex,tileDim);
+	uvec3 blockID = getIJK(blockIndex,blockDim);
 
 	uvec3 voxelDim = uvec3(
 			VOXEL_DIM_X,
@@ -91,7 +91,7 @@ uint global_indexing_of_voxel_and_tile(uint globalIndex,uvec3 globalDim){
 
 	return get_dim_index(
 			voxelID +
-			voxelDim * tileID
+			voxelDim * blockID
 			,globalDim);
 }
 #endif

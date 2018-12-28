@@ -11,8 +11,9 @@
 #define ATOMIC_COUNTER_BINDING 4
 #define SCAN_BUFFER_BINDING 5
 #define UNIFORM_GRID_BINDING 6
-// tiles buffer
-#define TILES_BINDING 7
+// grid blocks buffer
+#define BLOCKS_BINDING 7
+#define BLOCKS_INDIRECT_BINDING 8
 
 // ubos
 // particle double buffer offset

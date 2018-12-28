@@ -5,13 +5,13 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "../../../../shader/shared_hpp/buffer_bindings.hpp"
 #include "../../../test/BufferData.hpp"
+#include "../../../test/block/BlockPipeline.hpp"
 #include "../../../test/map/mapTechnique.hpp"
 #include "../../../test/p2g/P2GPushSyncTechnique.hpp"
 #include "../../../test/p2g/p2g_atomic_global.hpp"
 #include "../../../test/p2g/p2g_shared_atomic.hpp"
 #include "../../../test/reorder/countingSortPipeline.hpp"
 #include "../../../test/test_util.hpp"
-#include "../../../test/tile/TilePipeline.hpp"
 #include "../../src/snow/grid/grid_def.hpp"
 #include "../../src/snow/grid/gridpoint.hpp"
 #include "../../src/snow/particle/particle_exp.hpp"
@@ -110,19 +110,19 @@ OutputData test(testData data) {
 #endif
 #endif
 
-#ifdef TILE_COMPACTION
-  TilePipeline tile_pipeline;
+#ifdef BLOCK_COMPACTION
+  BlockPipeline block_pipeline;
 
-  TilePipeline::TileData tile_data{
+  BlockPipeline::BlockData block_data{
       data.numGridPoints,
       layout,
   };
 
-  IOBufferData io_tile;
+  IOBufferData io_block;
   // in
-  io_tile.in_buffer.push_back(cnt_srt_pipeline.getGridCounter());
+  io_block.in_buffer.push_back(cnt_srt_pipeline.getGridCounter());
 
-  tile_pipeline.init(std::move(tile_data), std::move(io_tile));
+  block_pipeline.init(std::move(block_data), std::move(io_block));
 #endif
   auto gridpoint_vel_mass = BufferData(
       "gridpoints", "Gridpoint_vel_mass", grid_buffer.get_buffer_info(),
@@ -215,8 +215,8 @@ OutputData test(testData data) {
 #ifdef FULL_SORTED
                  &cnt_srt_pipeline,
 #endif
-#ifdef TILE_COMPACTION
-                 &tile_pipeline,
+#ifdef BLOCK_COMPACTION
+                 &block_pipeline,
 #endif
                  &resetGridVel, &p2gTransfer, numParticles = data.numParticles,
                  numGridPoints = data.numGridPoints]() {
@@ -224,17 +224,17 @@ OutputData test(testData data) {
 #ifdef FULL_SORTED
                                   &cnt_srt_pipeline,
 #endif
-#ifdef TILE_COMPACTION
-                                  &tile_pipeline,
+#ifdef BLOCK_COMPACTION
+                                  &block_pipeline,
 #endif
                                   &resetGridVel, &p2gTransfer, &numParticles,
                                   &numGridPoints]() {
 #ifdef FULL_SORTED
                  cnt_srt_pipeline.run({numParticles, numGridPoints});
 #endif
-#ifdef TILE_COMPACTION
+#ifdef BLOCK_COMPACTION
 
-                 tile_pipeline.run({numGridPoints});
+                 block_pipeline.run({numGridPoints});
 #endif
                  BenchmarkerGPU::getInstance().time(
                      "resetGridVel", [&resetGridVel, &numGridPoints]() {

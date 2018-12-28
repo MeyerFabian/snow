@@ -1,5 +1,5 @@
-#ifndef VOXEL_TILE_SIZE
-#define VOXEL_TILE_SIZE
+#ifndef VOXEL_BLOCK_SIZE
+#define VOXEL_BLOCK_SIZE
 #define VOXEL_SIZE_X_BIT 3
 #define VOXEL_SIZE_Y_BIT 3
 #define VOXEL_SIZE_Z_BIT 3

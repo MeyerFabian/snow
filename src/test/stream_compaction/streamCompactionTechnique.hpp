@@ -1,5 +1,5 @@
-#ifndef REORDERTECHNIQUE_H
-#define REORDERTECHNIQUE_H
+#ifndef STREAMCOMPACTIONTECHNIQUE_H
+#define STREAMCOMPACTIONTECHNIQUE_H
 #include "../../snow/utils/defines.hpp"
 
 #include <glm/glm.hpp>
@@ -8,31 +8,25 @@
 #include "../../snow/shader/technique.hpp"
 #include "../IOBufferData.hpp"
 
-class ReorderTechnique : public Technique {
+class StreamCompactionTechnique : public Technique {
  public:
   LocalSize local_size;
-  bool dw_back;
 
-  struct ReorderData {
+  struct StreamCompactionData {
     LocalSize local_size;
-    std::string filename;
-    bool dw_back;
-    GLuint scan_block_size;
   };
 
   struct DispatchData {
     GLuint bufferSize;
   };
 
-  struct UniformsStatic {
-    GLuint scanBlockSize;
-  };
+  struct UniformsStatic {};
 
   struct UniformsDynamic {
     GLuint bufferSize;
   };
 
-  void init(ReorderData&& data, IOBufferData&& io);
+  void init(StreamCompactionData&& data, IOBufferData&& io);
   void dispatch_with_barrier(DispatchData&& data) const;
   void uniforms_update(UniformsDynamic&& uniforms) const;
 
