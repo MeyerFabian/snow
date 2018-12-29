@@ -2,10 +2,15 @@
 void StreamCompactionTechnique::init(StreamCompactionData&& data,
                                      IOBufferData&& io) {
   local_size = data.local_size;
-  auto shader = std::make_shared<Shader>(ShaderType::COMPUTE, "");
+  auto shader = std::make_shared<Shader>(
+      ShaderType::COMPUTE, "shader/compute/preprocess/stream_compaction.glsl");
 
   shader->set_local_size(local_size);
 
+  std::vector<Shader::CommandType> vec = {
+      {PreprocessorCmd::DEFINE, "ABSTRACT_LAYOUT"},
+      {PreprocessorCmd::DEFINE, "UNARY_OP(value) " + data.gl_unary_op},
+  };
   auto io_cmds(io.generateCommands(true));
   vec.insert(std::end(vec), std::begin(io_cmds), std::end(io_cmds));
 
@@ -14,7 +19,6 @@ void StreamCompactionTechnique::init(StreamCompactionData&& data,
   Technique::add_shader(std::move(shader));
   Technique::upload();
   Technique::use();
-  uniforms_init({data.scan_block_size});
 }
 void StreamCompactionTechnique::dispatch_with_barrier(
     DispatchData&& data) const {

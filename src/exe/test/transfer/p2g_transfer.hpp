@@ -62,6 +62,9 @@ OutputData test(testData data) {
   /**********************************************************************
    *                    Techniques + IOData creation                    *
    **********************************************************************/
+  auto gridpoint_vel_mass = BufferData(
+      "gridpoints", "Gridpoint_vel_mass", grid_buffer.get_buffer_info(),
+      data.numGridPoints, 1, "0", "Gridpoint_size");
 
 #ifdef FULL_SORTED
   // full sort double buffered
@@ -121,13 +124,11 @@ OutputData test(testData data) {
   IOBufferData io_block;
   // in
   io_block.in_buffer.push_back(cnt_srt_pipeline.getGridCounter());
+  io_block.out_buffer.push_back(
+      std::make_unique<BufferData>(gridpoint_vel_mass));
 
   block_pipeline.init(std::move(block_data), std::move(io_block));
 #endif
-  auto gridpoint_vel_mass = BufferData(
-      "gridpoints", "Gridpoint_vel_mass", grid_buffer.get_buffer_info(),
-      data.numGridPoints, 1, "0", "Gridpoint_size");
-
   auto resetGridVel = MapTechnique();
   MapTechnique::MapData map_data{
       "shader/compute/mapreduce/mapSingle.glsl",

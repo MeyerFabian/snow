@@ -41,8 +41,10 @@ void BlockPipeline::init(BlockData&& td_data, IOBufferData&& io) {
       "dispatch_dim", "num_groups_x",
       indirect_dispatch_buffer->get_buffer_info(), 1, 1, "0", "0");
 
-  // block counter here
-  io.out_buffer.push_back(block_counter->cloneBufferDataInterface());
+  IOBufferData io_map_reduce;
+  io_map_reduce.in_buffer.push_back(
+      io.in_buffer[0]->cloneBufferDataInterface());
+  io_map_reduce.out_buffer.push_back(block_counter->cloneBufferDataInterface());
 
   local_size = {
       VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z / global_loads_per_thread / 2, 1,
@@ -66,7 +68,7 @@ void BlockPipeline::init(BlockData&& td_data, IOBufferData&& io) {
   };
 
   max_count.init(std::move(reduce_commands), std::move(reduce_data),
-                 std::move(io));
+                 std::move(io_map_reduce));
 
   // scan
 
@@ -128,6 +130,32 @@ void BlockPipeline::init(BlockData&& td_data, IOBufferData&& io) {
   };
   write_ind_disp_buffer.init(std::move(map_commands), std::move(map_data),
                              std::move(io_map));
+
+  // index create streamcompact
+  StreamCompactionTechnique::StreamCompactionData stream_data{
+      LocalSize{32, 1, 1},
+      "((value>0)?true:false)",
+  };
+
+  IOBufferData io_stream_compact;
+
+  io_stream_compact.in_buffer.push_back(
+      block_counter->cloneBufferDataInterface());
+  io_stream_compact.in_buffer.push_back(
+      block_scan_local.cloneBufferDataInterface());
+  io_stream_compact.out_buffer.push_back(
+      block_index->cloneBufferDataInterface());
+
+  streamCompaction = StreamCompactionTechnique();
+  streamCompaction.init(std::move(stream_data), std::move(io_stream_compact));
+
+  for (auto it = io.out_buffer.begin(); it != io.out_buffer.end(); it++) {
+    auto block_buffer = std::make_unique<BlockBufferData>(
+        (*it)->cloneBufferDataInterface(),
+        BlockBufferData::IndexSSBOData{
+            block_index->cloneBufferDataInterface()});
+    block_data.push_back(std::move(block_buffer));
+  }
 }
 
 void BlockPipeline::run(GLuint numVectors) {
@@ -146,5 +174,30 @@ void BlockPipeline::run(GLuint numVectors) {
   BenchmarkerGPU::getInstance().time(
       "indirect_dispatch_buffer_write",
       [this]() { write_ind_disp_buffer.dispatch_with_barrier({1}); });
+
+  BenchmarkerGPU::getInstance().time(
+      "block_stream_compact", [this]() {
+        streamCompaction.dispatch_with_barrier({blockSize});
+      });
+}
+
+std::vector<std::unique_ptr<BlockBufferData> >
+BlockPipeline::getBlockBufferData() {
+  std::vector<std::unique_ptr<BlockBufferData> > ret;
+  for (auto& buffer_data : block_data) {
+    ret.push_back(buffer_data->clone());
+  }
+  return ret;
+}
+std::vector<std::unique_ptr<BlockBufferDataAccess> >
+BlockPipeline::getBlockBufferDataAccess() {
+  std::vector<std::unique_ptr<BlockBufferDataAccess> > ret;
+  for (auto& buffer_data : block_data) {
+    ret.push_back(std::make_unique<BlockBufferDataAccess>(
+        buffer_data->clone(), BlockBufferDataAccess::IndexSSBOData{
+                                  block_counter->cloneBufferDataInterface(),
+                              }));
+  }
+  return ret;
 }
 

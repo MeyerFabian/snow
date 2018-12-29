@@ -1,23 +1,20 @@
-
-#ifndef STREAMCOMPACTBUFFERDATAACCESS_HPP_HQMWAVIY
-#define STREAMCOMPACTBUFFERDATAACCESS_HPP_HQMWAVIY
+#ifndef BLOCKBUFFERDATAACCESS_HPP_HQMWAVIY
+#define BLOCKBUFFERDATAACCESS_HPP_HQMWAVIY
 #include <memory>
 #include "../snow/buffer/buffer.hpp"
 #include "../snow/shader/shader.hpp"
 #include "../snow/utils/string_to_upper.hpp"
+#include "BlockBufferData.hpp"
 #include "BufferDataInterface.hpp"
-#include "StreamCompactBufferData.hpp"
-class StreamCompactBufferDataAccess : public BufferDataInterface {
+class BlockBufferDataAccess : public BufferDataInterface {
  public:
   struct IndexSSBOData {
-    std::unique_ptr<BufferDataInterface> scan;
     std::unique_ptr<BufferDataInterface> count;
   };
 
-  StreamCompactBufferDataAccess(
-      std::unique_ptr<StreamCompactBufferData> in_buffer,
-      IndexSSBOData&& in_ssbo)
-      : stream_compact_buffer(std::move(in_buffer)), ssbo(std::move(in_ssbo)) {}
+  BlockBufferDataAccess(std::unique_ptr<BlockBufferData> in_buffer,
+                        IndexSSBOData&& in_ssbo)
+      : block_buffer(std::move(in_buffer)), ssbo(std::move(in_ssbo)) {}
 
   void setName(std::string name) override;
   std::string getName() override;
@@ -35,9 +32,9 @@ class StreamCompactBufferDataAccess : public BufferDataInterface {
   virtual std::unique_ptr<BufferDataInterface> cloneBufferDataInterface()
       override;
 
-  std::unique_ptr<StreamCompactBufferData> stream_compact_buffer;
+  std::unique_ptr<BlockBufferData> block_buffer;
   IndexSSBOData ssbo;
 };
 
-#endif /* end of include guard: STREAMCOMPACTBUFFERDATAACCESS_HPP_HQMWAVIY */
+#endif /* end of include guard: BLOCKBUFFERDATAACCESS_HPP_HQMWAVIY */
 

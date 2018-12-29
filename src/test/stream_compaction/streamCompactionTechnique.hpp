@@ -14,6 +14,7 @@ class StreamCompactionTechnique : public Technique {
 
   struct StreamCompactionData {
     LocalSize local_size;
+    std::string gl_unary_op;
   };
 
   struct DispatchData {

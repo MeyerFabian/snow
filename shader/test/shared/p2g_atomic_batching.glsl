@@ -59,8 +59,10 @@ void main(void){
 
 		vp_mp[1]= INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
 		}
-		 */
 #elif MULTIPLE_PARTICLES==4
+		 */
+
+#if MULTIPLE_PARTICLES==4
 		//unroll
 		uint globalParticleIndex = scan+process_count;
 		if(0 < batch_count){
