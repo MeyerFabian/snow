@@ -23,7 +23,7 @@ void print(T t) {
   std::cout << glm::to_string(t) << std::endl;
 }
 
-enum class BufferType { SSBO, UNIFORM };
+enum class BufferType { SSBO, UNIFORM, DISPATCH };
 enum class BufferUsage { STATIC_DRAW, DYNAMIC_DRAW, STATIC_READ, DYNAMIC_READ };
 enum class BufferLayout { AOS, SOA };
 
@@ -96,6 +96,11 @@ class Buffer {
     resize_buffer();
   }
 
+  void rebind_as(BufferType in_type) const {
+    glBindBuffer(gl_map_type(in_type), bufferHandle);
+  }
+  void rebind() const { glBindBuffer(gl_map_type(), bufferHandle); }
+
  private:
   template <typename Container>
   void gl_write_aos(Container&& c, void* ptr) {
@@ -155,13 +160,18 @@ class Buffer {
     gl_unmap();
   }
 
-  GLenum gl_map_type() const {
-    switch (type) {
+  GLenum gl_map_type() const { return gl_map_type(type); }
+
+  GLenum gl_map_type(BufferType in_type) const {
+    switch (in_type) {
       case BufferType::SSBO:
         return GL_SHADER_STORAGE_BUFFER;
         break;
       case BufferType::UNIFORM:
         return GL_UNIFORM_BUFFER;
+        break;
+      case BufferType::DISPATCH:
+        return GL_DISPATCH_INDIRECT_BUFFER;
         break;
     }
   }

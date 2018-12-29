@@ -175,10 +175,9 @@ void BlockPipeline::run(GLuint numVectors) {
       "indirect_dispatch_buffer_write",
       [this]() { write_ind_disp_buffer.dispatch_with_barrier({1}); });
 
-  BenchmarkerGPU::getInstance().time(
-      "block_stream_compact", [this]() {
-        streamCompaction.dispatch_with_barrier({blockSize});
-      });
+  BenchmarkerGPU::getInstance().time("block_stream_compact", [this]() {
+    streamCompaction.dispatch_with_barrier({blockSize});
+  });
 }
 
 std::vector<std::unique_ptr<BlockBufferData> >

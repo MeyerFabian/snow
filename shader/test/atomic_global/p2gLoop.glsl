@@ -1,10 +1,6 @@
 #version 440
 #extension GL_NV_shader_atomic_float: enable
 
-uniform vec3 gGridPos;
-uniform uvec3 gGridDim;
-uniform float gridSpacing;
-
 uniform uint indexSize;
 
 #include "shader/compute/interpolation/cubic.include.glsl"
@@ -26,7 +22,7 @@ void main(void){
 		INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,i,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
 
 	// Bin due to position in grid
-	PREC_VEC3_TYPE positionInGrid= (pos-gGridPos)/gridSpacing;
+	PREC_VEC3_TYPE positionInGrid= (pos-grid_def.gGridPos)/grid_def.gridSpacing;
 
 
 	for(int x = -LEFT_SUPPORT; x<= RIGHT_SUPPORT ;x++){
@@ -36,9 +32,9 @@ void main(void){
 
 				//floor
 				ivec3 globalGridIndex = ivec3(positionInGrid) + gridOffset;
-				if(inBounds(globalGridIndex,gGridDim)){
+				if(inBounds(globalGridIndex,grid_def.gGridDim)){
 
-					uint voxelAndTileIndex = get_dim_index(globalGridIndex,gGridDim);
+					uint voxelAndTileIndex = get_dim_index(globalGridIndex,grid_def.gGridDim);
 					vec3 gridDistanceToParticle = vec3(globalGridIndex)- positionInGrid;
 					float wip = .0f;
 					weighting (gridDistanceToParticle,wip);
@@ -46,7 +42,7 @@ void main(void){
 					float mp = vp_mp.w;
 					vec3 vp = vp_mp.xyz;
 
-					float mi = mp;// *wip;
+					float mi = mp*wip;
 					vec3 vi = vp*mp*wip;
 					atomicAdd(OUTPUT_AT(OUTPUT,Gridpoint_vel_mass,OUTPUT_SIZE,voxelAndTileIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).w,
 							mi);

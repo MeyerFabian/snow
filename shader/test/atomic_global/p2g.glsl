@@ -1,10 +1,6 @@
 #version 440
 #extension GL_NV_shader_atomic_float: enable
 
-uniform vec3 gGridPos;
-uniform uvec3 gGridDim;
-uniform float gridSpacing;
-
 uniform uint indexSize;
 
 #include "shader/compute/interpolation/cubic.include.glsl"
@@ -27,7 +23,7 @@ void main(void){
 		INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,i,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
 
 	// Bin due to position in grid
-	PREC_VEC3_TYPE positionInGrid= (pos-gGridPos)/gridSpacing;
+	PREC_VEC3_TYPE positionInGrid= (pos-grid_def.gGridPos)/grid_def.gridSpacing;
 
 
 	ivec3 gridOffset = getIJK(int(particle_offset),RIGHT_SUPPORT); // temp = 21%16 = 5, ijk=(5%4, 5/4, 21/16) = (1,1,1)+(-2,-2,-2) = (-1,-1,-1)
@@ -35,8 +31,8 @@ void main(void){
 
 	//floor
 	ivec3 globalGridIndex = ivec3(positionInGrid) + gridOffset;
-	if(inBounds(globalGridIndex,gGridDim)){
-		uint voxelAndTileIndex = get_dim_index(globalGridIndex,gGridDim);
+	if(inBounds(globalGridIndex,grid_def.gGridDim)){
+		uint voxelAndTileIndex = get_dim_index(globalGridIndex,grid_def.gGridDim);
 		vec3 gridDistanceToParticle = vec3(globalGridIndex)- positionInGrid;
 		float wip = .0f;
 		weighting (gridDistanceToParticle,wip);

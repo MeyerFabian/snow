@@ -1,6 +1,6 @@
 #ifndef BLOCK_BUFFER
 #define BLOCK_BUFFER
-#include "shader/defines/sorting_key.include.glsl"
+#include "shader/buffers/grid_defines.include.glsl"
 #include "shader/shared_hpp/buffer_bindings.hpp"
 #include "shader/buffers/structs/block.include.glsl"
 #include "shader/compute/indexing/scan_block_index.glsl"

@@ -155,13 +155,19 @@ OutputData test(testData data) {
   for (auto& particle_sorted : particles_sorted) {
     p2g_io.in_buffer.push_back(particle_sorted->cloneBufferDataInterface());
   }
-#endif
-
+#else
   p2g_io.in_buffer.push_back(
       std::make_unique<BufferData>(Particle_pos_unsorted));
-
+#endif
   // OUTPUT
+#ifdef BLOCK_COMPACTION
+  auto grid_block_compact = block_pipeline.getBlockBufferData();
+  for (auto& block_buffer_data : grid_block_compact) {
+    p2g_io.out_buffer.push_back(block_buffer_data->cloneBufferDataInterface());
+  }
+#else
   p2g_io.out_buffer.push_back(std::make_unique<BufferData>(gridpoint_vel_mass));
+#endif
 
 #if defined(ATOMIC_LOOP)
   auto p2gTransfer = P2G_atomic_global();

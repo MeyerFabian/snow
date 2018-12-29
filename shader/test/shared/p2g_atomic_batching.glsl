@@ -61,7 +61,6 @@ void main(void){
 		}
 #elif MULTIPLE_PARTICLES==4
 		 */
-
 #if MULTIPLE_PARTICLES==4
 		//unroll
 		uint globalParticleIndex = scan+process_count;

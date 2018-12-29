@@ -45,11 +45,12 @@ class BlockPipeline {
   GLuint blockSize;
   std::unique_ptr<Buffer<DispatchIndirect>> indirect_dispatch_buffer;
   std::unique_ptr<Buffer<Block>> block_buffer;
+
   std::unique_ptr<BufferData> block_counter;
   std::unique_ptr<BufferData> block_index;
+  std::unique_ptr<BufferData> block_dispatch_indirect;
 
   std::vector<std::unique_ptr<BlockBufferData>> block_data;
-  std::unique_ptr<BufferData> block_dispatch_indirect;
 };
 #endif
 
