@@ -1,5 +1,10 @@
 #include "BlockPipeline.hpp"
 
+void BlockPipeline::indirect_dispatch() {
+  indirect_dispatch_buffer->rebind_as(BufferType::DISPATCH);
+  glDispatchComputeIndirect(0);
+  indirect_dispatch_buffer->rebind();
+}
 void BlockPipeline::init(BlockData&& td_data, IOBufferData&& io) {
   blockSize = td_data.numGridPoints / (VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z);
 

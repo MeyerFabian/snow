@@ -5,20 +5,23 @@
 #include "../../snow/utils/defines.hpp"
 
 #include <glm/glm.hpp>
+#include <optional>
 #include "../../../shader/shared_hpp/precision.hpp"
 #include "../../../shader/shared_hpp/voxel_block_size.hpp"
 #include "../../snow/shader/technique.hpp"
 #include "../../snow/utils/defines.hpp"
 #include "../IOBufferData.hpp"
+#include "../indirect_dispatch/IndirectDispatch.hpp"
 class P2G_shared_atomic : public Technique {
  public:
-  LocalSize local_size = {VOXEL_DIM_X, VOXEL_DIM_Y, VOXEL_DIM_Z};
+  LocalSize local_size = {VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z, 1, 1};
   struct UniformsStatic {
     glm::uvec3 gGridDim;
   };
 
   struct P2GData {
     UniformsStatic uniforms;
+    std::optional<std::shared_ptr<IndirectDispatch>> block_indirect;
   };
 
   struct P2GBatchingData {
@@ -37,6 +40,7 @@ class P2G_shared_atomic : public Technique {
   void init(P2GData&& data, IOBufferData&& io);
   void uniforms_init(UniformsStatic&& uniforms);
   void uniforms_update(UniformsDynamic&& uniforms);
+  std::optional<std::shared_ptr<IndirectDispatch>> block_dispatch;
   glm::uvec3 gGridDim;
   std::string filename;
   std::vector<Shader::CommandType> vec = {};

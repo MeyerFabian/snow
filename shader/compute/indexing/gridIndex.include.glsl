@@ -19,14 +19,14 @@
  */
 
 #include "shader/shared_hpp/voxel_block_size.hpp"
-uint get_dim_index(const uvec3 ijk, uvec3 dim){
+uint get_dim_index(const uvec3 ijk,const uvec3 dim){
 	return ijk.x + (ijk.y * dim.x) + (ijk.z *dim.y * dim.x);
 }
 
 bool inBounds(const ivec3 index, const uvec3 dim){
 	return index.x>= 0 && index.y>=0 && index.z>=0 && index.x < dim.x && index.y < dim.y && index.z< dim.z;
 }
-uint get_block_index(const uvec3 globalID, uvec3
+uint get_block_index(const uvec3 globalID, const uvec3
 		globalDim){
 
 	uvec3 blockID = uvec3(
@@ -54,7 +54,7 @@ uint get_voxel_index(const uvec3 globalID){
 	return get_dim_index(voxelID,voxelDim);
 }
 
-uint get_voxel_and_block_index(const uvec3 globalID, uvec3 globalDim){
+uint get_voxel_and_block_index(const uvec3 globalID, const uvec3 globalDim){
 	uint blockIndex = get_block_index(globalID, globalDim);
 
 	uint voxelIndex = get_voxel_index(globalID);
@@ -63,13 +63,25 @@ uint get_voxel_and_block_index(const uvec3 globalID, uvec3 globalDim){
 
 	return blockIndex *voxelDim_flat + voxelIndex;
 }
-uint get_voxel_and_block_index(uint voxelIndex, uint blockIndex){
+uint get_voxel_and_block_index(const uint voxelIndex,const uint blockIndex){
 
 	uint voxelDim_flat =VOXEL_DIM_X*VOXEL_DIM_Y*VOXEL_DIM_Z;
 
 	return blockIndex *voxelDim_flat + voxelIndex;
 }
-uint global_indexing_of_voxel_and_block(uint globalIndex,uvec3 globalDim){
+
+uvec3 getBlockID(const uint blockIndex,const uvec3 globalDim){
+
+	uvec3 blockDim = uvec3(
+			globalDim.x>>VOXEL_SIZE_X_BIT,
+			globalDim.y>>VOXEL_SIZE_Y_BIT,
+			globalDim.z>>VOXEL_SIZE_Z_BIT);
+
+	return getIJK(blockIndex,blockDim);
+
+}
+
+uint global_indexing_of_voxel_and_block(const uint globalIndex, const uvec3 globalDim){
 	uint blockIndex = globalIndex>>(VOXEL_SIZE_X_BIT+VOXEL_SIZE_Y_BIT+VOXEL_SIZE_Z_BIT);
 
 	uvec3 blockDim = uvec3(

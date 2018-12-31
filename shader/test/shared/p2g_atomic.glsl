@@ -6,24 +6,28 @@ uniform uint indexSize;
 #include "shader/compute/interpolation/cubic.include.glsl"
 layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
 
-#define HALO_X (X+LEFT_SUPPORT+RIGHT_SUPPORT)
-#define HALO_Y (Y+LEFT_SUPPORT+RIGHT_SUPPORT)
-#define HALO_Z (Z+LEFT_SUPPORT+RIGHT_SUPPORT)
+#define HALO_X (VOXEL_DIM_X+LEFT_SUPPORT+RIGHT_SUPPORT)
+#define HALO_Y (VOXEL_DIM_Y+LEFT_SUPPORT+RIGHT_SUPPORT)
+#define HALO_Z (VOXEL_DIM_Z+LEFT_SUPPORT+RIGHT_SUPPORT)
 #define THREAD_RANGE int((HALO_X*HALO_Y*HALO_Z)/(X*Y*Z))
 shared PREC_VEC_TYPE temp [HALO_X*HALO_Y*HALO_Z];
 
+#define blockSize uvec3(VOXEL_DIM_X,VOXEL_DIM_Y,VOXEL_DIM_Z)
 void main(void){
-	uvec3 ijk = gl_GlobalInvocationID;
-	uvec3 t_ijk = gl_LocalInvocationID;
-
-
+#ifdef OUTPUT_BLOCK_INDEX
+	uvec3 blockID = getBlockID(OUTPUT_BLOCK_INDEX_AT(OUTPUT_BLOCK_INDEX,OUTPUT_BLOCK_INDEX_VAR,OUTPUT_BLOCK_INDEX_SIZE,gl_WorkGroupID.x,OUTPUT_BLOCK_INDEX_NUM_BUFFER,OUTPUT_BLOCK_INDEX_INDEX_BUFFER), grid_def.gGridDim);
+#else
+	uvec3 blockID = getBlockID(gl_WorkGroupID.x,grid_def.gGridDim);
+#endif
+	uvec3 t_ijk = getIJK(gl_LocalInvocationID.x,blockSize);
+	uvec3 ijk = blockID * blockSize + t_ijk;
 
 	uint grid_key = SORTING_KEY(ijk,grid_def.gGridDim);
 	uint count = INPUT_COUNT_AT(INPUT_COUNT,INPUT_COUNT_VAR,INPUT_COUNT_SIZE,grid_key,INPUT_COUNT_NUM_BUFFER,INPUT_COUNT_INDEX_BUFFER);
 
 	uint scan = INPUT_SCAN_AT(INPUT_SCAN,INPUT_SCAN_VAR,INPUT_SCAN_SIZE,grid_key,INPUT_SCAN_NUM_BUFFER,INPUT_SCAN_INDEX_BUFFER);
 
-	int local_i = int(gl_LocalInvocationIndex);
+	int local_i = int(gl_LocalInvocationID.x);
 
 	for(int frac = 0; frac < THREAD_RANGE;frac++){
 		temp[local_i] = PREC_VEC_TYPE(0.0);
@@ -56,16 +60,12 @@ void main(void){
 					PREC_SCAL_TYPE wip = .0f;
 					weighting (gridDistanceToParticle,wip);
 
-					PREC_SCAL_TYPE mp = vp_mp.w;
-					PREC_VEC3_TYPE vp = vp_mp.xyz;
-
-					PREC_SCAL_TYPE mi = mp *wip;
-					PREC_VEC3_TYPE vi = vp*mp*wip;
+					PREC_VEC_TYPE vi_mi = PREC_VEC_TYPE(vp_mp.xyz,1.0)*vp_mp.w*wip;
 					uint local_i = get_dim_index(t_ijk + uvec3(gridOffset+LEFT_SUPPORT),uvec3(HALO_X,HALO_Y,HALO_Z));
-					atomicAdd(temp[local_i].x,vi.x );
-					atomicAdd(temp[local_i].y,vi.y );
-					atomicAdd(temp[local_i].z,vi.z );
-					atomicAdd(temp[local_i].w,mi );
+					atomicAdd(temp[local_i].x,vi_mi.x );
+					atomicAdd(temp[local_i].y,vi_mi.y );
+					atomicAdd(temp[local_i].z,vi_mi.z );
+					atomicAdd(temp[local_i].w,vi_mi.w );
 
 				}
 			}
@@ -75,8 +75,8 @@ void main(void){
 	memoryBarrierShared();
 	barrier();
 
-	local_i = int(gl_LocalInvocationIndex);
-	ivec3 grid_start_node = ivec3(gl_WorkGroupID * gl_WorkGroupSize) - LEFT_SUPPORT;
+	local_i = int(gl_LocalInvocationID.x);
+	ivec3 grid_start_node = ivec3(blockID * blockSize) - LEFT_SUPPORT;
 
 	for(int frac = 0; frac < THREAD_RANGE;frac++){
 		uvec3 halo_ijk = uvec3(getIJK(local_i,ivec3(HALO_X,HALO_Y,HALO_Z)));

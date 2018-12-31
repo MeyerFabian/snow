@@ -14,10 +14,11 @@
 #include "../BlockBufferDataAccess.hpp"
 #include "../BufferData.hpp"
 #include "../IOBufferData.hpp"
+#include "../indirect_dispatch/IndirectDispatch.hpp"
 #include "../scan/ScanPipeline.hpp"
 
 #include "../../src/snow/grid/block_ind_dispatch.hpp"
-class BlockPipeline {
+class BlockPipeline : public IndirectDispatch {
  public:
   struct BlockData {
     GLuint numGridPoints;
@@ -34,6 +35,8 @@ class BlockPipeline {
   getBlockBufferDataAccess();
 
   std::vector<std::unique_ptr<BlockBufferData>> getBlockBufferData();
+
+  virtual void indirect_dispatch() override;
 
  private:
   GLuint global_loads_per_thread = 1;

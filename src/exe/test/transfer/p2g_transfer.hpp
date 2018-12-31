@@ -114,7 +114,8 @@ OutputData test(testData data) {
 #endif
 
 #ifdef BLOCK_COMPACTION
-  BlockPipeline block_pipeline;
+  std::shared_ptr<BlockPipeline> block_pipeline =
+      std::make_shared<BlockPipeline>();
 
   BlockPipeline::BlockData block_data{
       data.numGridPoints,
@@ -127,7 +128,7 @@ OutputData test(testData data) {
   io_block.out_buffer.push_back(
       std::make_unique<BufferData>(gridpoint_vel_mass));
 
-  block_pipeline.init(std::move(block_data), std::move(io_block));
+  block_pipeline->init(std::move(block_data), std::move(io_block));
 #endif
   auto resetGridVel = MapTechnique();
   MapTechnique::MapData map_data{
@@ -161,7 +162,7 @@ OutputData test(testData data) {
 #endif
   // OUTPUT
 #ifdef BLOCK_COMPACTION
-  auto grid_block_compact = block_pipeline.getBlockBufferData();
+  auto grid_block_compact = block_pipeline->getBlockBufferData();
   for (auto& block_buffer_data : grid_block_compact) {
     p2g_io.out_buffer.push_back(block_buffer_data->cloneBufferDataInterface());
   }
@@ -194,6 +195,9 @@ OutputData test(testData data) {
 
   P2G_shared_atomic::P2GData p2g_data{
       data.grid_def.gGridDim,
+#ifdef BLOCK_COMPACTION
+      block_pipeline,
+#endif
   };
   p2gTransfer.init_atomic(std::move(p2g_data), std::move(p2g_io));
 #endif
@@ -241,13 +245,12 @@ OutputData test(testData data) {
 #endif
 #ifdef BLOCK_COMPACTION
 
-                 block_pipeline.run({numGridPoints});
+                 block_pipeline->run({numGridPoints});
 #endif
                  BenchmarkerGPU::getInstance().time(
                      "resetGridVel", [&resetGridVel, &numGridPoints]() {
                        resetGridVel.dispatch_with_barrier({numGridPoints});
                      });
-
 #ifdef SHARED
                  BenchmarkerGPU::getInstance().time(
                      "p2gTransfer_shared", [&p2gTransfer, &numParticles]() {
@@ -259,10 +262,11 @@ OutputData test(testData data) {
                      });
 #else
 
-                 BenchmarkerGPU::getInstance().time(
-                     "p2gTransfer_atomic", [&p2gTransfer, &numParticles]() {
-                       p2gTransfer.dispatch_with_barrier({numParticles});
-                     });
+                                  BenchmarkerGPU::getInstance().time(
+                                      "p2gTransfer_atomic", [&p2gTransfer,
+                 &numParticles]() {
+                                        p2gTransfer.dispatch_with_barrier({numParticles});
+                                      });
 #endif
                });
              });
