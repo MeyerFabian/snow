@@ -7,9 +7,8 @@
 #include "../../../test/BufferData.hpp"
 #include "../../../test/block/BlockPipeline.hpp"
 #include "../../../test/map/mapTechnique.hpp"
-#include "../../../test/p2g/P2GPushSyncTechnique.hpp"
 #include "../../../test/p2g/p2g_atomic_global.hpp"
-#include "../../../test/p2g/p2g_shared_atomic.hpp"
+#include "../../../test/p2g/p2g_shared.hpp"
 #include "../../../test/reorder/countingSortPipeline.hpp"
 #include "../../../test/test_util.hpp"
 #include "../../src/snow/grid/grid_def.hpp"
@@ -145,24 +144,35 @@ OutputData test(testData data) {
 
   resetGridVel.init(std::move(map_data), std::move(io_map));
 
-  IOBufferData p2g_io;
+  /**********************************************************************
+   *                               p2g_io in                            *
+   **********************************************************************/
 
+  IOBufferData p2g_io;
 #ifdef FULL_SORTED
 #ifdef SHARED
   auto particles_sorted = cnt_srt_pipeline.getSortedBufferDataAccess();
-#else
+#else   // NOT SHARED
   auto particles_sorted = cnt_srt_pipeline.getSortedBufferData();
-#endif
+#endif  // SHARED
   for (auto& particle_sorted : particles_sorted) {
     p2g_io.in_buffer.push_back(particle_sorted->cloneBufferDataInterface());
   }
-#else
+#else   // NOT FULL_SORTED
   p2g_io.in_buffer.push_back(
       std::make_unique<BufferData>(Particle_pos_unsorted));
-#endif
-  // OUTPUT
+#endif  // FULL_SORTED
+
+  /**********************************************************************
+   *                               p2g_io out                           *
+   **********************************************************************/
+
 #ifdef BLOCK_COMPACTION
+#ifdef PUSH_SYNC
+  auto grid_block_compact = block_pipeline->getBlockBufferDataAccess();
+#else
   auto grid_block_compact = block_pipeline->getBlockBufferData();
+#endif
   for (auto& block_buffer_data : grid_block_compact) {
     p2g_io.out_buffer.push_back(block_buffer_data->cloneBufferDataInterface());
   }
@@ -170,47 +180,68 @@ OutputData test(testData data) {
   p2g_io.out_buffer.push_back(std::make_unique<BufferData>(gridpoint_vel_mass));
 #endif
 
-#if defined(ATOMIC_LOOP)
+  /**********************************************************************
+   *                               p2g technique                        *
+   **********************************************************************/
+
+#if defined(SHARED)  // 1
+
+  auto p2gTransfer = P2G_shared();
+
+#if defined(SHARED_ATOMIC_LOOP_REV)  // 2
+
+  P2G_shared::P2GData p2g_data{
+      data.grid_def.gGridDim,
+  };
+  p2gTransfer.init_atomic_loop_reverse(std::move(p2g_data), std::move(p2g_io));
+#elif defined(SHARED_ATOMIC)  // 2
+
+#if defined(SHARED_BATCHING_MULT_PART)  // 3
+  P2G_shared::P2GBatchingData p2g_data{
+      data.grid_def.gGridDim,
+#ifdef BLOCK_COMPACTION                 // 4
+      block_pipeline,
+#else                                   // NOT BLOCK_COMPACT
+      std::nullopt,
+#endif                                  // BLOCK_COMPACT 4
+      SHARED_BATCHING_MULT_PART,
+  };
+  p2gTransfer.init_atomic_batching(std::move(p2g_data), std::move(p2g_io));
+#else                                   // NO SHARED_BATCHING
+  P2G_shared::P2GData p2g_data{
+      data.grid_def.gGridDim,
+#ifdef BLOCK_COMPACTION                 // 4
+      block_pipeline,
+#endif                                  // BLOCK_COMPACTION 4
+  };
+  p2gTransfer.init_atomic(std::move(p2g_data), std::move(p2g_io));
+#endif                                  // SHARED_BATCHING 3
+
+#elif defined(PUSH_SYNC)  // 2
+
+#if defined(SHARED_BATCHING_MULT_PART)  // 3
+  P2G_shared::P2GBatchingData p2g_data{
+      data.grid_def.gGridDim,
+      block_pipeline,
+      SHARED_BATCHING_MULT_PART,
+  };
+  p2gTransfer.init_sync_batching(std::move(p2g_data), std::move(p2g_io));
+#else                                   // NO_SHARED_BATCHING
+  P2G_shared::P2GData p2g_data{
+      data.grid_def.gGridDim,
+      block_pipeline,
+  };
+  p2gTransfer.init_sync(std::move(p2g_data), std::move(p2g_io));
+#endif                                  // SHARED_BATCHING 3
+
+#endif                      // PUSH_SYNC 2
+#elif defined(ATOMIC_LOOP)  // 1
   auto p2gTransfer = P2G_atomic_global();
   P2G_atomic_global::P2GData p2g_data{};
 
   p2gTransfer.init_looping(std::move(p2g_data), std::move(p2g_io));
-#elif defined(SHARED_ATOMIC)
-
-  auto p2gTransfer = P2G_shared_atomic();
-
-#if defined(SHARED_ATOMIC_LOOP_REV)
-
-  P2G_shared_atomic::P2GData p2g_data{
-      data.grid_def.gGridDim,
-  };
-  p2gTransfer.init_loop_reverse(std::move(p2g_data), std::move(p2g_io));
-#elif defined(SHARED_ATOMIC_BATCHING_MULT_PART)
-  P2G_shared_atomic::P2GBatchingData p2g_data{
-      data.grid_def.gGridDim,
-      SHARED_ATOMIC_BATCHING_MULT_PART,
-  };
-  p2gTransfer.init_batching(std::move(p2g_data), std::move(p2g_io));
-#else
-
-  P2G_shared_atomic::P2GData p2g_data{
-      data.grid_def.gGridDim,
-#ifdef BLOCK_COMPACTION
-      block_pipeline,
-#endif
-  };
-  p2gTransfer.init_atomic(std::move(p2g_data), std::move(p2g_io));
-#endif
-
-#elif defined(PUSH_SYNC)
-
-  auto p2gTransfer = P2GPushSyncTechnique();
-
-  P2GPushSyncTechnique::P2GData p2g_data{
-      data.grid_def.gGridDim,
-  };
-  p2gTransfer.init_sync(std::move(p2g_data), std::move(p2g_io));
-#else
+#else                       // 1
+  // global w/o looping
   auto p2gTransfer = P2G_atomic_global();
   P2G_atomic_global::P2GData p2g_data{};
   p2gTransfer.init_too_parallel(std::move(p2g_data), std::move(p2g_io));
@@ -254,11 +285,7 @@ OutputData test(testData data) {
 #ifdef SHARED
                  BenchmarkerGPU::getInstance().time(
                      "p2gTransfer_shared", [&p2gTransfer, &numParticles]() {
-                       p2gTransfer.dispatch_with_barrier({
-#ifdef PUSH_SYNC
-                           MAX_COUNTS
-#endif
-                       });
+                       p2gTransfer.dispatch_with_barrier({});
                      });
 #else
 

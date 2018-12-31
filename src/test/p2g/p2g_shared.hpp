@@ -12,7 +12,7 @@
 #include "../../snow/utils/defines.hpp"
 #include "../IOBufferData.hpp"
 #include "../indirect_dispatch/IndirectDispatch.hpp"
-class P2G_shared_atomic : public Technique {
+class P2G_shared : public Technique {
  public:
   LocalSize local_size = {VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z, 1, 1};
   struct UniformsStatic {
@@ -25,7 +25,7 @@ class P2G_shared_atomic : public Technique {
   };
 
   struct P2GBatchingData {
-    UniformsStatic uniforms;
+    P2GData p2g_data;
     GLuint multiple_particles;
   };
 
@@ -33,8 +33,11 @@ class P2G_shared_atomic : public Technique {
   void dispatch(UniformsDynamic&& uniforms);
   void dispatch_with_barrier(UniformsDynamic&& uniforms);
   void init_atomic(P2GData&& data, IOBufferData&& io);
-  void init_loop_reverse(P2GData&& data, IOBufferData&& io);
-  void init_batching(P2GBatchingData&& data, IOBufferData&& io);
+  void init_atomic_loop_reverse(P2GData&& data, IOBufferData&& io);
+  void init_atomic_batching(P2GBatchingData&& data, IOBufferData&& io);
+
+  void init_sync(P2GData&& data, IOBufferData&& io);
+  void init_sync_batching(P2GBatchingData&& data, IOBufferData&& io);
 
  private:
   void init(P2GData&& data, IOBufferData&& io);

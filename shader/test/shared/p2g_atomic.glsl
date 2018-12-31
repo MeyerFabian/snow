@@ -55,7 +55,6 @@ void main(void){
 				for(int z = -LEFT_SUPPORT; z <= RIGHT_SUPPORT ;z++){
 					ivec3 gridOffset = ivec3(x,y,z);
 					uvec3 global_grid_index = uvec3(ivec3(ijk)+gridOffset);
-					uint global_grid_key = get_dim_index(global_grid_index,grid_def.gGridDim);
 					PREC_VEC3_TYPE gridDistanceToParticle =vec3(global_grid_index) -  positionInGrid ;
 					PREC_SCAL_TYPE wip = .0f;
 					weighting (gridDistanceToParticle,wip);

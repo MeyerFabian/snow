@@ -1,6 +1,6 @@
-#include "p2g_shared_atomic.hpp"
+#include "p2g_shared.hpp"
 
-void P2G_shared_atomic::init(P2GData&& data, IOBufferData&& io) {
+void P2G_shared::init(P2GData&& data, IOBufferData&& io) {
   auto shader = std::make_shared<Shader>(ShaderType::COMPUTE, filename);
 
   block_dispatch = std::move(data.block_indirect);
@@ -17,26 +17,37 @@ void P2G_shared_atomic::init(P2GData&& data, IOBufferData&& io) {
   Technique::use();
   uniforms_init(std::move(data.uniforms));
 }
-void P2G_shared_atomic::init_atomic(P2GData&& data, IOBufferData&& io) {
+void P2G_shared::init_atomic(P2GData&& data, IOBufferData&& io) {
   filename = "shader/test/shared/p2g_atomic.glsl";
   init(std::move(data), std::move(io));
 }
-void P2G_shared_atomic::init_loop_reverse(P2GData&& data, IOBufferData&& io) {
+void P2G_shared::init_sync(P2GData&& data, IOBufferData&& io) {
+  filename = "shader/test/shared/p2g_sync.glsl";
+  init(std::move(data), std::move(io));
+}
+void P2G_shared::init_atomic_loop_reverse(P2GData&& data, IOBufferData&& io) {
   filename = "shader/test/shared/p2g_atomic_loop_reverse.glsl";
   init(std::move(data), std::move(io));
 }
-void P2G_shared_atomic::init_batching(P2GBatchingData&& data,
+void P2G_shared::init_atomic_batching(P2GBatchingData&& data,
                                       IOBufferData&& io) {
   std::string multiple_particles = std::to_string(data.multiple_particles);
   vec.push_back(
       {PreprocessorCmd::DEFINE, "MULTIPLE_PARTICLES " + multiple_particles});
   filename = "shader/test/shared/p2g_atomic_batching.glsl";
-  init(P2GData{data.uniforms}, std::move(io));
+  init(std::move(data.p2g_data), std::move(io));
 }
-void P2G_shared_atomic::uniforms_init(UniformsStatic&& uniforms) {
+void P2G_shared::init_sync_batching(P2GBatchingData&& data, IOBufferData&& io) {
+  std::string multiple_particles = std::to_string(data.multiple_particles);
+  vec.push_back(
+      {PreprocessorCmd::DEFINE, "MULTIPLE_PARTICLES " + multiple_particles});
+  filename = "shader/test/shared/p2g_sync_batching.glsl";
+  init(std::move(data.p2g_data), std::move(io));
+}
+void P2G_shared::uniforms_init(UniformsStatic&& uniforms) {
   gGridDim = uniforms.gGridDim;
 }
-void P2G_shared_atomic::dispatch(UniformsDynamic&& uniforms) {
+void P2G_shared::dispatch(UniformsDynamic&& uniforms) {
   Technique::use();
   uniforms_update(std::move(uniforms));
   if (*block_dispatch) {
@@ -50,9 +61,9 @@ void P2G_shared_atomic::dispatch(UniformsDynamic&& uniforms) {
     */
   }
 }
-void P2G_shared_atomic::dispatch_with_barrier(UniformsDynamic&& uniforms) {
+void P2G_shared::dispatch_with_barrier(UniformsDynamic&& uniforms) {
   dispatch(std::move(uniforms));
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
-void P2G_shared_atomic::uniforms_update(UniformsDynamic&& uniforms) {}
+void P2G_shared::uniforms_update(UniformsDynamic&& uniforms) {}
 
