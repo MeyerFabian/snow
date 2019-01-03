@@ -1,5 +1,4 @@
-#define LEFT_SUPPORT 1
-#define RIGHT_SUPPORT 2
+#include "shader/shared_hpp/interpolation_support.hpp"
 /*
  * Returns weight distribution by grid basis function (dyadic products of one-dimensional
  * cubic B-splines) from particle to actual grid neighbors dependant on their distance to the particle.
@@ -38,7 +37,4 @@ void weightingGradient(const vec3 distanceVector, inout vec3 wg){
 	wg.x = weightingGradient(distanceVector.x)*  weighting(distanceVector.y) * weighting(distanceVector.z);
 	wg.y = weighting(distanceVector.x)*  weightingGradient(distanceVector.y) * weighting(distanceVector.z);
 	wg.z = weighting(distanceVector.x)*  weighting(distanceVector.y) * weightingGradient(distanceVector.z);
-}
-int getSupport(){
-	return 2;
 }

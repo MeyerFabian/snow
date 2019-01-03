@@ -126,8 +126,11 @@ OutputData test(testData data) {
   io_block.in_buffer.push_back(cnt_srt_pipeline.getGridCounter());
   io_block.out_buffer.push_back(
       std::make_unique<BufferData>(gridpoint_vel_mass));
-
-  block_pipeline->init(std::move(block_data), std::move(io_block));
+#ifdef SHARED_PULL
+  block_pipeline->initHalo(std::move(block_data), std::move(io_block));
+#else
+  block_pipeline->initBlock(std::move(block_data), std::move(io_block));
+#endif
 #endif
   auto resetGridVel = MapTechnique();
   MapTechnique::MapData map_data{
@@ -150,7 +153,7 @@ OutputData test(testData data) {
 
   IOBufferData p2g_io;
 #ifdef FULL_SORTED
-#ifdef SHARED
+#ifdef SHARED_PUSH
   auto particles_sorted = cnt_srt_pipeline.getSortedBufferDataAccess();
 #else   // NOT SHARED
   auto particles_sorted = cnt_srt_pipeline.getSortedBufferData();
@@ -184,7 +187,7 @@ OutputData test(testData data) {
    *                               p2g technique                        *
    **********************************************************************/
 
-#if defined(SHARED)  // 1
+#if defined(SHARED_PUSH)  // 1
 
   auto p2gTransfer = P2G_shared();
 
@@ -235,6 +238,9 @@ OutputData test(testData data) {
 #endif                                  // SHARED_BATCHING 3
 
 #endif                      // PUSH_SYNC 2
+#elif defined(SHARED_PULL)  // 1
+
+  auto p2gTransfer = P2G_shared();
 #elif defined(ATOMIC_LOOP)  // 1
   auto p2gTransfer = P2G_atomic_global();
   P2G_atomic_global::P2GData p2g_data{};
@@ -282,11 +288,13 @@ OutputData test(testData data) {
                      "resetGridVel", [&resetGridVel, &numGridPoints]() {
                        resetGridVel.dispatch_with_barrier({numGridPoints});
                      });
-#ifdef SHARED
+#if defined(SHARED_PUSH)
                  BenchmarkerGPU::getInstance().time(
                      "p2gTransfer_shared", [&p2gTransfer, &numParticles]() {
                        p2gTransfer.dispatch_with_barrier({});
                      });
+#elif defined(SHARED_PULL)
+
 #else
 
                                   BenchmarkerGPU::getInstance().time(

@@ -5,46 +5,23 @@ void BlockPipeline::indirect_dispatch() {
   glDispatchComputeIndirect(0);
   indirect_dispatch_buffer->rebind();
 }
-void BlockPipeline::init(BlockData&& td_data, IOBufferData&& io) {
+void BlockPipeline::initBlock(BlockData&& td_data, IOBufferData&& io) {
+  global_loads_per_thread = 1;
   blockSize = td_data.numGridPoints / (VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z);
 
   /**********************************************************************
    *                          Buffer Creation                           *
    **********************************************************************/
-  indirect_dispatch_buffer = std::make_unique<Buffer<DispatchIndirect> >(
-      BufferType::SSBO, BufferUsage::STATIC_DRAW, BufferLayout::AOS,
-      "shader/buffers/block_indirect_dispatch.include.glsl");
-  indirect_dispatch_buffer->transfer_to_gpu(
-      std::vector<DispatchIndirect>{{1, 1, 1}});
-  indirect_dispatch_buffer->gl_bind_base(BLOCKS_INDIRECT_BINDING);
 
   block_buffer = std::make_unique<Buffer<Block> >(
       BufferType::SSBO, BufferUsage::STATIC_DRAW, td_data.layout,
       "shader/buffers/block.include.glsl");
   block_buffer->resize_buffer(blockSize);
   block_buffer->gl_bind_base(BLOCKS_BINDING);
-  /**********************************************************************
-   *                        In/Outs for Shaders                         *
-   **********************************************************************/
-
-  auto block_scan_local =
-      BufferData("blocks", "Block_scan_local", block_buffer->get_buffer_info(),
-                 blockSize, 1, "0", "Block_VAR_SIZE");
-
-  auto block_scan_block =
-      BufferData("blocks", "Block_scan_block", block_buffer->get_buffer_info(),
-                 blockSize, 1, "0", "Block_VAR_SIZE");
 
   block_counter = std::make_unique<BufferData>(
       "blocks", "Block_counter", block_buffer->get_buffer_info(), blockSize, 1,
       "0", "Block_VAR_SIZE");
-  block_index = std::make_unique<BufferData>(
-      "blocks", "Block_index", block_buffer->get_buffer_info(), blockSize, 1,
-      "0", "Block_VAR_SIZE");
-
-  block_dispatch_indirect = std::make_unique<BufferData>(
-      "dispatch_dim", "num_groups_x",
-      indirect_dispatch_buffer->get_buffer_info(), 1, 1, "0", "0");
 
   IOBufferData io_map_reduce;
   io_map_reduce.in_buffer.push_back(
@@ -52,7 +29,7 @@ void BlockPipeline::init(BlockData&& td_data, IOBufferData&& io) {
   io_map_reduce.out_buffer.push_back(block_counter->cloneBufferDataInterface());
 
   local_size = {
-      VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z / global_loads_per_thread / 2, 1,
+      VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z / *global_loads_per_thread / 2, 1,
       1};
 
   MapReduceTechnique::MapReduceData reduce_data({
@@ -75,6 +52,87 @@ void BlockPipeline::init(BlockData&& td_data, IOBufferData&& io) {
   max_count.init(std::move(reduce_commands), std::move(reduce_data),
                  std::move(io_map_reduce));
 
+  init(std::move(td_data), std::move(io));
+}
+void BlockPipeline::initHalo(BlockData&& td_data, IOBufferData&& io) {
+  blockSize = td_data.numGridPoints / (VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z);
+
+  /**********************************************************************
+   *                          Buffer Creation                           *
+   **********************************************************************/
+
+  block_buffer = std::make_unique<Buffer<Block> >(
+      BufferType::SSBO, BufferUsage::STATIC_DRAW, td_data.layout,
+      "shader/buffers/block.include.glsl");
+  block_buffer->resize_buffer(blockSize);
+  block_buffer->gl_bind_base(BLOCKS_BINDING);
+
+  block_counter = std::make_unique<BufferData>(
+      "blocks", "Block_counter", block_buffer->get_buffer_info(), blockSize, 1,
+      "0", "Block_VAR_SIZE");
+
+  IOBufferData io_map_reduce;
+  io_map_reduce.in_buffer.push_back(
+      io.in_buffer[0]->cloneBufferDataInterface());
+  io_map_reduce.out_buffer.push_back(block_counter->cloneBufferDataInterface());
+
+  local_size = {VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z, 1, 1};
+
+  MapReduceTechnique::MapReduceData reduce_data({
+      "shader/compute/mapreduce/mapReduceNearHalo.glsl",
+      local_size,
+      "uint",
+      "value",
+      "0",
+      "max(left,right)",
+  });
+  std::vector<Shader::CommandType> reduce_commands = {
+      /*
+            {PreprocessorCmd::IFDEF, "DIM_INDEX"},
+            {PreprocessorCmd::DEFINE,
+             "PERMUTATION(i) "
+             "global_indexing_of_voxel_and_block(i,grid_def.gGridDim)"},
+            {PreprocessorCmd::ENDIF, ""},
+        */
+  };
+
+  max_count.init(std::move(reduce_commands), std::move(reduce_data),
+                 std::move(io_map_reduce));
+
+  init(std::move(td_data), std::move(io));
+}
+void BlockPipeline::init(BlockData&& td_data, IOBufferData&& io) {
+  blockSize = td_data.numGridPoints / (VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z);
+
+  /**********************************************************************
+   *                          Buffer Creation                           *
+   **********************************************************************/
+  indirect_dispatch_buffer = std::make_unique<Buffer<DispatchIndirect> >(
+      BufferType::SSBO, BufferUsage::STATIC_DRAW, BufferLayout::AOS,
+      "shader/buffers/block_indirect_dispatch.include.glsl");
+  indirect_dispatch_buffer->transfer_to_gpu(
+      std::vector<DispatchIndirect>{{1, 1, 1}});
+  indirect_dispatch_buffer->gl_bind_base(BLOCKS_INDIRECT_BINDING);
+
+  /**********************************************************************
+   *                        In/Outs for Shaders                         *
+   **********************************************************************/
+
+  auto block_scan_local =
+      BufferData("blocks", "Block_scan_local", block_buffer->get_buffer_info(),
+                 blockSize, 1, "0", "Block_VAR_SIZE");
+
+  auto block_scan_block =
+      BufferData("blocks", "Block_scan_block", block_buffer->get_buffer_info(),
+                 blockSize, 1, "0", "Block_VAR_SIZE");
+
+  block_index = std::make_unique<BufferData>(
+      "blocks", "Block_index", block_buffer->get_buffer_info(), blockSize, 1,
+      "0", "Block_VAR_SIZE");
+
+  block_dispatch_indirect = std::make_unique<BufferData>(
+      "dispatch_dim", "num_groups_x",
+      indirect_dispatch_buffer->get_buffer_info(), 1, 1, "0", "0");
   // scan
 
   ScanTechnique::ScanData scan_data{
@@ -164,14 +222,26 @@ void BlockPipeline::init(BlockData&& td_data, IOBufferData&& io) {
 }
 
 void BlockPipeline::run(GLuint numVectors) {
-  GLuint buffer_size_before = numVectors;
-  GLuint buffer_size_after =
-      buffer_size_before / local_size.x / global_loads_per_thread;
-
+  GLuint buffer_size_before = 0;
+  GLuint buffer_size_after = 0;
+  if (global_loads_per_thread) {
+    // BLOCK_PIPELINE
+    buffer_size_before = numVectors;
+    buffer_size_after =
+        buffer_size_before / local_size.x / (*global_loads_per_thread);
+  } else {
+    // HALO_PIPELINE
+    buffer_size_after = blockSize;
+  }
   BenchmarkerGPU::getInstance().time(
       "block_counter", [this, buffer_size_before, buffer_size_after]() {
-        max_count.dispatch_with_barrier(
-            {buffer_size_before, buffer_size_after, global_loads_per_thread});
+        if (global_loads_per_thread) {
+          max_count.dispatch_with_barrier(
+              {buffer_size_before, buffer_size_after, global_loads_per_thread});
+        } else {
+          max_count.dispatch_with_barrier(
+              {std::nullopt, buffer_size_after, std::nullopt,false});
+        }
       });
 
   scanPipeline.run(blockSize);

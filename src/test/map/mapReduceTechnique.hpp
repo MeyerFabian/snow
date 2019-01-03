@@ -23,9 +23,10 @@ class MapReduceTechnique : public Technique {
   };
 
   struct DispatchData {
-    GLuint bufferSize;
+    std::optional<GLuint> bufferSize;
     GLuint dispatchDim_x = 1;
-    std::optional<GLuint> global_loads_per_thread;
+    std::optional<GLuint> global_loads_per_thread = std::nullopt;
+    bool dispatchDim_x_is_uniform = true;
   };
 
   LocalSize local_size;

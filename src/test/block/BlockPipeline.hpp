@@ -3,6 +3,7 @@
 #include <execution>
 
 #include "../../../shader/shared_hpp/buffer_bindings.hpp"
+#include "../../../shader/shared_hpp/interpolation_support.hpp"
 #include "../../../shader/shared_hpp/voxel_block_size.hpp"
 #include "../../src/snow/buffer/c_scan.hpp"
 #include "../../src/snow/grid/block.hpp"
@@ -28,7 +29,6 @@ class BlockPipeline : public IndirectDispatch {
   struct BlockDispatchData {
     GLuint numGridPoints;
   };
-  void init(BlockData&& td, IOBufferData&& io);
   void run(GLuint numVectors);
 
   std::vector<std::unique_ptr<BlockBufferDataAccess>>
@@ -38,8 +38,12 @@ class BlockPipeline : public IndirectDispatch {
 
   virtual void indirect_dispatch() override;
 
+  void initBlock(BlockData&& td, IOBufferData&& io);
+  void initHalo(BlockData&& td, IOBufferData&& io);
+
  private:
-  GLuint global_loads_per_thread = 1;
+  void init(BlockData&& td, IOBufferData&& io);
+  std::optional<GLuint> global_loads_per_thread;
   LocalSize local_size;
   MapReduceTechnique max_count;
   MapTechnique write_ind_disp_buffer;

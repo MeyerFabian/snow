@@ -72,10 +72,12 @@ void MapReduceTechnique::dispatch_with_barrier(DispatchData&& data) const {
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
 void MapReduceTechnique::uniforms_update(DispatchData&& uniforms) const {
-  Technique::uniform_update("bufferSize", uniforms.bufferSize);
+  if (uniforms.bufferSize) {
+    Technique::uniform_update("bufferSize", *uniforms.bufferSize);
+  }
   if (uniforms.global_loads_per_thread) {
     Technique::uniform_update("seq_loads", *uniforms.global_loads_per_thread);
-  } else {
+  } else if (uniforms.dispatchDim_x_is_uniform) {
     Technique::uniform_update("dispatchDim_x", uniforms.dispatchDim_x);
   }
 }
