@@ -25,6 +25,10 @@ void P2G_shared::init_sync(P2GData&& data, IOBufferData&& io) {
   filename = "shader/test/shared/p2g_sync.glsl";
   init(std::move(data), std::move(io));
 }
+void P2G_shared::init_pull_simple(P2GData&& data, IOBufferData&& io) {
+  filename = "shader/test/shared/p2g_pull_simple.glsl";
+  init(std::move(data), std::move(io));
+}
 void P2G_shared::init_atomic_loop_reverse(P2GData&& data, IOBufferData&& io) {
   filename = "shader/test/shared/p2g_atomic_loop_reverse.glsl";
   init(std::move(data), std::move(io));
@@ -55,10 +59,6 @@ void P2G_shared::dispatch(UniformsDynamic&& uniforms) {
   } else {
     glDispatchCompute(gGridDim.x * gGridDim.y * gGridDim.z / (local_size.x), 1,
                       1);
-    /*
-        glDispatchCompute(gGridDim.x / VOXEL_DIM_X, gGridDim.y / VOXEL_DIM_Y,
-                          gGridDim.z / VOXEL_DIM_Z);
-    */
   }
 }
 void P2G_shared::dispatch_with_barrier(UniformsDynamic&& uniforms) {

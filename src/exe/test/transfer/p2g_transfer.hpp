@@ -153,7 +153,7 @@ OutputData test(testData data) {
 
   IOBufferData p2g_io;
 #ifdef FULL_SORTED
-#ifdef SHARED_PUSH
+#ifdef SHARED
   auto particles_sorted = cnt_srt_pipeline.getSortedBufferDataAccess();
 #else   // NOT SHARED
   auto particles_sorted = cnt_srt_pipeline.getSortedBufferData();
@@ -171,7 +171,7 @@ OutputData test(testData data) {
    **********************************************************************/
 
 #ifdef BLOCK_COMPACTION
-#ifdef PUSH_SYNC
+#if defined(PUSH_SYNC) || defined(SHARED_PULL)
   auto grid_block_compact = block_pipeline->getBlockBufferDataAccess();
 #else
   auto grid_block_compact = block_pipeline->getBlockBufferData();
@@ -187,7 +187,7 @@ OutputData test(testData data) {
    *                               p2g technique                        *
    **********************************************************************/
 
-#if defined(SHARED_PUSH)  // 1
+#if defined(SHARED)  // 1
 
   auto p2gTransfer = P2G_shared();
 
@@ -235,12 +235,17 @@ OutputData test(testData data) {
       block_pipeline,
   };
   p2gTransfer.init_sync(std::move(p2g_data), std::move(p2g_io));
-#endif                                  // SHARED_BATCHING 3
 
-#endif                      // PUSH_SYNC 2
+#endif  // SHARED_BATCHING 3
+
 #elif defined(SHARED_PULL)  // 1
 
-  auto p2gTransfer = P2G_shared();
+  P2G_shared::P2GData p2g_data{
+      data.grid_def.gGridDim,
+      block_pipeline,
+  };
+  p2gTransfer.init_pull_simple(std::move(p2g_data), std::move(p2g_io));
+#endif                      // SHARED
 #elif defined(ATOMIC_LOOP)  // 1
   auto p2gTransfer = P2G_atomic_global();
   P2G_atomic_global::P2GData p2g_data{};
@@ -288,12 +293,11 @@ OutputData test(testData data) {
                      "resetGridVel", [&resetGridVel, &numGridPoints]() {
                        resetGridVel.dispatch_with_barrier({numGridPoints});
                      });
-#if defined(SHARED_PUSH)
+#if defined(SHARED)
                  BenchmarkerGPU::getInstance().time(
                      "p2gTransfer_shared", [&p2gTransfer, &numParticles]() {
                        p2gTransfer.dispatch_with_barrier({});
                      });
-#elif defined(SHARED_PULL)
 
 #else
 
