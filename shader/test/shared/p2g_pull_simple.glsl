@@ -54,6 +54,7 @@ void main(void){
 	barrier();
 	PREC_VEC_TYPE vi_mi = PREC_VEC_TYPE(0.0);
 	for(int particle_count = 0; particle_count < tile_count; particle_count++){
+
 		//LOAD
 		for(int local_i = int(gl_LocalInvocationID.x); local_i < (HALO_X*HALO_Y*HALO_Z);local_i += X*Y*Z) {
 
@@ -70,35 +71,35 @@ void main(void){
 
 		memoryBarrierShared();
 		barrier();
+
 		// TRANSFER
-		/*
-		   for(int x = -LEFT_SUPPORT; x<= RIGHT_SUPPORT ;x++){
-		   for(int y = -LEFT_SUPPORT; y<= RIGHT_SUPPORT ;y++){
-		   for(int z = -LEFT_SUPPORT; z <= RIGHT_SUPPORT ;z++){
-		   ivec3 gridOffset = ivec3(x,y,z);
-		   uint local_i = get_dim_index(t_ijk + uvec3(gridOffset+LEFT_SUPPORT),uvec3(HALO_X,HALO_Y,HALO_Z));
-		   if(particle_count < num[num_count+local_i]){
-		   uvec3 global_grid_index = uvec3(ivec3(ijk)+gridOffset);
-		   PREC_VEC3_TYPE gridDistanceToParticle =vec3(global_grid_index) - temp[temp_pos + local_i].xyz ;
-		   PREC_SCAL_TYPE wip = .0f;
-		   weighting (gridDistanceToParticle,wip);
+		for(int x = -LEFT_SUPPORT; x<= RIGHT_SUPPORT ;x++){
+			for(int y = -LEFT_SUPPORT; y<= RIGHT_SUPPORT ;y++){
+				for(int z = -LEFT_SUPPORT; z <= RIGHT_SUPPORT ;z++){
+					ivec3 gridOffset = ivec3(x,y,z);
+					uint local_i = get_dim_index(t_ijk + uvec3(gridOffset+LEFT_SUPPORT),uvec3(HALO_X,HALO_Y,HALO_Z));
+					if(particle_count < num[num_count+local_i]){
+						PREC_VEC3_TYPE gridDistanceToParticle = vec3(ijk) - temp[temp_pos + local_i].xyz ;
+						PREC_SCAL_TYPE wip = .0f;
+						weighting (gridDistanceToParticle,wip);
 
-		   PREC_VEC_TYPE vp_mp = temp[temp_vel+local_i];
-		   vi_mi += PREC_VEC_TYPE(vp_mp.xyz,1.0)*vp_mp.w*wip;
-		   }
+						PREC_VEC_TYPE vp_mp = temp[temp_vel+local_i];
+						vi_mi += PREC_VEC_TYPE(vp_mp.xyz,1.0)*vp_mp.w*wip;
+					}
 
-		   }
-		   }
-		   }
+				}
+			}
+		}
 
-		   memoryBarrierShared();
-		   barrier();
-		 */
+		memoryBarrierShared();
+		barrier();
 	}
+
+
 	// WRITE
 	uint write_key = SORTING_KEY(ijk,grid_def.gGridDim);
-	OUTPUT_AT(OUTPUT,Gridpoint_vel_mass,OUTPUT_SIZE,write_key,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).x =
-		//vi_mi;
-		float(num[num_scan + get_dim_index(t_ijk+LEFT_SUPPORT,uvec3(HALO_X,HALO_Y,HALO_Z))]);
+	OUTPUT_AT(OUTPUT,Gridpoint_vel_mass,OUTPUT_SIZE,write_key,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) =
+		vi_mi;
+	//temp[temp_pos + get_dim_index(t_ijk+LEFT_SUPPORT,uvec3(HALO_X,HALO_Y,HALO_Z))];
 
 }
