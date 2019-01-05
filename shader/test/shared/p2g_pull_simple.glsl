@@ -1,8 +1,10 @@
 #version 440
 #extension GL_NV_shader_atomic_float: enable
 
-
+//reverse supports
+#define PULL_METHOD
 #include "shader/compute/interpolation/cubic.include.glsl"
+
 layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
 
 #define HALO_X (VOXEL_DIM_X+LEFT_SUPPORT+RIGHT_SUPPORT)
@@ -12,6 +14,7 @@ layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
 // somehow opengl either bugs out with two shared mem. variables of same type:
 // i tried padding without results.
 // this here is a workaround:
+
 
 #define temp_pos 0
 #define temp_vel HALO_X*HALO_Y*HALO_Z

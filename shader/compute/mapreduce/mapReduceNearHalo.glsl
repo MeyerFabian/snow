@@ -29,7 +29,13 @@ layout(local_size_x =X)in;
  * AT(buffer,var,index) =>
  * buffer[index].var
  */
+
+
+
 shared UNARY_OP_RETURN_TYPE s_data[X];
+
+//reverse supports
+#define PULL_METHOD
 #include "shader/shared_hpp/interpolation_support.hpp"
 
 #define HALO_X (VOXEL_DIM_X+LEFT_SUPPORT+RIGHT_SUPPORT)
