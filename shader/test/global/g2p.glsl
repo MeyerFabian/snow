@@ -1,4 +1,5 @@
 #version 440
+#version 440
 #extension GL_NV_shader_atomic_float: enable
 
 uniform uint indexSize;
@@ -15,15 +16,14 @@ void main(void){
 		return;
 	}
 
-	PREC_VEC3_TYPE pos = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,i,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+	PREC_VEC3_TYPE pos = OUTPUT_AT(INPUT,Particle_pos_vol,OUTPUT_SIZE,i,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).xyz;
 
-
-	PREC_VEC_TYPE vp_mp =
-		INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,i,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
 
 	// Bin due to position in grid
 	PREC_VEC3_TYPE positionInGrid= (pos-grid_def.gGridPos)/grid_def.gridSpacing;
 
+
+	PREC_VEC3_TYPE vp_n = PREC_VEC3_TYPE(0.0f);
 
 	for(int x = -LEFT_SUPPORT; x<= RIGHT_SUPPORT ;x++){
 		for(int y = -LEFT_SUPPORT; y<= RIGHT_SUPPORT ;y++){
@@ -34,29 +34,17 @@ void main(void){
 				ivec3 globalGridIndex = ivec3(positionInGrid) + gridOffset;
 				if(inBounds(globalGridIndex,grid_def.gGridDim)){
 
-					uint voxelAndTileIndex = get_dim_index(globalGridIndex,grid_def.gGridDim);
+					uint key = SORTING_KEY(globalGridIndex,grid_def.gGridDim);
 					vec3 gridDistanceToParticle = vec3(globalGridIndex)- positionInGrid;
 					float wip = .0f;
 					weighting (gridDistanceToParticle,wip);
 
-					float mp = vp_mp.w;
-					vec3 vp = vp_mp.xyz;
+					vec4 vi_mi_n = INPUT_AT(INPUT,Gridpoint_vel_mass,INPUT_SIZE,key,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+					vp_n += (vi_mi_n>1e-8f)?(wip * vi_mi_n.xyz/vi_mi_n.w) : 0.0f;
 
-					float mi = mp*wip;
-					vec3 vi = vp*mp*wip;
-					atomicAdd(OUTPUT_AT(OUTPUT,Gridpoint_vel_mass,OUTPUT_SIZE,voxelAndTileIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).w,
-							mi);
-					atomicAdd(OUTPUT_AT(OUTPUT,Gridpoint_vel_mass,OUTPUT_SIZE,voxelAndTileIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).x,
-							vi.x);
-
-					atomicAdd(OUTPUT_AT(OUTPUT,Gridpoint_vel_mass,OUTPUT_SIZE,voxelAndTileIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).y,
-							vi.y);
-
-					atomicAdd(OUTPUT_AT(OUTPUT,Gridpoint_vel_mass,OUTPUT_SIZE,voxelAndTileIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).z,
-							vi.z);
 				}
 			}
 		}
-
 	}
+	OUTPUT_AT(INPUT,Particle_vel_mass,OUTPUT_SIZE,i,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).xyz = vp_n;
 }

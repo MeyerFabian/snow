@@ -17,12 +17,12 @@ void P2G_atomic_global::init(P2GData&& data, IOBufferData&& io) {
   uniforms_init(std::move(data.uniforms));
 }
 void P2G_atomic_global::init_too_parallel(P2GData&& data, IOBufferData&& io) {
-  filename = "shader/test/atomic_global/p2g.glsl";
+  filename = "shader/test/global/p2g.glsl";
   ydim = 64;
   init(std::move(data), std::move(io));
 }
 void P2G_atomic_global::init_looping(P2GData&& data, IOBufferData&& io) {
-  filename = "shader/test/atomic_global/p2gLoop.glsl";
+  filename = "shader/test/global/p2gLoop.glsl";
   ydim = 1;
   init(std::move(data), std::move(io));
 }

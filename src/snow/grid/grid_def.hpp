@@ -3,7 +3,7 @@
 // shared data structure (C++/GLSL), which is enabled in c++
 
 #include <glm/glm.hpp>
-#include "../../../../shader/shared_hpp/precision.hpp"
+#include "../../../shader/shared_hpp/precision.hpp"
 
 #include "../../../shader/utils/access.include.glsl"
 

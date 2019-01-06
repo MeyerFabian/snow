@@ -29,6 +29,7 @@ void P2G_shared::init_pull_simple(P2GData&& data, IOBufferData&& io) {
   filename = "shader/test/shared/p2g_pull_simple.glsl";
   init(std::move(data), std::move(io));
 }
+
 void P2G_shared::init_atomic_loop_reverse(P2GData&& data, IOBufferData&& io) {
   filename = "shader/test/shared/p2g_atomic_loop_reverse.glsl";
   init(std::move(data), std::move(io));
@@ -46,6 +47,13 @@ void P2G_shared::init_sync_batching(P2GBatchingData&& data, IOBufferData&& io) {
   vec.push_back(
       {PreprocessorCmd::DEFINE, "MULTIPLE_PARTICLES " + multiple_particles});
   filename = "shader/test/shared/p2g_sync_batching.glsl";
+  init(std::move(data.p2g_data), std::move(io));
+}
+void P2G_shared::init_pull_multiple(P2GBatchingData&& data, IOBufferData&& io) {
+  std::string multiple_particles = std::to_string(data.multiple_particles);
+  vec.push_back(
+      {PreprocessorCmd::DEFINE, "MULTIPLE_PARTICLES " + multiple_particles});
+  filename = "shader/test/shared/p2g_pull_multiple.glsl";
   init(std::move(data.p2g_data), std::move(io));
 }
 void P2G_shared::uniforms_init(UniformsStatic&& uniforms) {

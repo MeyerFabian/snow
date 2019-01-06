@@ -40,6 +40,7 @@ class P2G_shared : public Technique {
   void init_sync_batching(P2GBatchingData&& data, IOBufferData&& io);
 
   void init_pull_simple(P2GData&& data, IOBufferData&& io);
+  void init_pull_multiple(P2GBatchingData&& data, IOBufferData&& io);
 
  private:
   void init(P2GData&& data, IOBufferData&& io);

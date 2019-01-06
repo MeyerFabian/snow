@@ -10,17 +10,18 @@ layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
 #define HALO_X (VOXEL_DIM_X+LEFT_SUPPORT+RIGHT_SUPPORT)
 #define HALO_Y (VOXEL_DIM_Y+LEFT_SUPPORT+RIGHT_SUPPORT)
 #define HALO_Z (VOXEL_DIM_Z+LEFT_SUPPORT+RIGHT_SUPPORT)
+#define HALO_FLAT HALO_X*HALO_Y*HALO_Z
 
 // somehow opengl either bugs out with two shared mem. variables of same type:
 // i tried padding without results.
 // this here is a workaround:
 #define temp_pos 0
-#define temp_vel HALO_X*HALO_Y*HALO_Z
-shared PREC_VEC_TYPE temp [2*HALO_X*HALO_Y*HALO_Z];
+#define temp_vel HALO_FLAT*MULTIPLE_PARTICLES
+shared PREC_VEC_TYPE temp [2*HALO_FLAT*MULTIPLE_PARTICLES];
 
 #define num_scan 0
-#define num_count HALO_X*HALO_Y*HALO_Z
-shared uint num [2*HALO_X*HALO_Y*HALO_Z];
+#define num_count HALO_FLAT
+shared uint num [2*HALO_FLAT];
 
 #define blockSize uvec3(VOXEL_DIM_X,VOXEL_DIM_Y,VOXEL_DIM_Z)
 void main(void){
@@ -34,7 +35,7 @@ void main(void){
 
 	uint tile_count = OUTPUT_BLOCK_COUNT_AT(OUTPUT_BLOCK_COUNT,OUTPUT_BLOCK_COUNT_VAR,OUTPUT_BLOCK_COUNT_SIZE,blockIndex,OUTPUT_BLOCK_COUNT_NUM_BUFFER,OUTPUT_BLOCK_COUNT_INDEX_BUFFER);
 
-	for(int local_i = int(gl_LocalInvocationID.x); local_i < (HALO_X*HALO_Y*HALO_Z);local_i += X*Y*Z) {
+	for(int local_i = int(gl_LocalInvocationID.x); local_i < HALO_FLAT;local_i += X*Y*Z) {
 
 		uvec3 halo_ijk = uvec3(getIJK(local_i,ivec3(HALO_X,HALO_Y,HALO_Z)));
 		ivec3 to_process = grid_start_node + ivec3(halo_ijk);
@@ -54,37 +55,60 @@ void main(void){
 	memoryBarrierShared();
 	barrier();
 	PREC_VEC_TYPE vi_mi = PREC_VEC_TYPE(0.0);
-	for(int particle_count = 0; particle_count < tile_count; particle_count++){
-
+	for(int particle_count = 0; particle_count < tile_count; particle_count+=MULTIPLE_PARTICLES){
 		//LOAD
-		for(int local_i = int(gl_LocalInvocationID.x); local_i < (HALO_X*HALO_Y*HALO_Z);local_i += X*Y*Z) {
+		for(int local_i = int(gl_LocalInvocationID.x); local_i < HALO_FLAT;local_i += X*Y*Z) {
 
-			if(particle_count < num[num_count+local_i]){
-				uint globalParticleIndex = num[num_scan + local_i] + particle_count;
+			uint batch_count = clamp(int(num[num_count+local_i])-particle_count,0,MULTIPLE_PARTICLES);
+#if MULTIPLE_PARTICLES==2
+			uint globalParticleIndex = num[num_scan + local_i] +particle_count;
+			if(0<batch_count){
+
+				PREC_VEC3_TYPE pos = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+
+				temp[temp_pos + local_i ] = PREC_VEC_TYPE((pos-grid_def.gGridPos)/grid_def.gridSpacing,0.0);
+
+				temp[temp_vel + local_i ] = INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+			}
+			if(1<batch_count){
+
+				globalParticleIndex +=1;
+
+				PREC_VEC3_TYPE pos = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+
+				temp[temp_pos + local_i +HALO_FLAT] = PREC_VEC_TYPE((pos-grid_def.gGridPos)/grid_def.gridSpacing,0.0);
+
+				temp[temp_vel + local_i +HALO_FLAT] = INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+			}
+#else
+			for(int particle_i = particle_count; particle_i < particle_count + batch_count;particle_i++){
+				uint globalParticleIndex = num[num_scan + local_i] + particle_i;
 
 
 				PREC_VEC3_TYPE pos = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
-				temp[temp_pos + local_i] = PREC_VEC_TYPE((pos-grid_def.gGridPos)/grid_def.gridSpacing,0.0);
 
-				temp[temp_vel + local_i] = INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+				temp[temp_pos + local_i + HALO_FLAT * (particle_i-particle_count)] = PREC_VEC_TYPE((pos-grid_def.gGridPos)/grid_def.gridSpacing,0.0);
+
+				temp[temp_vel + local_i + HALO_FLAT * (particle_i-particle_count)] = INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
 			}
+#endif
 		}
 
 		memoryBarrierShared();
 		barrier();
-
 		// TRANSFER
 		for(int x = -LEFT_SUPPORT; x<= RIGHT_SUPPORT ;x++){
 			for(int y = -LEFT_SUPPORT; y<= RIGHT_SUPPORT ;y++){
 				for(int z = -LEFT_SUPPORT; z <= RIGHT_SUPPORT ;z++){
 					ivec3 gridOffset = ivec3(x,y,z);
 					uint local_i = get_dim_index(t_ijk + uvec3(gridOffset+LEFT_SUPPORT),uvec3(HALO_X,HALO_Y,HALO_Z));
-					if(particle_count < num[num_count+local_i]){
-						PREC_VEC3_TYPE gridDistanceToParticle = vec3(ijk) - temp[temp_pos + local_i].xyz ;
+					uint batch_count = clamp(int(num[num_count+local_i])-particle_count,0,MULTIPLE_PARTICLES);
+					for(int particle_i = particle_count; particle_i< particle_count + batch_count;particle_i++){
+						PREC_VEC3_TYPE gridDistanceToParticle = vec3(ijk) - temp[temp_pos + local_i + HALO_FLAT * (particle_i-particle_count)].xyz ;
 						PREC_SCAL_TYPE wip = .0f;
 						weighting (gridDistanceToParticle,wip);
 
-						PREC_VEC_TYPE vp_mp = temp[temp_vel+local_i];
+						PREC_VEC_TYPE vp_mp = temp[temp_vel+local_i + HALO_FLAT * (particle_i-particle_count)];
 						vi_mi += PREC_VEC_TYPE(vp_mp.xyz,1.0)*vp_mp.w*wip;
 					}
 
