@@ -173,6 +173,9 @@ class Buffer {
       case BufferType::DISPATCH:
         return GL_DISPATCH_INDIRECT_BUFFER;
         break;
+      default:
+        return GL_SHADER_STORAGE_BUFFER;
+        break;
     }
   }
 
@@ -190,7 +193,10 @@ class Buffer {
       case BufferUsage::DYNAMIC_READ:
         return GL_DYNAMIC_READ;
         break;
-    }
+      default:
+        return GL_STATIC_DRAW;
+        break;
+	}
   }
   void gl_read_aos(std::vector<ElemT>& c, void* ptr,
                    size_t first_n_elem) const {
