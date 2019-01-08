@@ -2,7 +2,7 @@
 #extension GL_NV_shader_atomic_float: enable
 
 //reverse supports
-#define PULL_METHOD
+#define P2G_PULL
 #include "shader/compute/interpolation/cubic.include.glsl"
 
 layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;

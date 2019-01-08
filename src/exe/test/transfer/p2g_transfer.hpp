@@ -42,13 +42,15 @@ OutputData test(testData data) {
 
   auto buffers = TestBuffers(std::move(data), layout);
   auto buffersData = buffers.getBufferData();
+#ifdef FULL_SORTED
   TestCountSort::TestCountSortData ts_data{
       numGridPoints,
       layout,
   };
 
   TestCountSort ts(std::move(ts_data), buffersData);
-
+#endif
+#ifdef BLOCK_COMPACTION
   TestBlockPipeline::TestBlockPipelineData tp_data{
       numGridPoints,
       layout,
@@ -56,27 +58,53 @@ OutputData test(testData data) {
   };
 
   TestBlockPipeline tp(std::move(tp_data), buffersData);
+#endif
   TestP2G::TestP2GData tp2g_data{
+      gGridDim,
+#ifdef FULL_SORTED
       ts.getSortedBufferData(),
       ts.getSortedBufferDataAccess(),
+#endif
+#ifdef BLOCK_COMPACTION
       tp.getBlockBufferData(),
       tp.getBlockBufferDataAccess(),
-      gGridDim,
       tp.getIndirectDispatch(),
+#endif
   };
+
   TestP2G tp2g(std::move(tp2g_data), buffersData);
   /**********************************************************************
    *                         execute dispatches                         *
    **********************************************************************/
   BenchmarkerCPU bench;
-  bench.time("Total CPU time spent", [&ts, &tp, &tp2g, &numParticles,
-                                      &numGridPoints]() {
-    executeTest(1, [&ts, &tp, &tp2g, &numParticles, &numGridPoints]() {
-      ts.run(numGridPoints, numParticles);
-      tp.run(numGridPoints);
-      tp2g.run(numGridPoints, numParticles);
-    });
-  });
+  bench.time("Total CPU time spent",
+             [
+#ifdef FULL_SORTED
+                 &ts,
+#endif
+#ifdef BLOCK_COMPACTION
+                 &tp,
+#endif
+
+                 &tp2g, &numParticles, &numGridPoints]() {
+               executeTest(1, [
+#ifdef FULL_SORTED
+                                  &ts,
+#endif
+#ifdef BLOCK_COMPACTION
+                                  &tp,
+#endif
+
+                                  &tp2g, &numParticles, &numGridPoints]() {
+#ifdef FULL_SORTED
+                 ts.run(numGridPoints, numParticles);
+#endif
+#ifdef BLOCK_COMPACTION
+                 tp.run(numGridPoints);
+#endif
+                 tp2g.run(numGridPoints, numParticles);
+               });
+             });
 
   BenchmarkerGPU::getInstance().collect_times_last_frame();
   BenchmarkerGPU::getInstance().collect_times_last_frame();

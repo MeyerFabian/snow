@@ -45,37 +45,47 @@ OutputData test(testData data) {
 
   auto buffers = TestBuffers(std::move(data), layout);
   auto buffersData = buffers.getBufferData();
+#ifdef FULL_SORTED
   TestCountSort::TestCountSortData ts_data{
       numGridPoints,
       layout,
   };
 
   TestCountSort ts(std::move(ts_data), buffersData);
-
+#endif
+#ifdef BLOCK_COMPACTION
   TestBlockPipeline::TestBlockPipelineData tp_data{
       numGridPoints,
       layout,
       ts.getGridCounter(),
   };
-
   TestBlockPipeline tp(std::move(tp_data), buffersData);
+#endif
+
   TestP2G::TestP2GData tp2g_data{
+      gGridDim,
+#ifdef FULL_SORTED
       ts.getSortedBufferData(),
       ts.getSortedBufferDataAccess(),
+#endif
+#ifdef BLOCK_COMPACTION
       tp.getBlockBufferData(),
       tp.getBlockBufferDataAccess(),
-      gGridDim,
       tp.getIndirectDispatch(),
+#endif
   };
   TestP2G tp2g(std::move(tp2g_data), buffersData);
 
   TestG2P::TestG2PData tg2p_data{
+      gGridDim,
+#ifdef FULL_SORTED
       ts.getSortedBufferData(),
       ts.getSortedBufferDataAccess(),
+#endif
+#ifdef BLOCK_COMPACTION
       tp.getBlockBufferData(),
-      tp.getBlockBufferDataAccess(),
-      gGridDim,
       tp.getIndirectDispatch(),
+#endif
   };
   TestG2P tg2p(std::move(tg2p_data), buffersData);
 
@@ -83,11 +93,30 @@ OutputData test(testData data) {
    *                         execute dispatches                         *
    **********************************************************************/
   BenchmarkerCPU bench;
-  bench.time("Total CPU time spent", [&ts, &tp, &tp2g, &tg2p, &numParticles,
-                                      &numGridPoints]() {
-    executeTest(1, [&ts, &tp, &tp2g, &tg2p, &numParticles, &numGridPoints]() {
+  bench.time("Total CPU time spent", [
+#ifdef FULL_SORTED
+                                         &ts,
+#endif
+#ifdef BLOCK_COMPACTION
+                                         &tp,
+#endif
+                                         &tp2g, &tg2p, &numParticles,
+                                         &numGridPoints]() {
+    executeTest(1, [
+#ifdef FULL_SORTED
+                       &ts,
+#endif
+#ifdef BLOCK_COMPACTION
+                       &tp,
+#endif
+
+                       &tp2g, &tg2p, &numParticles, &numGridPoints]() {
+#ifdef FULL_SORTED
       ts.run(numGridPoints, numParticles);
+#endif
+#ifdef BLOCK_COMPACTION
       tp.run(numGridPoints);
+#endif
       tp2g.run(numGridPoints, numParticles);
       tg2p.run(numGridPoints, numParticles);
     });

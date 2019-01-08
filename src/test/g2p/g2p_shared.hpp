@@ -1,5 +1,5 @@
-#ifndef P2GSHAREDCOMPUTE_H
-#define P2GSHAREDCOMPUTE_H
+#ifndef G2PSHAREDATOMICCOMPUTE_H
+#define G2PSHAREDATOMICCOMPUTE_H
 #include <memory>
 
 #include "../../snow/utils/defines.hpp"
@@ -12,38 +12,32 @@
 #include "../../snow/utils/defines.hpp"
 #include "../IOBufferData.hpp"
 #include "../indirect_dispatch/IndirectDispatch.hpp"
-class P2G_shared : public Technique {
+class G2P_shared : public Technique {
  public:
   LocalSize local_size = {VOXEL_DIM_X * VOXEL_DIM_Y * VOXEL_DIM_Z, 1, 1};
   struct UniformsStatic {
     glm::uvec3 gGridDim;
   };
 
-  struct P2GData {
+  struct G2PData {
     UniformsStatic uniforms;
     std::optional<std::shared_ptr<IndirectDispatch>> block_indirect;
   };
 
-  struct P2GBatchingData {
-    P2GData p2g_data;
+  struct G2PBatchingData {
+    G2PData g2p_data;
     GLuint multiple_particles;
   };
 
   struct UniformsDynamic {};
   void dispatch(UniformsDynamic&& uniforms);
   void dispatch_with_barrier(UniformsDynamic&& uniforms);
-  void init_atomic(P2GData&& data, IOBufferData&& io);
-  void init_atomic_loop_reverse(P2GData&& data, IOBufferData&& io);
-  void init_atomic_batching(P2GBatchingData&& data, IOBufferData&& io);
 
-  void init_sync(P2GData&& data, IOBufferData&& io);
-  void init_sync_batching(P2GBatchingData&& data, IOBufferData&& io);
-
-  void init_pull_simple(P2GData&& data, IOBufferData&& io);
-  void init_pull_multiple(P2GBatchingData&& data, IOBufferData&& io);
+  void init_pull(G2PData&& data, IOBufferData&& io);
+  void init_pull_batching(G2PBatchingData&& data, IOBufferData&& io);
 
  private:
-  void init(P2GData&& data, IOBufferData&& io);
+  void init(G2PData&& data, IOBufferData&& io);
   void uniforms_init(UniformsStatic&& uniforms);
   void uniforms_update(UniformsDynamic&& uniforms);
   std::optional<std::shared_ptr<IndirectDispatch>> block_dispatch;
@@ -51,5 +45,5 @@ class P2G_shared : public Technique {
   std::string filename;
   std::vector<Shader::CommandType> vec = {};
 };
-#endif  // P2GSHAREDATOMICCOMPUTE_H
+#endif  // G2PSHAREDATOMICCOMPUTE_H
 

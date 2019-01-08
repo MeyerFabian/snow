@@ -35,7 +35,7 @@ layout(local_size_x =X)in;
 shared UNARY_OP_RETURN_TYPE s_data[X];
 
 //reverse supports
-#define PULL_METHOD
+#define P2G_PULL
 #include "shader/shared_hpp/interpolation_support.hpp"
 
 #define HALO_X (VOXEL_DIM_X+LEFT_SUPPORT+RIGHT_SUPPORT)

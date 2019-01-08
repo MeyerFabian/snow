@@ -15,12 +15,15 @@
 class TestP2G {
  public:
   struct TestP2GData {
-    std::vector<std::unique_ptr<SortedBufferData> > sorted_buffer;
-    std::vector<std::unique_ptr<SortedBufferDataAccess> > sorted_buffer_access;
-    std::vector<std::unique_ptr<BlockBufferData> > block_buffer;
-    std::vector<std::unique_ptr<BlockBufferDataAccess> > block_buffer_access;
     glm::uvec3 gGridDim;
-    std::optional<std::shared_ptr<IndirectDispatch> > indirect_dispatch;
+    std::vector<std::unique_ptr<SortedBufferData> > sorted_buffer = {};
+    std::vector<std::unique_ptr<SortedBufferDataAccess> > sorted_buffer_access =
+        {};
+    std::vector<std::unique_ptr<BlockBufferData> > block_buffer = {};
+    std::vector<std::unique_ptr<BlockBufferDataAccess> > block_buffer_access =
+        {};
+    std::optional<std::shared_ptr<IndirectDispatch> > indirect_dispatch =
+        std::nullopt;
   };
 
   TestP2G(TestP2GData&& tp, OutputBufferData bd) {
