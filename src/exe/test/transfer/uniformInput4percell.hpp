@@ -22,15 +22,19 @@ static testData createInput() {
       for (size_t z = 0; z < 100; z++) {
         particles2.push_back({{0.0f, 0.0f, 0.0f, 0.0f}});
         // 0
-        particles.push_back(
-            {// pos_vol keep in grid +support bounds
-             PREC_VEC_TYPE(2.75 * gridSpacing + 0.5f * float(x) * gridSpacing,
-                           2.75 * gridSpacing + 0.5f * float(y) * gridSpacing,
-                           2.75 * gridSpacing + float(z) * gridSpacing, 0.0f),
-             // vel_mass
-             PREC_VEC_TYPE(glm::linearRand(-1.0f, 1.0f),
-                           glm::linearRand(-1.0f, 1.0f),
-                           glm::linearRand(-1.0f, 1.0f), 1.0f)});
+        particles.push_back({
+            // pos_vol keep in grid +support bounds
+            PREC_VEC_TYPE(2.75 * gridSpacing + 0.5f * float(x) * gridSpacing,
+                          2.75 * gridSpacing + 0.5f * float(y) * gridSpacing,
+                          2.75 * gridSpacing + float(z) * gridSpacing, 0.0f),
+            // vel_mass
+            /*
+            PREC_VEC_TYPE(glm::linearRand(-1.0f, 1.0f),
+                          glm::linearRand(-1.0f, 1.0f),
+                          glm::linearRand(-1.0f, 1.0f), 1.0f)
+						  */
+             PREC_VEC_TYPE(1.0f),
+        });
       }
     }
   }

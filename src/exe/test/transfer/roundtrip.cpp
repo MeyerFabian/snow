@@ -34,7 +34,13 @@ int main() {
   auto mv_i = std::transform_reduce(
       std::begin(output.grid), std::end(output.grid),
       PREC_VEC_TYPE(0.0f, 0.0f, 0.0f, 0.0f), std::plus<>(),
-      [](const auto& elem) { return elem.Gridpoint_vel_mass; });
+      [](const auto& elem) {
+        return PREC_VEC_TYPE(
+            elem.Gridpoint_vel_mass.x * elem.Gridpoint_vel_mass.w,
+            elem.Gridpoint_vel_mass.y * elem.Gridpoint_vel_mass.w,
+            elem.Gridpoint_vel_mass.z * elem.Gridpoint_vel_mass.w,
+            elem.Gridpoint_vel_mass.w);
+      });
 
   auto mv_p = std::transform_reduce(
       std::begin(input.particles), std::end(input.particles),

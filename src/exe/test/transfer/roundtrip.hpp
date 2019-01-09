@@ -5,6 +5,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "../../../test/BufferData.hpp"
 #include "../../../test/block/BlockPipeline.hpp"
+#include "../../../test/map/mapTechnique.hpp"
 #include "../../../test/p2g/p2g_atomic_global.hpp"
 #include "../../../test/p2g/p2g_shared.hpp"
 #include "../../../test/reorder/countingSortPipeline.hpp"
@@ -76,6 +77,24 @@ OutputData test(testData data) {
   };
   TestP2G tp2g(std::move(tp2g_data), buffersData);
 
+  MapTechnique mass_divide = MapTechnique();
+  MapTechnique::MapData map_data{
+      "shader/compute/mapreduce/mapSingle.glsl",
+      // unary_op
+      "(value.w>1e-8f)?vec4(value.xyz/"
+      "value.w,value.w):vec4(0.0f,0.0f,0.0f,value.w)",
+  };
+
+  IOBufferData io_map;
+  // INPUT
+  io_map.in_buffer.push_back(
+      std::make_unique<BufferData>(buffersData.gridpoint_vel_mass));
+  // OUTPUT
+  io_map.out_buffer.push_back(
+      std::make_unique<BufferData>(buffersData.gridpoint_vel_mass));
+
+  mass_divide.init(std::move(map_data), std::move(io_map));
+
   TestG2P::TestG2PData tg2p_data{
       gGridDim,
 #ifdef FULL_SORTED
@@ -93,34 +112,41 @@ OutputData test(testData data) {
    *                         execute dispatches                         *
    **********************************************************************/
   BenchmarkerCPU bench;
-  bench.time("Total CPU time spent", [
+  bench.time("Total CPU time spent",
+             [
 #ifdef FULL_SORTED
-                                         &ts,
+                 &ts,
 #endif
 #ifdef BLOCK_COMPACTION
-                                         &tp,
+                 &tp,
 #endif
-                                         &tp2g, &tg2p, &numParticles,
-                                         &numGridPoints]() {
-    executeTest(1, [
+                 &tp2g, &tg2p, &mass_divide, &numParticles, &numGridPoints]() {
+               executeTest(1, [
 #ifdef FULL_SORTED
-                       &ts,
+                                  &ts,
 #endif
 #ifdef BLOCK_COMPACTION
-                       &tp,
+                                  &tp,
 #endif
 
-                       &tp2g, &tg2p, &numParticles, &numGridPoints]() {
+                                  &tp2g, &tg2p, &mass_divide, &numParticles,
+                                  &numGridPoints]() {
 #ifdef FULL_SORTED
-      ts.run(numGridPoints, numParticles);
+                 ts.run(numGridPoints, numParticles);
 #endif
 #ifdef BLOCK_COMPACTION
-      tp.run(numGridPoints);
+                 tp.run(numGridPoints);
 #endif
-      tp2g.run(numGridPoints, numParticles);
-      tg2p.run(numGridPoints, numParticles);
-    });
-  });
+                 tp2g.run(numGridPoints, numParticles);
+
+                 BenchmarkerGPU::getInstance().time(
+                     "massDivide", [&mass_divide, &numGridPoints]() {
+                       mass_divide.dispatch_with_barrier({numGridPoints});
+                     });
+
+                 tg2p.run(numGridPoints, numParticles);
+               });
+             });
 
   BenchmarkerGPU::getInstance().collect_times_last_frame();
   BenchmarkerGPU::getInstance().collect_times_last_frame();

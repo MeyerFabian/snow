@@ -24,7 +24,7 @@ uint get_dim_index(const uvec3 ijk,const uvec3 dim){
 }
 
 bool inBounds(const ivec3 index, const uvec3 dim){
-	return index.x>= 0 && index.y>=0 && index.z>=0 && index.x < dim.x && index.y < dim.y && index.z< dim.z;
+	return index.x>= 0 && index.y>=0 && index.z>=0 && index.x < int(dim.x) && index.y < int(dim.y) && index.z< int(dim.z);
 }
 uint get_block_index(const uvec3 globalID, const uvec3
 		globalDim){

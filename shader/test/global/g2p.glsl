@@ -39,7 +39,7 @@ void main(void){
 					weighting (gridDistanceToParticle,wip);
 
 					vec4 vi_mi_n = INPUT_AT(INPUT,Gridpoint_vel_mass,INPUT_SIZE,key,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
-					vp_n += (vi_mi_n.w>1e-8f)?(wip * vi_mi_n.xyz/vi_mi_n.w) : vec3(0.0f);
+					vp_n += vi_mi_n.xyz;
 
 				}
 			}

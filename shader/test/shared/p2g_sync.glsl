@@ -47,9 +47,9 @@ void main(void){
 
 			positionInGrid= (pos-grid_def.gGridPos)/grid_def.gridSpacing;
 		}
-		for(int x = -LEFT_SUPPORT; x<= RIGHT_SUPPORT ;x++){
+		for(int z = -LEFT_SUPPORT; z<= RIGHT_SUPPORT ;z++){
 			for(int y = -LEFT_SUPPORT; y<= RIGHT_SUPPORT ;y++){
-				for(int z = -LEFT_SUPPORT; z <= RIGHT_SUPPORT ;z++){
+				for(int x = -LEFT_SUPPORT; x <= RIGHT_SUPPORT ;x++){
 					if(particle_i<count){
 						ivec3 gridOffset = ivec3(x,y,z);
 						uvec3 global_grid_index = uvec3(ivec3(ijk)+gridOffset);

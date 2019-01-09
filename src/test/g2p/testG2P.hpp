@@ -54,6 +54,7 @@ class TestG2P {
 #if defined(SHARED)
     G2P_shared::G2PData g2p_data{
         tg.gGridDim,
+        tg.indirect_dispatch,
     };
     g2pTransfer.init_pull(std::move(g2p_data), std::move(g2p_io));
 #else
