@@ -52,11 +52,21 @@ class TestG2P {
 #endif
 
 #if defined(SHARED)
+#if defined(SHARED_BATCHING_MULT_PART)
+    G2P_shared::G2PBatchingData g2p_data{
+        tg.gGridDim,
+        tg.indirect_dispatch,
+        SHARED_BATCHING_MULT_PART,
+    };
+    g2pTransfer.init_pull_batching(std::move(g2p_data), std::move(g2p_io));
+#else
     G2P_shared::G2PData g2p_data{
         tg.gGridDim,
         tg.indirect_dispatch,
     };
     g2pTransfer.init_pull(std::move(g2p_data), std::move(g2p_io));
+#endif
+
 #else
     G2P_global::G2PData g2p_data{};
     g2pTransfer.init_looping(std::move(g2p_data), std::move(g2p_io));

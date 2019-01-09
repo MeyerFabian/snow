@@ -28,12 +28,10 @@ static testData createInput() {
                           2.75 * gridSpacing + 0.5f * float(y) * gridSpacing,
                           2.75 * gridSpacing + float(z) * gridSpacing, 0.0f),
             // vel_mass
-            /*
             PREC_VEC_TYPE(glm::linearRand(-1.0f, 1.0f),
                           glm::linearRand(-1.0f, 1.0f),
-                          glm::linearRand(-1.0f, 1.0f), 1.0f)
-						  */
-             PREC_VEC_TYPE(1.0f),
+                          glm::linearRand(-1.0f, 1.0f), 1.0f),
+             //PREC_VEC_TYPE(1.0f),
         });
       }
     }

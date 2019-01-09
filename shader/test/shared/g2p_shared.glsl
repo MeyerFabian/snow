@@ -54,10 +54,10 @@ void main(void){
 				for(int x = -LEFT_SUPPORT; x <= RIGHT_SUPPORT ;x++){
 					ivec3 gridOffset = ivec3(x,y,z);
 					uvec3 global_grid_index = uvec3(ivec3(ijk)+gridOffset);
+					uint local_i = get_dim_index(t_ijk + uvec3(gridOffset +LEFT_SUPPORT ),uvec3(HALO_X,HALO_Y,HALO_Z));
 					PREC_VEC3_TYPE gridDistanceToParticle =vec3(global_grid_index) -  positionInGrid ;
 					PREC_SCAL_TYPE wip = 0.0f;
 					weighting (gridDistanceToParticle,wip);
-					uint local_i = get_dim_index(t_ijk + uvec3(gridOffset +LEFT_SUPPORT ),uvec3(HALO_X,HALO_Y,HALO_Z));
 
 					PREC_VEC_TYPE vi_n =  temp[local_i];
 
