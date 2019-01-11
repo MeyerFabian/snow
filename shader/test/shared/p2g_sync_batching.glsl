@@ -42,8 +42,8 @@ void main(void){
 
 #if MULTIPLE_PARTICLES==2
 		//unroll
+		uint globalParticleIndex = scan+process_count;
 		if(0 < batch_count){
-			uint globalParticleIndex = scan+process_count;
 			PREC_VEC3_TYPE pos = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
 
 			vp_mp[0]= INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
@@ -53,12 +53,48 @@ void main(void){
 
 		if(1 < batch_count){
 
-			uint globalParticleIndex = scan+process_count+1;
+			globalParticleIndex +=1;
 			PREC_VEC3_TYPE pos = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
 
 			vp_mp[1]= INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
 
 			positionInGrid[1]= (pos-grid_def.gGridPos)/grid_def.gridSpacing;
+		}
+#elif MULTIPLE_PARTICLES==4
+
+		uint globalParticleIndex = scan+process_count;
+		if(0 < batch_count){
+			PREC_VEC3_TYPE pos = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+
+			vp_mp[0]= INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+			positionInGrid[0]= (pos-grid_def.gGridPos)/grid_def.gridSpacing;
+		}
+		if(1 < batch_count){
+
+			globalParticleIndex +=1;
+			PREC_VEC3_TYPE pos = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+
+			vp_mp[1]= INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+			positionInGrid[1]= (pos-grid_def.gGridPos)/grid_def.gridSpacing;
+		}
+
+		if(2 < batch_count){
+
+			globalParticleIndex +=1;
+			PREC_VEC3_TYPE pos = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+
+			vp_mp[2]= INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+			positionInGrid[2]= (pos-grid_def.gGridPos)/grid_def.gridSpacing;
+		}
+
+
+		if(3 < batch_count){
+
+			globalParticleIndex +=1;
+			PREC_VEC3_TYPE pos = INPUT_AT(INPUT,Particle_pos_vol,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER).xyz;
+
+			vp_mp[3]= INPUT_AT(INPUT,Particle_vel_mass,INPUT_SIZE,globalParticleIndex,INPUT_NUM_BUFFER,INPUT_INDEX_BUFFER);
+			positionInGrid[3]= (pos-grid_def.gGridPos)/grid_def.gridSpacing;
 		}
 #else
 		for(int particle_i = 0; particle_i< batch_count;particle_i++){
@@ -80,36 +116,65 @@ void main(void){
 					uvec3 global_grid_index = uvec3(ivec3(ijk)+gridOffset);
 
 					uint local_i = get_dim_index(t_ijk + uvec3(gridOffset+LEFT_SUPPORT),uvec3(HALO_X,HALO_Y,HALO_Z));
+					PREC_VEC_TYPE vi_mi = PREC_VEC_TYPE(0.0);
 #if MULTIPLE_PARTICLES == 2
 					if(0 < batch_count){
 						PREC_VEC3_TYPE gridDistanceToParticle =vec3(global_grid_index) -  positionInGrid[0] ;
 						PREC_SCAL_TYPE wip = .0f;
 						weighting (gridDistanceToParticle,wip);
 
-						PREC_VEC_TYPE vi_mi = PREC_VEC_TYPE(vp_mp[0].xyz,1.0)*vp_mp[0].w*wip;
-						temp[local_i] +=vi_mi;
+						vi_mi += PREC_VEC_TYPE(vp_mp[0].xyz,1.0)*vp_mp[0].w*wip;
 					}
 					if(1<batch_count){
 						PREC_VEC3_TYPE gridDistanceToParticle =vec3(global_grid_index) -  positionInGrid[1] ;
 						PREC_SCAL_TYPE wip = .0f;
 						weighting (gridDistanceToParticle,wip);
 
-						PREC_VEC_TYPE vi_mi = PREC_VEC_TYPE(vp_mp[1].xyz,1.0)*vp_mp[1].w*wip;
-						temp[local_i] +=vi_mi;
+						vi_mi += PREC_VEC_TYPE(vp_mp[1].xyz,1.0)*vp_mp[1].w*wip;
 					}
+#elif MULTIPLE_PARTICLES == 4
 
+					if(0 < batch_count){
+						PREC_VEC3_TYPE gridDistanceToParticle =vec3(global_grid_index) -  positionInGrid[0] ;
+						PREC_SCAL_TYPE wip = .0f;
+						weighting (gridDistanceToParticle,wip);
+
+						vi_mi += PREC_VEC_TYPE(vp_mp[0].xyz,1.0)*vp_mp[0].w*wip;
+					}
+					if(1<batch_count){
+						PREC_VEC3_TYPE gridDistanceToParticle =vec3(global_grid_index) -  positionInGrid[1] ;
+						PREC_SCAL_TYPE wip = .0f;
+						weighting (gridDistanceToParticle,wip);
+
+						vi_mi += PREC_VEC_TYPE(vp_mp[1].xyz,1.0)*vp_mp[1].w*wip;
+					}
+					if(2<batch_count){
+						PREC_VEC3_TYPE gridDistanceToParticle =vec3(global_grid_index) -  positionInGrid[2] ;
+						PREC_SCAL_TYPE wip = .0f;
+						weighting (gridDistanceToParticle,wip);
+
+						vi_mi += PREC_VEC_TYPE(vp_mp[2].xyz,1.0)*vp_mp[2].w*wip;
+					}
+					if(3<batch_count){
+						PREC_VEC3_TYPE gridDistanceToParticle =vec3(global_grid_index) -  positionInGrid[3] ;
+						PREC_SCAL_TYPE wip = .0f;
+						weighting (gridDistanceToParticle,wip);
+
+						vi_mi += PREC_VEC_TYPE(vp_mp[3].xyz,1.0)*vp_mp[3].w*wip;
+					}
 #else
 					for(int particle_i = 0; particle_i< batch_count;particle_i++){
 						PREC_VEC3_TYPE gridDistanceToParticle =vec3(global_grid_index) -  positionInGrid[particle_i] ;
 						PREC_SCAL_TYPE wip = .0f;
 						weighting (gridDistanceToParticle,wip);
 
-						PREC_VEC_TYPE vi_mi = PREC_VEC_TYPE(vp_mp[particle_i].xyz,1.0)*vp_mp[particle_i].w*wip;
-
-						temp[local_i] +=vi_mi;
+						vi_mi += PREC_VEC_TYPE(vp_mp[particle_i].xyz,1.0)*vp_mp[particle_i].w*wip;
 
 					}
+
 #endif
+
+					temp[local_i] +=vi_mi;
 
 					memoryBarrierShared();
 					barrier();
