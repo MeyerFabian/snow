@@ -8,7 +8,7 @@
 #define UNARY_OPERATION_GL "value"
 #define UNARY_OPERATION(value) value
 #define INIT_TYPE "PREC_SCAL_TYPE"
-#define INIT_DATA PREC_SCAL_TYPE(1.0f)
+#define INIT_DATA glm::linearRand(0.0f, 1.0f)
 #define BUFFER_IN_NAME "shader/test/soa_aos/buffer_in_scalar.include.glsl"
 #define BUFFER_OUT_NAME "shader/test/soa_aos/buffer_out_scalar.include.glsl"
 #endif

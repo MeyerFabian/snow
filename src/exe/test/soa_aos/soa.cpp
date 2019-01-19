@@ -100,6 +100,7 @@ int main() {
   std::cout << "CPU map, CPU sum: " << sum << std::endl;
   std::cout << "GPU map, CPU sum: " << sum_gpu << std::endl;
   std::cout << "Difference: " << std::abs(sum - sum_gpu) << std::endl;
+  std::cout << "Relative Error: " << std::abs(sum - sum_gpu)/sum << std::endl;
 
   GLFWWindow::swapBuffers();
 

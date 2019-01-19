@@ -9,7 +9,11 @@
 #include <glm/gtx/norm.hpp>
 
 #include <string>
+#ifdef MAPREDUCE_SINGLE
+#include "../../../test/soa_aos/gpu_in_out_structs_scalar.hpp"
+#else
 #include "../../../test/soa_aos/gpu_in_out_structs.hpp"
+#endif
 #endif
 
 #ifndef NUMVECTORS
@@ -17,7 +21,7 @@
 #endif
 
 #ifndef INIT_DATA
-#define INIT_DATA PREC_VEC_TYPE(glm::ballRand(1.0f), 0.0f)
+#define INIT_DATA PREC_VEC_TYPE(glm::ballRand(1.0), 0.0f)
 #endif /* ifndef INIT_DATA */
 
 #include <execution>
@@ -48,7 +52,12 @@ int main() {
   BufferLayout layout = BufferLayout::SOA;
 #endif
   Buffer<Input> input(BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
-                      "shader/test/soa_aos/buffer_in.include.glsl");
+#ifdef MAPREDUCE_SINGLE
+                      "shader/test/soa_aos/buffer_in_scalar.include.glsl"
+#else
+                      "shader/test/soa_aos/buffer_in.include.glsl"
+#endif
+  );
 
   input.transfer_to_gpu(input_data);
   input.gl_bind_base(1);
@@ -56,7 +65,11 @@ int main() {
   auto output = std::make_shared<Buffer<Output>>(
       BufferType::SSBO, BufferUsage::STATIC_DRAW, layout,
 
+#ifdef MAPREDUCE_SINGLE
+      "shader/test/soa_aos/buffer_out_scalar.include.glsl"
+#else
       "shader/test/soa_aos/buffer_out.include.glsl"
+#endif
 
   );
   output->transfer_to_gpu(output_data_init);
@@ -77,7 +90,11 @@ int main() {
       filename,
       local_size,
       "PREC_SCAL_TYPE",
+#ifdef MAPREDUCE_SINGLE
+      "value",
+#else
       "length(value)",
+#endif
       "0",
       "left+right",
   });
@@ -97,18 +114,25 @@ int main() {
 
   BenchmarkerGPU::getInstance().collect_times_last_frame();
   BenchmarkerGPU::getInstance().collect_times_last_frame();
-  float sum_gpu = test.fetch_gpu_result(
+  auto sum_gpu = test.fetch_gpu_result(
       output, [](const auto& elem) { return elem.out_g; }, std::plus<>());
   BenchmarkerGPU::write_to_file("MapReduce");
   BenchmarkerGPU::write_to_file("Map");
   bench.write_to_file("MapReduceCPU");
-  auto sum = std::transform_reduce(
-      std::begin(input_data), std::end(input_data), 0.0f, std::plus<>(),
-      [](const auto& elem) { return glm::l2Norm(glm::vec3(elem.in_v)); });
+#ifdef MAPREDUCE_SINGLE
 
+  auto sum = std::transform_reduce(std::begin(input_data), std::end(input_data),
+                                   0.0, std::plus<>(),
+                                   [](const auto& elem) { return elem.in_v; });
+#else
+  auto sum = std::transform_reduce(
+      std::begin(input_data), std::end(input_data), 0.0, std::plus<>(),
+      [](const auto& elem) { return glm::l2Norm(glm::vec3(elem.in_v)); });
+#endif
   std::cout << "CPU map, CPU sum: " << sum << std::endl;
   std::cout << "GPU map, CPU sum: " << sum_gpu << std::endl;
   std::cout << "Difference: " << std::abs(sum - sum_gpu) << std::endl;
+  std::cout << "Relative Error: " << std::abs(sum - sum_gpu) / sum << std::endl;
 
   GLFWWindow::swapBuffers();
 

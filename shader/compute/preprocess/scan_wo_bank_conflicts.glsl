@@ -25,7 +25,6 @@ layout(local_size_x =X)in;
 
 #define LOG_NUM_BANKS 5
 // else case generally faster
-#define ZERO_BANK_CONFLICTS
 #ifdef ZERO_BANK_CONFLICTS
 #define CONFLICT_FREE_OFFSET(n) \
   (((n) >> LOG_NUM_BANKS) + ((n) >> (2 * LOG_NUM_BANKS)))
@@ -83,7 +82,7 @@ void main(void){
   if(tIndex==0) {
     uint last = X*2-1 + CONFLICT_FREE_OFFSET(X*2-1);
 #ifdef OUTPUT2
-	OUTPUT2_AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,gl_WorkGroupID.x,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) = s_data[last];
+    OUTPUT2_AT(OUTPUT2,OUTPUT2_VAR,OUTPUT2_SIZE,gl_WorkGroupID.x,OUTPUT2_NUM_BUFFER,OUTPUT2_INDEX_BUFFER) = s_data[last];
 #endif
     s_data[last] = BINARY_OP_NEUTRAL_ELEMENT;
   }
@@ -119,7 +118,7 @@ void main(void){
 
   // global writes at 1) t_id and 2) t_id + X
   OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[tIndex +CONFLICT_FREE_OFFSET(tIndex)];
-  
+
   OUTPUT_AT(OUTPUT,OUTPUT_VAR,OUTPUT_SIZE,globalIndex+X,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER) = s_data[(tIndex+ X)+CONFLICT_FREE_OFFSET(tIndex+X)];
 
 }

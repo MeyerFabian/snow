@@ -87,15 +87,15 @@ OutputData test(testData data) {
 #endif
 
                  &tp2g, &numParticles, &numGridPoints]() {
-               executeTest(1, [
+               executeTest(1000, [
 #ifdef FULL_SORTED
-                                  &ts,
+                                     &ts,
 #endif
 #ifdef BLOCK_COMPACTION
-                                  &tp,
+                                     &tp,
 #endif
 
-                                  &tp2g, &numParticles, &numGridPoints]() {
+                                     &tp2g, &numParticles, &numGridPoints]() {
 #ifdef FULL_SORTED
                  ts.run(numGridPoints, numParticles);
 #endif
