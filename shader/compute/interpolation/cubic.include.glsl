@@ -38,3 +38,7 @@ void weightingGradient(const vec3 distanceVector, inout vec3 wg){
 	wg.y = weighting(distanceVector.x)*  weightingGradient(distanceVector.y) * weighting(distanceVector.z);
 	wg.z = weighting(distanceVector.x)*  weighting(distanceVector.y) * weightingGradient(distanceVector.z);
 }
+
+PREC_SCAL_TYPE InverseDp(float spacing){
+	return 3.0/(spacing*spacing);
+}

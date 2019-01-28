@@ -28,7 +28,7 @@ class TestG2P {
     IOBufferData g2p_io;
 
 #ifdef FULL_SORTED
-#ifdef SHARED
+#ifdef G2P_SHARED
     auto particles_sorted = std::move(tg.sorted_buffer_access);
 #else   // NOT SHARED
     auto particles_sorted = std::move(tg.sorted_buffer);
@@ -51,30 +51,37 @@ class TestG2P {
         std::make_unique<BufferData>(bd.gridpoint_vel_mass));
 #endif
 
-#if defined(SHARED)
-#if defined(SHARED_BATCHING_MULT_PART)
+#if defined(G2P_SHARED)
+#if defined(G2P_SHARED_BATCHING_MULT_PART)
     G2P_shared::G2PBatchingData g2p_data{
+        G2P_SHARED_BATCHING_MULT_PART,
         tg.gGridDim,
         tg.indirect_dispatch,
-        SHARED_BATCHING_MULT_PART,
     };
     g2pTransfer.init_pull_batching(std::move(g2p_data), std::move(g2p_io));
 #else
     G2P_shared::G2PData g2p_data{
         tg.gGridDim,
         tg.indirect_dispatch,
+#ifdef APIC
+        true,
+#endif
     };
     g2pTransfer.init_pull(std::move(g2p_data), std::move(g2p_io));
 #endif
 
 #else
-    G2P_global::G2PData g2p_data{};
+    G2P_global::G2PData g2p_data{
+#ifdef APIC
+        true,
+#endif
+    };
     g2pTransfer.init_looping(std::move(g2p_data), std::move(g2p_io));
 #endif
   }
 
   void run(GLuint numGridPoints, GLuint numParticles) {
-#if defined(SHARED)
+#if defined(G2P_SHARED)
     BenchmarkerGPU::getInstance().time("g2pTransfer_shared", [this]() {
       g2pTransfer.dispatch_with_barrier({});
     });
@@ -87,7 +94,7 @@ class TestG2P {
   };
 
  private:
-#if defined(SHARED)
+#if defined(G2P_SHARED)
   G2P_shared g2pTransfer;
 #else
   G2P_global g2pTransfer;

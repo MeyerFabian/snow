@@ -22,11 +22,12 @@ class P2G_shared : public Technique {
   struct P2GData {
     UniformsStatic uniforms;
     std::optional<std::shared_ptr<IndirectDispatch>> block_indirect;
+    bool apic = false;
   };
 
   struct P2GBatchingData {
-    P2GData p2g_data;
     GLuint multiple_particles;
+    P2GData p2g_data;
   };
 
   struct UniformsDynamic {};

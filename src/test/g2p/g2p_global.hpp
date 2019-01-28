@@ -12,9 +12,8 @@
 class G2P_global : public Technique {
  public:
   LocalSize local_size = {1024, 1, 1};
-  struct UniformsStatic {};
   struct G2PData {
-    UniformsStatic uniforms;
+    bool apic = false;
   };
 
   struct UniformsDynamic {
@@ -26,7 +25,6 @@ class G2P_global : public Technique {
 
  private:
   void init(G2PData&& data, IOBufferData&& io);
-  void uniforms_init(UniformsStatic&& uniforms);
   void uniforms_update(UniformsDynamic&& uniforms);
   std::string filename;
 };

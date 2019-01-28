@@ -45,6 +45,9 @@ void main(void){
 
 	for(int particle_i = 0; particle_i < count; particle_i++){
 		PREC_VEC3_TYPE vp_n= PREC_VEC3_TYPE(0.0);
+#ifdef APIC
+		PREC_MAT3_TYPE Bp_n = PREC_MAT3_TYPE(0.0);
+#endif
 		uint globalParticleIndex = scan+particle_i;
 		PREC_VEC3_TYPE pos = OUTPUT_AT(OUTPUT,Particle_pos_vol,OUTPUT_SIZE,globalParticleIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).xyz;
 
@@ -62,9 +65,21 @@ void main(void){
 					PREC_VEC_TYPE vi_n =  temp[local_i];
 
 					vp_n += wip * vi_n.xyz;
+#ifdef APIC
+					//need to be reworked
+					PREC_VEC3_TYPE delta_x_n = (gridDistanceToParticle+gridDistanceToParticle)*grid_def.gridSpacing;
+					PREC_VEC3_TYPE delta_x_p = (gridDistanceToParticle-gridDistanceToParticle)*grid_def.gridSpacing;
+
+					Bp_n += 0.5 * wip * (outerProduct(vi_n.xyz,delta_x_n) + outerProduct(delta_x_p,vi_n.xyz));
+#endif
 				}
 			}
 		}
 		OUTPUT_AT(OUTPUT,Particle_vel_mass,OUTPUT_SIZE,globalParticleIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).xyz = vp_n;
+#ifdef APIC
+		OUTPUT_AT(OUTPUT,Particle_Bp_1,OUTPUT_SIZE,globalParticleIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).xyz = Bp_n[0];
+		OUTPUT_AT(OUTPUT,Particle_Bp_2,OUTPUT_SIZE,globalParticleIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).xyz = Bp_n[1];
+		OUTPUT_AT(OUTPUT,Particle_Bp_3,OUTPUT_SIZE,globalParticleIndex,OUTPUT_NUM_BUFFER,OUTPUT_INDEX_BUFFER).xyz = Bp_n[2];
+#endif
 	}
 }

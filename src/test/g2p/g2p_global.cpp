@@ -9,18 +9,20 @@ void G2P_global::init(G2PData&& data, IOBufferData&& io) {
   auto io_cmds(io.generateCommands());
   vec.insert(std::end(vec), std::begin(io_cmds), std::end(io_cmds));
 
+  if (data.apic) {
+    vec.insert(std::end(vec), {PreprocessorCmd::DEFINE, "APIC"});
+  }
+
   shader->add_cmds(vec.begin(), vec.end());
 
   Technique::add_shader(std::move(shader));
   Technique::upload();
   Technique::use();
-  uniforms_init(std::move(data.uniforms));
 }
 void G2P_global::init_looping(G2PData&& data, IOBufferData&& io) {
   filename = "shader/test/global/g2p.glsl";
   init(std::move(data), std::move(io));
 }
-void G2P_global::uniforms_init(UniformsStatic&& uniforms) {}
 void G2P_global::dispatch(UniformsDynamic&& uniforms) {
   Technique::use();
   auto numParticles = uniforms.numParticles;

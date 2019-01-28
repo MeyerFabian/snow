@@ -18,12 +18,11 @@ void P2G_atomic_global::init(P2GData&& data, IOBufferData&& io) {
 }
 void P2G_atomic_global::init_too_parallel(P2GData&& data, IOBufferData&& io) {
   filename = "shader/test/global/p2g.glsl";
-  ydim = 64;
+  too_parallel = true;
   init(std::move(data), std::move(io));
 }
 void P2G_atomic_global::init_looping(P2GData&& data, IOBufferData&& io) {
   filename = "shader/test/global/p2gLoop.glsl";
-  ydim = 1;
   init(std::move(data), std::move(io));
 }
 void P2G_atomic_global::uniforms_init(UniformsStatic&& uniforms) {}
@@ -31,7 +30,7 @@ void P2G_atomic_global::dispatch(UniformsDynamic&& uniforms) {
   Technique::use();
   auto numParticles = uniforms.numParticles;
   uniforms_update(std::move(uniforms));
-  glDispatchCompute(numParticles / local_size.x + 1, ydim, 1);
+  glDispatchCompute(numParticles / local_size.x + 1, 1, 1);
 }
 void P2G_atomic_global::dispatch_with_barrier(UniformsDynamic&& uniforms) {
   dispatch(std::move(uniforms));

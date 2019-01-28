@@ -50,7 +50,7 @@ class TestP2G {
 
     IOBufferData p2g_io;
 #ifdef FULL_SORTED
-#ifdef SHARED
+#ifdef P2G_SHARED
     auto particles_sorted = std::move(tp.sorted_buffer_access);
 #else   // NOT SHARED
     auto particles_sorted = std::move(tp.sorted_buffer);
@@ -85,7 +85,7 @@ class TestP2G {
     /**********************************************************************
      *                               p2g technique                        *
      **********************************************************************/
-#if defined(SHARED)
+#if defined(P2G_SHARED)
 #if defined(SHARED_ATOMIC_LOOP_REV)  // 2
 
     P2G_shared::P2GData p2g_data{
@@ -95,40 +95,46 @@ class TestP2G {
                                          std::move(p2g_io));
 #elif defined(SHARED_ATOMIC)  // 2
 
-#if defined(SHARED_BATCHING_MULT_PART)  // 3
+#if defined(P2G_SHARED_BATCHING_MULT_PART)  // 3
     P2G_shared::P2GBatchingData p2g_data{
+        P2G_SHARED_BATCHING_MULT_PART,
         tp.gGridDim,
-#ifdef BLOCK_COMPACTION                 // 4
+#ifdef BLOCK_COMPACTION                     // 4
         tp.indirect_dispatch,
-#else                                   // NOT BLOCK_COMPACT
+#else                                       // NOT BLOCK_COMPACT
         std::nullopt,
-#endif                                  // BLOCK_COMPACT 4
-        SHARED_BATCHING_MULT_PART,
+#endif                                      // BLOCK_COMPACT 4
     };
     p2gTransfer.init_atomic_batching(std::move(p2g_data), std::move(p2g_io));
-#else                                   // NO SHARED_BATCHING
+#else                                       // NO SHARED_BATCHING
     P2G_shared::P2GData p2g_data{
         tp.gGridDim,
-#ifdef BLOCK_COMPACTION                 // 4
+#ifdef BLOCK_COMPACTION                     // 4
         tp.indirect_dispatch,
-#endif                                  // BLOCK_COMPACTION 4
+#endif                                      // BLOCK_COMPACTION 4
     };
     p2gTransfer.init_atomic(std::move(p2g_data), std::move(p2g_io));
-#endif                                  // SHARED_BATCHING 3
+#endif                                      // SHARED_BATCHING 3
 
 #elif defined(PUSH_SYNC)  // 2
 
-#if defined(SHARED_BATCHING_MULT_PART)  // 3
+#if defined(P2G_SHARED_BATCHING_MULT_PART)  // 3
     P2G_shared::P2GBatchingData p2g_data{
+        P2G_SHARED_BATCHING_MULT_PART,
         tp.gGridDim,
         tp.indirect_dispatch,
-        SHARED_BATCHING_MULT_PART,
+#ifdef APIC
+        true,
+#endif
     };
     p2gTransfer.init_sync_batching(std::move(p2g_data), std::move(p2g_io));
-#else                                   // NO_SHARED_BATCHING
+#else  // NO_SHARED_BATCHING
     P2G_shared::P2GData p2g_data{
         tp.gGridDim,
         tp.indirect_dispatch,
+#ifdef APIC
+        true,
+#endif
     };
     p2gTransfer.init_sync(std::move(p2g_data), std::move(p2g_io));
 
@@ -136,11 +142,11 @@ class TestP2G {
 
 #elif defined(SHARED_PULL)  // 1
 
-#if defined(SHARED_BATCHING_MULT_PART)  // 3
+#if defined(P2G_SHARED_BATCHING_MULT_PART)  // 3
     P2G_shared::P2GBatchingData p2g_data{
+        P2G_SHARED_BATCHING_MULT_PART,
         tp.gGridDim,
         tp.indirect_dispatch,
-        SHARED_BATCHING_MULT_PART,
     };
     p2gTransfer.init_pull_multiple(std::move(p2g_data), std::move(p2g_io));
 #else
@@ -167,7 +173,7 @@ class TestP2G {
         "resetGridVel", [this, &numGridPoints]() {
           resetGridVel.dispatch_with_barrier({numGridPoints});
         });
-#if defined(SHARED)
+#if defined(P2G_SHARED)
     BenchmarkerGPU::getInstance().time("p2gTransfer_shared", [this]() {
       p2gTransfer.dispatch_with_barrier({});
     });
@@ -182,7 +188,7 @@ class TestP2G {
  private:
   MapTechnique resetGridVel;
 
-#if defined(SHARED)  // 1
+#if defined(P2G_SHARED)  // 1
   P2G_shared p2gTransfer;
 #else
   P2G_atomic_global p2gTransfer;

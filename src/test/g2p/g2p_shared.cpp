@@ -8,6 +8,11 @@ void G2P_shared::init(G2PData&& data, IOBufferData&& io) {
   shader->set_local_size(local_size);
 
   auto io_cmds(io.generateCommands());
+
+  if (data.apic) {
+    vec.insert(std::end(vec), {PreprocessorCmd::DEFINE, "APIC"});
+  }
+
   vec.insert(std::end(vec), std::begin(io_cmds), std::end(io_cmds));
 
   shader->add_cmds(vec.begin(), vec.end());

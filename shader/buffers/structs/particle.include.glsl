@@ -6,9 +6,9 @@ struct Particle_exp {
 	PREC_VEC_TYPE Particle_pos_vol;
 	PREC_VEC_TYPE Particle_vel_mass;
 
-	PREC_VEC_TYPE Particle_ElasDeform_1;
-	PREC_VEC_TYPE Particle_ElasDeform_2;
-	PREC_VEC_TYPE Particle_ElasDeform_3;
+	PREC_VEC_TYPE Particle_Bp_1;
+	PREC_VEC_TYPE Particle_Bp_2;
+	PREC_VEC_TYPE Particle_Bp_3;
 };
 struct Particle_exp_2{
 	PREC_VEC_TYPE Particle_PlasDeform_1;
@@ -20,9 +20,9 @@ struct Particle_exp_2{
 #define Particle_pos_vol	0
 #define Particle_vel_mass	1
 
-#define Particle_ElasDeform_1	2
-#define Particle_ElasDeform_2	3
-#define Particle_ElasDeform_3	4
+#define Particle_Bp_1		2
+#define Particle_Bp_2		3
+#define Particle_Bp_3		4
 #define Particle_exp_size 5
 
 #define Particle_exp_2 PREC_VEC_TYPE

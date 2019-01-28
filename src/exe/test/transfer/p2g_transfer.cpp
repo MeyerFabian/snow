@@ -6,7 +6,7 @@
 #define INDEX_SORTED
 #endif
 #if defined(SHARED_ATOMIC) || defined(PUSH_SYNC) || defined(SHARED_PULL)
-#define SHARED
+#define P2G_SHARED
 #endif
 #if defined(PUSH_SYNC)
 #define BLOCK_COMPACTION

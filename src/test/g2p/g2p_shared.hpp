@@ -22,11 +22,12 @@ class G2P_shared : public Technique {
   struct G2PData {
     UniformsStatic uniforms;
     std::optional<std::shared_ptr<IndirectDispatch>> block_indirect;
+    bool apic = false;
   };
 
   struct G2PBatchingData {
-    G2PData g2p_data;
     GLuint multiple_particles;
+    G2PData g2p_data;
   };
 
   struct UniformsDynamic {};
