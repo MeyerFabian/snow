@@ -1,6 +1,6 @@
 #ifndef TEST_UTIL_HPP
 #define TEST_UTIL_HPP
-#include "../snow/rendering/GLFWWindow.hpp"
+#include "../core/rendering/GLFWWindow.hpp"
 template <typename F, typename... Args>
 void executeTest(size_t runs, F&& func, Args&&... args) {
 #ifdef MARKERS

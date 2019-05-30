@@ -2,7 +2,6 @@
 #define TESTBLOCKPIPELINE_HPP_7ZI58GST
 
 #include "../OutputBufferData.hpp"
-#include "../block/BlockPipeline.hpp"
 class TestBlockPipeline {
  public:
   struct TestBlockPipelineData {

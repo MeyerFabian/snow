@@ -1,9 +1,9 @@
 #ifndef GPU_IN_OUT_STRUCTS_HPP
 #define GPU_IN_OUT_STRUCTS_HPP
 // shared data structure (C++/GLSL), which is enabled in c++
-#include "../../snow/utils/defines.hpp"
+#include "../../core/utils/defines.hpp"
 
-#include "../../../../shader/shared_hpp/precision.hpp"
+#include "../../../shader/shared_hpp/precision.hpp"
 
 #ifndef AOS_LAYOUT
 #define AOS_LAYOUT

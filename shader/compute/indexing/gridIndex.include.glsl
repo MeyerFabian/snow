@@ -1,24 +1,14 @@
 #ifndef GRIDINDEX_GLSL
 #define GRIDINDEX_GLSL
+
+#include "shader/shared_hpp/voxel_block_size.hpp"
+
 /**
- * Takes an integer vector ijk and returns the respective buffer index.
- * i of [0,x-GridDimension]
- * j of[0,y-GridDimension]
- * k of [0, z-GridDimension]
- */
-/*
-   void getIndex(const ivec3 ijk,inout int index){
-   index = ijk.x + (ijk.y * int(gGridDim[0].x)) + (ijk.z *int(gGridDim[1].x) * int(gGridDim[0].x));
-   }
- */
-/**
- * Takes an integer vector ijk and returns the respective buffer index.
+ * Takes an integer vector ijk and returns the respective linearized index.
  * i of [0,x-dim]
  * j of[0,y-dim]
  * k of [0, z-dim]
  */
-
-#include "shader/shared_hpp/voxel_block_size.hpp"
 uint get_dim_index(const uvec3 ijk,const uvec3 dim){
 	return ijk.x + (ijk.y * dim.x) + (ijk.z *dim.y * dim.x);
 }
@@ -81,14 +71,34 @@ uvec3 getBlockID(const uint blockIndex,const uvec3 globalDim){
 
 }
 
+/*
+ *
+ * Convert from per block index to a global grid indexing
+ * in:
+ * @globalIndex : global thread index             : 4
+ * @globalDim   : 3D dimensions of grid in voxels : (128,128,128)
+ * @return      : global grid index
+ *
+ * First block xy-slice:
+ *
+ *  0  1  2  3       0   1   2   3
+ *  4  5  6  7  -> 128 129 130 131
+ *  8  9 10 11     256 257 258 259
+ * 12 13 14 15     384 385 386 389
+ */
 uint global_indexing_of_voxel_and_block(const uint globalIndex, const uvec3 globalDim){
-	uint blockIndex = globalIndex>>(VOXEL_SIZE_X_BIT+VOXEL_SIZE_Y_BIT+VOXEL_SIZE_Z_BIT);
 
+	// 3D dimensions of grid in blocks
+	// example: (128,128,128)/(4,4,4)         : (32,32,32)
 	uvec3 blockDim = uvec3(
 			globalDim.x>>VOXEL_SIZE_X_BIT,
 			globalDim.y>>VOXEL_SIZE_Y_BIT,
 			globalDim.z>>VOXEL_SIZE_Z_BIT);
 
+
+	// block indexing, example: 8/64          : 0
+	uint blockIndex = globalIndex>>(VOXEL_SIZE_X_BIT+VOXEL_SIZE_Y_BIT+VOXEL_SIZE_Z_BIT);
+	// example                                : (0,0,0)
 	uvec3 blockID = getIJK(blockIndex,blockDim);
 
 	uvec3 voxelDim = uvec3(
@@ -96,13 +106,16 @@ uint global_indexing_of_voxel_and_block(const uint globalIndex, const uvec3 glob
 			VOXEL_DIM_Y,
 			VOXEL_DIM_Z);
 
-	uint voxelIndex = globalIndex % (VOXEL_DIM_X*VOXEL_DIM_Y*VOXEL_DIM_Z);
+	// voxel index within block
+	// example: 4%64                          : 4
+	uint voxelIndexInBlock = globalIndex % (VOXEL_DIM_X*VOXEL_DIM_Y*VOXEL_DIM_Z);
+	// example                                : (0,1,0)
+	uvec3 voxelIDInBlock = getIJK(voxelIndexInBlock,voxelDim);
 
-	uvec3 voxelID = getIJK(voxelIndex,voxelDim);
 
-
+	// get_dim_index((0,1,0),(128,128,128))   : 128
 	return get_dim_index(
-			voxelID +
+			voxelIDInBlock +
 			voxelDim * blockID
 			,globalDim);
 }

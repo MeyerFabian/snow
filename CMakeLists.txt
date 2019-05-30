@@ -1,3 +1,4 @@
+# s.t. MSVC creates source groups
 function(assign_source_group)
 	foreach(_source IN ITEMS ${ARGN})
 		if (IS_ABSOLUTE "${_source}")
@@ -11,13 +12,14 @@ function(assign_source_group)
 	endforeach()
 endfunction(assign_source_group)
 
-
+#C++17 compiler flags
 IF(MINGW)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std:c++17")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std:c++17")
 ENDIF()
 project(snowProject)
 cmake_minimum_required(VERSION 3.12)
 
+#allows nmake to export compile commands
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake CACHE PATH "Project specific path. Set manually if it was not found.")
@@ -31,9 +33,9 @@ find_package(GLM REQUIRED)
 set(TESTS_ENABLED ON CACHE BOOL "enables tests")
 
 if("${TESTS_ENABLED}")
-	file(GLOB_RECURSE TEST_SOURCE "src/test/*.cpp")
 	set(TEST_INCLUDES include/eigen)
-	file(GLOB_RECURSE TEST_FILES "src/exe/test/*.cpp")
+	file(GLOB_RECURSE TEST_FILES "exe/test/*.cpp")
+	file(GLOB_RECURSE TEST_SOURCES "src/test/*.cpp" "src/test/*.hpp")
 endif()
 
 include_directories(
@@ -62,20 +64,20 @@ endif()
 
 
 
-file(GLOB_RECURSE SOURCE_FILES "src/snow/*.cpp" "src/snow/*.hpp")
-file(GLOB_RECURSE EXE_FILES "src/exe/snow/*.cpp")
+file(GLOB_RECURSE SOURCE_FILES "src/core/*.cpp" "src/core/*.hpp")
+file(GLOB_RECURSE EXE_FILES "exe/snow/*.cpp")
 list(GET EXE_FILES 0 FIRST_EXEC)
 get_filename_component(FIRST_EXEC_NAME ${FIRST_EXEC} NAME_WE)
 foreach (EXEC ${EXE_FILES})
 
 	get_filename_component(EXEC_NAME ${EXEC} NAME_WE)
-	
+
 	add_executable(${EXEC_NAME}
 		${EXEC}
 		)
-		IF(MSVC)
+	IF(MSVC)
 		set_target_properties(${EXEC_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/Release)
-		ENDIF()
+	ENDIF()
 	target_link_libraries(${EXEC_NAME}
 		SNOWGL_LIBRARY
 		)
@@ -89,19 +91,19 @@ foreach (TEST ${TEST_FILES})
 	add_executable(${TEST_NAME}
 		${TEST}
 		)
-		IF(MSVC)
+	IF(MSVC)
 		set_target_properties(${TEST_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/Release)
-		ENDIF()
+	ENDIF()
 	target_link_libraries(${TEST_NAME}
 		SNOWGL_LIBRARY
-		TEST_LIBRARY
+		#TEST_LIBRARY
 		)
 
 endforeach(TEST)
 
 add_subdirectory(include/stb_image)
-add_subdirectory(src/snow)
-add_subdirectory(src/test)
+add_subdirectory(src/core)
+#add_subdirectory(src/test)
 target_compile_definitions(svd PUBLIC -DREFLECTION=0)
 IF(MSVC)
 	if(CMAKE_GENERATOR MATCHES "NMake")
@@ -131,10 +133,10 @@ IF(MSVC)
 	if (_cpp_latest_flag_supported)
 		STRING(FIND ${CMAKE_CXX_FLAGS} "/std:c++latest" index)
 		if(index EQUAL -1)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest" CACHE TYPE INTERNAL FORCE)
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest" CACHE TYPE INTERNAL FORCE)
 		ENDIF()
 	endif()
-		
+
 	file(COPY shader DESTINATION ${BUILD_DESTINATION})
 	file(COPY resources/textures DESTINATION ${BUILD_DESTINATION})
 	file(COPY resources/model DESTINATION ${BUILD_DESTINATION})
