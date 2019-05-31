@@ -33,7 +33,7 @@ class P2G_atomic_global : public Technique {
   void uniforms_update(UniformsDynamic&& uniforms);
   std::string filename;
   GLuint ydim;
-  bool too_parallel;
+  bool too_parallel = false;
 };
 #endif  // P2GCOMPUTE_H
 

@@ -26,8 +26,6 @@ void main(void){
 
 	uint scan = INPUT_SCAN_AT(INPUT_SCAN,INPUT_SCAN_VAR,INPUT_SCAN_SIZE,grid_key,INPUT_SCAN_NUM_BUFFER,INPUT_SCAN_INDEX_BUFFER);
 
-	int local_i = int(gl_LocalInvocationID.x);
-
 	for(int local_i = int(gl_LocalInvocationID.x); local_i < (HALO_X*HALO_Y*HALO_Z);local_i += X*Y*Z) {
 		temp[local_i] = PREC_VEC_TYPE(0.0);
 	}
@@ -69,7 +67,6 @@ void main(void){
 	barrier();
 
 	ivec3 grid_start_node = ivec3(blockID * blockSize) - LEFT_SUPPORT;
-
 
 	for(int local_i = int(gl_LocalInvocationID.x); local_i < (HALO_X*HALO_Y*HALO_Z);local_i += X*Y*Z) {
 		uvec3 halo_ijk = uvec3(getIJK(local_i,ivec3(HALO_X,HALO_Y,HALO_Z)));
