@@ -20,7 +20,7 @@
  * @INPUT_COUNT        : Per cell particle counter
  * @INPUT_SCAN         : Scan over per cell particle counter
  *
- * BlockBufferData ->
+ * BlockBufferDataAccess ->
  * @OUTPUT             : Grid quantity (Gridpoint_vel_mass)
  * @OUTPUT_BLOCK_INDEX : Indexing over active blocks
  * @OUTPUT_BLOCK_COUNT : Maximum particle counter in a block

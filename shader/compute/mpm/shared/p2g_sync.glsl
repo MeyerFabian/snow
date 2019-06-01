@@ -18,7 +18,7 @@ uniform uint indexSize;
  * @INPUT_COUNT        : Per cell particle counter
  * @INPUT_SCAN         : Scan over per cell particle counter
  *
- * BlockBufferData ->
+ * BlockBufferDataAccess ->
  * @OUTPUT             : Grid quantity (Gridpoint_vel_mass)
  * @OUTPUT_BLOCK_INDEX : Indexing over active blocks
  * @OUTPUT_BLOCK_COUNT : Maximum particle counter in a block
@@ -45,7 +45,6 @@ layout(local_size_x =X, local_size_y =Y,local_size_z =Z)in;
 #define HALO_X (VOXEL_DIM_X+LEFT_SUPPORT+RIGHT_SUPPORT)
 #define HALO_Y (VOXEL_DIM_Y+LEFT_SUPPORT+RIGHT_SUPPORT)
 #define HALO_Z (VOXEL_DIM_Z+LEFT_SUPPORT+RIGHT_SUPPORT)
-//
 // linearized shared buffer
 shared PREC_VEC_TYPE temp [HALO_X*HALO_Y*HALO_Z];
 
