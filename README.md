@@ -1,3 +1,5 @@
+My MSc. on GPU-Acceleration of the Material-Point-Method can be found [here](https://github.com/mpm-msc/snow).
+
 Visuals
 ====
 Click the video folder for a video! :)
